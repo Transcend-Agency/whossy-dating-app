@@ -1,0 +1,21 @@
+.marquee-background {
+    @apply w-full min-h-screen flex flex-col items-center justify-center bg-black relative fixed;
+    
+    .rfm-marquee-container {
+        overflow-x: visible;
+    }
+
+    &__image {
+        @apply w-[25rem] h-[30rem] mr-[4px] mt-[4px];
+        z-index: z('marquee-background-image');
+    }
+
+    &__overlay {
+        @apply w-full inset-0 fixed h-screen bg-[#080808] opacity-80;
+        z-index: z('marquee-background-overlay');
+    }
+
+    &__container {
+        @apply flex flex-col fixed rotate-[5deg];
+    }
+}
