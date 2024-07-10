@@ -1,6 +1,6 @@
 .marquee-background {
-    @apply w-full min-h-screen flex flex-col items-center justify-center bg-black relative fixed;
-    
+    @apply w-full min-h-screen flex flex-col items-center justify-center bg-black fixed;
+
     .rfm-marquee-container {
         overflow-x: visible;
     }
