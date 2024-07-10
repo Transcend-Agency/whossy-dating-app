@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /*=============================================
 =            FONTS            =
 =============================================*/
@@ -21,6 +22,7 @@
 @import "./styles/utils/breakpoints.scss";
 /*=====  End of Utils  ======*/
 
+@import "./styles/shared/auth-modal.scss";
 /*=============================================
 =            Base           =
 =============================================*/
@@ -37,6 +39,7 @@
 =============================================*/
 
 @import "./styles/components/auth/marquee-image-slider-background.scss";
+@import "./styles/components/ui//button.scss";
 // @import "./styles/components/preloader.scss";
 // @import "./styles/components/navigation.scss";
 // @import "./styles/components/particle-scene.scss";
@@ -51,7 +54,8 @@
 =            Pages            =
 =============================================*/
 
-@import "./styles/pages/home/index.scss";
+@import "./styles/pages/home.scss";
+@import "./styles/pages/login.scss";
 // @import "./styles/pages/home/about.scss";
 // @import "./styles/pages/home/footer.scss";
 // @import "./styles/pages/home/services.scss";

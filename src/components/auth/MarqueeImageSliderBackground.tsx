@@ -1,5 +1,6 @@
 import React from 'react';
 import Marquee from "react-fast-marquee";
+import { motion } from 'framer-motion';
 
 type MarqueeImageSliderBackgroundProps = {
 
@@ -8,7 +9,9 @@ type MarqueeImageSliderBackgroundProps = {
 const MarqueeImageSliderBackground: React.FC<MarqueeImageSliderBackgroundProps> = () => {
     const imageNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
 
-    return <div className='marquee-background'>
+    return <motion.div
+        initial={{ scale: 1.1 }} animate={{ scale: 1, transition: { duration: 1.3, ease: 'linear' } }}
+        className='marquee-background'>
         <div className='marquee-background__overlay'></div>
         <div className='marquee-background__container'>
             <Marquee speed={20}>
@@ -32,6 +35,6 @@ const MarqueeImageSliderBackground: React.FC<MarqueeImageSliderBackgroundProps> 
                 ))}
             </Marquee>
         </div>
-    </div>
+    </motion.div>
 }
 export default MarqueeImageSliderBackground;
