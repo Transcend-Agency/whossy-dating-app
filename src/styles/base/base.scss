@@ -6,10 +6,11 @@
 }
 
 html {
-//   background-color: $color-black;
-  font-size: calc(100vw / 1440 * 10);
+  //   background-color: $color-black;
+  font-size: calc(100vw / 1512 * 10);
   line-height: 1;
-//   overflow: hidden;
+  font-family: $font-neue-montreal;
+  //   overflow: hidden;
   // position: fixed;
   min-height: 100vh;
   overflow: scroll;
@@ -20,8 +21,4 @@ html {
   @include media('<phone') {
     font-size: calc(100vw / 750 * 10);
   }
-}
-
-.clickable {
-  cursor: none;
 }
