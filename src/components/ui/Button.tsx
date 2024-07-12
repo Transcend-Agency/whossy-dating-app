@@ -1,11 +1,12 @@
 import React from 'react';
 
-type ButtonProps = {
-    text: string
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    text: string;
+    className?: string
 };
 
-const Button: React.FC<ButtonProps> = ({ text }) => {
+const Button: React.FC<ButtonProps> = ({ text, className, ...props }) => {
 
-    return <button className='button'>{text}</button>
+    return <button className={`button ${className}`} {...props}>{text}</button>
 }
 export default Button;
