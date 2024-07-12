@@ -1,6 +1,6 @@
 .button {
-    @apply w-full rounded-[0.8rem] text-white text-[1.8rem] font-medium leading-[2.16rem];
+    @apply w-full rounded-[0.8rem] text-white text-[1.8rem] font-medium leading-[2.16rem] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200;
     font-family: $font-neue-montreal;
     background-color: $color-primary-pink;
-    padding: 1.9rem;
+    padding: 1.7rem;
 }
