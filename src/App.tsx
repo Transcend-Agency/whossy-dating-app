@@ -12,9 +12,10 @@ import MarqueeImageSliderBackground from './components/auth/MarqueeImageSliderBa
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import CreateAccount from './pages/CreateAccount'
+import OnboardingLayout from "./pages/OnboardingLayout";
+import RelationshipPreference from "./pages/RelationshipPreference";
 
-
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function App() {
   const location = useLocation();
@@ -30,10 +31,13 @@ function App() {
             <Route path='reset-password' element={<ResetPassword />} />
             <Route path='create-account' element={<CreateAccount />} />
           </Route>
+          <Route path="/onboarding" element={<OnboardingLayout />}>
+          <Route index element={<RelationshipPreference />} />
+        </Route>
         </Routes>
       </AnimatePresence>
     </QueryClientProvider>
-  )
+  );
 }
 
-export default App
+export default App;
