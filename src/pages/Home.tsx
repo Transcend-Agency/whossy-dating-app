@@ -11,7 +11,7 @@ const Home: React.FC<HomeProps> = () => {
 
     return (
         <div className='home'>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.35, delay: 1 } }} exit={{ opacity: 0, transition: { duration: 0.35 } }} className='home__container'>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.25, delay: 1 } }} exit={{ opacity: 0, transition: { duration: 0.25 } }} className='home__container'>
                 <h1 className='home__title'>
                     Heartfelt Connections Await. <br />Discover Love on Whossy.
                 </h1>
