@@ -22,7 +22,6 @@
 @import "./styles/utils/breakpoints.scss";
 /*=====  End of Utils  ======*/
 
-@import "./styles/shared/auth-modal.scss";
 /*=============================================
 =            Base           =
 =============================================*/
@@ -38,6 +37,7 @@
 =            Components            =
 =============================================*/
 
+@import "./styles/components/auth/auth-page.scss";
 @import "./styles/components/auth/marquee-image-slider-background.scss";
 @import "./styles/components/ui//button.scss";
 // @import "./styles/components/preloader.scss";
@@ -56,6 +56,7 @@
 
 @import "./styles/pages/home.scss";
 @import "./styles/pages/login.scss";
+@import "./styles/pages/reset-password.scss";
 // @import "./styles/pages/home/about.scss";
 // @import "./styles/pages/home/footer.scss";
 // @import "./styles/pages/home/services.scss";
