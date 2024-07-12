@@ -9,6 +9,9 @@ import Home from './pages/Home'
 import { AnimatePresence } from "framer-motion";
 import Login from './pages/Login'
 import MarqueeImageSliderBackground from './components/auth/MarqueeImageSliderBackground'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import CreateAccount from './pages/CreateAccount'
 
 
 const queryClient = new QueryClient()
@@ -23,6 +26,9 @@ function App() {
           <Route path='/auth' element={<AuthLayout />}>
             <Route index element={<Home />} />
             <Route path='login' element={<Login />} />
+            <Route path='forgot-password' element={<ForgotPassword />} />
+            <Route path='reset-password' element={<ResetPassword />} />
+            <Route path='create-account' element={<CreateAccount />} />
           </Route>
         </Routes>
       </AnimatePresence>
