@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import AuthPage from './AuthPage';
-import AuthModalHeader from './AuthModalHeader';
-import Button from '../ui/Button';
-import Countdown from 'react-countdown';
 import { getAuth, sendEmailVerification } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import Countdown from 'react-countdown';
+import { useNavigate } from 'react-router-dom';
+import Button from '../ui/Button';
+import AuthModalHeader from './AuthModalHeader';
 import AuthModalRequestMessage from './AuthModalRequestMessage';
+import AuthPage from './AuthPage';
 
 
 type EmailVerificationProps = {
@@ -20,7 +20,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = () => {
     const [requestError, setRequestError] = useState('')
     const navigate = useNavigate()
 
-    const renderer = ({ hours, minutes, seconds, completed, }) => {
+    const renderer = ({ seconds, completed, }: { seconds: number, completed: boolean }) => {
         if (completed == true)
             setCanResendCode(true)
         // if (completed) {
@@ -29,7 +29,6 @@ const EmailVerification: React.FC<EmailVerificationProps> = () => {
         // } else {
         return <> in {seconds}s</>
         // }
-
     };
 
     const onResendCodeClick = async () => {

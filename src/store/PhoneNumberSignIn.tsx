@@ -1,4 +1,3 @@
-import { ConfirmationResult } from 'firebase/auth';
 import create from 'zustand';
 
 type PhoneNumberStore = {
@@ -10,7 +9,7 @@ type PhoneNumberStore = {
     setConfirmationResult: (confirmationResult: any) => void;
 };
 
-const usePhoneNumberStore = create<PhoneNumberStore>((set, get) => ({
+const usePhoneNumberStore = create<PhoneNumberStore>((set) => ({
     phone_number: '',
     verification_id: '',
     confirmationResult: {},

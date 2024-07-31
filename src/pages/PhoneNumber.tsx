@@ -1,28 +1,24 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import usePhoneNumberStore from "../store/PhoneNumberSignIn"
-import { AnimatePresence } from "framer-motion"
-import { ZodType, z } from "zod"
-import PhoneInput, { isPossiblePhoneNumber } from "react-phone-number-input"
-import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { FormData } from "../types/auth"
-import AuthPage from "../components/auth/AuthPage"
-import AuthModalBackButton from "../components/auth/AuthModalBackButton"
-import AuthModalHeader from "../components/auth/AuthModalHeader"
-import AuthInput from "../components/auth/AuthInput"
-import { motion } from "framer-motion"
-import Button from "../components/ui/Button"
-import OtpInput from 'react-otp-input';
+import { RecaptchaVerifier, getAuth, signInWithPhoneNumber } from 'firebase/auth'
 import {
     collection,
-    doc, getDocs, query, updateDoc, where
-} from 'firebase/firestore';
-import { db } from "../firebase"
+    getDocs, query,
+    where
+} from 'firebase/firestore'
+import { AnimatePresence, motion } from "framer-motion"
+import { useState } from "react"
+import { Controller, useForm } from "react-hook-form"
+import OtpInput from 'react-otp-input'
+import PhoneInput, { isPossiblePhoneNumber } from "react-phone-number-input"
+import { ZodType, z } from "zod"
+import AuthModalBackButton from "../components/auth/AuthModalBackButton"
+import AuthModalHeader from "../components/auth/AuthModalHeader"
 import AuthModalRequestMessage from "../components/auth/AuthModalRequestMessage"
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import { FirebaseError } from "firebase/app"
-import { auth } from "../firebase"
+import AuthPage from "../components/auth/AuthPage"
+import Button from "../components/ui/Button"
+import { auth, db } from "../firebase"
+import usePhoneNumberStore from "../store/PhoneNumberSignIn"
+import { FormData } from "../types/auth"
 
 
 interface PhoneNumberProps {
@@ -48,16 +44,14 @@ const VerifyCodeSchema: ZodType<{ code: string }> = z
         code: z.string().min(6, { message: "OTP should be 6 digits" }),
     })
 
-const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, goBack, key }) => {
+const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => {
     const phone_number = usePhoneNumberStore(state => state.phone_number)
-    const verification_id = usePhoneNumberStore(state => state.verification_id)
     const setVerificationId = usePhoneNumberStore(state => state.setVerificationId)
     const setConfirmationResult = usePhoneNumberStore(state => state.setConfirmationResult)
     const [loading, setLoading] = useState(false)
     const firebaseAuth = getAuth();
-    
+
     const {
-        register,
         handleSubmit,
         control,
         formState: { errors },
@@ -69,11 +63,6 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, goBack, ke
         }
     });
     const [requestError, setRequestError] = useState('')
-    const [recaptcha, setRecaptcha] = useState<RecaptchaVerifier>()
-    const initiateSignup = async () => {
-        const confirmationResult = await signInWithPhoneNumber(firebaseAuth, phone_number, recaptchaVerifier!)
-        console.log(confirmationResult)
-    }
     const onFormSubmit = async (data: any) => {
         try {
             setLoading(true)
@@ -84,7 +73,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, goBack, ke
             } else {
                 const setPhoneNumber = usePhoneNumberStore(state => state.setPhoneNumber)
                 // advance()
-                
+
                 console.log(data.phone_number, firebaseAuth)
                 const recaptcha = new RecaptchaVerifier(auth, 'recaptcha', {
                     'size': 'invisible',
@@ -94,21 +83,20 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, goBack, ke
                         console.log('captcha solved')
                     }
                     // 'expired-callback': () => {
-                        //     grecaptcha.reset(window.recaptchaWidgetId);
-                        
-                        // }
-                    })
-                    setRecaptcha(recaptcha)
-                    const confirmationResult = await signInWithPhoneNumber(
-                        auth,
-                        data.phone_number,
-                        recaptcha
-                        );
-                        setVerificationId(confirmationResult.verificationId)
-                        setConfirmationResult(confirmationResult)
-                        console.log(confirmationResult)
-                        advance()
-                        setPhoneNumber(data.phone_number)
+                    //     grecaptcha.reset(window.recaptchaWidgetId);
+
+                    // }
+                })
+                const confirmationResult = await signInWithPhoneNumber(
+                    auth,
+                    data.phone_number,
+                    recaptcha
+                );
+                setVerificationId(confirmationResult.verificationId)
+                setConfirmationResult(confirmationResult)
+                console.log(confirmationResult)
+                advance()
+                setPhoneNumber(data.phone_number)
 
             }
 
@@ -149,7 +137,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, goBack, ke
     )
 }
 
-const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ advance, goBack, key }) => {
+const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ goBack, key }) => {
     const verification_id = usePhoneNumberStore(state => state.verification_id)
     const confirmationResult = usePhoneNumberStore(state => state.confirmationResult)
     const [loading, setLoading] = useState(false);
@@ -158,7 +146,7 @@ const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ advance, goBack,
     const {
         handleSubmit,
         control,
-        formState: { errors, isValid },
+        formState: { isValid },
     } = useForm<FormData>({
         resolver: zodResolver(VerifyCodeSchema),
         mode: 'onBlur',
@@ -196,7 +184,7 @@ const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ advance, goBack,
                 <AuthModalHeader title='Phone number Sign in' subtitle="Enter the OTP sent to your number below" />
                 <form onSubmit={handleSubmit(onFormSubmit)} className='auth-page__modal__form'>
                     <Controller control={control} name={"code"}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                        render={({ field: { onChange, value } }) => (
                             <>
                                 <OtpInput
                                     value={value}
@@ -224,15 +212,6 @@ const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ advance, goBack,
 const PhoneNumber: React.FC<PhoneNumberProps> = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const pageOrder = ['phone_number', 'verification-code']
-    const navigate = useNavigate()
-    // const  = usePhoneNumberStore(state => state.phone_number)
-
-    // useEffect(() => {
-    //     if (!id) {
-    //         navigate('/auth')
-    //     }
-    // }, [])
-
     const advance = () => {
         setCurrentPage(currentPage + 1)
     }

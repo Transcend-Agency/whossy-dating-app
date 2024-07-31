@@ -23,9 +23,8 @@ import AuthPage from '../components/auth/AuthPage';
 import Button from '../components/ui/Button';
 import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
-import { FormData } from '../types/auth';
-import firebase from 'firebase/app';
 import useAccountSetupFormStore from '../store/AccountSetup';
+import { FormData } from '../types/auth';
 
 
 const CreateAccountFormSchema: ZodType<FormData> = z
@@ -114,7 +113,7 @@ const CreateAccount: React.FC<{}> = () => {
             const q = query(collection(db, "users"), where("uid", "==", user.uid));
             const result = await getDocs(q);
             if (result.docs.length === 0) {
-                const userResult = await setDoc(doc(db, "users", res.user.uid), {
+                await setDoc(doc(db, "users", res.user.uid), {
                     uid: res.user.uid,
                     first_name: res.user.displayName.split(" ")[0],
                     last_name: res.user.displayName.split(" ")[1],
