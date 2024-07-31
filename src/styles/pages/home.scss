@@ -1,0 +1,32 @@
+.home {
+    @apply fixed w-full h-screen flex items-center justify-center px-[2rem];
+
+    @include media('<=phone') {
+    &__line-break {
+        @apply hidden;
+    }
+
+    }
+
+    &__container {
+        @apply flex flex-col items-center;
+        z-index: 1000;
+    }
+
+    &__title {
+        font-family: $font-neue-montreal;
+        @apply text-[4rem] font-bold text-white text-center leading-[4.8rem] mb-[2rem];
+    }
+
+    .button-container {
+        width: 43.9rem;
+    }
+
+    &__cta {
+        @apply text-[1.8rem] mt-[1.2rem] text-white;
+
+        &__underline {
+            @apply font-bold underline cursor-pointer;
+        }
+    }
+}

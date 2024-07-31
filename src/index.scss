@@ -2,22 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://cdn.syncfusion.com/ej2/material.css");
+
 /*=============================================
-=            FONTS            =
+=            FONTS           
 =============================================*/
 
-@import './styles/base/fonts.scss';
+@import "./styles/base/fonts.scss";
 
 /*=====  End of FONTS  ======*/
-
-
-
 
 /*=============================================
 =            Utils            =
 =============================================*/
-@import './styles/utils/functions.scss';
-@import './styles/utils/variables.scss';
+@import "./styles/utils/functions.scss";
+@import "./styles/utils/variables.scss";
 @import "./styles/utils/breakpoints.scss";
 /*=====  End of Utils  ======*/
 
@@ -28,30 +27,30 @@
 @import "./styles/base/reset.scss";
 @import "./styles/base/base.scss";
 
-
 /*=====  End of Base ======*/
-
 
 /*=============================================
 =            Components            =
 =============================================*/
 
-// @import "./styles/components/cursor.scss";
+@import "./styles/components/auth/auth-page.scss";
+@import "./styles/components/onboarding/onboarding-page.scss";
+@import "./styles/components/auth/marquee-image-slider-background.scss";
+@import "./styles/components/ui//button.scss";
+@import "./styles/components/ui//slider.scss";
 // @import "./styles/components/preloader.scss";
 // @import "./styles/components/navigation.scss";
 // @import "./styles/components/particle-scene.scss";
 // @import "./styles/components/menu.scss";
 
-
 /*=====  End of Components  ======*/
-
-
 
 /*=============================================
 =            Pages            =
 =============================================*/
 
-@import "./styles/pages/home/index.scss";
+@import "./styles/pages/home.scss";
+@import "./styles/pages/reset-password.scss";
 // @import "./styles/pages/home/about.scss";
 // @import "./styles/pages/home/footer.scss";
 // @import "./styles/pages/home/services.scss";
