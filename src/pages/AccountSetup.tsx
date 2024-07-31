@@ -1,31 +1,29 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AnimatePresence } from 'framer-motion';
-import { E164Number } from 'libphonenumber-js/core';
+import { getAuth, sendEmailVerification, updateProfile } from 'firebase/auth';
+import {
+    collection,
+    doc,
+    getDocs, query, updateDoc, where
+} from 'firebase/firestore';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import ReactFlagsSelect from "react-flags-select";
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input';
+import { default as Locale, default as en } from 'react-phone-number-input/locale/en';
 import 'react-phone-number-input/style.css';
+import { useNavigate } from 'react-router-dom';
 import { ZodType, z } from 'zod';
 import AuthInput from '../components/auth/AuthInput';
 import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
+import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
+import GenderButton from '../components/auth/GenderButton';
 import Button from '../components/ui/Button';
+import { db } from "../firebase";
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
-import en from 'react-phone-number-input/locale/en'
-import Locale from 'react-phone-number-input/locale/en';
-import { motion } from 'framer-motion'
-import GenderButton from '../components/auth/GenderButton';
-import { useNavigate } from 'react-router-dom';
-import { auth, db } from "../firebase";
-import {
-    collection,
-    doc, getDoc, getDocs, query, updateDoc, where
-} from 'firebase/firestore';
-import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
-import { getAuth, sendEmailVerification, updateProfile } from 'firebase/auth';
 type AccountSetupProps = {
 
 };
@@ -56,7 +54,7 @@ const AccountGenderFormSchema: ZodType<{ gender: string; }> = z
     })
 
 
-const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, goBack, key }) => {
+const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, key }) => {
     const first_name = useAccountSetupFormStore(state => state.userData.first_name)
     const last_name = useAccountSetupFormStore(state => state.userData.last_name)
     const setNames = useAccountSetupFormStore(state => state.setNames)
@@ -158,7 +156,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                         )}
                     />
                     <Controller control={control} name={"country_of_origin"}
-                        render={({ field: { onChange, onBlur, value, ref } }) => (
+                        render={({ field: { onChange } }) => (
                             <>
                                 <ReactFlagsSelect
                                     selectButtonClassName={`${errors?.country_of_origin?.message && 'has-error'}`}
@@ -178,7 +176,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
     )
 }
 
-const FillInGender: React.FC<AccountSetupFormPage> = ({ advance, goBack, key }) => {
+const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
     const gender = useAccountSetupFormStore(state => state.userData.gender)
     const setGender = useAccountSetupFormStore(state => state.setGender)
     const [loading, setLoading] = useState(false)
@@ -189,8 +187,6 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ advance, goBack, key }) 
     const {
         handleSubmit,
         control,
-        watch,
-        trigger,
         formState: { errors },
     } = useForm<FormData>({
         resolver: zodResolver(AccountGenderFormSchema),

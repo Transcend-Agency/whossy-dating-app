@@ -1,20 +1,19 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { confirmPasswordReset } from 'firebase/auth';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
-import AuthPage from '../components/auth/AuthPage';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ZodType, z } from 'zod';
+import AuthInput from '../components/auth/AuthInput';
 import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
-import AuthInput from '../components/auth/AuthInput';
-import Button from '../components/ui/Button';
-import ResetPasswordRequirementParamater from '../components/auth/ResetPasswordRequirementParamater';
-import { ZodType, z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormData } from '../types/auth';
-import { confirmPasswordReset } from 'firebase/auth';
-import { auth } from '../firebase';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
-import { motion } from 'framer-motion';
+import AuthPage from '../components/auth/AuthPage';
+import ResetPasswordRequirementParamater from '../components/auth/ResetPasswordRequirementParamater';
+import Button from '../components/ui/Button';
+import { auth } from '../firebase';
+import { FormData } from '../types/auth';
 
 type ResetPasswordProps = {
 
@@ -121,7 +120,7 @@ const ResetPasswordDetails: React.FC<ResetPasswordPage> = ({ advance, goBack }) 
     </AuthPage>
 }
 
-const ResetPasswordSuccessPage: React.FC<ResetPasswordPage> = ({ key, goBack, advance }) => {
+const ResetPasswordSuccessPage: React.FC<ResetPasswordPage> = ({ key, advance }) => {
     const navigate = useNavigate()
     const onGoToLogin = () => {
         advance()

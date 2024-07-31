@@ -1,9 +1,8 @@
 import React from 'react';
-import AuthPage from './AuthPage';
-import { AnimatePresence } from 'framer-motion';
-import AuthModalHeader from './AuthModalHeader';
-import Button from '../ui/Button';
 import { useNavigate } from 'react-router-dom';
+import Button from '../ui/Button';
+import AuthModalHeader from './AuthModalHeader';
+import AuthPage from './AuthPage';
 
 type FinalizeSetupProps = {
 

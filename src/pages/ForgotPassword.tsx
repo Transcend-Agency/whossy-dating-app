@@ -32,7 +32,7 @@ const ForgotPasswordFormSchema: ZodType<{ email?: string }> = z
     })
 
 
-const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key, goBack }) => {
+const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key }) => {
     const {
         register,
         handleSubmit,
@@ -102,8 +102,6 @@ const ForgotPasswordSuccessPage: React.FC<ForgotPasswordPage> = ({ key, goBack }
 const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const pageOrder = ['forgot-password', 'success']
-    const navigate = useNavigate()
-
 
     const advance = () => {
         setCurrentPage(currentPage + 1)

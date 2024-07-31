@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+    collection,
+    doc,
+    getDocs,
+    query,
+    setDoc,
+    where,
+} from 'firebase/firestore';
+import { AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
+import { ZodType, z } from "zod";
 import AuthInput from '../components/auth/AuthInput';
 import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
+import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
 import Button from '../components/ui/Button';
-import { FormData } from "../types/auth";
-import { z, ZodType } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase"
-import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
-import { AnimatePresence } from 'framer-motion';
+import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
-import {
-    query, collection, where, getDocs,
-    doc,
-    setDoc,
-} from 'firebase/firestore';
 import useAccountSetupFormStore from '../store/AccountSetup';
-import { User } from '../types/user';
-import { setUserId } from 'firebase/analytics';
+import { FormData } from "../types/auth";
 
 type LoginProps = {
 
@@ -48,7 +49,6 @@ const Login: React.FC<LoginProps> = () => {
         register,
         handleSubmit,
         formState: { errors },
-        watch
     } = useForm<FormData>({
         resolver: zodResolver(LoginFormSchema),
         mode: 'onBlur'
@@ -144,7 +144,7 @@ const Login: React.FC<LoginProps> = () => {
                     first_name: res.user.displayName.split(" ")[0],
                     last_name: res.user.displayName.split(" ")[1],
                 })
-                const userResult = await setDoc(doc(db, "users", res.user.uid), {
+                await setDoc(doc(db, "users", res.user.uid), {
                     uid: res.user.uid,
                     first_name: res.user.displayName.split(" ")[0],
                     last_name: res.user.displayName.split(" ")[1],
