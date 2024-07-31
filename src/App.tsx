@@ -14,6 +14,10 @@ import ResetPassword from './pages/ResetPassword'
 import CreateAccount from './pages/CreateAccount'
 import OnboardingLayout from "./pages/OnboardingLayout";
 import RelationshipPreference from "./pages/RelationshipPreference";
+import AccountSetup from './pages/AccountSetup'
+import PhoneNumber from './pages/PhoneNumber'
+import FinalizeSetup from './components/auth/FinalizeSetup'
+import EmailVerification from './components/auth/EmailVerification'
 
 const queryClient = new QueryClient();
 
@@ -30,10 +34,14 @@ function App() {
             <Route path='forgot-password' element={<ForgotPassword />} />
             <Route path='reset-password' element={<ResetPassword />} />
             <Route path='create-account' element={<CreateAccount />} />
+            <Route path='account-setup' element={<AccountSetup />} />
+            <Route path='phone-number' element={<PhoneNumber />} />
+            <Route path='finalize-setup' element={<FinalizeSetup />} />
+            <Route path='email-verification' element={<EmailVerification />} />
           </Route>
           <Route path="/onboarding" element={<OnboardingLayout />}>
-          <Route index element={<RelationshipPreference />} />
-        </Route>
+            <Route index element={<RelationshipPreference />} />
+          </Route>
         </Routes>
       </AnimatePresence>
     </QueryClientProvider>
