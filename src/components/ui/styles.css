@@ -1,0 +1,22 @@
+.SliderRoot {
+  
+}
+
+.SliderTrack {
+  
+}
+
+.SliderRange {
+
+}
+
+.SliderThumb {
+  
+}
+.SliderThumb:hover {
+  background-color: var(--violet-3);
+}
+.SliderThumb:focus {
+  outline: none;
+  box-shadow: 0 0 0 5px var(--black-a8);
+}
