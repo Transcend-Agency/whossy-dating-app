@@ -4,16 +4,17 @@ import Skip from "./Skip";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 
 const ShortIntroduction: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [value, setValue] = useState("");
-  const { updateOnboardingData, "onboarding-data":data } = useOnboardingStore();
+  const { updateOnboardingData, "onboarding-data": data } =
+    useOnboardingStore();
   useEffect(() => {
     if (data["short-introduction"]) {
-      setValue(data["short-introduction"])
+      setValue(data["short-introduction"]);
     }
- }, [])
+  }, []);
 
   return (
     <OnboardingPage>
