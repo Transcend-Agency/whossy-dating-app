@@ -5,7 +5,7 @@ import RegularOptions from "./RegularOptions";
 import { useEffect, useState } from "react";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 import { drinking } from "../../constants/onboarding";
 
 const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -13,7 +13,10 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const { updateOnboardingData, "onboarding-data": data } =
     useOnboardingStore();
   useEffect(() => {
-    if (data["drinking-preference"] !== null && data["drinking-preference"] !== undefined) {
+    if (
+      data["drinking-preference"] !== null &&
+      data["drinking-preference"] !== undefined
+    ) {
       setActive(data["drinking-preference"]);
     }
   }, []);
@@ -28,6 +31,7 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
       <div className="onboarding-page__regular-options-container">
         {drinking.map((item, i) => (
           <RegularOptions
+            key={i}
             desc={item}
             index={i}
             active={active}
@@ -40,10 +44,10 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         <Button
           text="Continue"
           onClick={() => {
-              advance();
-              updateOnboardingData({
-                "drinking-preference": active,
-              });
+            advance();
+            updateOnboardingData({
+              "drinking-preference": active,
+            });
           }}
         />
       </div>
@@ -52,5 +56,3 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 };
 
 export default DoYouDrink;
-
-
