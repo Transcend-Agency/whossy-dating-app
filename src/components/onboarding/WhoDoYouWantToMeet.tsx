@@ -4,18 +4,19 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 import { meet } from "../../constants/onboarding";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhoDoYouWantToMeet: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null | undefined>(null);
-  const { updateOnboardingData, "onboarding-data":data } = useOnboardingStore();
+  const { updateOnboardingData, "onboarding-data": data } =
+    useOnboardingStore();
   useEffect(() => {
     if (data["gender-preference"] !== null) {
-      setActive(data["gender-preference"])
+      setActive(data["gender-preference"]);
     }
- }, [])
+  }, []);
   return (
     <OnboardingPage>
       <h1 className="onboarding-page__header">Who do you want to meet?</h1>
@@ -43,7 +44,7 @@ const WhoDoYouWantToMeet: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           advance={() => {
             if (active !== null) {
               advance();
-              updateOnboardingData({"gender-preference": active});
+              updateOnboardingData({ "gender-preference": active });
             }
           }}
           selected={active}
