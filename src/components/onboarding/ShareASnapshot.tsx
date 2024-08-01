@@ -13,7 +13,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const test = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "cities", "SA"), {
+      await setDoc(doc(db, "users", "userId"), {
         name: "Los Angeles",
         state: "CA",
         country: "USA",
