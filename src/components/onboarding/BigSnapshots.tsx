@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { usePictureStore } from "../../store/onboarding/usePictureStore";
 
 // interface Picture {
@@ -10,6 +10,7 @@ const BigSnapshots = () => {
   // const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { setPictures, pictures } = usePictureStore();
+  const [selected, setSelected] = useState("")
 
   // const [picture, setPicture] = useState<Picture>({
   //   fileName: "",
@@ -21,7 +22,8 @@ const BigSnapshots = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPictures({ imageOne: reader.result as string });
+        setPictures({ imageOne: file });
+        setSelected(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -47,9 +49,9 @@ const BigSnapshots = () => {
         style={{ display: "none" }}
         onChange={handleImageSelect}
       />
-      {pictures.imageOne !== "" && (
+      {selected !== "" && (
         <img
-          src={pictures.imageOne}
+          src={selected}
           style={{
             position: "absolute",
             top: 0,

@@ -7,18 +7,51 @@ import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { usePictureStore } from "../../store/onboarding/usePictureStore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import toast from "react-hot-toast";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   // Add a new document in collection "cities"
-  const test = async () => {
+
+  const { pictures } = usePictureStore();
+  const { addPhotos, "onboarding-data": data, } = useOnboardingStore();
+  const uploadImage = (file: File, i: number) => {
+    if (!file) return;
+    const storage = getStorage();
+    const storageRef = ref(storage, `tests/userId/profile_pictures/image_${i}`);
+    uploadBytes(storageRef, file)
+      .then(() => {
+        toast.success("Image has been uploaded successfully 🚀");
+        console.log("File was uploaded was successfully!");
+        getDownloadURL(storageRef)
+          .then((url) => {
+            addPhotos(url);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "users", "userId"), {
-        name: "Los Angeles",
-        state: "CA",
-        country: "USA",
+      await setDoc(doc(db, "preferences", "userId"), {
+        bio: data["short-introduction"],
+        date_of_birth: data["date-of-birth"],
+        distance: data["distance-search"],
+        drink: data["drinking-preference"],
+        education: data.education,
+        interests: data.interests,
+        meet: data["gender-preference"],
+        pets: data.pets,
+        photos: data.photos,
+        preference: data["relationship-preference"],
+        smoke: data["smoking-preference"],
+        workout: data["workout-preference"],
       });
-      console.log("added");
+      console.log("added successfully!");
     } catch (err) {
       console.log(err);
     }
@@ -44,8 +77,21 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         <Button
           text="Get Started"
           onClick={() => {
-            advance();
-            test();
+            // advance();
+            // console.log(pictures);
+            // test();
+            const uploadPromises = Object.values(pictures).map((file, i) => {
+              return file ? uploadImage(file, i) : Promise.resolve(); 
+            });
+            Promise.all(uploadPromises)
+              .then(() => {
+                // All images have been uploaded successfully
+                console.log("All images uploaded:", data.photos);
+                uploadToFirestore();
+              })
+              .catch((error) => {
+                console.error("Error uploading some images:", error);
+              });
           }}
         />
       </div>

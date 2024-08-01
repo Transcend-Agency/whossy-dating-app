@@ -13,7 +13,7 @@ interface OnboardingData {
   pets?: string[];
   "workout-preference"?: number | null;
   "short-introduction"?: string;
-  snapshot?: string[];
+  photos?: string[];
 }
 
 interface Onboarding {
@@ -23,6 +23,7 @@ interface Onboarding {
   removeInterests: (s: string) => void;
   addPets: (s: string) => void;
   removePets: (s: string) => void;
+  addPhotos: (s: string) => void;
   reset: () => void;
 }
 
@@ -39,7 +40,7 @@ const initialState = {
     pets: [],
     "workout-preference": null,
     "short-introduction": "",
-    snapshot: [],
+    photos: [],
   },
 };
 
@@ -81,6 +82,13 @@ export const useOnboardingStore = create<
           "onboarding-data": {
             ...state["onboarding-data"],
             pets: state["onboarding-data"].pets?.filter((item) => item !== pet),
+          },
+        })),
+      addPhotos: (photos) =>
+        set((state) => ({
+          "onboarding-data": {
+            ...state["onboarding-data"],
+            photos: [...(state["onboarding-data"].photos || []), photos],
           },
         })),
       updateOnboardingData: (data) =>
