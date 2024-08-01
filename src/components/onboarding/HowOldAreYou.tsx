@@ -2,7 +2,7 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 import OnboardingButton from "./OnboardingButton";
 
 // import Date from "./Date";
@@ -25,11 +25,15 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
     }
   }, [birth_date]);
   useEffect(() => {
-    if (data["date-of-birth"] !== undefined && data["date-of-birth"] !== null && data["date-of-birth"] !== "") {
+    if (
+      data["date-of-birth"] !== undefined &&
+      data["date-of-birth"] !== null &&
+      data["date-of-birth"] !== ""
+    ) {
       const the_date = new Date(data["date-of-birth"]);
       setBirthDate({
-        day: (the_date.getDate()-1).toString(),
-        month: (the_date.getMonth()+1).toString(),
+        day: (the_date.getDate() - 1).toString(),
+        month: (the_date.getMonth() + 1).toString(),
         year: the_date.getFullYear().toString(),
       });
     }
@@ -90,7 +94,6 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           error="Fill in all input fields"
         />
       </div>
-      <button onClick={() => console.log(birth_date)}>click</button>
     </OnboardingPage>
   );
 };
