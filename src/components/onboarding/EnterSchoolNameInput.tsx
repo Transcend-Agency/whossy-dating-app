@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 
 interface SchoolNameProps {
   getSchool: (s: any) => void;
