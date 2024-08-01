@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   PictureData,
   usePictureStore,
 } from "../../store/onboarding/usePictureStore";
+// import { uploadImage } from "../../constants/onboarding";
 
 interface ImageProps {
   // image?: string;
@@ -13,16 +14,20 @@ const Image: React.FC<ImageProps> = ({ name }) => {
   const { setPictures, pictures } = usePictureStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const [selected, setSelected] = useState("");
+
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         // setPicture({ fileName: file.name, fileSrc: reader.result as string });
-        setPictures({ [name]: reader.result as string });
-        console.log(file.name);
+        setPictures({ [name]: file });
+        setSelected(reader.result as string);
+        console.log(pictures);
       };
       reader.readAsDataURL(file);
+      // uploadImage(file)
     }
   };
 
@@ -31,6 +36,8 @@ const Image: React.FC<ImageProps> = ({ name }) => {
       fileInputRef.current.click();
     }
   };
+
+  
   return (
     <figure className="relative mb-10 cursor-pointer" onClick={handleClick}>
       <img
@@ -44,11 +51,11 @@ const Image: React.FC<ImageProps> = ({ name }) => {
         style={{ display: "none" }}
         onChange={handleImageSelect}
       />
-      {pictures[name] === "" ? (
+      {selected === "" ? (
         <div className="w-[8rem] h-[6.4rem] rounded-lg bg-[#F0F0F0] " />
       ) : (
         <img
-          src={pictures[name]}
+          src={selected}
           className="w-[8rem] h-[6.4rem] rounded-lg object-cover"
           alt="user photo"
         />
@@ -58,6 +65,7 @@ const Image: React.FC<ImageProps> = ({ name }) => {
 };
 
 const SmallSnapshots = () => {
+
   return (
     <section className="flex space-x-[0.8rem]">
       <Image name="imageTwo" />

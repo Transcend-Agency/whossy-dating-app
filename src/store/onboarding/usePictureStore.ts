@@ -2,12 +2,12 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface PictureData {
-  imageOne?: string;
-  imageTwo?: string;
-  imageThree?: string;
-  imageFour?: string;
-  imageFive?: string;
-  imageSix?: string;
+  imageOne?: File;
+  imageTwo?: File;
+  imageThree?: File;
+  imageFour?: File;
+  imageFive?: File;
+  imageSix?: File;
 }
 
 interface Picture {
@@ -18,12 +18,12 @@ interface Picture {
 
 const initialState = {
   pictures: {
-    imageOne: "",
-    imageTwo: "",
-    imageThree: "",
-    imageFour: "",
-    imageFive: "",
-    imageSix: "",
+    imageOne: undefined,
+    imageTwo: undefined,
+    imageThree: undefined,
+    imageFour: undefined,
+    imageFive: undefined,
+    imageSix: undefined,
   },
 };
 
