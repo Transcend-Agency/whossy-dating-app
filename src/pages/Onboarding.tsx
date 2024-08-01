@@ -40,7 +40,7 @@ const Onboarding = () => {
   return (
     <>
       {/* <AnimatePresence> */}
-      <h1 className="onboarding-page__logo">Logo</h1>
+      {/* <h1 className="onboarding-page__logo">Logo</h1> */}
       <div className="onboarding-page__progress-bar">
         {Array.from({ length: completed }, (_, i) => (
           <div className="onboarding-page__progress-bar__completed" key={i} />
