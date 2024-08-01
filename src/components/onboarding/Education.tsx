@@ -4,7 +4,7 @@ import Skip from "./Skip";
 import EnterSchoolNameInput from "./EnterSchoolNameInput";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 import { useEffect, useState } from "react";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
