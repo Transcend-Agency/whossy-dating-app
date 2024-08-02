@@ -1,5 +1,5 @@
 .onboarding-page {
-  @apply lg:grid grid-cols-2 h-screen md:flex justify-center overflow-hidden;
+  @apply lg:grid grid-cols-2 h-screen md:flex justify-center lg:overflow-hidden;
 
   &__logo {
     @apply mb-[4rem] text-[2.4rem] text-[#CCCCCC];
