@@ -16,7 +16,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   // Add a new document in collection "cities"
 
   const { pictures } = usePictureStore();
-  const { addPhotos, "onboarding-data": data, } = useOnboardingStore();
+  const { addPhotos, "onboarding-data": data } = useOnboardingStore();
   const uploadImage = (file: File, i: number) => {
     if (!file) return;
     const storage = getStorage();
@@ -37,7 +37,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "preferences", "userId"), {
+      await setDoc(doc(db, "preferences", "userId_4"), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -79,19 +79,19 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
           onClick={() => {
             // advance();
             // console.log(pictures);
-            // test();
-            const uploadPromises = Object.values(pictures).map((file, i) => {
-              return file ? uploadImage(file, i) : Promise.resolve(); 
-            });
-            Promise.all(uploadPromises)
-              .then(() => {
-                // All images have been uploaded successfully
-                console.log("All images uploaded:", data.photos);
-                uploadToFirestore();
-              })
-              .catch((error) => {
-                console.error("Error uploading some images:", error);
-              });
+            Object.values(pictures).forEach((item, i) =>
+              uploadImage(item, i)
+            );
+            // Promise.all(uploadPromises)
+            //   .then(() => {
+            //     // All images have been uploaded successfully
+            //     console.log("All images uploaded:", data.photos);
+            //     uploadToFirestore();
+            //   })
+            //   .catch((error) => {
+            //     console.error("Error uploading some images:", error);
+            //   });
+            setTimeout(() => uploadToFirestore(), 8000)
           }}
         />
       </div>
