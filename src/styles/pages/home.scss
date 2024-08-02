@@ -1,5 +1,12 @@
 .home {
-    @apply fixed w-full h-screen flex items-center justify-center;
+    @apply fixed w-full h-screen flex items-center justify-center px-[2rem];
+
+    @include media('<=phone') {
+    &__line-break {
+        @apply hidden;
+    }
+
+    }
 
     &__container {
         @apply flex flex-col items-center;
