@@ -18,7 +18,7 @@
   }
 
   &__section-one {
-    @apply px-[6.4rem] overflow-x-hidden py-[4.8rem] max-w-[768px] lg:max-w-none overflow-y-scroll;
+    @apply px-[2rem] lg:px-[6.4rem] overflow-x-hidden py-[4.8rem] max-w-[768px] lg:max-w-none overflow-y-scroll;
     &__buttons {
       // @apply flex space-x-[2rem] sticky bottom-0 bg-white pt-[2rem] pb-[4rem];
       @apply flex space-x-[2rem] bg-white pt-[1rem];
