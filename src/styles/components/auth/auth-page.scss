@@ -1,6 +1,12 @@
 .auth-page {
     @apply fixed w-full h-screen flex items-center justify-center px-[2.5rem];
 
+    &.email-verification {
+        .auth-page__modal__header__title {
+            @apply mt-[37px];
+        }
+    }
+
     .error-message-container {
         @apply h-[2rem] pt-[0.6rem];
 
@@ -37,6 +43,7 @@
 
                 &__cta {
                     @apply text-white underline cursor-pointer;
+
                     &.disabled {
                         @apply cursor-not-allowed;
                     }
