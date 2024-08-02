@@ -10,7 +10,7 @@ const BigSnapshots = () => {
   // const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { setPictures, pictures } = usePictureStore();
-  const [selected, setSelected] = useState("")
+  const [selected, setSelected] = useState("");
 
   // const [picture, setPicture] = useState<Picture>({
   //   fileName: "",
@@ -37,7 +37,7 @@ const BigSnapshots = () => {
   return (
     <figure className="relative h-[35rem] mt-10">
       <img
-        className="absolute -top-[2rem] size-[3rem] z-[99] cursor-pointer"
+        className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer"
         src="/assets/icons/camera.svg"
         alt="add pictures"
         onClick={handleClick}
