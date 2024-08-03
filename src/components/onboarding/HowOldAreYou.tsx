@@ -56,9 +56,16 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           placeholder="DD"
           maxLength={2}
           value={birth_date.day}
-          onChange={(e) =>
-            setBirthDate((prev) => ({ ...prev, day: e.target.value }))
-          }
+          onChange={(e) => {
+            const value = e.target.value;
+            // Validate day (1-31)
+            if (
+              /^\d{0,2}$/.test(value) &&
+              (value === "" || (Number(value) >= 1 && Number(value) <= 31))
+            ) {
+              setBirthDate((prev) => ({ ...prev, day: value }));
+            }
+          }}
         />
         <input
           type="text"
@@ -66,9 +73,16 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           placeholder="MM"
           maxLength={2}
           value={birth_date.month}
-          onChange={(e) =>
-            setBirthDate((prev) => ({ ...prev, month: e.target.value }))
-          }
+          onChange={(e) => {
+            const value = e.target.value;
+            // Validate month (1-12)
+            if (
+              /^\d{0,2}$/.test(value) &&
+              (value === "" || (Number(value) >= 1 && Number(value) <= 12))
+            ) {
+              setBirthDate((prev) => ({ ...prev, month: value }));
+            }
+          }}
         />
         <input
           type="text"
