@@ -1,7 +1,7 @@
 import { alphabet } from "../../constants/onboarding";
-import TagSelector from "../ui/TagSelector";
+import TagSelector from "./InterestTag";
 
-const InterestOptions = () => {
+const Interests = () => {
   return (
     <>
       {alphabet.map((item, _) => (
@@ -9,7 +9,7 @@ const InterestOptions = () => {
           <h1 className="text-[1.8rem]">{item.letter.toUpperCase()}</h1>
           <div className="space-y-[1rem]">
             {item.options.map((option, i) => (
-              <TagSelector key={i} text={option} />
+              <TagSelector text={option} key={i} />
             ))}
           </div>
           <hr className="mt-[1.8rem]" />
@@ -19,5 +19,4 @@ const InterestOptions = () => {
   );
 };
 
-export default InterestOptions;
-
+export default Interests;

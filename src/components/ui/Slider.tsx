@@ -1,14 +1,15 @@
 import * as Slide from "@radix-ui/react-slider";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 
 interface SliderProps {
-  getDistance: (s: any) => void;
+  getDistance?: (s: any) => void;
 }
 
 const Slider: React.FC<SliderProps> = ({ getDistance }) => {
   const [distance, setDistance] = useState(50);
-  const { "onboarding-data": data } = useOnboardingStore();
+  const { "onboarding-data": data, updateOnboardingData } =
+    useOnboardingStore();
 
   useEffect(() => {
     if (data["distance-search"]) {
@@ -42,7 +43,8 @@ const Slider: React.FC<SliderProps> = ({ getDistance }) => {
         step={1}
         onValueChange={(e) => {
           setDistance(e[0]);
-          getDistance(e[0]);
+          updateOnboardingData({ "distance-search": e[0] });
+          getDistance && getDistance(e[0]);
         }}
       >
         <Slide.Track

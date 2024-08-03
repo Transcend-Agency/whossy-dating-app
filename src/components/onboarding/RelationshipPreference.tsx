@@ -3,17 +3,18 @@ import Options from "./Options";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 import { relationship_preferences } from "../../constants/onboarding";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
   const [active, setActive] = useState<number | null | undefined>(null);
-  const { updateOnboardingData, "onboarding-data":data } = useOnboardingStore();
+  const { updateOnboardingData, "onboarding-data": data } =
+    useOnboardingStore();
   useEffect(() => {
     if (data["relationship-preference"] !== null) {
-      setActive(data["relationship-preference"])
+      setActive(data["relationship-preference"]);
     }
- }, [])
+  }, []);
   return (
     <OnboardingPage>
       <h1 className="onboarding-page__header">
@@ -49,7 +50,6 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
         }}
       />
       {/* <button onClick={() => console.log(data)}>click</button> */}
-
     </OnboardingPage>
   );
 };

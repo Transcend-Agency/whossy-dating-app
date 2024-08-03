@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface OnboardingData {
   "relationship-preference"?: number | null;
@@ -10,9 +10,10 @@ interface OnboardingData {
   education?: string;
   "drinking-preference"?: number | null;
   "smoking-preference"?: number | null;
+  pets?: string[];
   "workout-preference"?: number | null;
   "short-introduction"?: string;
-  snapshot?: string[];
+  photos?: string[];
 }
 
 interface Onboarding {
@@ -20,6 +21,9 @@ interface Onboarding {
   updateOnboardingData: (s: OnboardingData) => void;
   addInterests: (s: string) => void;
   removeInterests: (s: string) => void;
+  addPets: (s: string) => void;
+  removePets: (s: string) => void;
+  addPhotos: (s: string) => void;
   reset: () => void;
 }
 
@@ -28,14 +32,15 @@ const initialState = {
     "relationship-preference": null,
     "gender-preference": null,
     "date-of-birth": null,
-    "distance-search": 0,
+    "distance-search": 50,
     interests: [],
     education: "",
     "drinking-preference": null,
     "smoking-preference": null,
+    pets: [],
     "workout-preference": null,
     "short-introduction": "",
-    snapshot: [],
+    photos: [],
   },
 };
 
@@ -65,6 +70,27 @@ export const useOnboardingStore = create<
             ),
           },
         })),
+      addPets: (pet) =>
+        set((state) => ({
+          "onboarding-data": {
+            ...state["onboarding-data"],
+            pets: [...(state["onboarding-data"].pets || []), pet],
+          },
+        })),
+      removePets: (pet) =>
+        set((state) => ({
+          "onboarding-data": {
+            ...state["onboarding-data"],
+            pets: state["onboarding-data"].pets?.filter((item) => item !== pet),
+          },
+        })),
+      addPhotos: (photos) =>
+        set((state) => ({
+          "onboarding-data": {
+            ...state["onboarding-data"],
+            photos: [...(state["onboarding-data"].photos || []), photos],
+          },
+        })),
       updateOnboardingData: (data) =>
         set((state) => ({
           "onboarding-data": { ...state["onboarding-data"], ...data },
@@ -73,7 +99,7 @@ export const useOnboardingStore = create<
     }),
     {
       name: "onboarding-data",
-      getStorage: () => localStorage,
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
