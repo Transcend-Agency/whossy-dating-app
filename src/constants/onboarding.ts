@@ -1,9 +1,3 @@
-import { doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import toast from "react-hot-toast";
-import { db } from "../firebase";
-import { useOnboardingStore } from "../store/onboarding/useStore";
-import { usePictureStore } from "../store/onboarding/usePictureStore";
 // import {useState} from 'react';
 
 // const {"onboarding-data": data} = useOnboardingStore();
@@ -806,11 +800,6 @@ const workout = [
 
 
 export {
-  relationship_preferences,
-  alphabet,
-  meet,
-  drinking,
-  smoking,
-  workout,
-  pets,
+  alphabet, drinking, meet, pets, relationship_preferences, smoking,
+  workout
 };

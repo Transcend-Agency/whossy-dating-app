@@ -41,11 +41,14 @@ const Onboarding = () => {
     <>
       {/* <AnimatePresence> */}
       {/* <h1 className="onboarding-page__logo">Logo</h1> */}
-      
+
       <div className="onboarding-page__progress-bar">
-        {pageOrder.map((page, index) => (
-          <ProgressBarItem active={index <= currentPage} />
-        ))}
+        {pageOrder.map((page, index) => {
+          console.log(page)
+          return (
+            <ProgressBarItem active={index <= currentPage} />
+          )
+        })}
       </div>
 
       <AnimatePresence mode="wait">
