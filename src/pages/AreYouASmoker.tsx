@@ -5,17 +5,21 @@ import RegularOptions from "../components/onboarding/RegularOptions";
 import { useEffect, useState } from "react";
 import { OnboardingProps } from "../types/onboarding";
 import OnboardingPage from "../components/onboarding/OnboardingPage";
-import { useOnboardingStore } from "../store/useStore";
+import { useOnboardingStore } from "../store/onboarding/useStore";
 import { smoking } from "../constants/onboarding";
 
 const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null>(null);
-  const { updateOnboardingData, "onboarding-data":data } = useOnboardingStore();
+  const { updateOnboardingData, "onboarding-data": data } =
+    useOnboardingStore();
   useEffect(() => {
-    if (data["smoking-preference"] !== null && data["smoking-preference"] !== undefined) {
-      setActive(data["smoking-preference"])
+    if (
+      data["smoking-preference"] !== null &&
+      data["smoking-preference"] !== undefined
+    ) {
+      setActive(data["smoking-preference"]);
     }
- }, [])
+  }, []);
 
   return (
     <OnboardingPage>
@@ -27,6 +31,7 @@ const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
       <div className="onboarding-page__regular-options-container">
         {smoking.map((item, i) => (
           <RegularOptions
+            key={i}
             desc={item}
             index={i}
             active={active}
@@ -39,10 +44,10 @@ const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         <Button
           text="Continue"
           onClick={() => {
-              advance();
-              updateOnboardingData({
-                "smoking-preference": active,
-              });
+            advance();
+            updateOnboardingData({
+              "smoking-preference": active,
+            });
           }}
           // disabled
           // className="cursor-not-allowed"

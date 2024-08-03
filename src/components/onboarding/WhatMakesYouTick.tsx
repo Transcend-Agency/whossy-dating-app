@@ -3,10 +3,10 @@ import OnboardingSearch from "./OnboardingSearch";
 import Skip from "./Skip";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import InterestOptions from "./InterestOptions";
+import Interests from "./Interests";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
 import toast from "react-hot-toast";
-import { useOnboardingStore } from "../../store/useStore";
+import { useOnboardingStore } from "../../store/onboarding/useStore";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -22,7 +22,7 @@ const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           Share the interests and habits that defines you
         </p>
         <OnboardingSearch />
-        <InterestOptions />
+        <Interests />
       </section>
       <div className="onboarding-page__section-one__buttons ">
         <OnboardingBackButton onClick={goBack} />

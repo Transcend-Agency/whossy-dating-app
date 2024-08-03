@@ -1,3 +1,14 @@
+import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import toast from "react-hot-toast";
+import { db } from "../firebase";
+import { useOnboardingStore } from "../store/onboarding/useStore";
+import { usePictureStore } from "../store/onboarding/usePictureStore";
+// import {useState} from 'react';
+
+// const {"onboarding-data": data} = useOnboardingStore();
+
+
 const alphabet = [
   {
     letter: "a",
@@ -720,6 +731,22 @@ const drinking = [
   "Regular night out",
 ];
 
+const pets = [
+  "🐕 Dog",
+  "🐈 Cat",
+  "🐍 Reptile",
+  "🐸 Amphibian",
+  "🦜 Bird",
+  "🐟 Fish",
+  "😩  Don't like pets",
+  "🐇 Rabbits",
+  "🐀 Mouse",
+  "😉 Planning on getting",
+  "🤮 Allergic",
+  "🐎 Other",
+  "🙃 Want a pet",
+];
+
 const smoking = [
   "Working on quitting",
   "Drinks and smoke",
@@ -733,6 +760,57 @@ const workout = [
   "Occasionally",
   "Only on weekends",
   "Regularly",
+  "Rarely",
+  "Not at all",
 ];
 
-export { relationship_preferences, alphabet, meet, drinking, smoking, workout };
+// const uploadImage = (file: File) => {
+//   if (!file) return;
+  
+//   //Get Storage from firebase
+//   const storage = getStorage();
+//   const storageRef = ref(
+//     storage,
+//     `users/userId/profile_pictures/${file.name}}`
+//   );
+//   uploadBytes(storageRef, file)
+//     .then(() => {
+//       toast.success("Image has been uploaded successfully 🚀");
+//       console.log("File was uploaded was successfully!");
+//       getDownloadURL(storageRef)
+//         .then((url) => {
+//           // `url` is the download URL for 'images/stars.jpg'
+
+
+
+//           // This can be downloaded directly:
+//           const xhr = new XMLHttpRequest();
+//           xhr.responseType = "blob";
+//           xhr.onload = (event) => {
+//             const blob = xhr.response;
+//           };
+//           xhr.open("GET", url);
+//           xhr.send();
+
+//           // Or inserted into an <img> element
+//           // const img = document.getElementById("myimg");
+//           // img.setAttribute("src", url);
+//         })
+//         .catch((error) => {
+//           // Handle any errors
+//         });
+//     })
+//     .catch((err) => console.log(err));
+// };
+
+
+
+export {
+  relationship_preferences,
+  alphabet,
+  meet,
+  drinking,
+  smoking,
+  workout,
+  pets,
+};
