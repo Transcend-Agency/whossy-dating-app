@@ -64,7 +64,7 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
               (value === "" || (Number(value) >= 1 && Number(value) <= 31))
             ) {
               setBirthDate((prev) => ({ ...prev, day: value }));
-            }
+            } else {toast.error("enter a valid day")}
           }}
         />
         <input
@@ -81,7 +81,7 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
               (value === "" || (Number(value) >= 1 && Number(value) <= 12))
             ) {
               setBirthDate((prev) => ({ ...prev, month: value }));
-            }
+            } else {toast.error("enter a valid month")}
           }}
         />
         <input
