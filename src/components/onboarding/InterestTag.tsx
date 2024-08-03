@@ -28,7 +28,7 @@ const InterestTag: React.FC<InterestTagProps> = ({ text }) => {
   }, []);
   return (
     <div
-      className="text-[1.6rem] inline-block mr-[1rem] w-fit rounded-md px-[0.6rem] py-[0.8rem] cursor-pointer"
+      className="text-[1.6rem] inline-block mr-[1rem] w-fit rounded-md px-[0.6rem] py-[0.8rem] cursor-pointer transition-all duration-150"
       style={{
         border: selected !== text ? "1px solid #8A8A8E" : "1px solid black",
         backgroundColor: selected !== text ? "white" : "black",

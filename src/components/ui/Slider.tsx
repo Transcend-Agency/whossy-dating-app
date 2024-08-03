@@ -22,7 +22,7 @@ const Slider: React.FC<SliderProps> = ({ getDistance }) => {
       <div className="bg-[#CDCDCD] size-[27.2rem] rounded-full flex justify-center items-center">
         <div className="bg-white size-[20.8rem] rounded-full flex justify-center items-center">
           <div className="bg-[#F6F6F6] size-[14.4rem] rounded-full flex justify-center items-center">
-            <p className="">
+            <p className="font-bold">
               {distance} {distance === 1 ? "mile" : "miles"}
             </p>
           </div>

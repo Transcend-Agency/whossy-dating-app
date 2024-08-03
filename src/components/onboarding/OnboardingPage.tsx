@@ -10,15 +10,11 @@ type OnboardingPageProps = {
 const OnboardingPage: React.FC<OnboardingPageProps> = ({ children }) => {
   return (
     <motion.div
-      // variants={{
-      //   hidden: { opacity: 0, y: 20 },
-      //   visible: { opacity: 1, y: 0 },
-      //   exit: { opacity: 0, y: -20 },
-      // }}
-      // initial="hidden"
-      // animate="visible"
-      // exit="exit"
-      // transition={{ duration: 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="onboarding-page__section-one__page"
     >
       {children}
     </motion.div>
