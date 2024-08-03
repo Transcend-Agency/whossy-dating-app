@@ -4,6 +4,7 @@ import OnboardingPage from "./OnboardingPage";
 import { useEffect, useState } from "react";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
 import OnboardingButton from "./OnboardingButton";
+import toast from "react-hot-toast";
 
 // import Date from "./Date";
 
@@ -12,15 +13,18 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<boolean | null | undefined>(null);
   const { updateOnboardingData, "onboarding-data": data } =
     useOnboardingStore();
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
   useEffect(() => {
     if (
       birth_date.day.length > 0 &&
       birth_date.month.length > 0 &&
       birth_date.year.length === 4
-    )
-      setActive(true);
-    else {
+    ) {
+      if (parseInt(birth_date.year) <= currentYear - 18) setActive(true);
+      else toast.error("You must be 18 and above");
+    } else {
       setActive(null);
     }
   }, [birth_date]);
