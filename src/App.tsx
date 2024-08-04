@@ -17,6 +17,7 @@ import EmailVerification from './components/auth/EmailVerification'
 import Onboarding from "./pages/Onboarding";
 import { Toaster } from "react-hot-toast";
 import Landing from "./pages/Landing";
+import DashboardLayout from "./components/dashboard/DashboardLayout";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +44,10 @@ function App() {
           <Route path="/onboarding" element={<OnboardingLayout />}>
             <Route index element={<Onboarding />} />
           </Route>
-          <Route path='' element={<Landing />}/>
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            {/* <Route index element={<Onboarding />} /> */}
+          </Route>
+          <Route path='' element={<Landing />} />
         </Routes>
         <ToastContainer />
       </AnimatePresence>
