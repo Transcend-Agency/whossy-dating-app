@@ -1,5 +1,5 @@
 .home {
-    @apply fixed w-full h-screen flex items-center justify-center px-[2rem];
+    @apply fixed w-full h-[100dvh] flex items-center justify-center px-[2rem];
 
     @include media('<=phone') {
     &__line-break {
