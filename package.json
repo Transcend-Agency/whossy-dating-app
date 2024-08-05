@@ -16,6 +16,7 @@
     "firebase": "^10.12.2",
     "form": "^0.2.4",
     "framer-motion": "^11.2.12",
+    "lottie-react": "^2.4.0",
     "react": "^18.3.1",
     "react-countdown": "^2.3.5",
     "react-dom": "^18.3.1",
@@ -23,12 +24,12 @@
     "react-flags-select": "^2.2.3",
     "react-hook": "^0.0.1",
     "react-hook-form": "^7.52.1",
+    "react-hot-toast": "^2.4.1",
     "react-otp-input": "^3.1.1",
     "react-phone-number-input": "^3.4.3",
     "react-router-dom": "^6.24.0",
     "zod": "^3.23.8",
-    "zustand": "^4.5.4",
-    "react-hot-toast": "^2.4.1"
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
