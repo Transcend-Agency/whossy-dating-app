@@ -1,5 +1,11 @@
 .auth-page {
-    @apply fixed w-full h-screen flex items-center justify-center px-[2.5rem];
+    @apply fixed w-full h-[100dvh] flex items-center justify-center px-[2.5rem];
+
+    &.email-verification {
+        .auth-page__modal__header__title {
+            @apply mt-[37px];
+        }
+    }
 
     .error-message-container {
         @apply h-[2rem] pt-[0.6rem];
@@ -32,11 +38,14 @@
         }
 
         &__otp-input {
+            -webkit-appearance: none;
+
             &__notifier {
                 @apply text-[#8a8a8e] text-[1.8rem] mt-[1.6rem] text-center mb-[2.5rem] font-medium;
 
                 &__cta {
                     @apply text-white underline cursor-pointer;
+
                     &.disabled {
                         @apply cursor-not-allowed;
                     }
@@ -120,6 +129,24 @@
             @apply mt-[3.2rem];
 
             &__input {
+                -webkit-appearance: none;
+
+                &:-webkit-autofill {
+                    border: none;
+                    border-radius: .3rem;
+                    caret-color: #fff;
+                    /* Pour le I quand on édite */
+                    color: #fff;
+                    background: #292a2d;
+                    /* webkit autofill */
+                    -webkit-text-fill-color: #fff;
+                    /* Surcharge la font color d'autofill */
+                    -webkit-background-clip: text;
+                    /* Supprime le background autofill, utile pour le border radius */
+                    box-shadow: 0 0 0 50px #292a2d inset;
+                    /* Ajoute un fake background à base d'ombrage aplatit */
+                }
+
                 background-color: $color-dark-black;
                 font-family: $font-neue-montreal;
                 @apply text-[1.6rem] font-medium leading-[1] -tracking-[0.001em] text-white w-full py-[2.1rem] px-[1.6rem] rounded-[8px] outline-0 focus:outline-0 focus:outline-none focus:border-[#1D1D1D] border border-transparent transition-all;
@@ -139,6 +166,7 @@
 
             .PhoneInput {
                 border: 1px solid transparent;
+                -webkit-appearance: none;
 
                 &--focus {
                     border: 1px solid #1D1D1D;
@@ -153,6 +181,7 @@
                 }
 
                 &Input {
+                    -webkit-appearance: none;
                     font-family: $font-neue-montreal;
                     @apply ml-[1.6rem] bg-transparent py-[0.7rem] outline-0 focus:outline-0;
 

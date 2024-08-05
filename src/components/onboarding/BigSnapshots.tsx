@@ -10,7 +10,7 @@ import Modal from "../ui/Modal";
 const BigSnapshots = () => {
   // const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { setPictures, pictures } = usePictureStore();
+  const { setPictures } = usePictureStore();
   const [selected, setSelected] = useState("");
   const [openModal, setOpenModal] = useState(false);
 

@@ -56,7 +56,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = () => {
     }
 
     return <AuthPage className='email-verification'>
-        <div className='auth-page__modal'>
+        <div className='auth-page__modal pt-[30px]'>
             <AnimatePresence mode='wait'>
                 {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
             </AnimatePresence>

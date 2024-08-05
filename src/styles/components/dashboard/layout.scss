@@ -1,0 +1,7 @@
+.dashboard-layout {
+    @apply w-[100vw] h-[100dvh];
+
+    &__top-nav {
+        @apply px-[5.6rem];
+    }
+}

@@ -19,17 +19,16 @@ const Options: React.FC<OptionsProps> = ({
 }) => {
   return (
     <div
-      className={`onboarding-page__preferences-container__preferences ${
-        active === index &&
+      className={`onboarding-page__preferences-container__preferences ${active === index &&
         "onboarding-page__preferences-container__preferences__active"
-      }`}
+        }`}
       key={index}
       onClick={onclick}
     >
       <div className="onboarding-page__preferences-container__preferences__sub-container">
         <img className={className} src={image} alt="" />
         <div>
-          <h1 className="onboarding-page__preferences-container__preferences__header">
+          <h1 className={`onboarding-page__preferences-container__preferences__header ${!desc && 'onboarding-page__preferences-container__preferences__header--without-description'}`}>
             {title}
           </h1>
           <p className="onboarding-page__preferences-container__preferences__text">
