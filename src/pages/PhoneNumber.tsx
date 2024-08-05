@@ -62,6 +62,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
             phone_number
         }
     });
+    const setPhoneNumber = usePhoneNumberStore(state => state.setPhoneNumber)
     const [requestError, setRequestError] = useState('')
     const onFormSubmit = async (data: any) => {
         try {
@@ -71,7 +72,6 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
             if (result.docs.length !== 0 && result.docs[0].data().auth_provider !== 'phone') {
                 setRequestError("Sign In Using Another Method")
             } else {
-                const setPhoneNumber = usePhoneNumberStore(state => state.setPhoneNumber)
                 // advance()
 
                 console.log(data.phone_number, firebaseAuth)
@@ -101,7 +101,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
             }
 
         } catch (err: any) {
-            console.log(err.code)
+            console.log(err)
             if (err.code == 'auth/invalid-phone-number') {
                 setRequestError("Invalid Phone Number")
             } else if (err.code == 'auth/invalid-app-credential') {
