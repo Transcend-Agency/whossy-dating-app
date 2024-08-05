@@ -110,7 +110,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
         setCurrentPage(currentPage - 1)
     }
 
-    return <motion.div exit={{ opacity: 0, scale: 0.99, transition: { duration: 0.2 } }}>
+    return <motion.div initial={{}} exit={{ opacity: 0, scale: 0.99, transition: { duration: 0.2 } }}>
         <AnimatePresence mode='wait'>
             {pageOrder[currentPage] == 'forgot-password' && <ForgotPasswordInputPage key="forgot-password" advance={advance} goBack={goBack} />}
             {pageOrder[currentPage] == 'success' && <ForgotPasswordSuccessPage key="forgot-password" advance={advance} goBack={goBack} />}

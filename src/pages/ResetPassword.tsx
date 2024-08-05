@@ -57,7 +57,7 @@ const ResetPasswordDetails: React.FC<ResetPasswordPage> = ({ advance, goBack }) 
     const navigate = useNavigate()
     const onGoToLogin = () => {
         goBack()
-            navigate("/auth/login")
+        navigate("/auth/login")
     }
 
     const onFormSubmit = async (data: any) => {
@@ -147,7 +147,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = () => {
         setCurrentPage(currentPage - 1)
     }
 
-    return <motion.div exit={{ opacity: 0, scale: 0.99, transition: { duration: 0.2 } }}>
+    return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.2 } }} exit={{ opacity: 0, scale: 0.99, transition: { duration: 0.2 } }}>
         <AnimatePresence mode='wait'>
             {pageOrder[currentPage] == 'reset-password' && <ResetPasswordDetails key="forgot-password" advance={advance} goBack={goBack} />}
             {pageOrder[currentPage] == 'success' && <ResetPasswordSuccessPage key="forgot-password" advance={advance} goBack={goBack} />}
