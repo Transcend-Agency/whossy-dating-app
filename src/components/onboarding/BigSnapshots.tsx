@@ -84,7 +84,7 @@ const BigSnapshots = () => {
       {selected === "" && (
         <img
           className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer"
-          src="/assets/icons/camera.svg"
+          src="/assets/icons/camera.png"
           alt="add pictures"
           onClick={handleClick}
         />
@@ -105,7 +105,7 @@ const BigSnapshots = () => {
             left: 0,
             width: `30rem`,
             height: `33.5rem`,
-            zIndex: 50,
+            zIndex: 40,
             borderRadius: "22px",
             objectFit: "cover",
           }}
@@ -120,7 +120,7 @@ const BigSnapshots = () => {
             left: `${i * 6}rem`,
             width: `${30 - i * 3}rem`,
             height: `${33.5 - i * 3}rem`,
-            zIndex: `${40 - i * 10}`,
+            zIndex: `${30 - i * 10}`,
             borderRadius: "22px",
             backgroundColor: item.color,
             transform: `rotate(${0 + i * 5}deg)`,
