@@ -50,7 +50,7 @@ const Image: React.FC<ImageProps> = ({ name }) => {
       ) : (
         <img
           className="absolute -top-[1rem] size-[2.5rem] cursor-pointer"
-          src="/assets/images/onboarding/grey-camera.svg"
+          src="/assets/icons/camera-gray.png"
           onClick={handleClick}
         />
       )}
