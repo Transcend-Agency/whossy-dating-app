@@ -15,9 +15,11 @@ import { useOnboardingStore } from "../../store/onboarding/useStore";
 import { useState } from "react";
 import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   // Add a new document in collection "cities"
+  const navigate = useNavigate();
 
   const { pictures } = usePictureStore();
   const { addPhotos, "onboarding-data": data } = useOnboardingStore();
@@ -41,7 +43,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "preferences", "userId_10"), {
+      await setDoc(doc(db, "preferences", "userId_190"), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -56,7 +58,8 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         workout: data["workout-preference"],
       });
       toast.success("Account has been created successfully 🚀");
-      setOpenModal(false);
+      // setOpenModal(false);
+      navigate('/dashboard');
     } catch (err) {
       console.log(err);
     }
@@ -100,6 +103,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
             setTimeout(() => uploadToFirestore(), 8000);
           }}
         />
+        {/* <button onClick={() => console.log(data.photos)}>click</button> */}
       </div>
       {openModal && (
         <Modal>
