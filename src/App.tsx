@@ -10,14 +10,21 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import CreateAccount from "./pages/CreateAccount";
 import OnboardingLayout from "./pages/OnboardingLayout";
-import AccountSetup from './pages/AccountSetup'
-import PhoneNumber from './pages/PhoneNumber'
-import FinalizeSetup from './components/auth/FinalizeSetup'
-import EmailVerification from './components/auth/EmailVerification'
+import AccountSetup from "./pages/AccountSetup";
+import PhoneNumber from "./pages/PhoneNumber";
+import FinalizeSetup from "./components/auth/FinalizeSetup";
+import EmailVerification from "./components/auth/EmailVerification";
 import Onboarding from "./pages/Onboarding";
 import { Toaster } from "react-hot-toast";
 import Landing from "./pages/Landing";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
+import Matching from "./pages/Matching";
+import GlobalSearch from "./pages/GlobalSearch";
+import Favorites from "./pages/Favorites";
+import Chat from "./pages/Chat";
+import Profile from "./pages/Profile";
+import ProfileEdit from "./pages/ProfileEdit";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -32,22 +39,28 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/auth" element={<AuthLayout />}>
             <Route index element={<Home />} />
-            <Route path='login' element={<Login />} />
-            <Route path='forgot-password' element={<ForgotPassword />} />
-            <Route path='reset-password' element={<ResetPassword />} />
-            <Route path='create-account' element={<CreateAccount />} />
-            <Route path='account-setup' element={<AccountSetup />} />
-            <Route path='phone-number' element={<PhoneNumber />} />
-            <Route path='finalize-setup' element={<FinalizeSetup />} />
-            <Route path='email-verification' element={<EmailVerification />} />
+            <Route path="login" element={<Login />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="create-account" element={<CreateAccount />} />
+            <Route path="account-setup" element={<AccountSetup />} />
+            <Route path="phone-number" element={<PhoneNumber />} />
+            <Route path="finalize-setup" element={<FinalizeSetup />} />
+            <Route path="email-verification" element={<EmailVerification />} />
           </Route>
           <Route path="/onboarding" element={<OnboardingLayout />}>
             <Route index element={<Onboarding />} />
           </Route>
           <Route path="/dashboard" element={<DashboardLayout />}>
-            {/* <Route index element={<Onboarding />} /> */}
+            <Route index element={<Matching />} />
+            <Route path="globalSearch" element={<GlobalSearch />} />
+            <Route path="heart" element={<Favorites />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile/edit" element={<ProfileEdit />} />
           </Route>
-          <Route path='' element={<Landing />} />
+          <Route path="" element={<Landing />} />
         </Routes>
         <ToastContainer />
       </AnimatePresence>
