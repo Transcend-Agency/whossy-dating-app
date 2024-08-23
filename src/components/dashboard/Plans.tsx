@@ -34,7 +34,7 @@ const Plans = () => {
           ))}
           <button
             style={{
-              width: "100%",
+              // width: "100%",
               marginTop: "2rem",
               padding: "0.8rem",
               borderRadius: "8px",

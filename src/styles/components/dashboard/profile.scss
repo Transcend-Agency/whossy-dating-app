@@ -4,6 +4,7 @@
     @apply flex flex-col space-y-[1.5rem];
   }
   &__header {
+    border: 1px solid #D9D9D9;
     @apply flex py-[1.2rem] items-center px-[1.6rem] justify-between font-medium;
     &__name {
       @apply flex text-[1.6rem] cursor-pointer items-center gap-x-[1.2rem];
