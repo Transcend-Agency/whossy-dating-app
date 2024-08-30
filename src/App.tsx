@@ -23,8 +23,9 @@ import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
-import ProfileEdit from "./pages/ProfileEdit";
+import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
+import Preferences from "./pages/Preferences";
 
 const queryClient = new QueryClient();
 
@@ -58,7 +59,8 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="profile/edit" element={<ProfileEdit />} />
+            <Route path="profile/preferences" element={<Preferences />} />
+            <Route path="profile/edit" element={<EditProfile />} />
           </Route>
           <Route path="" element={<Landing />} />
         </Routes>
