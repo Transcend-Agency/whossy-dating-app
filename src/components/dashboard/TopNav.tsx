@@ -11,7 +11,7 @@ const TopNav = () => {
         className="cursor-pointer"
         onClick={() => navigate("/dashboard/settings")}
       />
-      <Icon src={filter} className="cursor-pointer" />
+      <Icon src={filter} className="cursor-pointer" onClick={() => navigate("/dashboard/profile/preferences")}/>
     </div>
   );
 };
