@@ -3,13 +3,17 @@ import "./styles.css";
 
 interface SwitchProps {
   text: string;
+  textColor?: string;
 }
 
-const Switch: React.FC<SwitchProps> = ({ text }) => (
+const Switch: React.FC<SwitchProps> = ({ text, textColor='#8A8A8E' }) => (
   <form>
     <div className="flex items-center justify-between">
       <label
         className="w-full text-[#8A8A8E] leading-none pr-[15px]"
+        style={{
+          color: textColor
+        }}
         htmlFor={text}
       >
         {text}
