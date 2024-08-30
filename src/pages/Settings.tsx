@@ -1,4 +1,3 @@
-import { logout } from "@/assets/icons";
 import ProfileHeader from "@/components/dashboard/ProfileHeader";
 import Icon from "@/components/ui/Icon";
 import Switch from "@/components/ui/Switch";
