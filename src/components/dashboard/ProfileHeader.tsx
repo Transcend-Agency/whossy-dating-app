@@ -1,21 +1,33 @@
 interface ProfileHeaderProps {
   title: string;
+  changed?: boolean;
+  goBack?: () => void;
+  save?: () => void;
 }
 
-const ProfileHeader:React.FC<ProfileHeaderProps> = ({ title }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+  title,
+  save,
+  changed,
+  goBack,
+}) => {
   return (
     <header className="profile__header">
       <div className="profile__header__name">
         <img src="/assets/icons/left-arrow-black.svg" alt="Back Arrow" />
         <h1
           onClick={() => {
-            window.history.back();
+            goBack ? goBack() : window.history.back();
           }}
         >
           {title}
         </h1>
       </div>
-      <h2 className="profile__header__save">Save</h2>
+      {changed && (
+        <button className="profile__header__save" onClick={save}>
+          Save
+        </button>
+      )}
     </header>
   );
 };
