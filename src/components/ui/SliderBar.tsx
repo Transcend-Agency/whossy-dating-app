@@ -3,18 +3,24 @@ import { useState } from "react";
 
 interface SliderBarProps {
   getValue: (value: number) => void;
-  rangeColor: string;
-  trackColor: string;
-  thumbColor: string;
+  rangeColor?: string;
+  trackColor?: string;
+  thumbColor?: string;
+  min?: number;
+  max?: number;
+  val?:number;
 }
 
 const SliderBar: React.FC<SliderBarProps> = ({
   getValue,
-  rangeColor,
-  trackColor,
-  thumbColor,
+  min = 1,
+  max=100,
+  rangeColor = '#C5C5C7',
+  trackColor = '#ffffff',
+  thumbColor = '#ffffff',
+  val = 0,
 }) => {
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number | undefined>(val);
   return (
     <Slide.Root
       style={{
@@ -25,9 +31,9 @@ const SliderBar: React.FC<SliderBarProps> = ({
         width: "100%",
         height: "20px",
       }}
-      value={[value]}
-      max={100}
-      min={1}
+      value={[value as number]}
+      max={max}
+      min={min}
       step={1}
       onValueChange={(e) => {
         setValue(e[0]);
