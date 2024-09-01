@@ -4,7 +4,7 @@ import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
-import { relationship_preferences } from "../../constants/onboarding";
+import { relationship_preferences } from "../../constants";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
   const [active, setActive] = useState<number | null | undefined>(null);

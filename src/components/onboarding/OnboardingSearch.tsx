@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { alphabet } from "../../constants/onboarding";
+import { alphabet } from "../../constants";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
 
 const OnboardingSearch = () => {

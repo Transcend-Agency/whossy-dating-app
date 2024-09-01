@@ -1,4 +1,3 @@
-
 const alphabet = [
   {
     letter: "a",
@@ -742,7 +741,7 @@ const smoking = [
   "Drinks and smoke",
   "Occasional smoker",
   "Frequent smoker",
-  //   "Not my thing",
+  "Not my thing",
 ];
 
 const workout = [
@@ -754,9 +753,47 @@ const workout = [
   "Not at all",
 ];
 
+const marital_status = ["married", "divorced", "not my thing", "player"];
+
+const love_language = [
+  "Words of Affirmation",
+  "Acts of Service",
+  "Receiving Gifts",
+  "Quality Time",
+  "Physical Touch",
+];
+
+const zodiac =[
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpio",
+  "Sagittarius",
+  "Capricorn",
+  "Aquarius",
+  "Pisces"
+]
+
+const family_goals = [
+  "I want children",
+  "Not sure yet",
+  "Not interested for now",
+  "I don't want children",
+  "I have children",
+  "I want more",
+]
+
+const religion = [
+  "Chirstianity", "Muslim", "Iraq"
+]
+
 // const uploadImage = (file: File) => {
 //   if (!file) return;
-  
+
 //   //Get Storage from firebase
 //   const storage = getStorage();
 //   const storageRef = ref(
@@ -770,8 +807,6 @@ const workout = [
 //       getDownloadURL(storageRef)
 //         .then((url) => {
 //           // `url` is the download URL for 'images/stars.jpg'
-
-
 
 //           // This can be downloaded directly:
 //           const xhr = new XMLHttpRequest();
@@ -793,9 +828,15 @@ const workout = [
 //     .catch((err) => console.log(err));
 // };
 
-
-
 export {
-  alphabet, drinking, meet, pets, relationship_preferences, smoking,
-  workout
+  alphabet,
+  drinking,
+  meet,
+  pets,
+  relationship_preferences,
+  smoking,
+  workout,
+  marital_status,
+  family_goals,
+  religion, love_language, zodiac
 };

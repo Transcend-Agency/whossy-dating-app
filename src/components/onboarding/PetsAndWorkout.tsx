@@ -6,7 +6,7 @@ import RegularOptions from "./RegularOptions";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
-import { workout } from "../../constants/onboarding";
+import { workout } from "../../constants";
 import Pets from "./Pets";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
