@@ -5,7 +5,7 @@ import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
-import { meet } from "../../constants/onboarding";
+import { meet } from "../../constants";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhoDoYouWantToMeet: React.FC<OnboardingProps> = ({ advance, goBack }) => {

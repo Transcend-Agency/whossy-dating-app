@@ -1,4 +1,4 @@
-import { pets } from "../../constants/onboarding";
+import { pets } from "../../constants";
 import PetTag from "./PetTag";
 
 const Pets = () => {

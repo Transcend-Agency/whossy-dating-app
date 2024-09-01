@@ -1,4 +1,4 @@
-import { alphabet } from "../../constants/onboarding";
+import { alphabet } from "../../constants";
 import TagSelector from "./InterestTag";
 
 const Interests = () => {

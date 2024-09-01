@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
-import { drinking } from "../../constants/onboarding";
+import { drinking } from "../../constants";
 
 const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null>(null);
