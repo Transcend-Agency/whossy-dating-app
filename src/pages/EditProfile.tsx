@@ -1,18 +1,114 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileHeader from "../components/dashboard/ProfileHeader";
 import Interests from "../components/onboarding/Interests";
 import Card from "../components/dashboard/Card";
 import BottomModal from "@/components/dashboard/BottomModal";
+import Name from "@/components/dashboard/Name";
+import PhoneNumber from "@/components/dashboard/PhoneNumber";
+import Email from "@/components/dashboard/Email";
+import { useGetUserPreferences, useGetUserProfile } from "@/hooks/useUser";
+import { User, UserPrefences } from "@/types/user";
+import OnboardingSearch from "@/components/onboarding/OnboardingSearch";
+import {
+  drinking,
+  family_goals,
+  love_language,
+  marital_status,
+  pets,
+  relationship_preferences,
+  religion,
+  smoking,
+  workout,
+  zodiac,
+} from "@/constants";
 
 const Section = ({
   items,
   navigate,
   setShow,
 }: {
-  items: { title: string; value: string; page?: number; options?: string[] }[];
+  items: {
+    title: string;
+    value: string;
+    page?: number;
+    options?: string[];
+    notChange?: boolean;
+    id?: string;
+    placeholder?: string;
+    range?: number;
+    arrayNumber?: number;
+  }[];
   navigate?: (i: number | undefined) => void;
-  setShow: (s) => void;
+  setShow: (s: any) => void;
 }) => {
+  const [fetchedUserProfile, setFetchedUserProfile] = useState<User>({});
+  const [fetchedUserPreferences, setFetchedUserPreferences] =
+    useState<UserPrefences>({});
+
+  const fetchUserProfile = async () => {
+    const userProfile = await useGetUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2");
+
+    if (userProfile) {
+      setFetchedUserProfile(userProfile);
+    } else {
+      console.log("No user profile data found.");
+    }
+  };
+  const fetchUserPreferences = async () => {
+    const userPrefences = await useGetUserPreferences(
+      "Ay2YNO2JnYePExiVo7AGnrkupE22"
+    );
+
+    if (userPrefences) {
+      setFetchedUserPreferences(userPrefences as UserPrefences);
+    } else {
+      console.log("No user preferences data found.");
+    }
+  };
+  useEffect(() => {
+    fetchUserProfile();
+    fetchUserPreferences();
+  }, []);
+  const getValue = (id: string | undefined): string | null => {
+    switch (id) {
+      case "preference":
+        return (
+          relationship_preferences[fetchedUserPreferences.preference as number]
+            ?.title ?? null
+        );
+      case "drink":
+        return drinking[fetchedUserPreferences.drink as number] ?? null;
+      case "smoke":
+        return smoking[fetchedUserPreferences.smoke as number] ?? null;
+      case "workout":
+        return workout[fetchedUserPreferences.workout as number] ?? null;
+      case "pet_owner":
+        return pets[fetchedUserPreferences.pet_owner as number] ?? null;
+      case "education":
+        return workout[fetchedUserPreferences.workout as number] ?? null;
+      case "love_language":
+        return (
+          love_language[fetchedUserPreferences.love_language as number] ?? null
+        );
+      case "zodiac":
+        return zodiac[fetchedUserPreferences.zodiac as number] ?? null;
+      case "family_goal":
+        return (
+          family_goals[fetchedUserPreferences.family_goals as number] ?? null
+        );
+      case "marital_status":
+        return (
+          marital_status[fetchedUserPreferences.marital_status as number] ??
+          null
+        );
+      case "interests":
+        return fetchedUserPreferences.interests?.[0] ?? null;
+      case "religion":
+        return religion[fetchedUserPreferences.religion as number] ?? null;
+      default:
+        return null;
+    }
+  };
   return (
     <section
       className="bg-[#F6F6F6] px-[1.6rem] my-5"
@@ -33,14 +129,36 @@ const Section = ({
               navigate(item.page);
             } else {
               console.log("pressed");
-              setShow({ title: item.title, options: item.options });
+              if (!item.notChange) {
+                setShow({
+                  title: item.title,
+                  options: item.options,
+                  placeholder: item.placeholder,
+                  range: item.range,
+                  value: getValue(item.id),
+                  id: item.id,
+                  // arrayNumber: typeof(fetchedUserPreferences[item.id] ?? 5) === 'number'
+                });
+              }
             }
           }}
         >
           <p>{item.title}</p>
           <div className="flex text-[#8A8A8E] gap-[0.8rem]">
-            <p>{item.value}</p>
-            <img src="/assets/icons/right-arrow.svg" alt="" />
+            {item.value === "user_profile" && (
+              <p>{fetchedUserProfile[item.id as keyof User]}</p>
+            )}
+
+            {/* {item.value === "user_preferences" && (
+              <p>
+                {fetchedUserPreferences[ item.id as keyof UserPrefences
+                ]?.toString()}
+              </p>
+            )} */}
+            {item.id && <p>{getValue(item.id)}</p>}
+            {!item.notChange && (
+              <img src="/assets/icons/right-arrow.svg" alt="" />
+            )}
           </div>
         </div>
       ))}
@@ -48,124 +166,12 @@ const Section = ({
   );
 };
 
-const Name = () => {
-  const [name, setName] = useState({
-    "First Name": "Temidire",
-    "Last Name": "Owoeye",
-  });
-  return (
-    <>
-      <ProfileHeader title="Edit Profile" />
-      <section
-        className="bg-[#F6F6F6] px-[1.6rem]"
-        style={{
-          borderTop: "1px solid #D9D9D980",
-          borderBottom: "1px solid #D9D9D980",
-        }}
-      >
-        {Object.keys(name).map((item, i) => (
-          <div
-            className="flex justify-between py-[1.2rem] text-[1.4rem] border-[#D9D9D9] cursor-pointer"
-            style={{
-              borderBottom:
-                i !== Object.keys(name).length - 1 ? "1px solid #D9D9D9" : "",
-            }}
-            key={i}
-          >
-            <p>{item}</p>
-            <div className="flex text-[#8A8A8E] gap-[0.8rem]">
-              <input
-                value={
-                  name[
-                    item as keyof { "First Name": string; "Last Name": string }
-                  ]
-                }
-                onChange={(e) => {
-                  setName((prev) => ({ ...prev, [item]: e.target.value }));
-                }}
-                className="w-[7rem] bg-inherit outline-none text-end"
-              />
-            </div>
-          </div>
-        ))}
-      </section>
-    </>
-  );
-};
-
-const Email = () => {
-  const [email, setEmail] = useState("temidireowoeye@gmail.com");
-  return (
-    <>
-      <ProfileHeader title="Edit Profile" />
-      <section
-        className="bg-[#F6F6F6] px-[1.6rem]"
-        style={{
-          borderTop: "1px solid #D9D9D980",
-          borderBottom: "1px solid #D9D9D980",
-        }}
-      >
-        <div className="flex justify-between py-[1.2rem] text-[1.4rem] border-[#D9D9D9] cursor-pointer">
-          <header className="flex gap-2 items-center">
-            <p>Email</p>
-            <div className="text-[1.2rem] bg-[#0CB25A] text-white px-[0.8rem] py-[0.4rem] rounded-full">
-              Verified
-            </div>
-          </header>
-          <div className="flex text-[#8A8A8E] gap-[0.8rem]">
-            <input
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className="w-[15rem] bg-inherit outline-none text-end"
-            />
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-const PhoneNumber = () => {
-  const [phone, setPhone] = useState("+2349073210998");
-  return (
-    <>
-      <ProfileHeader title="Edit Profile" />
-      <section
-        className="bg-[#F6F6F6] px-[1.6rem]"
-        style={{
-          borderTop: "1px solid #D9D9D980",
-          borderBottom: "1px solid #D9D9D980",
-        }}
-      >
-        <div className="flex justify-between py-[1.2rem] text-[1.4rem] border-[#D9D9D9] cursor-pointer">
-          <header className="flex gap-2 items-center">
-            <p>Phone Number</p>
-            <div className="text-[1.2rem] bg-[#0CB25A] text-white px-[0.8rem] py-[0.4rem] rounded-full">
-              Verified
-            </div>
-          </header>
-          <div className="flex text-[#8A8A8E] gap-[0.8rem]">
-            <input
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-              }}
-              className="w-[15rem] bg-inherit outline-none text-end"
-            />
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
 const PersonalInterests = () => {
   return (
     <>
       <ProfileHeader title="Interests" />
-      <main className="p-[1.6rem]">
+      <main className="px-6">
+        <OnboardingSearch />
         <Interests />
       </main>
     </>
@@ -191,9 +197,16 @@ const EditProfile = () => {
     "preview",
   ];
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [show, setShow] = useState<{ title: string; options: string[] } | null>(
-    null
-  );
+  const [show, setShow] = useState<{
+    title: string;
+    options: string[];
+    placeholder?: string;
+    range?: number;
+    value?: string;
+    id?: string;
+    arrayNumber?: number;
+  } | null>(null);
+
   return (
     <>
       {pages[currentPage] === "view" && (
@@ -247,17 +260,27 @@ const EditProfile = () => {
 export default EditProfile;
 
 const items = [
-  { title: "Name", value: "Temidire", page: 1 },
-  { title: "Birthday", value: "August 6, 2018" },
-  { title: "Gender", value: "Male", options: ["Male", "Female"] },
-  { title: "Email", value: "temidireowoeye@gmail.com", page: 2 },
-  { title: "Phone Number", value: "+2349073210998", page: 3 },
+  { title: "Name", value: "user_profile", page: 1, id: "first_name" },
+  {
+    title: "Birthday",
+    value: "user_preferences",
+    notChange: true,
+    id: "date_of_birth",
+  },
+  {
+    title: "Gender",
+    value: "user_profile",
+    options: ["Male", "Female"],
+    id: "gender",
+  },
+  { title: "Email", value: "user_profile", page: 2, id: "email" },
+  { title: "Phone Number", value: "user_profile", page: 3, id: "phone_number" },
 ];
 
 const items_two = [
   {
     title: "Relationship Preference",
-    value: "Temidire",
+    value: "user_preferences",
     options: [
       "Looking to date",
       "Chatting and connecting",
@@ -265,26 +288,27 @@ const items_two = [
       "Ready for commitment",
       "Undecided or exploring",
     ],
+    id: "preference",
   },
-  { title: "interests", value: "August 6, 2018", page: 4 },
+  { title: "Interests", value: "August 6, 2018", page: 4, id: "interests" },
 ];
 
 const items_three = [
-  { title: "Education", value: "Current Schooling" },
+  {
+    title: "Education",
+    value: "user_preferences",
+    placeholder: "Enter school name",
+    id: "education",
+  },
   {
     title: "Love Language",
     value: "Giving and receiving gifts",
-    options: [
-      "Giving and receiving gifts",
-      "Touch and Hugs",
-      "Heartfelt compliments",
-      "Doing things for others",
-      "Spending time together",
-    ],
+    options: love_language,
+    id: "love_language",
   },
   {
     title: "Zodiac",
-    value: "Cancer",
+    value: "user_preferences",
     options: [
       "Cancer",
       "Leo",
@@ -299,6 +323,7 @@ const items_three = [
       "Scorpio",
       "Sagittarius",
     ],
+    id: "zodiac",
   },
   {
     title: "Future family goals",
@@ -311,61 +336,44 @@ const items_three = [
       "I have children",
       "I want more",
     ],
+    id: "family_goal",
   },
-  { title: "Height", value: "140cm" },
-  { title: "Weight", value: "6lbs" },
-  { title: "Religion", value: "Christian" },
+  { title: "Height", value: "140cm", range: 140 },
+  { title: "Weight", value: "6lbs", range: 170 },
+  {
+    title: "Religion",
+    value: "user_preferences",
+    options: religion,
+    id: "religion",
+  },
   {
     title: "Smoker",
-    value: "Working on quitting",
-    options: [
-      "Working on quitting",
-      "Drinks and Smoke",
-      "Occassional smoker ",
-      "Frequent Smoker",
-      "Doesn't smoke",
-    ],
+    value: "user_preferences",
+    options: smoking,
+    id: "smoke",
   },
   {
     title: "Drinking",
-    value: "Mindful drinking",
-    options: [
-      "Mindful drinking",
-      "100% sober",
-      "Special moments only",
-      "Regular nights out",
-      "Not my thing",
-    ],
+    value: "user_preferences",
+    options: drinking,
+    id: "drink",
   },
   {
     title: "Workout",
-    value: "Yes, regularly",
-    options: [
-      "Yes, regularly",
-      "Occasionally",
-      "Only on weekends",
-      "Rarely",
-      "Not at all",
-    ],
+    value: "user_preferences",
+    options: workout,
+    id: "workout",
   },
   {
     title: "Pet owner",
-    value: "🐕 Dog",
-    options: [
-      "🐕 Dog",
-      "🐈 Cat",
-      "🐍 Reptile",
-      "🐸 Amphibian",
-      "🦜 Bird",
-      "🐟 Fish",
-      "😩 Don’t like pets",
-      "🐇 Rabbits",
-      "🐀 Mouse",
-      "😉 Planning on getting",
-      "🤮 Allergic",
-      "🐎 Other",
-      "🙃 Want a pet",
-    ],
+    value: "user_preferences",
+    options: pets,
+    id: "pet_owner",
   },
-  { title: "Marital status", value: "single" },
+  {
+    title: "Marital status",
+    value: "user_preferences",
+    options: marital_status,
+    id: "marital_status",
+  },
 ];
