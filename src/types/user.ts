@@ -30,3 +30,33 @@ export type UserPrefences = {
   religion?: number;
   pet_owner?: number;
 };
+
+export type UserFilters = {
+  age_range?: { max: number; min: number };
+  city?: string;
+  distance?: number;
+  communication_style?: number;
+  country?: string;
+  dietary?: number;
+  drink?: number;
+  education?: string;
+  family_goals?: number;
+  family_plans?: number;
+  has_bio?: boolean;
+  height_range?: { max: number; min: number };
+  interests?: string[];
+  marital_status?: number;
+  love_language?: number;
+  meet?: number;
+  outreach?: boolean;
+  pet_owner?: number;
+  preference?: number;
+  religion?: number;
+  similar_interest?: boolean;
+  smoke?: number;
+  weight_range?: { max: number; min: number };
+  workout: number;
+  zodiac: number;
+};
+
+export type UserProfile = User | UserFilters | UserPrefences;
