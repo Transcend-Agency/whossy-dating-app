@@ -2,6 +2,7 @@ import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
 import { useEffect, useState } from "react";
 import ProfileHeader from "./ProfileHeader";
 import { useNavigate } from "react-router-dom";
+import { User } from "@/types/user";
 
 const Name = () => {
   const [initialData, setInitialData] = useState({
@@ -14,13 +15,13 @@ const Name = () => {
   });
 
   const handleUpdate = () => {
-    useUpdateUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2", fetchUserProfile, {
+    useUpdateUserProfile("users",  fetchUserProfile, {
       first_name: name["First Name"],
       last_name: name["Last Name"],
     });
   };
   const fetchUserProfile = async () => {
-    const userProfile = await useGetUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2");
+    const userProfile = await useGetUserProfile("users") as User;
 
     if (userProfile) {
       setName({

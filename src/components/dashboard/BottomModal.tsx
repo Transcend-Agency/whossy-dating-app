@@ -1,24 +1,26 @@
 import { useState } from "react";
 import SliderBar from "../ui/SliderBar";
-import { useUpdateUserPreferences } from "@/hooks/useUser";
+import { useUpdateUserProfile } from "@/hooks/useUser";
 import { UserPrefences } from "@/types/user";
 import {
   marital_status,
   relationship_preferences,
+  preference,
   love_language,
   zodiac,
-  family_goals,
+  family_goal,
   religion,
   smoking,
   drinking,
   pets,
   workout,
+  education,
 } from "@/constants";
-import toast from "react-hot-toast";
 
 const BottomModal = ({
   item,
   close,
+  path,
 }: {
   item: {
     title: string;
@@ -30,6 +32,7 @@ const BottomModal = ({
     // arrayNumber?: number;
   };
   close: () => void;
+  path: string;
 }) => {
   const [active, setActive] = useState<string | null | undefined>(item.value);
 
@@ -41,13 +44,15 @@ const BottomModal = ({
     marital_status,
     love_language,
     zodiac,
-    family_goals,
+    family_goal,
     religion,
     relationship_preferences,
     smoking,
     drinking,
     pets,
     workout,
+    preference,
+    education,
   };
 
   const findValueInArrays = (item: any) => {
@@ -61,10 +66,9 @@ const BottomModal = ({
   };
 
   const handleUpdate = () => {
-    useUpdateUserPreferences(
-      "Ay2YNO2JnYePExiVo7AGnrkupE22",
+    useUpdateUserProfile(
+      path,
       () => {
-        toast.success("Updated!");
         close();
       },
       {
@@ -99,22 +103,27 @@ const BottomModal = ({
       </header>
       {item.options && (
         <div className=" w-full p-[1.6rem] space-y-[1rem]">
-          {item.options.map((item, i) => (
+          {item.options.map((_, i) => (
             <div
               className={`p-[0.8rem] cursor-pointer inline-block mr-[1.6rem] text-[1.4rem]  ${
-                active === item
+                active === _
                   ? "bg-black text-white"
                   : "bg-[#F6F6F6] text-[#8A8A8E]"
               } w-fit rounded-[0.6rem]`}
               key={i}
-              onClick={() => setActive(item)}
+              onClick={() => {
+                setActive(_);
+                console.log(
+                  item.id as keyof UserPrefences,
+                  findValueInArrays(active)?.index
+                );
+              }}
             >
-              {item}
+              {_}
             </div>
           ))}
         </div>
       )}
-      <p>{item.value}</p>
       {item.placeholder && (
         <div className="flex bg-[#F6F6F6] m-[1.6rem] gap-2 p-[1.6rem] text-[1.4rem]">
           <img src="/assets/icons/search.svg" alt="" />

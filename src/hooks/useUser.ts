@@ -1,69 +1,38 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
+import toast from "react-hot-toast";
 
-const useGetUserProfile = async (uid: string, ): Promise<User | undefined> => {
-  const docRef = doc(db, "users", uid);
+const collection_one ='users';
+const collection_two ='preferences';
+const collection_three ='filters';
+
+const uid = "Ay2YNO2JnYePExiVo7AGnrkupE22"
+
+const useGetUserProfile = async (path: string): Promise<UserProfile | undefined> => {
+  const docRef = doc(db, path, uid);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     // console.log("Document data:", docSnap.data() as User);
 
     // check the path i.e the collection name that was pased
-    // if ()
-    return docSnap.data() as User;
-  } else {
+    if (path === collection_one) return docSnap.data() as User;
+    if (path === collection_two) return docSnap.data() as UserPrefences;
+    if (path === collection_three) return docSnap.data() as UserFilters;
+   } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
   }
 };
 
 const useUpdateUserProfile = async (
-  uid: string,
-  success?: () => void,
-  updatedFields?: Partial<User>
+  path: string,
+  success: () => void,
+  updatedFields?: Partial<UserProfile>
 ) => {
-  const userRef = doc(db, "users", uid);
-  await updateDoc(userRef, updatedFields as User).then(success);
+  const userRef = doc(db, path, uid);
+  await updateDoc(userRef, updatedFields as UserProfile).then(() => {success(); toast.success("Updated!")});
 };
 
-const useGetUserPreferences = async (
-  uid: string
-): Promise<UserPrefences | undefined> => {
-  const docRef = doc(db, "preferences", uid);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    // console.log("Document data:", docSnap.data() as User);
-    return docSnap.data() as UserPrefences;
-  } else {
-    // docSnap.data() will be undefined in this case
-    console.log("No such document!");
-  }
-};
-
-const useUpdateUserPreferences = async (
-  uid: string,
-  success?: () => void,
-  updatedFields?: Partial<UserPrefences>
-) => {
-  const userRef = doc(db, "preferences", uid);
-  await updateDoc(userRef, updatedFields as UserPrefences).then(success);
-};
-
-const useGetFilteredPrefences = async (
-  uid: string,
-) => {
-  const docRef = doc(db, "filters", uid);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    // console.log("Document data:", docSnap.data() as User);
-    return docSnap.data() as UserFilters;
-  } else {
-    // docSnap.data() will be undefined in this case
-    console.log("No such document!");
-  }
-};
-
-export { useGetUserProfile, useUpdateUserProfile, useGetUserPreferences, useUpdateUserPreferences, useGetFilteredPrefences };
+export { useGetUserProfile, useUpdateUserProfile };

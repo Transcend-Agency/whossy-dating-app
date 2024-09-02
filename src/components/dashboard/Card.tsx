@@ -6,7 +6,6 @@ import Icon from "../ui/Icon";
 import Information from "./Information";
 import Interests from "./Interests";
 import Status from "./Status";
-import NavBar from "./NavBar";
 
 const Card = () => {
   const distance = 10;

@@ -778,7 +778,7 @@ const zodiac =[
   "Pisces"
 ]
 
-const family_goals = [
+const family_goal = [
   "I want children",
   "Not sure yet",
   "Not interested for now",
@@ -802,10 +802,12 @@ const communication_style = [
 const preference = [
   "Looking to date",
   "Chatting and connecting",
-  "Just for fun",
   "Ready for commitment",
+  "Just for fun",
   "Undecided or exploring",
 ]
+
+const education = ['Not in school', 'Currently Schooling']
 
 // const uploadImage = (file: File) => {
 //   if (!file) return;
@@ -853,6 +855,6 @@ export {
   smoking,
   workout,
   marital_status,
-  family_goals, preference,
-  religion, love_language, zodiac, communication_style
+  family_goal, preference,
+  religion, love_language, zodiac, communication_style, education
 };

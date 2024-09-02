@@ -15,7 +15,7 @@ export type UserPrefences = {
   date_of_birth?: string;
   distance?: number;
   drink?: number;
-  education?: string;
+  education?: number;
   interests?: string[];
   meet?: number;
   pets?: string;
@@ -26,7 +26,7 @@ export type UserPrefences = {
   marital_status?: number;
   love_language?: number;
   zodiac?: number;
-  family_goals?: number;
+  family_goal?: number;
   religion?: number;
   pet_owner?: number;
 };
@@ -39,7 +39,7 @@ export type UserFilters = {
   country?: string;
   dietary?: number;
   drink?: number;
-  education?: string;
+  education?: number;
   family_goals?: number;
   family_plans?: number;
   has_bio?: boolean;

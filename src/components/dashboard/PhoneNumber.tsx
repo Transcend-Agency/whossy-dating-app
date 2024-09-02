@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import ProfileHeader from "./ProfileHeader";
 import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { User } from "@/types/user";
 
 const PhoneNumber = () => {
   const [initialData, setInitialData] = useState("");
   const [phone, setPhone] = useState("");
   const fetchUserProfile = async () => {
-    const userProfile = await useGetUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2");
+    const userProfile = await useGetUserProfile("users") as User;
 
     if (userProfile) {
       setPhone(userProfile.phone_number as string);
@@ -20,7 +21,7 @@ const PhoneNumber = () => {
   }, []);
 
   const handleUpdate = () => {
-    useUpdateUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2", fetchUserProfile, {
+    useUpdateUserProfile("users" ,fetchUserProfile, {
       phone_number: phone,
     });
   };

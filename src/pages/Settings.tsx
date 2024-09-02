@@ -1,5 +1,4 @@
 import ProfileHeader from "@/components/dashboard/ProfileHeader";
-import Icon from "@/components/ui/Icon";
 import Switch from "@/components/ui/Switch";
 
 const Options = () => {
@@ -14,6 +13,7 @@ const Options = () => {
       {options.map((item, i) => (
         <div
           className="pb-[1.2rem]"
+          key={i}
           style={{ borderBottom: "1px solid #D9D9D9" }}
         >
           <header className="flex items-center">
