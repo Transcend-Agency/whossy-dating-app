@@ -74,7 +74,7 @@ const Section = ({
       case "preference":
         return (
           relationship_preferences[fetchedUserPreferences.preference as number]
-            ?.title ?? "choose"
+            ?.title ?? null
         );
       case "drink":
         return drinking[fetchedUserPreferences.drink as number] ?? "choose";
@@ -104,7 +104,7 @@ const Section = ({
       case "interests":
         return fetchedUserPreferences.interests?.[0] ?? "choose";
       case "religion":
-        return religion[fetchedUserPreferences.religion as number] ?? "choose";
+        return religion[fetchedUserPreferences.religion as number] ?? null;
       default:
         return null;
     }
