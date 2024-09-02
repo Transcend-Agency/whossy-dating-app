@@ -1,13 +1,16 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { User, UserPrefences } from "@/types/user";
+import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 
-const useGetUserProfile = async (uid: string): Promise<User | undefined> => {
+const useGetUserProfile = async (uid: string, ): Promise<User | undefined> => {
   const docRef = doc(db, "users", uid);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     // console.log("Document data:", docSnap.data() as User);
+
+    // check the path i.e the collection name that was pased
+    // if ()
     return docSnap.data() as User;
   } else {
     // docSnap.data() will be undefined in this case
@@ -48,4 +51,19 @@ const useUpdateUserPreferences = async (
   await updateDoc(userRef, updatedFields as UserPrefences).then(success);
 };
 
-export { useGetUserProfile, useUpdateUserProfile, useGetUserPreferences, useUpdateUserPreferences };
+const useGetFilteredPrefences = async (
+  uid: string,
+) => {
+  const docRef = doc(db, "filters", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // console.log("Document data:", docSnap.data() as User);
+    return docSnap.data() as UserFilters;
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+  }
+};
+
+export { useGetUserProfile, useUpdateUserProfile, useGetUserPreferences, useUpdateUserPreferences, useGetFilteredPrefences };
