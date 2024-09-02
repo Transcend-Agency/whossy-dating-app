@@ -791,6 +791,22 @@ const religion = [
   "Chirstianity", "Muslim", "Iraq"
 ]
 
+const communication_style = [
+  "Direct and to the point",
+  "Friendly and open",
+  "Reserved and thoughtful",
+  "Humorous and lighthearted",
+  "Detailed and descriptive",
+]
+
+const preference = [
+  "Looking to date",
+  "Chatting and connecting",
+  "Just for fun",
+  "Ready for commitment",
+  "Undecided or exploring",
+]
+
 // const uploadImage = (file: File) => {
 //   if (!file) return;
 
@@ -837,6 +853,6 @@ export {
   smoking,
   workout,
   marital_status,
-  family_goals,
-  religion, love_language, zodiac
+  family_goals, preference,
+  religion, love_language, zodiac, communication_style
 };
