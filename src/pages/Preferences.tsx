@@ -4,6 +4,17 @@ import DoubleSliderBar from "@/components/ui/DoubleSliderBar";
 import SliderBar from "@/components/ui/SliderBar";
 import Switch from "@/components/ui/Switch";
 import Tag from "@/components/ui/Tag";
+import {
+  communication_style,
+  drinking,
+  family_goals,
+  love_language,
+  pets,
+  preference,
+  smoking,
+  workout,
+  zodiac,
+} from "@/constants";
 import React, { useState } from "react";
 
 interface SectionProps {
@@ -63,7 +74,7 @@ const getOptionsByTitle = (title: string) => {
 };
 const getOptionsByType = (title: string) => {
   const item = others.find((o) => o.title === title);
-  return item ? item.type : '';
+  return item ? item.type : "";
 };
 
 const Preferences = () => {
@@ -113,12 +124,13 @@ const Preferences = () => {
       </Sections>
       <Sections className="space-y-[1.6rem]">
         {others.map((item, i) => (
-          <Others text={item.title} getValue={(val) => setShow(val)} />
+          <Others key={i} text={item.title} getValue={(val) => setShow(val)} />
         ))}
       </Sections>
       {show !== "" && (
         <BottomModal
-          item={{ title: show, options: getOptionsByTitle(show), type: getOptionsByType(show) }}
+          item={{ title: show, options: getOptionsByTitle(show) }}
+          // type: getOptionsByType(show)
           close={() => setShow("")}
         />
       )}
@@ -137,13 +149,7 @@ const gender = [
 const others = [
   {
     title: "Relationship Preference",
-    options: [
-      "Looking to date",
-      "Chatting and connecting",
-      "Just for fun",
-      "Ready for commitment",
-      "Undecided or exploring",
-    ],
+    options: preference,
   },
   {
     title: "Education",
@@ -151,99 +157,35 @@ const others = [
   },
   {
     title: "Love language",
-    options: [
-      "Giving and receiving gifts",
-      "Touch and Hugs",
-      "Heartfelt Compliments",
-      "Doing Things for Each Other",
-      "Spending Time Together",
-    ],
+    options: love_language,
   },
   {
     title: "Zodiac",
-    options: [
-      "Cancer",
-      "Leo",
-      "Taurus",
-      "Virgo",
-      "Aquaris",
-      "Capricorn",
-      "Pisces",
-      "Gemini",
-      "Libra",
-      "Aries",
-      "Scorpio",
-      "Sagittarius",
-    ],
+    options: zodiac,
   },
   {
     title: "Future family plans",
-    options: [
-      "I want children",
-      "Not sure yet",
-      "Not interested for now",
-      "I don't want children",
-      "I have children",
-      "I want more",
-    ],
+    options: family_goals,
   },
   {
     title: "How you communicate",
-    options: [
-      "Direct and to the point",
-      "Friendly and open",
-      "Reserved and thoughtful",
-      "Humorous and lighthearted",
-      "Detailed and descriptive",
-    ],
+    options: communication_style,
   },
   {
     title: "Smoker",
-    options: [
-      "Working on quitting",
-      "Drinks and smoke",
-      "Occassional smoker",
-      "Frequent smoker",
-      "Doesn't smoke",
-    ],
+    options: smoking,
   },
   {
     title: "Drinking",
-    options: [
-      "Mindful drinking",
-      "100% sober",
-      "Special moments only",
-      "Regular nights out",
-      "Not my thing",
-    ],
+    options: drinking,
   },
   {
     title: "Workout",
-    options: [
-      "Yes, regularly",
-      "Occassionally",
-      "Only on weekends",
-      "Rarely",
-      "Not at all",
-    ],
+    options: workout,
   },
   {
     title: "Pet owner",
-    options: [
-      "🐕 Dog",
-      "🐈 Cat",
-      "🐍 Reptile",
-      "🐸 Amphibian",
-      "🦜 Bird",
-      "🐟 Fish",
-      "😩 Don’t like pets",
-      "🐇 Rabbits",
-      "🐀 Mouse",
-      "😉 Planning on getting",
-      "🤮 Allergic",
-      "🐎 Other",
-      "🙃 Want a pet",
-    ],
+    options: pets,
   },
   {
     title: "City of residence",
