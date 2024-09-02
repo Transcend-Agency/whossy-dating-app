@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import ProfileHeader from "./ProfileHeader";
 import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { User } from "@/types/user";
 
 const Email = () => {
-    const [initialData, setInitialData] = useState("");
-    const [email, setEmail] = useState("");
+  const [initialData, setInitialData] = useState("");
+  const [email, setEmail] = useState("");
   const fetchUserProfile = async () => {
-    const userProfile = await useGetUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2");
+    const userProfile = (await useGetUserProfile(
+      "users"
+    )) as User;
 
     if (userProfile) {
       setEmail(userProfile.email as string);
@@ -20,13 +23,21 @@ const Email = () => {
   }, []);
 
   const handleUpdate = () => {
-    useUpdateUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2", fetchUserProfile, {
-      email,
-    });
+    useUpdateUserProfile(
+      "users",
+      fetchUserProfile,
+      {
+        email,
+      }
+    );
   };
   return (
     <>
-      <ProfileHeader title="Edit Profile" changed={email !== initialData} save={handleUpdate}/>
+      <ProfileHeader
+        title="Edit Profile"
+        changed={email !== initialData}
+        save={handleUpdate}
+      />
       <section
         className="bg-[#F6F6F6] px-[1.6rem]"
         style={{
@@ -47,7 +58,7 @@ const Email = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              className="w-[15rem] bg-inherit outline-none text-end"
+              className="w-[26rem] bg-inherit outline-none text-end"
             />
           </div>
         </div>

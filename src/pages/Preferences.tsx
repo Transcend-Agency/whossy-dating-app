@@ -7,7 +7,7 @@ import Tag from "@/components/ui/Tag";
 import {
   communication_style,
   drinking,
-  family_goals,
+  family_goal,
   love_language,
   pets,
   preference,
@@ -72,10 +72,10 @@ const getOptionsByTitle = (title: string) => {
   const item = others.find((o) => o.title === title);
   return item ? item.options : [];
 };
-const getOptionsByType = (title: string) => {
-  const item = others.find((o) => o.title === title);
-  return item ? item.type : "";
-};
+// const getOptionsByType = (title: string) => {
+//   const item = others.find((o) => o.title === title);
+//   return item ? item.type : "";
+// };
 
 const Preferences = () => {
   const [distance, setDistance] = useState<number>(0);
@@ -132,6 +132,7 @@ const Preferences = () => {
           item={{ title: show, options: getOptionsByTitle(show) }}
           // type: getOptionsByType(show)
           close={() => setShow("")}
+          path="filters"
         />
       )}
     </main>
@@ -165,7 +166,7 @@ const others = [
   },
   {
     title: "Future family plans",
-    options: family_goals,
+    options: family_goal,
   },
   {
     title: "How you communicate",

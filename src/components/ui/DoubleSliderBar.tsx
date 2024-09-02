@@ -1,5 +1,4 @@
 import * as Slide from "@radix-ui/react-slider";
-import { getValue } from "firebase/remote-config";
 import { useState } from "react";
 
 interface DoubleSliderBarProps {

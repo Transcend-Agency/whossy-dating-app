@@ -1,26 +1,27 @@
 import { useEffect, useState } from "react";
 import ProfileHeader from "../components/dashboard/ProfileHeader";
-import Interests from "../components/onboarding/Interests";
 import Card from "../components/dashboard/Card";
 import BottomModal from "@/components/dashboard/BottomModal";
 import Name from "@/components/dashboard/Name";
 import PhoneNumber from "@/components/dashboard/PhoneNumber";
 import Email from "@/components/dashboard/Email";
-import { useGetUserPreferences, useGetUserProfile } from "@/hooks/useUser";
-import { User, UserPrefences } from "@/types/user";
-import OnboardingSearch from "@/components/onboarding/OnboardingSearch";
+import { useGetUserProfile } from "@/hooks/useUser";
+import { UserPrefences, UserProfile } from "@/types/user";
 import {
   drinking,
-  family_goals,
+  education,
+  family_goal,
   love_language,
   marital_status,
   pets,
+  preference,
   relationship_preferences,
   religion,
   smoking,
   workout,
   zodiac,
 } from "@/constants";
+import Habits from "@/components/dashboard/Habits";
 
 const Section = ({
   items,
@@ -41,12 +42,12 @@ const Section = ({
   navigate?: (i: number | undefined) => void;
   setShow: (s: any) => void;
 }) => {
-  const [fetchedUserProfile, setFetchedUserProfile] = useState<User>({});
+  const [fetchedUserProfile, setFetchedUserProfile] = useState<UserProfile>({});
   const [fetchedUserPreferences, setFetchedUserPreferences] =
     useState<UserPrefences>({});
 
   const fetchUserProfile = async () => {
-    const userProfile = await useGetUserProfile("LhM2885SizfxstEBL0YJbEF8kIM2");
+    const userProfile = await useGetUserProfile("users");
 
     if (userProfile) {
       setFetchedUserProfile(userProfile);
@@ -55,9 +56,7 @@ const Section = ({
     }
   };
   const fetchUserPreferences = async () => {
-    const userPrefences = await useGetUserPreferences(
-      "Ay2YNO2JnYePExiVo7AGnrkupE22"
-    );
+    const userPrefences = await useGetUserProfile("preferences");
 
     if (userPrefences) {
       setFetchedUserPreferences(userPrefences as UserPrefences);
@@ -74,7 +73,7 @@ const Section = ({
       case "preference":
         return (
           relationship_preferences[fetchedUserPreferences.preference as number]
-            ?.title ?? null
+            ?.title ?? "choose"
         );
       case "drink":
         return drinking[fetchedUserPreferences.drink as number] ?? "choose";
@@ -85,16 +84,18 @@ const Section = ({
       case "pet_owner":
         return pets[fetchedUserPreferences.pet_owner as number] ?? "choose";
       case "education":
-        return workout[fetchedUserPreferences.workout as number] ?? "choose";
+        return education[fetchedUserPreferences.education as number] ?? "choose";
       case "love_language":
         return (
-          love_language[fetchedUserPreferences.love_language as number] ?? "choose"
+          love_language[fetchedUserPreferences.love_language as number] ??
+          "choose"
         );
       case "zodiac":
         return zodiac[fetchedUserPreferences.zodiac as number] ?? "choose";
       case "family_goal":
         return (
-          family_goals[fetchedUserPreferences.family_goals as number] ?? "choose"
+          family_goal[fetchedUserPreferences.family_goal as number] ??
+          "choose"
         );
       case "marital_status":
         return (
@@ -106,7 +107,7 @@ const Section = ({
       case "religion":
         return religion[fetchedUserPreferences.religion as number] ?? null;
       default:
-        return null;
+        return "chooose";
     }
   };
   return (
@@ -146,7 +147,7 @@ const Section = ({
           <p>{item.title}</p>
           <div className="flex text-[#8A8A8E] gap-[0.8rem]">
             {item.value === "user_profile" && (
-              <p>{fetchedUserProfile[item.id as keyof User]}</p>
+              <p>{fetchedUserProfile[item.id as keyof UserProfile]}</p>
             )}
 
             {/* {item.value === "user_preferences" && (
@@ -163,18 +164,6 @@ const Section = ({
         </div>
       ))}
     </section>
-  );
-};
-
-const PersonalInterests = () => {
-  return (
-    <>
-      <ProfileHeader title="Interests" />
-      <main className="px-6">
-        <OnboardingSearch />
-        <Interests />
-      </main>
-    </>
   );
 };
 
@@ -245,13 +234,19 @@ const EditProfile = () => {
               style={{ zIndex: 10 }}
             />
           )}
-          {show && <BottomModal item={show} close={() => setShow(null)} />}
+          {show && (
+            <BottomModal
+              path="preferences"
+              item={show}
+              close={() => setShow(null)}
+            />
+          )}
         </main>
       )}
       {pages[currentPage] === "name" && <Name />}
       {pages[currentPage] === "email" && <Email />}
       {pages[currentPage] === "phoneNumber" && <PhoneNumber />}
-      {pages[currentPage] === "interests" && <PersonalInterests />}
+      {pages[currentPage] === "interests" && <Habits path="preferences" />}
       {pages[currentPage] === "preview" && <PreviewProfile />}
     </>
   );
@@ -281,13 +276,7 @@ const items_two = [
   {
     title: "Relationship Preference",
     value: "user_preferences",
-    options: [
-      "Looking to date",
-      "Chatting and connecting",
-      "Just for fun",
-      "Ready for commitment",
-      "Undecided or exploring",
-    ],
+    options: preference,
     id: "preference",
   },
   { title: "Interests", value: "August 6, 2018", page: 4, id: "interests" },
@@ -297,7 +286,7 @@ const items_three = [
   {
     title: "Education",
     value: "user_preferences",
-    placeholder: "Enter school name",
+    options: education,
     id: "education",
   },
   {
