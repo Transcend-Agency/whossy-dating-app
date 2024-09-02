@@ -74,37 +74,37 @@ const Section = ({
       case "preference":
         return (
           relationship_preferences[fetchedUserPreferences.preference as number]
-            ?.title ?? null
+            ?.title ?? "choose"
         );
       case "drink":
-        return drinking[fetchedUserPreferences.drink as number] ?? null;
+        return drinking[fetchedUserPreferences.drink as number] ?? "choose";
       case "smoke":
-        return smoking[fetchedUserPreferences.smoke as number] ?? null;
+        return smoking[fetchedUserPreferences.smoke as number] ?? "choose";
       case "workout":
-        return workout[fetchedUserPreferences.workout as number] ?? null;
+        return workout[fetchedUserPreferences.workout as number] ?? "choose";
       case "pet_owner":
-        return pets[fetchedUserPreferences.pet_owner as number] ?? null;
+        return pets[fetchedUserPreferences.pet_owner as number] ?? "choose";
       case "education":
-        return workout[fetchedUserPreferences.workout as number] ?? null;
+        return workout[fetchedUserPreferences.workout as number] ?? "choose";
       case "love_language":
         return (
-          love_language[fetchedUserPreferences.love_language as number] ?? null
+          love_language[fetchedUserPreferences.love_language as number] ?? "choose"
         );
       case "zodiac":
-        return zodiac[fetchedUserPreferences.zodiac as number] ?? null;
+        return zodiac[fetchedUserPreferences.zodiac as number] ?? "choose";
       case "family_goal":
         return (
-          family_goals[fetchedUserPreferences.family_goals as number] ?? null
+          family_goals[fetchedUserPreferences.family_goals as number] ?? "choose"
         );
       case "marital_status":
         return (
           marital_status[fetchedUserPreferences.marital_status as number] ??
-          null
+          "choose"
         );
       case "interests":
-        return fetchedUserPreferences.interests?.[0] ?? null;
+        return fetchedUserPreferences.interests?.[0] ?? "choose";
       case "religion":
-        return religion[fetchedUserPreferences.religion as number] ?? null;
+        return religion[fetchedUserPreferences.religion as number] ?? "choose";
       default:
         return null;
     }
