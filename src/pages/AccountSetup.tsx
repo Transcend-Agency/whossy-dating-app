@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getAuth, sendEmailVerification, updateProfile } from 'firebase/auth';
+import { getAuth, sendEmailVerification, updateEmail, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
 import {
     collection,
     doc,
-    getDocs, query, updateDoc, where
+    getDocs, query, setDoc, updateDoc, where
 } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
@@ -47,6 +47,11 @@ const AccountCountriesFormSchema: ZodType<{ phone_number: string; country_of_ori
     .refine((data) => isPossiblePhoneNumber(data.phone_number), {
         message: "Please Enter a Valid Phone Number",
         path: ["phone_number"], // path of error
+    })
+const AccountCountriesFormSchemaForPhoneNumberAuthentication: ZodType<{ email: string; country_of_origin: string }> = z
+    .object({
+        email: z.string().min(1, { message: "Email is required" }).email({ message: "Email is invalid" }),
+        country_of_origin: z.string().min(1, { message: "Country Of Origin is required" }),
     })
 const AccountGenderFormSchema: ZodType<{ gender: string; }> = z
     .object({
@@ -93,14 +98,20 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
     const phone_number = useAccountSetupFormStore(state => state.userData.phone_number)
     const country_of_origin = useAccountSetupFormStore(state => state.userData.country_of_origin)
     const setCountryAndPhoneData = useAccountSetupFormStore(state => state.setCountryAndPhoneData)
+    const auth_provider = useAccountSetupFormStore(state => state.userData.auth_provider)
+    const updateAccountSetupUserData = useAccountSetupFormStore(state => state.updateUserData)
+    const email = useAccountSetupFormStore(state => state.userData.email)
     const {
         handleSubmit,
         control,
         formState: { errors },
+        register
     } = useForm<FormData>({
-        resolver: zodResolver(AccountCountriesFormSchema),
+        resolver: zodResolver(auth_provider == 'phone' ? AccountCountriesFormSchemaForPhoneNumberAuthentication : AccountCountriesFormSchema),
         mode: 'onBlur',
-        defaultValues: {
+        defaultValues: auth_provider == 'phone' ? {
+            email, country_of_origin
+        } : {
             phone_number,
             country_of_origin
         }
@@ -114,13 +125,25 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
     const onFormSubmit = async (data: any) => {
         try {
             setLoading(true)
-            const q = query(collection(db, "users"), where("phone_number", "==", data.phone_number));
-            const result = await getDocs(q);
-            if (result.docs.length > 0) {
-                setRequestError("Phone Number Exists")
-            } else {
-                setCountryAndPhoneData(data)
-                advance()
+            if (auth_provider == 'phone') {
+                const q = query(collection(db, "users"), where("email", "==", data.email));
+                const result = await getDocs(q);
+                if (result.docs.length > 0) {
+                    setRequestError("Email Already Exists")
+                } else {
+                    updateAccountSetupUserData({ country_of_origin: data.country_of_origin, email: data.email })
+                    advance()
+                }
+            }
+            else {
+                const q = query(collection(db, "users"), where("phone_number", "==", data.phone_number));
+                const result = await getDocs(q);
+                if (result.docs.length > 0) {
+                    setRequestError("Phone Number Exists")
+                } else {
+                    setCountryAndPhoneData(data)
+                    advance()
+                }
             }
         } catch (err) {
             setRequestError("Something Went Wrong")
@@ -147,20 +170,21 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                 <AuthModalBackButton onClick={goBack} />
                 <AuthModalHeader title='Just a few more steps to go!' subtitle="Ensure to enter the correct data as some will appear on your profile." />
                 <form onSubmit={handleSubmit(onFormSubmit)} className='auth-page__modal__form'>
-                    <Controller control={control} name={"phone_number"}
+                    {auth_provider !== 'phone' && <Controller control={control} name={"phone_number"}
                         render={({ field: { onChange, onBlur, value, ref } }) => (
                             <>
                                 <PhoneInput ref={ref} international defaultCountry='US' placeholder="Phone Number" onChange={onChange} onBlur={onBlur} value={value as string} className={`PhoneInput ${errors?.phone_number?.message && `PhoneInput--error`}`} />
                                 <div className='error-message-container'><motion.span animate={{ opacity: errors?.phone_number?.message ? 1 : 0, transition: { duration: 0.2 } }} className="error-message">{errors?.phone_number?.message as string}</motion.span></div>
                             </>
                         )}
-                    />
+                    />}
+                    {auth_provider == 'phone' && <AuthInput register={register} error={errors.email} name='email' type='email' placeholder='Your Email' />}
                     <Controller control={control} name={"country_of_origin"}
                         render={({ field: { onChange } }) => (
                             <>
                                 <ReactFlagsSelect
                                     selectButtonClassName={`${errors?.country_of_origin?.message && 'has-error'}`}
-                                    placeholder="Country Of Origin"
+                                    placeholder="Nationality"
                                     className='countries-select'
                                     searchable
                                     selected={selected}
@@ -184,6 +208,8 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
     const [requestError, setRequestError] = useState('')
     const getAccountSetupData = useAccountSetupFormStore(state => state.getAccountSetupData)
     const id = useAccountSetupFormStore(state => state.userData.id)
+    const email = useAccountSetupFormStore(state => state.userData.email)
+    const auth_provider = useAccountSetupFormStore(state => state.userData.auth_provider)
     const navigate = useNavigate()
     const {
         handleSubmit,
@@ -202,26 +228,42 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
         setGender(data.gender)
         try {
             setLoading(true)
-            const userRef = doc(db, "users", id);
-            await updateDoc(userRef, {
-                ...getAccountSetupData(),
-                gender: data.gender,
-                has_completed_account_creation: true
-            });
-            // await auth.currentUser
-            await updateProfile(auth.currentUser!, {
-                displayName: `${getAccountSetupData().first_name} ${getAccountSetupData().last_name}`
-            })
-            if (!auth.currentUser?.emailVerified) {
-                await sendEmailVerification(auth.currentUser!, {
+            if (auth_provider == 'phone') {
+                await setDoc(doc(db, "users", id), {
+                    uid: id,
+                    auth_provider: "phone",
+                    email: auth.currentUser?.email ? auth.currentUser?.email : email,
+                    has_completed_account_creation: true,
+                    has_completed_onboarding: false,
+                    ...getAccountSetupData(),
+                });
+                // await updateEmail(auth.currentUser!, email)
+                await verifyBeforeUpdateEmail(auth.currentUser!, email, {
                     url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/login`
                 })
                 navigate('/auth/email-verification')
             } else {
-                navigate('/auth/finalize-setup')
+                const userRef = doc(db, "users", id);
+                await updateDoc(userRef, {
+                    ...getAccountSetupData(),
+                    gender: data.gender,
+                    has_completed_account_creation: true,
+                });
+                await updateProfile(auth.currentUser!, {
+                    displayName: `${getAccountSetupData().first_name} ${getAccountSetupData().last_name}`
+                })
+                if (!auth.currentUser?.emailVerified) {
+                    await sendEmailVerification(auth.currentUser!, {
+                        url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/login`
+                    })
+                    navigate('/auth/email-verification')
+                } else {
+                    navigate('/auth/finalize-setup')
+                }
             }
         } catch (err) {
             setRequestError("Something Went Wrong")
+            console.log(err)
         }
         finally {
             setLoading(false)
