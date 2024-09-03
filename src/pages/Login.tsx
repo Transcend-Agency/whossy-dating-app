@@ -60,7 +60,7 @@ const Login: React.FC<LoginProps> = () => {
     const setCountryAndPhoneData = useAccountSetupFormStore(state => state.setCountryAndPhoneData)
     const setUserId = useAccountSetupFormStore(state => state.setUserId)
     const setId = useAccountSetupFormStore(state => state.setId)
-
+    const setAuthProvider = useAccountSetupFormStore(state => state.setAuthProvider)
     const navigate = useNavigate()
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
 
@@ -96,6 +96,7 @@ const Login: React.FC<LoginProps> = () => {
                     if (!user.has_completed_account_creation) {
                         setId(result.docs[0].id)
                         setUserId(user.uid)
+                        setAuthProvider('email')
                         setNames({ first_name: user.first_name, last_name: user.last_name })
                         setGender('')
                         setCountryAndPhoneData({ phone_number: '', country_of_origin: '' })
@@ -152,7 +153,7 @@ const Login: React.FC<LoginProps> = () => {
                     email: res.user.email,
                     has_completed_account_creation: false,
                     has_completed_onboarding: false
-                  });
+                });
                 setId(res.user.uid)
                 navigate('/auth/account-setup')
             }
@@ -195,7 +196,7 @@ const Login: React.FC<LoginProps> = () => {
             <AnimatePresence mode='wait'>
                 {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
             </AnimatePresence>
-            <AuthModalBackButton onClick={() => navigate('/auth')}/>
+            <AuthModalBackButton onClick={() => navigate('/auth')} />
             <AuthModalHeader title='Welcome back' subtitle='login to see who you’ve matched with ✌' />
             <form
                 onSubmit={handleSubmit(onEmailAndPasswordSubmit)}

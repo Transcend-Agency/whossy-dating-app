@@ -10,6 +10,7 @@ import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import OtpInput from 'react-otp-input'
 import PhoneInput, { isPossiblePhoneNumber } from "react-phone-number-input"
+import { useNavigate } from "react-router-dom"
 import { ZodType, z } from "zod"
 import AuthModalBackButton from "../components/auth/AuthModalBackButton"
 import AuthModalHeader from "../components/auth/AuthModalHeader"
@@ -17,6 +18,7 @@ import AuthModalRequestMessage from "../components/auth/AuthModalRequestMessage"
 import AuthPage from "../components/auth/AuthPage"
 import Button from "../components/ui/Button"
 import { auth, db } from "../firebase"
+import useAccountSetupFormStore from "../store/AccountSetup"
 import usePhoneNumberStore from "../store/PhoneNumberSignIn"
 import { FormData } from "../types/auth"
 
@@ -63,6 +65,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
         }
     });
     const setPhoneNumber = usePhoneNumberStore(state => state.setPhoneNumber)
+    const updateAccountSetupUserData = useAccountSetupFormStore(state => state.updateUserData)
     const [requestError, setRequestError] = useState('')
     const onFormSubmit = async (data: any) => {
         try {
@@ -84,7 +87,6 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
                     }
                     // 'expired-callback': () => {
                     //     grecaptcha.reset(window.recaptchaWidgetId);
-
                     // }
                 })
                 const confirmationResult = await signInWithPhoneNumber(
@@ -97,7 +99,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
                 console.log(confirmationResult)
                 advance()
                 setPhoneNumber(data.phone_number)
-
+                updateAccountSetupUserData({ phone_number: data.phone_number })
             }
 
         } catch (err: any) {
@@ -140,8 +142,12 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
 const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ goBack, key }) => {
     const verification_id = usePhoneNumberStore(state => state.verification_id)
     const confirmationResult = usePhoneNumberStore(state => state.confirmationResult)
+    const setId = useAccountSetupFormStore(state => state.setId)
+    const setUserId = useAccountSetupFormStore(state => state.setUserId)
+    const setAuthProvider = useAccountSetupFormStore(state => state.setAuthProvider)
     const [loading, setLoading] = useState(false);
     const [requestError, setRequestError] = useState('')
+    const navigate = useNavigate()
 
     const {
         handleSubmit,
@@ -160,7 +166,30 @@ const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ goBack, key }) =
             console.log(confirmationResult, verification_id)
             setLoading(true)
             const verificationData = await confirmationResult.confirm(data.code)
-            console.log(verificationData)
+
+            const q = query(collection(db, "users"), where("uid", "==", verificationData.user.uid));
+            const result = await getDocs(q);
+            console.log(result)
+            if (result.docs.length !== 0 && result.docs[0].data().auth_provider == 'phone') {
+                const user = result.docs[0].data()
+                if (!user.has_completed_account_creation) {
+                    navigate('/auth/account-setup')
+                    setId(verificationData.user.uid)
+                    setUserId(verificationData.user.uid)
+                    setAuthProvider('phone')
+                } else if (!user.has_completed_onboarding) {
+                    navigate('/onboarding')
+                } else {
+                    navigate('/dashboard')
+                }
+            } else {
+                setId(verificationData.user.uid)
+                setUserId(verificationData.user.uid)
+                setAuthProvider('phone')
+                console.log(verificationData)
+                navigate('/auth/account-setup')
+            }
+
         } catch (err: any) {
             console.log(err)
             if (err.code == 'auth/invalid-verification-code') {
