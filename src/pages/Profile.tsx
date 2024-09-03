@@ -1,6 +1,3 @@
-import { profileEdit } from "../assets/icons";
-import Icon from "../components/ui/Icon";
-import CircleProgressBar from "../components/dashboard/CircleProgressBar";
 import toast from "react-hot-toast";
 import Plans from "../components/dashboard/Plans";
 import { useNavigate } from "react-router-dom";

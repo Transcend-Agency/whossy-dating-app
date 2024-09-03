@@ -1,4 +1,3 @@
-import React from "react";
 
 const CircleProgressBar = ({ percentage, circleWidth }: any) => {
   const radius = 45;
