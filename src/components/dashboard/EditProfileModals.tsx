@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react"
-import DashboardSettingsModal from "./DashboardSettingsModal"
-import { DashboardSettingsModalProps } from "./DashboardSettingsModal"
-import { AnimatePresence, motion } from "framer-motion"
 import * as Slider from "@radix-ui/react-slider"
+import { motion } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+import DashboardSettingsModal, { DashboardSettingsModalProps } from "./DashboardSettingsModal"
 
 export const NameSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
     return (
@@ -51,7 +50,7 @@ export const EmailSettingsModal: React.FC<DashboardSettingsModalProps> = ({ show
                 {isEditable && <input ref={inputRef} className="modal__verified-changeable-input__input" onChange={(e) => setEmail(e.target.value)} value={email} />}
             </div>
             {/* <AnimatePresence></AnimatePresence> */}
-            <motion.p initial={{ opacity: isEditable ? 0 : 1 }} animate={{ opacity: isEditable ? 0 : 1 }} exit={{ opacity: 0 }} className="modal__verified-changeable-input__click-to-edit" onClick={() => { setIsEditable(true); inputRef.current?.focus() }}>Click to change email</motion.p>
+            <motion.p initial={{ opacity: isEditable ? 0 : 1 }} animate={{ opacity: isEditable ? 0 : 1 }} exit={{ opacity: 0 }} className="modal__verified-changeable-input__click-to-edit" onClick={() => { setIsEditable(true); }}>Click to change email</motion.p>
         </DashboardSettingsModal>
     )
 }
@@ -74,7 +73,7 @@ export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps> = (
                 {isEditable && <input ref={inputRef} className="modal__verified-changeable-input__input" onChange={(e) => setEmail(e.target.value)} value={email} />}
             </div>
             {/* <AnimatePresence></AnimatePresence> */}
-            <motion.p initial={{ opacity: isEditable ? 0 : 1 }} animate={{ opacity: isEditable ? 0 : 1 }} exit={{ opacity: 0 }} className="modal__verified-changeable-input__click-to-edit" onClick={() => { setIsEditable(true); inputRef.current?.focus() }}>Click to update phone number</motion.p>
+            <motion.p initial={{ opacity: isEditable ? 0 : 1 }} animate={{ opacity: isEditable ? 0 : 1 }} exit={{ opacity: 0 }} className="modal__verified-changeable-input__click-to-edit" onClick={() => { setIsEditable(true) }}>Click to update phone number</motion.p>
         </DashboardSettingsModal>
     )
 }

@@ -10,10 +10,9 @@ interface PreviewProfileProps {
 
 const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }) => {
     const [currentImage, setCurrentImage] = useState(0)
-    const [profileImages, setProfileImages] = useState(["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"])
+    const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
     const [expanded, setExpanded] = useState(false)
     const moreDetailsContainer = useRef(null)
-    const [animationCompleted, setAnimationCompleted] = useState(false)
     const profileContainer = useRef(null);
 
     const goToNextPost = () => {
@@ -43,7 +42,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                         overflowY: 'hidden',
                     }}
                 onAnimationEnd={() => {
-                    setAnimationCompleted(true)
                     console.log(expanded)
                 }}
                 ref={profileContainer}
@@ -96,7 +94,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                 <AnimatePresence>
                                     {expanded && <motion.img exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                                         className="contract-icon" onClick={() => {
-                                            profileContainer.current.scrollTop = 0
+                                            (profileContainer.current as unknown as {scrollTop: number})!.scrollTop = 0
                                             setExpanded(!expanded)
                                         }} src="/assets/icons/down.svg" />}
                                 </AnimatePresence>
@@ -123,7 +121,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
                                 {profileImages.map((image, index) => (
-                                    <div onClick={() => setCurrentImage(index)} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
+                                    <div onClick={() => { setCurrentImage(index);  image}} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
                         </div>

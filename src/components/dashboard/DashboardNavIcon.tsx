@@ -45,7 +45,7 @@ const UserProfileIcon: React.FC<IconProps> = ({ active }) => {
     )
 }
 
-const DashboardNavIcon: React.FC<DashboardNavIconProps> = ({ active, icon, set }) => {
+const DashboardNavIcon: React.FC<DashboardNavIconProps> = ({ active, icon }) => {
     const navigate = useNavigate()
 
     return <div onClick={() => navigate(`/dashboard/${icon}`)}>

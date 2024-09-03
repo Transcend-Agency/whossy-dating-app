@@ -7,7 +7,7 @@ type ProfileCreditButttonProps = {
     imgSrc: string
 };
 
-const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText, onLinkClick, imgSrc }) => {
+const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText,  imgSrc }) => {
 
     return <div className='user-profile__credit-buttons__button'>
         <img src={imgSrc} />
