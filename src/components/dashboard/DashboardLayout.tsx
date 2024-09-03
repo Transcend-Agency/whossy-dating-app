@@ -4,9 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Matches from './Matches';
 import ChatInterface from './ChatInterface';
 
-type DashboardProps = {
-
-};
+type DashboardProps = {};
 
 const Dashboard: React.FC<DashboardProps> = () => {
     const { pathname } = useLocation()
@@ -34,7 +32,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
             <Matches />
             <Outlet />
         </main>
-
     </div>
-}
+};
 export default Dashboard;
