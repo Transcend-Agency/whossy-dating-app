@@ -18,6 +18,8 @@ import Onboarding from "./pages/Onboarding";
 import { Toaster } from "react-hot-toast";
 import Landing from "./pages/Landing";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
+import UserProfile from "./pages/dashboard/UserProfile";
+import Explore from "./pages/dashboard/Explore";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +47,10 @@ function App() {
             <Route index element={<Onboarding />} />
           </Route>
           <Route path="/dashboard" element={<DashboardLayout />}>
-            {/* <Route index element={<Onboarding />} /> */}
+            <Route path="user-profile" element={<UserProfile />} />
+            <Route path="explore" element={<Explore />} />
+            <Route path="swipe-and-match" element={<Explore />} />
+            <Route path="matches" element={<Explore />} />
           </Route>
           <Route path='' element={<Landing />} />
         </Routes>

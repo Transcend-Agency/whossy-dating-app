@@ -4,7 +4,7 @@ export type User = {
     first_name?: string;
     gender?: string;
     has_completed_account_creation?: string;
-    has_completed_account_onboarding?: string;
+    has_completed_onboarding?: string;
     last_name?: string;
     phone_number?: string;
 }

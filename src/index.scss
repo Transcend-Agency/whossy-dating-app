@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url("https://cdn.syncfusion.com/ej2/material.css");
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 
 /*=============================================
 =            FONTS           
@@ -38,10 +39,10 @@
 @import "./styles/components/auth/marquee-image-slider-background.scss";
 @import "./styles/components/ui//button.scss";
 @import "./styles/components/ui//slider.scss";
-// @import "./styles/components/preloader.scss";
-// @import "./styles/components/navigation.scss";
-// @import "./styles/components/particle-scene.scss";
-// @import "./styles/components/menu.scss";
+@import "./styles/components/dashboard/layout.scss";
+@import "./styles/components/dashboard/profile-settings.scss";
+@import "./styles/components/dashboard/modal.scss";
+@import "./styles/components/dashboard/preview-profile.scss";
 
 /*=====  End of Components  ======*/
 
@@ -51,6 +52,8 @@
 
 @import "./styles/pages/home.scss";
 @import "./styles/pages/reset-password.scss";
+@import "./styles/pages/user-profile.scss";
+@import "./styles/pages/explore.scss";
 // @import "./styles/pages/home/about.scss";
 // @import "./styles/pages/home/footer.scss";
 // @import "./styles/pages/home/services.scss";
