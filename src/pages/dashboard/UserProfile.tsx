@@ -1,12 +1,11 @@
+import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
-import ProfileCreditButttons from '../../components/dashboard/ProfileCreditButtton';
 import ProfileCreditButtton from '../../components/dashboard/ProfileCreditButtton';
 import ProfilePlan from '../../components/dashboard/ProfilePlan';
 import EditProfile from './EditProfile';
-import { motion } from 'framer-motion'
-import ProfileSettings from './ProfileSettings';
 import PreviewProfile from './PreviewProfile';
+import ProfileSettings from './ProfileSettings';
 
 type UserProfileProps = {
 };

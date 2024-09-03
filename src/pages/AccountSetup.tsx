@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getAuth, sendEmailVerification, updateEmail, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
+import { getAuth, sendEmailVerification, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
 import {
     collection,
     doc,

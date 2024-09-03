@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
-import UserProfileImage from "../../components/dashboard/UserProfileImage";
 import SettingsToggleItem from "../../components/dashboard/SettingsToggleItem";
 
 interface ProfileSettingsProps {
@@ -11,7 +10,7 @@ interface ProfileSettingsProps {
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, onPreviewProfileClick }) => {
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, }) => {
     const [profileSettings, setProfileSettings] = useState({
         incoming_messages: false,
         hide_verification_badge: false,
