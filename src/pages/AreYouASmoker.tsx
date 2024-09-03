@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { OnboardingProps } from "../types/onboarding";
 import OnboardingPage from "../components/onboarding/OnboardingPage";
 import { useOnboardingStore } from "../store/onboarding/useStore";
-import { smoking } from "../constants/onboarding";
+import { smoking } from "../constants";
 
 const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null>(null);
