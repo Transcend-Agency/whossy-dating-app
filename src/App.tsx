@@ -24,7 +24,7 @@ import Matching from "./pages/Matching";
 import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
-import Profile from "./pages/Profile";
+import Profile from "./pages/MobileProfile";
 import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
 import Preferences from "./pages/Preferences";
@@ -59,14 +59,13 @@ function App() {
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<Explore />} />
             <Route path="matches" element={<Explore />} />
-            <Route index element={<Matching />} />
+            {/* <Route index element={<Matching />} /> */}
             <Route path="globalSearch" element={<GlobalSearch />} />
             <Route path="heart" element={<Favorites />} />
             <Route path="chat" element={<Chat />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="profile/preferences" element={<Preferences />} />
-            <Route path="profile/edit" element={<EditProfile />} />
+            {/* <Route path="settings" element={<Settings />} /> */}
+            {/* <Route path="profile/preferences" element={<Preferences />} /> */}
+            {/* <Route path="profile/edit" element={<EditProfile />} /> */}
           </Route>
           <Route path="" element={<Landing />} />
         </Routes>
