@@ -61,6 +61,7 @@ const CreateAccount: React.FC<{}> = () => {
     const setGender = useAccountSetupFormStore(state => state.setGender)
     const setCountryAndPhoneData = useAccountSetupFormStore(state => state.setCountryAndPhoneData)
     const setId = useAccountSetupFormStore(state => state.setId)
+    const setAuthProvider = useAccountSetupFormStore(state => state.setAuthProvider)
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         console.log(data)
@@ -84,9 +85,10 @@ const CreateAccount: React.FC<{}> = () => {
                         auth_provider: "local",
                         email: user.email,
                         has_completed_account_creation: false,
-                        has_completed_account_onboarding: false
+                        has_completed_onboarding: false
                     });
                     setId(user.uid)
+                    setAuthProvider('email')
                     navigate('/auth/account-setup')
                 }
             }
@@ -123,6 +125,7 @@ const CreateAccount: React.FC<{}> = () => {
                     has_completed_onboarding: false
                 });
                 setId(res.user.uid)
+                setAuthProvider('google')
                 navigate('/auth/account-setup')
             }
             if (result.docs.length === 1) {
@@ -136,6 +139,7 @@ const CreateAccount: React.FC<{}> = () => {
                         last_name: user.last_name
                     })
                     setGender('')
+                    setAuthProvider('google')
                     setCountryAndPhoneData({ phone_number: '', country_of_origin: '' })
                     navigate('/auth/account-setup')
                 } else if (!user.has_completed_onboarding) {

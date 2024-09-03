@@ -60,3 +60,4 @@ export type UserFilters = {
 };
 
 export type UserProfile = User | UserFilters | UserPrefences;
+
