@@ -5,7 +5,7 @@ interface NavBarProps {
   children: React.ReactNode | React.ReactNode[];
 }
 
-const NavBar: React.FC<NavBarProps> = ({ children }) => {
+const MobileNavBar: React.FC<NavBarProps> = ({ children }) => {
   return (
     <>
       <TopNav />
@@ -15,4 +15,4 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
   );
 };
 
-export default NavBar;
+export default MobileNavBar;
