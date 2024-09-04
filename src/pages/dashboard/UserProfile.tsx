@@ -6,6 +6,7 @@ import ProfilePlan from '../../components/dashboard/ProfilePlan';
 import EditProfile from './EditProfile';
 import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
+import MobileProfile from '../MobileProfile';
 
 type UserProfileProps = {
 };
@@ -13,7 +14,7 @@ type UserProfileProps = {
 const UserProfile: React.FC<UserProfileProps> = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile'>('user-profile')
     return <>
-        <DashboardPageContainer>
+        <DashboardPageContainer className="hidden lg:block">
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page'>
                 <div className='user-profile__container'>
                     <div className='flex justify-end'>
@@ -61,6 +62,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
             <PreviewProfile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} />
         </DashboardPageContainer>
+        <MobileProfile />
     </>
 }
 export default UserProfile;
