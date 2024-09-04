@@ -22,6 +22,8 @@ import {
   zodiac,
 } from "@/constants";
 import Habits from "@/components/dashboard/Habits";
+import Photos from "@/components/dashboard/Photos";
+import Skeleton from "@/components/ui/Skeleton";
 
 const Section = ({
   items,
@@ -46,7 +48,10 @@ const Section = ({
   const [fetchedUserPreferences, setFetchedUserPreferences] =
     useState<UserPrefences>({});
 
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isLoadingPreferences, setIsLoadingPreferences] = useState(false);
   const fetchUserProfile = async () => {
+    setIsLoadingProfile(true);
     const userProfile = await useGetUserProfile("users");
 
     if (userProfile) {
@@ -54,8 +59,10 @@ const Section = ({
     } else {
       console.log("No user profile data found.");
     }
+    setIsLoadingProfile(false);
   };
   const fetchUserPreferences = async () => {
+    setIsLoadingPreferences(true);
     const userPrefences = await useGetUserProfile("preferences");
 
     if (userPrefences) {
@@ -63,12 +70,14 @@ const Section = ({
     } else {
       console.log("No user preferences data found.");
     }
+
+    setIsLoadingPreferences(false);
   };
   useEffect(() => {
     fetchUserProfile();
     fetchUserPreferences();
   }, []);
-  const getValue = (id: string | undefined): string | null => {
+  const getValue = (id: string | undefined): string | undefined => {
     switch (id) {
       case "preference":
         return (
@@ -84,7 +93,9 @@ const Section = ({
       case "pet_owner":
         return pets[fetchedUserPreferences.pet_owner as number] ?? "choose";
       case "education":
-        return education[fetchedUserPreferences.education as number] ?? "choose";
+        return (
+          education[fetchedUserPreferences.education as number] ?? "choose"
+        );
       case "love_language":
         return (
           love_language[fetchedUserPreferences.love_language as number] ??
@@ -94,8 +105,7 @@ const Section = ({
         return zodiac[fetchedUserPreferences.zodiac as number] ?? "choose";
       case "family_goal":
         return (
-          family_goal[fetchedUserPreferences.family_goal as number] ??
-          "choose"
+          family_goal[fetchedUserPreferences.family_goal as number] ?? "choose"
         );
       case "marital_status":
         return (
@@ -106,8 +116,12 @@ const Section = ({
         return fetchedUserPreferences.interests?.[0] ?? "choose";
       case "religion":
         return religion[fetchedUserPreferences.religion as number] ?? null;
-      default:
-        return "chooose";
+      case "height":
+        return religion[fetchedUserPreferences.religion as number] ?? null;
+      case "weight":
+        return religion[fetchedUserPreferences.religion as number] ?? null;
+      // default:
+      //   return "choose";
     }
   };
   return (
@@ -156,9 +170,15 @@ const Section = ({
                 ]?.toString()}
               </p>
             )} */}
-            {item.id && <p>{getValue(item.id)}</p>}
-            {!item.notChange && (
-              <img src="/assets/icons/right-arrow.svg" alt="" />
+            {item.id && !isLoadingPreferences ? (
+              <div className="flex">
+                <p>{getValue(item.id)}</p>
+                {!item.notChange && (
+                  <img src="/assets/icons/right-arrow.svg" alt="" />
+                )}
+              </div>
+            ) : (
+              <Skeleton height="10px" width="30px" />
             )}
           </div>
         </div>
@@ -207,16 +227,7 @@ const EditProfile = () => {
           >
             Preview Profile
           </button>
-          <section className="bg-[#F6F6F6] py-[1.2rem] px-[1.6rem]">
-            <div className="grid grid-cols-4 grid-rows-2 sm:grid-rows-6 gap-4">
-              <div className="row-span-2 col-span-2 h-[184px] bg-black rounded-2xl" />
-              <div className="sm:row-span-2 col-span-2 sm:h-full h-[88px] bg-yellow-400 rounded-2xl" />
-              <div className="sm:row-span-2 col-span-2 sm:h-full h-[88px] bg-red-500 rounded-2xl" />
-              {/* <div className="sm:row-span-2 sm:col-span-2 sm:h-full h-[108px] bg-blue-500 rounded-2xl" />
-              <div className="sm:row-span-2 sm:col-span-2 sm:h-full h-[108px] bg-green-500 rounded-2xl" />
-              <div className="sm:row-span-2 sm:col-span-2 sm:h-full h-[108px] bg-amber-500 rounded-2xl" /> */}
-            </div>
-          </section>
+          <Photos />
           <Section
             items={items}
             navigate={(c) => setCurrentPage(c as number)}
@@ -327,8 +338,8 @@ const items_three = [
     ],
     id: "family_goal",
   },
-  { title: "Height", value: "140cm", range: 140 },
-  { title: "Weight", value: "6lbs", range: 170 },
+  { title: "Height", value: "140cm", range: 140, id: "height" },
+  { title: "Weight", value: "6lbs", range: 170, id: "height" },
   {
     title: "Religion",
     value: "user_preferences",
