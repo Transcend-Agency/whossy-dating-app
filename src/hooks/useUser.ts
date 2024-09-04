@@ -3,14 +3,17 @@ import { db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
 
-const collection_one ='users';
-const collection_two ='preferences';
-const collection_three ='filters';
+const collection_one = "users";
+const collection_two = "preferences";
+const collection_three = "filters";
 
-const uid = "Ay2YNO2JnYePExiVo7AGnrkupE22"
+const uid = "Ay2YNO2JnYePExiVo7AMarkupE22";
+const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
-const useGetUserProfile = async (path: string): Promise<UserProfile | undefined> => {
-  const docRef = doc(db, path, uid);
+const useGetUserProfile = async (
+  path: string
+): Promise<UserProfile | undefined> => {
+  const docRef = doc(db, path, uid2);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -20,7 +23,7 @@ const useGetUserProfile = async (path: string): Promise<UserProfile | undefined>
     if (path === collection_one) return docSnap.data() as User;
     if (path === collection_two) return docSnap.data() as UserPrefences;
     if (path === collection_three) return docSnap.data() as UserFilters;
-   } else {
+  } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
   }
@@ -31,8 +34,11 @@ const useUpdateUserProfile = async (
   success: () => void,
   updatedFields?: Partial<UserProfile>
 ) => {
-  const userRef = doc(db, path, uid);
-  await updateDoc(userRef, updatedFields as UserProfile).then(() => {success(); toast.success("Updated!")});
+  const userRef = doc(db, path, uid2);
+  await updateDoc(userRef, updatedFields as UserProfile).then(() => {
+    success();
+    toast.success("Updated!");
+  });
 };
 
 export { useGetUserProfile, useUpdateUserProfile };

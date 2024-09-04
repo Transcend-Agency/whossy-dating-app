@@ -1,5 +1,5 @@
 import * as Slide from "@radix-ui/react-slider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SliderBarProps {
   getValue: (value: number) => void;
@@ -21,6 +21,9 @@ const SliderBar: React.FC<SliderBarProps> = ({
   val = 0,
 }) => {
   const [value, setValue] = useState<number | undefined>(val);
+  useEffect(() => {
+    setValue(val)
+  }, [val])
   return (
     <Slide.Root
       style={{

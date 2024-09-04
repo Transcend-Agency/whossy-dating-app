@@ -41,7 +41,9 @@ export type UserFilters = {
   drink?: number;
   education?: number;
   family_goals?: number;
+  family_goal?: number;
   family_plans?: number;
+  gender?: string;
   has_bio?: boolean;
   height_range?: { max: number; min: number };
   interests?: string[];
@@ -55,8 +57,8 @@ export type UserFilters = {
   similar_interest?: boolean;
   smoke?: number;
   weight_range?: { max: number; min: number };
-  workout: number;
-  zodiac: number;
+  workout?: number;
+  zodiac?: number;
 };
 
 export type UserProfile = User | UserFilters | UserPrefences;

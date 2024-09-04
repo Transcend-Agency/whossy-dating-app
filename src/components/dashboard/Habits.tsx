@@ -4,6 +4,7 @@ import { alphabet } from "@/constants";
 import { useEffect, useState } from "react";
 import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
 import { UserFilters, UserPrefences } from "@/types/user";
+import HabitSearch from "./HabitSearch";
 
 interface HabitsProps {
   path: string;
@@ -31,7 +32,19 @@ const Habits: React.FC<HabitsProps> = ({ path }) => {
     fetchInterests();
   }, [path]);
 
-  const hasChanged = JSON.stringify(initData) !== JSON.stringify(mutatedData);
+  const arraysAreEqual = (arr1: string[], arr2: string[]) => {
+    if (arr1.length !== arr2.length) return false;
+    for (let i = 0; i < arr1.length; i++) {
+      if (!arr2.includes(arr1[i])) return false;
+    }
+    return true;
+  };
+
+  const hasChanged = !arraysAreEqual(initData, mutatedData);
+
+  useEffect(() => {
+    console.log(mutatedData);
+  }, [mutatedData]);
 
   const handleUpdate = () => {
     useUpdateUserProfile(path, fetchInterests, {
@@ -57,7 +70,10 @@ const Habits: React.FC<HabitsProps> = ({ path }) => {
         save={handleUpdate}
       />
       <main className="px-6">
-        {/* <HabitSearch /> */}
+        <HabitSearch
+          initData={mutatedData}
+          setInitData={(arr) => setMutatedData(arr)}
+        />
         {alphabet.map((item, _) => (
           <div className="mb-[0.8rem]" key={_}>
             <h1 className="text-[1.8rem]">{item.letter.toUpperCase()}</h1>
