@@ -2,7 +2,7 @@
     @apply px-[1.6rem] pt-[2.4rem] w-full h-full;
 
     .filter {
-        @apply w-full flex justify-between;
+        @apply w-full flex justify-between relative;
         &__left {
             @apply w-full max-w-[62.7rem] flex flex-wrap gap-x-[1.6rem] gap-y-[1.6rem];
         }
@@ -16,14 +16,26 @@
             @apply cursor-pointer hover:scale-110 active:scale-100 transition-all duration-200;
         }
     }
+    .explore-grid-container {
+        @apply overflow-scroll h-full max-h-full mt-[1.6rem] pb-[13rem] relative pt-[1.6rem];
+    }
+    .explore-grid-gradient-top {
+        @apply w-full h-[1rem] bg-gradient-to-b from-[white] to-[rgba(255,255,255,0)] absolute -bottom-[2.6rem] z-10;
+    }
     .explore-grid {
-        @apply w-full grid grid-cols-5 mt-[3.2rem];
+        @apply w-full grid grid-cols-5  overflow-y-scroll;
         &__column {
             // @apply gap-[0.8rem];
             &:not(:last-of-type) {
                 @apply mr-[0.8rem]
             }
             &:nth-of-type(2n + 2) {
+                .explore-grid__profile:nth-child(4n+3), 
+                .explore-grid__profile:nth-child(4n+4) {
+                    @apply min-h-[28rem] h-[28rem];
+                }
+            }
+            &:nth-of-type(2n + 1) {
                 .explore-grid__profile:nth-child(4n+1), 
                 .explore-grid__profile:nth-child(4n+2) {
                     @apply min-h-[28rem] h-[28rem];
@@ -31,7 +43,7 @@
             }
         }
         &__profile {
-            @apply min-h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative;
+            @apply min-h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative hover:scale-[1.02] transition duration-200 active:scale-100 cursor-pointer;
             &:not(:last-of-type) {
                 @apply mb-[0.8rem];
             }
@@ -40,7 +52,7 @@
             @apply w-full h-full;
         }
         &__profile-picture-image {
-                @apply w-full h-full object-cover;
+                @apply w-full h-full object-cover min-h-[20rem];
         }
         &__profile-picture-gradient {
                 @apply w-full h-full object-cover absolute -bottom-[5rem];
