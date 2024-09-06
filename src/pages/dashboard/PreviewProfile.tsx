@@ -1,3 +1,6 @@
+import { family_goal, preference } from "@/constants";
+import { useGetUserProfile } from "@/hooks/useUser";
+import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,9 +29,35 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
         }
     }
 
+    const [userData, setUserData] = useState<User>();
+    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
+    
+    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
+    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+
+    const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
+        if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
+          throw new Error('Invalid Firebase date object');
+        }
+      
+        // Convert seconds to milliseconds
+        const milliseconds = firebaseDate.seconds * 1000;
+      
+        // Create a Date object
+        const date = new Date(milliseconds);
+      
+        // Get the year
+        return date.getFullYear();
+      };
+
     useEffect(() => {
         // console.log(moreDetailsContainer)
     }, [expanded])
+
+    useEffect(() => {
+        fetchUser();
+        fetchUserPreferences();
+    }, [])
 
     return (
         <>
@@ -63,7 +92,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             {/* <div className="preview-profile__image-bg-wrapper">
 
                             </div> */}
-                            {profileImages.map((src, index) =>
+                            {userPrefencesData?.photos?.map((src, index) =>
                             (
                                 <motion.img animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
@@ -84,11 +113,11 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
                                 <div className="active-badge">Active</div>
-                                <p className="location">~ 22 miles away</p>
+                                <p className="location">~ {userPrefencesData?.distance} miles away</p>
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
-                                    <p className="details">Stephanie, <span className="age">21</span></p>
+                                    <p className="details">{userData?.first_name}, <span className="age">{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span></p>
                                     <img src="/assets/icons/verified.svg" />
                                 </div>
                                 <AnimatePresence>
@@ -100,18 +129,13 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                 </AnimatePresence>
                             </motion.div>
                             <motion.div initial={{ height: 'auto' }} animate={expanded ? { height: 0, opacity: 0 } : { height: 'auto' }} ref={moreDetailsContainer} className="more-details">
-                                <p className="bio">
-                                    I am very excited to meet new people and make friends. Let’s start with that and see where it takes us 🚀
-                                </p>
+                                {userPrefencesData?.bio && <p className="bio">
+                                {userPrefencesData.bio.slice(0, 200)}...
+                                </p>}
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        <div className="interest">Travelling</div>
-                                        <div className="interest">Travelling</div>
-                                        <div className="interest">Travelling</div>
-                                        <div className="interest">Travelling</div>
-                                        <div className="interest">Travelling</div>
-                                        <div className="interest">Travelling</div>
+                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest">{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
@@ -134,8 +158,8 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             Relationship preference
                         </div>
                         <div className="content-item__value">
-                            <img src="/assets/images/onboarding/onboarding-fun.svg" />
-                            Just for fun
+                            {/* <img src="/assets/images/onboarding/onboarding-fun.svg" /> */}
+                            {preference[userPrefencesData?.preference as number]}
                         </div>
                     </div>
                     <div className="content-item">
@@ -143,11 +167,11 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             <img src="/assets/icons/relationship-preference.svg" />
                             Bio
                         </div>
-                        <div className="content-item__value">
-                            I am very excited to meet new people and make friends. Let’s start with that and see where it takes us 🚀
-                        </div>
+                        {userPrefencesData?.bio && <div className="content-item__value">
+                                {userPrefencesData.bio}
+                        </div>}
                     </div>
-                    <div className="content-item">
+                    {/* <div className="content-item">
                         <div className="content-item__title">
                             <img src="/assets/icons/about.svg" />
                             About
@@ -182,37 +206,16 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             <p className="content-item__info__title">Future family goals</p>
                             <p className="content-item__info__text">I want children</p>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="content-item">
                         <div className="content-item__title">
                             <img src="/assets/icons/interests-black.svg" />
                             Interests
                         </div>
                         <div className="content-item__multi-options-container">
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
-                            <div className="content-item__multi-options-container__item">
-                                Netflix
-                            </div>
+                            {userPrefencesData?.interests?.map((item, i) => <div key={i} className="content-item__multi-options-container__item">
+                                {item}
+                            </div>)}
                         </div>
                     </div>
                     <div className="content-item">
@@ -222,15 +225,15 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
+                            {userPrefencesData?.family_goal && <p className="content-item__info__text">{family_goal[userPrefencesData?.family_goal as number]}</p>}
                         </div>
                         <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
+                            <p className="content-item__info__title">Weight</p>
+                            {userPrefencesData?.weight ? <p className="content-item__info__text">{userPrefencesData.weight}kg</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                         <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
+                            <p className="content-item__info__title">Height</p>
+                            {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                     </div>
                     <div className="action-button">
