@@ -1,7 +1,10 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+
+type CollectionName = "users" | "preferences" | "filters";
 
 const collection_one = "users";
 const collection_two = "preferences";
@@ -11,7 +14,7 @@ const uid = "Ay2YNO2JnYePExiVo7AMarkupE22";
 const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
 const useGetUserProfile = async (
-  path: string
+  path: CollectionName
 ): Promise<UserProfile | undefined> => {
   const docRef = doc(db, path, uid2);
   const docSnap = await getDoc(docRef);
@@ -30,7 +33,7 @@ const useGetUserProfile = async (
 };
 
 const useUpdateUserProfile = async (
-  path: string,
+  path: CollectionName,
   success: () => void,
   updatedFields?: Partial<UserProfile>
 ) => {
@@ -41,4 +44,33 @@ const useUpdateUserProfile = async (
   });
 };
 
-export { useGetUserProfile, useUpdateUserProfile };
+const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) => void) => {
+  if (!file) return;
+  const storage = getStorage();
+  const storageRef = ref(storage, `tests/userId/profile_pictures/image_${i}`);
+  uploadBytes(storageRef, file)
+    .then(() => {
+      // toast.success("Image has been uploaded successfully 🚀");
+      console.log("File was uploaded was successfully!");
+      getDownloadURL(storageRef)
+        .then((url) => {
+          addPhotos(url);
+        })
+        .catch((error) => console.log(error));
+    })
+    .catch((err) => console.log(err));
+};
+
+const uploadPhotosToFirestore = async (photo: string[]) => {
+  console.log("Loading...");
+  try {
+    await setDoc(doc(db, collection_two, "userId_190"), {photo});
+    // toast.success("Account has been created successfully 🚀");
+    // setOpenModal(false);
+    // navigate('/dashboard');
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { useGetUserProfile, useUpdateUserProfile, uploadPhotosToGetUrl, uploadPhotosToFirestore };
