@@ -38,10 +38,10 @@ const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePa
 
     const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
     const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
-    const [toggle, setToggle] = useState({similar_interest: userPrefencesData?.similar_interest, has_bio: userPrefencesData?.has_bio})
+    const [toggle, setToggle] = useState({similar_interest: userPrefencesData?.similar_interest, has_bio: userPrefencesData?.has_bio, outreach: userPrefencesData?.outreach})
     const [userValue, setUserValue] = useState({distance: userPrefencesData?.distance, age_range: userPrefencesData?.age_range})
 
-    useEffect(() => {setToggle({similar_interest: userPrefencesData?.similar_interest as boolean, has_bio: userPrefencesData?.has_bio as boolean})}, [userPrefencesData?.similar_interest, userPrefencesData?.has_bio])
+    useEffect(() => {setToggle({similar_interest: userPrefencesData?.similar_interest as boolean, has_bio: userPrefencesData?.has_bio as boolean, outreach: userPrefencesData?.outreach})}, [userPrefencesData?.similar_interest, userPrefencesData?.has_bio, userPrefencesData?.outreach])
     useEffect(() => {setUserValue({distance: userPrefencesData?.distance as number, age_range: userPrefencesData?.age_range})}, [userPrefencesData?.distance, userPrefencesData?.age_range])
 
     return (
@@ -97,7 +97,7 @@ const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePa
                                 <div className="flex justify-between  items-center"> <p>Distance Radius</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.distance} mi</div></div>
                                 <SliderBar val={userValue?.distance} getValue={(val) => setUserValue((prev) => ({...prev, distance: val}))}/>
                             </div>
-                            <SettingsToggleItem title="Show people outside my distance radius and country for better reach" isActive={toggle?.has_bio as boolean} onButtonToggle={() => {setToggle((prev) => ({...prev, has_bio: !toggle.has_bio}));updateUserPreferences({has_bio: !userPrefencesData?.has_bio})}}/>
+                            <SettingsToggleItem title="Show people outside my distance radius and country for better reach" isActive={toggle?.outreach as boolean} onButtonToggle={() => {setToggle((prev) => ({...prev, outreach: !toggle.outreach}));updateUserPreferences({outreach: !userPrefencesData?.outreach})}}/>
                             <div className="px-5 pt-4">
                                 <div className="flex justify-between  items-center"> <p>Age range</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.age_range?.min} - {userValue?.age_range?.max}</div></div>
                                 <DoubleSliderBar val={[userValue?.age_range?.min as number, userValue?.age_range?.max as number]} getValue={(val) => setUserValue((prev) => ({...prev, age_range: {min: val[0], max: val[1]}}))}/>
