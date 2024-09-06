@@ -36,8 +36,8 @@ const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePa
     }, [])
     
 
-    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
-    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
+    // const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
+    // const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
     const [toggle, setToggle] = useState({similar_interest: userPrefencesData?.similar_interest, has_bio: userPrefencesData?.has_bio, outreach: userPrefencesData?.outreach})
     const [userValue, setUserValue] = useState({distance: userPrefencesData?.distance, age_range: userPrefencesData?.age_range})
 
