@@ -4,14 +4,14 @@ import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-interface PreviewProfileProps {
+interface PreviewProfileMobileProps {
     activePage: boolean;
     closePage: () => void
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }) => {
+const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage, closePage }) => {
     const [currentImage, setCurrentImage] = useState(0)
     const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
     const [expanded, setExpanded] = useState(false)
@@ -74,14 +74,14 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                     console.log(expanded)
                 }}
                 ref={profileContainer}
-                animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page preview-profile settings-page">
+                animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page preview-profile settings-page lg:hidden">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Preview Profile</p>
                         </button>
-                        <button className="settings-page__title__save-button">Save</button>
+                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                 </div>
 
@@ -250,4 +250,4 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
     )
 }
 
-export default PreviewProfile;
+export default PreviewProfileMobile;

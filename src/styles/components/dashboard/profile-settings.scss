@@ -23,7 +23,7 @@
     }
 
     &__settings-group {
-        @apply flex flex-col w-full;
+        @apply flex flex-col w-full px-[1.3rem] bg-[#f6f6f6];
         &__item {
             &:hover {
                 .settings-page__settings-group__item__value {
@@ -50,7 +50,7 @@
             &:first-of-type {
                 @apply mt-[0.8rem];
             }
-            @apply  text-[1.8rem] leading-[1.3rem] pt-[1.2rem] bg-[#F6F6F6] hover:bg-[#ececec] transition duration-[250ms] px-[1.6rem];
+            @apply  text-[1.8rem] pt-[1.2rem] bg-[#F6F6F6] hover:bg-[#ececec] transition duration-[250ms] w-full ;
             &-container {
                 @apply flex justify-between;
             }
@@ -78,6 +78,9 @@
                     background: linear-gradient(180deg, #FF5C00 0%, #F0174B 100%);
                     @apply leading-[1.1rem] text-[1.6rem] px-[1.2rem] py-[0.8rem] text-white rounded-full font-normal ml-[0.8rem];
                 }
+            }
+            &__single-text {
+                @apply text-[1.8rem] leading-[1.8rem] mb-[0] max-w-[32rem] flex items-center;
             }
             &__subtext {
                 @apply text-[1.8rem] leading-[2.16rem] max-w-[41.5rem] text-[#8A8A8E] text-left font-normal;
