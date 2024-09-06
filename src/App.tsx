@@ -23,6 +23,7 @@ import Explore from "./pages/dashboard/Explore";
 import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
+import PrivateRoute from "./pages/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -49,7 +50,7 @@ function App() {
           <Route path="/onboarding" element={<OnboardingLayout />}>
             <Route index element={<Onboarding />} />
           </Route>
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<Explore />} />
