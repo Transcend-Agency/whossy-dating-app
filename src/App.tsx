@@ -20,14 +20,10 @@ import Landing from "./pages/Landing";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import UserProfile from "./pages/dashboard/UserProfile";
 import Explore from "./pages/dashboard/Explore";
-import Matching from "./pages/Matching";
 import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
-import Profile from "./pages/MobileProfile";
-import EditProfile from "./pages/EditProfile";
-import Settings from "./pages/Settings";
-import Preferences from "./pages/Preferences";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -54,7 +50,8 @@ function App() {
           <Route path="/onboarding" element={<OnboardingLayout />}>
             <Route index element={<Onboarding />} />
           </Route>
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          {/* <Route path="/dashboard" element={<DashboardLayout />}> */}
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<Explore />} />

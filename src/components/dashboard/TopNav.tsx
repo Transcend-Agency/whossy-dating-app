@@ -1,17 +1,20 @@
-import { useNavigate } from "react-router-dom";
 import { filter, settings } from "../../assets/icons";
 import Icon from "../ui/Icon";
 
-const TopNav = () => {
-  const navigate = useNavigate();
+interface TopNavProps {
+  onSettings?: () => void;
+  onPreferences?: () => void;
+}
+
+const TopNav: React.FC<TopNavProps> = ({onSettings, onPreferences}) => {
   return (
-    <div className="flex justify-end sticky top-0 bg-white z-50 p-[1rem] space-x-[1.5rem]">
+    <div className="flex justify-end sticky top-0 bg-white p-[1rem] space-x-[1.5rem]">
       <Icon
         src={settings}
         className="cursor-pointer"
-        onClick={() => navigate("/dashboard/settings")}
+        onClick={onSettings}
       />
-      <Icon src={filter} className="cursor-pointer" onClick={() => navigate("/dashboard/profile/preferences")}/>
+      <Icon src={filter} className="cursor-pointer" onClick={onPreferences}/>
     </div>
   );
 };

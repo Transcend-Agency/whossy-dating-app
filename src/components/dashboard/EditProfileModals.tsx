@@ -2,28 +2,34 @@ import * as Slider from "@radix-ui/react-slider"
 import { motion } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import DashboardSettingsModal, { DashboardSettingsModalProps } from "./DashboardSettingsModal"
+import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants"
 
-export const NameSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
+export const NameSettingsModal: React.FC<DashboardSettingsModalProps & {first_name: string, last_name: string, handleSave: (first_name: string, last_name:string) => void}> = ({ showing, hideModal, first_name, last_name, handleSave }) => {
+    const [fullName, setFullName] = useState<{first_name: string, last_name: string}>({first_name, last_name })
+    useEffect(() => {
+        setFullName({first_name, last_name})
+    }, [first_name, last_name])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Name">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Name"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(fullName.first_name, fullName.last_name)}}>Save</button>}>
             <div className="">
                 <div className="modal__input-group">
                     <label className="modal__input-group__label">First Name</label>
-                    <input className="modal__input-group__input" />
+                    <input className="modal__input-group__input" onChange={(e) => setFullName((prev) => ({...prev, first_name: e.target.value}))} value={fullName.first_name} />
                 </div>
                 <div className="modal__input-group">
                     <label className="modal__input-group__label">Last Name</label>
-                    <input className="modal__input-group__input" />
+                    <input className="modal__input-group__input"  onChange={(e) => setFullName((prev) => ({...prev, last_name: e.target.value}))} value={fullName.last_name}/>
                 </div>
             </div>
         </DashboardSettingsModal>
     )
 }
 
-export const GenderSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [gender, setGender] = useState("")
+export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & {userGender: string, handleSave: (gender: string) => void}> = ({ showing, hideModal, userGender, handleSave }) => {
+    const [gender, setGender] = useState(userGender);
+    useEffect(() => {setGender(userGender)}, [userGender]);
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(gender)}}>Save</button>}>
             <div className="modal__gender-options">
                 <div onClick={() => setGender("Male")} className={`modal__gender-option ${gender == 'Male' && 'modal__gender-option--selected'}`}>Male</div>
                 <div onClick={() => setGender("Female")} className={`modal__gender-option ${gender == 'Female' && 'modal__gender-option--selected'}`}>Female</div>
@@ -55,22 +61,23 @@ export const EmailSettingsModal: React.FC<DashboardSettingsModalProps> = ({ show
     )
 }
 
-export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [email, setEmail] = useState('+2348140697549')
+export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps & {phone_number: string, handleSave: (phoneNumber: string) => void}> = ({ showing, hideModal, handleSave,phone_number }) => {
+    const [phoneNumber, setPhoneNumber] = useState(phone_number)
     const [isEditable, setIsEditable] = useState(false)
     const inputRef = useRef(null)
     useEffect(() => {
         setIsEditable(false)
     }, [showing])
+    useEffect(() => {setPhoneNumber(phone_number)}, [phone_number])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Phone Number">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Phone Number"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(phoneNumber)}}>Save</button>}>
             <div className="modal__verified-changeable-input">
                 <div className="modal__verified-changeable-input__left">
                     <p>Phone Number</p>
                     <div className="modal__verified-badge">Verified</div>
                 </div>
-                {!isEditable && <p className="modal__verified-changeable-input__value">{email}</p>}
-                {isEditable && <input ref={inputRef} className="modal__verified-changeable-input__input" onChange={(e) => setEmail(e.target.value)} value={email} />}
+                {!isEditable && <p className="modal__verified-changeable-input__value">{phoneNumber}</p>}
+                {isEditable && <input ref={inputRef} className="modal__verified-changeable-input__input" onChange={(e) => setPhoneNumber(e.target.value)} value={phoneNumber} />}
             </div>
             {/* <AnimatePresence></AnimatePresence> */}
             <motion.p initial={{ opacity: isEditable ? 0 : 1 }} animate={{ opacity: isEditable ? 0 : 1 }} exit={{ opacity: 0 }} className="modal__verified-changeable-input__click-to-edit" onClick={() => { setIsEditable(true) }}>Click to update phone number</motion.p>
@@ -78,11 +85,12 @@ export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps> = (
     )
 }
 
-export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(['Looking to date', 'Chatting and connecting', 'Just for fun', 'Ready for commitment', 'Undecided or exploring'])
-    const [selectedOption, setSelectedOption] = useState('')
+export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModalProps & {userPreference: number, handleSave: (preference: number) => void}> = ({ showing, hideModal, userPreference, handleSave }) => {
+    const [options] = useState(preference)
+    const [selectedOption, setSelectedOption] = useState(options[userPreference]);
+    useEffect(() => {setSelectedOption(options[userPreference])}, [userPreference])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -92,11 +100,12 @@ export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModa
     )
 }
 
-export const LoveLanguageSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(['Giving and receiving gifts', 'Touch and hugging', 'Heartfelt Compliments', 'Doing Things for Each Other', 'Spending Time Togther'])
-    const [selectedOption, setSelectedOption] = useState('')
+export const LoveLanguageSettingsModal: React.FC<DashboardSettingsModalProps & {userLoveLanguage: number, handleSave: (love_language: number) => void}> = ({ showing, hideModal, userLoveLanguage, handleSave }) => {
+    const [options] = useState(love_language)
+    const [selectedOption, setSelectedOption] = useState(options[userLoveLanguage])
+    useEffect(() => {setSelectedOption(options[userLoveLanguage])}, [userLoveLanguage])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Love Language">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Love Language" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -106,11 +115,13 @@ export const LoveLanguageSettingsModal: React.FC<DashboardSettingsModalProps> = 
     )
 }
 
-export const ZodiacSignSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(['Cancer', 'Leo', 'Taurus', 'Virgo', 'Aquarius', 'Capricorn', 'Pisces', 'Gemini', 'Libra', 'Aries', 'Scorpio', 'Sagittarius'])
-    const [selectedOption, setSelectedOption] = useState('')
+export const ZodiacSignSettingsModal: React.FC<DashboardSettingsModalProps & {userZodiac: number, handleSave: (zodiac: number) => void}> = ({ showing, hideModal, userZodiac, handleSave }) => {
+    const [options] = useState(zodiac)
+    const [selectedOption, setSelectedOption] = useState(options[userZodiac])
+    useEffect(() => {setSelectedOption(options[userZodiac])}, [userZodiac])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Zodiac Sign">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Zodiac Sign" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -120,11 +131,12 @@ export const ZodiacSignSettingsModal: React.FC<DashboardSettingsModalProps> = ({
     )
 }
 
-export const FutureFamilyPlansSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(['I want children', 'Not sure yet', 'Not interested for now', 'I don’t want children', 'I have children', 'I want more'])
-    const [selectedOption, setSelectedOption] = useState('')
+export const FutureFamilyPlansSettingsModal: React.FC<DashboardSettingsModalProps & {userFamilyGoal: number, handleSave: (family_goal: number) => void}> = ({ showing, hideModal, userFamilyGoal, handleSave }) => {
+    const [options] = useState(family_goal)
+    const [selectedOption, setSelectedOption] = useState(options[userFamilyGoal])
+    useEffect(() => {setSelectedOption(options[userFamilyGoal])}, [userFamilyGoal])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Future Family Plans">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Future Family Plans" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -134,11 +146,13 @@ export const FutureFamilyPlansSettingsModal: React.FC<DashboardSettingsModalProp
     )
 }
 
-export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(['Working on quitting', 'Drinks and smokes', 'Occasional smoker', 'Frequent smoker', 'Doesn’t smoke'])
-    const [selectedOption, setSelectedOption] = useState('')
+export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps & {userSmoke: number, handleSave: (smoke: number) => void}> = ({ showing, hideModal, userSmoke, handleSave }) => {
+    const [options] = useState(smoking)
+    const [selectedOption, setSelectedOption] = useState(options[userSmoke])
+    useEffect(() => {setSelectedOption(options[userSmoke])}, [userSmoke])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Smoker">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Smoker" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -148,22 +162,12 @@ export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps> = 
     )
 }
 
-export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState([
-        "Christianity",
-        "Islam",
-        "Hinduism",
-        "Buddhism",
-        "Sikhism",
-        "Judaism",
-        "Bahá'í Faith",
-        "Jainism",
-        "Zoroastrianism",
-        "Atheism"
-    ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps & {userReligion: number, handleSave: (religion: number) => void}> = ({ showing, hideModal, userReligion, handleSave }) => {
+    const [options] = useState(religion)
+    const [selectedOption, setSelectedOption] = useState(options[userReligion])
+    useEffect(() => {setSelectedOption(options[userReligion])}, [userReligion])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -173,17 +177,13 @@ export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps> = ({ s
     )
 }
 
-export const DrinkingSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState([
-        "Mindful drinking",
-        "100% Sober",
-        "Special moments only",
-        "Regular nights out",
-        "Not my thing"
-    ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const DrinkingSettingsModal: React.FC<DashboardSettingsModalProps & {userDrink: number, handleSave: (userDrink: number) => void} > = ({ showing, hideModal, userDrink, handleSave }) => {
+    const [options] = useState(drinking)
+    const [selectedOption, setSelectedOption] = useState(options[userDrink])
+    useEffect(() => {setSelectedOption(options[userDrink])}, [userDrink])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Drinking">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Drinking" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -193,17 +193,13 @@ export const DrinkingSettingsModal: React.FC<DashboardSettingsModalProps> = ({ s
     )
 }
 
-export const WorkoutSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState([
-        "Yes, regularly",
-        "Occasionally",
-        "Only on weekends",
-        "Rarely",
-        "Not at all"
-    ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const WorkoutSettingsModal: React.FC<DashboardSettingsModalProps & {userWorkout: number, handleSave: (userWorkout: number) => void}> = ({ showing, hideModal, userWorkout, handleSave }) => {
+    const [options] = useState(workout)
+    const [selectedOption, setSelectedOption] = useState(options[userWorkout])
+    useEffect(() => {setSelectedOption(options[userWorkout])}, [userWorkout])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Workout">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Workout" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -213,25 +209,13 @@ export const WorkoutSettingsModal: React.FC<DashboardSettingsModalProps> = ({ sh
     )
 }
 
-export const PetsSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState([
-        "🐕 Dog",
-        "🐈 Cat",
-        "🐍 Reptile",
-        "🐸 Amphibian",
-        "🦜 Bird",
-        "🐟 Fish",
-        "😩 Don’t like pets",
-        "🐇 Rabbits",
-        "🐀 Mouse",
-        "😉 Planning on getting",
-        "🤮 Allergic",
-        "🐎 Other",
-        "🙃 Want a pet"
-    ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const PetsSettingsModal: React.FC<DashboardSettingsModalProps & {userPet: number, handleSave: (pet: number) => void}> = ({ showing, hideModal, userPet, handleSave }) => {
+    const [options] = useState(pets)
+    const [selectedOption, setSelectedOption] = useState(options[userPet])
+    useEffect(() => {setSelectedOption(options[userPet])}, [userPet])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Pets">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Pets" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -241,19 +225,13 @@ export const PetsSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showi
     )
 }
 
-export const MaritalStatusSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(
-        [
-            "Single",
-            "Married",
-            "Divorced",
-            "Widowed",
-            "Separated",
-            "In a Relationship"
-        ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const MaritalStatusSettingsModal: React.FC<DashboardSettingsModalProps & {userMaritalStatus: number, handleSave: (marital_status: number) => void}> = ({ showing, hideModal, userMaritalStatus, handleSave }) => {
+    const [options] = useState(marital_status)
+    const [selectedOption, setSelectedOption] = useState(options[userMaritalStatus])
+    useEffect(() => {setSelectedOption(options[userMaritalStatus])}, [userMaritalStatus])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -263,18 +241,13 @@ export const MaritalStatusSettingsModal: React.FC<DashboardSettingsModalProps> =
     )
 }
 
-export const EducationSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [options] = useState(
-        [
-            "High School",
-            "Associate Degree",
-            "Bachelor's Degree",
-            "Master's Degree",
-            "Doctorate (Ph.D.)"
-        ])
-    const [selectedOption, setSelectedOption] = useState('')
+export const EducationSettingsModal: React.FC<DashboardSettingsModalProps & {userEducation: number, handleSave: (education: number) => void}> = ({ showing, hideModal, userEducation, handleSave }) => {
+    const [options] = useState(education)
+    const [selectedOption, setSelectedOption] = useState(options[userEducation])
+    useEffect(() => {setSelectedOption(options[userEducation])}, [userEducation])
+
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Education" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -284,8 +257,8 @@ export const EducationSettingsModal: React.FC<DashboardSettingsModalProps> = ({ 
     )
 }
 
-export const HeightSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [heightInCm, setHeightInCm] = useState<number[]>([55])
+export const HeightSettingsModal: React.FC<DashboardSettingsModalProps & {userHeight: number, handleSave: (height: number) => void}> = ({ showing, hideModal, userHeight, handleSave }) => {
+    const [heightInCm, setHeightInCm] = useState<number[]>([userHeight])
     const cmToFeetAndInches = (cm: number) => {
         // 1 inch = 2.54 cm
         // 1 foot = 12 inches
@@ -295,8 +268,9 @@ export const HeightSettingsModal: React.FC<DashboardSettingsModalProps> = ({ sho
 
         return `${feet}'${inches}"`;
     }
+    useEffect(() => {setHeightInCm([userHeight])}, [userHeight])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Height">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Height" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(heightInCm[0])}}>Save</button>}>
             <div className="modal__slider-container">
                 <div className="modal__slider-container__value">
                     {heightInCm}cm ({cmToFeetAndInches(heightInCm[0])})
@@ -314,14 +288,15 @@ export const HeightSettingsModal: React.FC<DashboardSettingsModalProps> = ({ sho
     )
 }
 
-export const WeightSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
-    const [weightInKg, setWeightInKg] = useState<number[]>([55])
+export const WeightSettingsModal: React.FC<DashboardSettingsModalProps & {userWeight: number, handleSave: (weight: number) => void}> = ({ showing, hideModal, userWeight, handleSave }) => {
+    const [weightInKg, setWeightInKg] = useState<number[]>([userWeight])
     const kilogramsToPounds = (kg: number) => {
         const lbs = kg * 2.20462;
         return lbs.toFixed(2); // Rounds to 2 decimal places
     }
+    useEffect(() => {setWeightInKg([userWeight])}, [userWeight])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Weight">
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Weight" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(weightInKg[0])}}>Save</button>}>
             <div className="modal__slider-container">
                 <div className="modal__slider-container__value">
                     {weightInKg}kg ({kilogramsToPounds(weightInKg[0])}lbs)
@@ -334,6 +309,81 @@ export const WeightSettingsModal: React.FC<DashboardSettingsModalProps> = ({ sho
                         <Slider.Thumb className="SliderThumb" aria-label="Volume" />
                     </Slider.Root>
                 </form>
+            </div>
+        </DashboardSettingsModal>
+    )
+}
+
+export const CountrySettingsModal: React.FC<DashboardSettingsModalProps & {preferredCountry: string; handleSave: (country: string) => void}> = ({ showing, hideModal, preferredCountry, handleSave}) => {
+    // const [options] = useState(education)
+    // const [selectedOption, setSelectedOption] = useState('')
+    // useEffect(() => {setSelectedOption(options[userEducation])}, [userEducation])
+
+    const [country, setCountry] = useState<string>(preferredCountry)
+    useEffect(() => {setCountry(preferredCountry)}, [preferredCountry])
+
+    return (
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => handleSave(country)}>Save</button>}>
+            <div className="modal__input-group__image-container">
+                <img className="modal__input-group__image" src="/assets/icons/search.svg"/>
+                <input className="modal__input-group__input w-full" value={country} onChange={(e) => setCountry(e.target.value)}/>
+            </div>
+            {/* <div className="modal__select-options">
+                {options.map(option => (
+                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                ))}
+            </div> */}
+        </DashboardSettingsModal>
+    )
+}
+
+export const CitySettingsModal: React.FC<DashboardSettingsModalProps & {preferredCity: string; handleSave: (city: string) => void}> = ({ showing, hideModal, preferredCity, handleSave}) => {
+
+    const [city, setCity] = useState<string>(preferredCity)
+    useEffect(() => {setCity(preferredCity)}, [preferredCity])
+
+    return (
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => handleSave(city)}>Save</button>}>
+            <div className="modal__input-group__image-container">
+                <img className="modal__input-group__image" src="/assets/icons/search.svg"/>
+                <input className="modal__input-group__input w-full" value={city} onChange={(e) => setCity(e.target.value)}/>
+            </div>
+            {/* <div className="modal__select-options">
+                {options.map(option => (
+                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                ))}
+            </div> */}
+        </DashboardSettingsModal>
+    )
+}
+
+export const CommunicationSettingsModal: React.FC<DashboardSettingsModalProps & {userCommunicationStyle: number, handleSave: (communication_style: number) => void}> = ({ showing, hideModal, userCommunicationStyle, handleSave }) => {
+    const [options] = useState(communication_style)
+    const [selectedOption, setSelectedOption] = useState(options[userCommunicationStyle])
+    useEffect(() => {setSelectedOption(options[userCommunicationStyle])}, [userCommunicationStyle])
+
+    return (
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Communication Style" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
+            <div className="modal__select-options">
+                {options.map(option => (
+                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                ))}
+            </div>
+        </DashboardSettingsModal>
+    )
+}
+
+export const DietarySettingsModal: React.FC<DashboardSettingsModalProps & {preferredDietary: number, handleSave: (dietary: number) => void}> = ({ showing, hideModal, preferredDietary, handleSave }) => {
+    const [options] = useState(dietary)
+    const [selectedOption, setSelectedOption] = useState(options[preferredDietary])
+    useEffect(() => {setSelectedOption(options[preferredDietary])}, [preferredDietary])
+
+    return (
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Communication Style" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption))}}>Save</button>}>
+            <div className="modal__select-options">
+                {options.map(option => (
+                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                ))}
             </div>
         </DashboardSettingsModal>
     )
