@@ -2,6 +2,14 @@ import toast from "react-hot-toast";
 import Plans from "../components/dashboard/Plans";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/dashboard/MobileNavBar";
+import { useEffect, useState } from "react";
+import { useGetUserProfile } from "@/hooks/useUser";
+import { User, UserPrefences } from "@/types/user";
+import {motion} from "framer-motion"
+import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
+import ProfilePlan from "@/components/dashboard/ProfilePlan";
+import TopNav from "@/components/dashboard/TopNav";
+import BottomNav from "@/components/dashboard/BottomNav";
 
 interface CardsProps {
   src: string;
@@ -10,6 +18,14 @@ interface CardsProps {
   txtColor: string;
   bgColor: string;
 }
+
+interface MobileProfileProps {
+  activePage: string
+  onEditProfilePage: () => void
+  onSettingsPage: () => void
+  onFiltersPage: () => void
+}
+
 const Cards: React.FC<CardsProps> = ({
   src,
   title,
@@ -35,73 +51,79 @@ const Cards: React.FC<CardsProps> = ({
   );
 };
 
-const MobileProfile = () => {
+const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage}) => {
   const percentage = 20;
   const navigate = useNavigate();
+
+  const [userData, setUserData] = useState<User>();
+  const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
+  
+  const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
+  const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+
+  useEffect(() => { fetchUser(); fetchUserPreferences();}, [])
+
+  const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
+    if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
+      throw new Error('Invalid Firebase date object');
+    }
+  
+    // Convert seconds to milliseconds
+    const milliseconds = firebaseDate.seconds * 1000;
+  
+    // Create a Date object
+    const date = new Date(milliseconds);
+  
+    // Get the year
+    return date.getFullYear();
+  };
+
+
   return (
-    <div className="lg:hidden">
-      <NavBar>
-        <div className="profile">
-          <section className="profile__section-one">
-            <figure className="profile__image-container">
-              <img
-                src="/assets/images/profile/profile-pic.png"
-                alt="Profile Image"
-                className="profile__image-container__image"
-              />
-              <img
-                className="profile__image-container__icon"
-                src="/assets/icons/profile.svg"
-                alt="profile edit"
-                onClick={() => {
-                  navigate('/dashboard/profile/edit')
-                }}
-              />
+    <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page lg:hidden'>
+    <div className='user-profile__container'>
+        {/* <div className='flex justify-end'>
+            <button onClick={() => setActivePage('profile-settings')} className='user-profile__settings-button'><img src="/assets/images/dashboard/settings.svg" /></button>
+        </div> */}
+        <TopNav onSettings={onSettingsPage} onPreferences={onFiltersPage}/>
+        <section className='user-profile__profile-picture-container'>
+            <figure className='user-profile__profile-picture'>
+                <img src="/assets/images/auth-bg/1.webp" />
             </figure>
-            {/* <figure className="profile__image-container">
-            <CircleProgressBar percentage={95} circleWidth={"100"} />
-            <img
-              className="profile__image-container__icon"
-              src="/assets/icons/profile.svg"
-              alt=""
-            />
-          </figure> */}
-            <h1 className="text-[1.6rem] w-fit self-center">
-              <span className="font-bold">Stephanie,</span> 21
-            </h1>
-            <h2 className="bg-black py-[0.8rem] px-[1.2rem] text-white text-[1.2rem] rounded-[8px] w-fit self-center">
-              {percentage}% complete
-            </h2>
-            <article
-              className="bg-white flex items-center justify-center w-full text-[1.4rem] py-[14px] px-[32px] space-x-[16px] rounded-[12px]"
-              style={{ border: "1px solid #D9D9D9" }}
-            >
-              <img src="/assets/icons/announcement.svg" alt="" />
-              <p>
-                Add more info to your profile to stand out. Click on the edit button
-                to get started.
-              </p>
-            </article>
-            <article className="bg-[#F6F6F6] flex items-center justify-center w-full text-[1.4rem] py-[14px] px-[32px] space-x-[16px] rounded-[12px]">
-              <img src="/assets/icons/announcement.svg" alt="" />
-              <p>Whossy Safety Guide</p>
-            </article>
-            <div className="w-full flex gap-x-4">
-              {cards.map(({ title, btnText, txtColor, bgColor, src }) => (
-                <Cards
-                  title={title}
-                  buttonText={btnText}
-                  txtColor={txtColor}
-                  bgColor={bgColor}
-                  src={src}
-                />
-              ))}
+            <button onClick={onEditProfilePage} className='user-profile__update-profile-button'>
+                <img src="/assets/icons/update-profile.svg" />
+            </button>
+        </section>
+        <section className='user-profile__profile-details'>
+            <div className='user-profile__profile-details'>
+                <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+                    <img src="/assets/icons/verified-badge.svg" />
+                </p>
             </div>
-            <Plans />
-          </section>
+            <div className='user-profile__profile-details__completion-status'>
+                20% Complete
+            </div>
+        </section>
+        <div className='user-profile__banner user-profile__banner--info'>
+            <img src="/assets/icons/notification-alert.svg" />
+            <p>Add more info to your profile to stand out. Click on the edit button to get started.</p>
         </div>
-      </NavBar>
+        <div className='user-profile__banner user-profile__banner--safety-guide'>
+            <img src="/assets/icons/notification-alert.svg" />
+            <p>Whossy Safety Guide</p>
+        </div>
+        <section className='user-profile__credit-buttons'>
+            <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
+            <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
+        </section>
+        <BottomNav />
     </div>
+    <section className='user-profile__plans'>
+        <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' />
+        <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' />
+    </section>
+
+</motion.div>
   );
 };
 
