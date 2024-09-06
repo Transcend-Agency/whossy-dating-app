@@ -51,6 +51,7 @@ function App() {
             <Route index element={<Onboarding />} />
           </Route>
           <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          {/* <Route path="/dashboard" element={<DashboardLayout />}> */}
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<Explore />} />

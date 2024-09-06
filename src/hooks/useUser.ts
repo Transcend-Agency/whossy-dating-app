@@ -11,12 +11,12 @@ const collection_two = "preferences";
 const collection_three = "filters";
 
 const uid = auth.currentUser?.uid;
-const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
+// const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
 const useGetUserProfile = async (
   path: CollectionName
 ): Promise<UserProfile | undefined> => {
-  const docRef = doc(db, path, uid2);
+  const docRef = doc(db, path, uid as string);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -37,7 +37,7 @@ const useUpdateUserProfile = async (
   success: () => void,
   updatedFields?: Partial<UserProfile>
 ) => {
-  const userRef = doc(db, path, uid2);
+  const userRef = doc(db, path, uid as string);
   await updateDoc(userRef, updatedFields as UserProfile).then(() => {
     success();
     toast.success("Updated!");
@@ -47,7 +47,7 @@ const useUpdateUserProfile = async (
 const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) => void) => {
   if (!file) return;
   const storage = getStorage();
-  const storageRef = ref(storage, `tests/userId/profile_pictures/image_${i}`);
+  const storageRef = ref(storage, `tests/${uid as string}/profile_pictures/image_${i}`);
   uploadBytes(storageRef, file)
     .then(() => {
       // toast.success("Image has been uploaded successfully 🚀");
@@ -64,7 +64,7 @@ const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) =>
 const uploadPhotosToFirestore = async (photo: string[]) => {
   console.log("Loading...");
   try {
-    await setDoc(doc(db, collection_two, "userId_190"), {photo});
+    await setDoc(doc(db, collection_two, uid as string), {photo});
     // toast.success("Account has been created successfully 🚀");
     // setOpenModal(false);
     // navigate('/dashboard');
