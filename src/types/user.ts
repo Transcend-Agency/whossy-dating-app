@@ -12,11 +12,12 @@ export type User = {
 
 export type UserPrefences = {
   bio?: string;
-  date_of_birth?: string;
+  date_of_birth?: {nanoseconds: number, seconds: number};
   distance?: number;
   drink?: number;
   education?: number;
   interests?: string[];
+  height?: number;
   meet?: number;
   pets?: string;
   photos?: string[];
@@ -29,6 +30,7 @@ export type UserPrefences = {
   family_goal?: number;
   religion?: number;
   pet_owner?: number;
+  weight?: number
 };
 
 export type UserFilters = {
@@ -41,7 +43,9 @@ export type UserFilters = {
   drink?: number;
   education?: number;
   family_goals?: number;
+  family_goal?: number;
   family_plans?: number;
+  gender?: string;
   has_bio?: boolean;
   height_range?: { max: number; min: number };
   interests?: string[];
@@ -55,8 +59,8 @@ export type UserFilters = {
   similar_interest?: boolean;
   smoke?: number;
   weight_range?: { max: number; min: number };
-  workout: number;
-  zodiac: number;
+  workout?: number;
+  zodiac?: number;
 };
 
 export type UserProfile = User | UserFilters | UserPrefences;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 type SettingsGroupProps = {
-    data: [string, string, () => void][]
+    data: [string, string | undefined, () => void][]
 };
 
 const SettingsGroup: React.FC<SettingsGroupProps> = ({ data }) => {
@@ -11,7 +11,7 @@ const SettingsGroup: React.FC<SettingsGroupProps> = ({ data }) => {
             <button onClick={item[2]} className="settings-page__settings-group__item">
                 <div className="settings-page__settings-group__item-container">
                     <div className="settings-page__settings-group__item__label">{item[0]}</div>
-                    <div className="settings-page__settings-group__item__value">{item[1]}<img src="/assets/icons/arrow-right.svg" /></div>
+                    {item[1] !== undefined ? <div className="settings-page__settings-group__item__value">{item[1]}{(item[0] !== "Birthday" && item[0] !== "Email") && <img src="/assets/icons/arrow-right.svg" />}</div> : <div className='settings-page__settings-group__item__value'>Choose</div>}
                 </div>
                 {index !== data.length - 1 && <div className="settings-page__settings-group__item-separator"></div>}
             </button>

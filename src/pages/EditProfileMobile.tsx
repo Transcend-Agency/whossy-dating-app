@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
-import SettingsGroup from "../../components/dashboard/SettingsGroup";
-import UserProfileImage from "../../components/dashboard/UserProfileImage";
 import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
 import { User, UserPrefences, UserProfile } from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
+import { DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "@/components/dashboard/EditProfileModals";
+import UserProfileImage from "@/components/dashboard/UserProfileImage";
+import SettingsGroup from "@/components/dashboard/SettingsGroup";
 import Photos from "@/components/dashboard/Photos";
 
 interface EditProfileProps {
@@ -16,7 +16,7 @@ interface EditProfileProps {
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile }) => {
+const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
     const [userData, setUserData] = useState<User>();
@@ -57,14 +57,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
             <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userPrefencesData?.weight as number}  handleSave={(weight) => updateUserPreferences({weight}) }/>
             <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
 
-            <motion.div animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
+            <motion.div animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page-no-border edit-profile settings-page lg:hidden">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Edit Profile</p>
                         </button>
-                        <button className="settings-page__title__save-button">Save</button>
+                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                     <button onClick={onPreviewProfile} className="settings-page__preview">Preview Profile</button>
                     {/* <div className="settings-page__profile-images">
@@ -83,7 +83,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
 
                     </div> */}
                     <Photos />
-                    <div className="space-y-3">
+                    <div className="space-y-3 mt-3">
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')
                         }],
@@ -146,4 +146,4 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
     )
 }
 
-export default EditProfile;
+export default EditProfileMobile;
