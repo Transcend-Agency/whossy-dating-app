@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -10,7 +10,7 @@ const collection_one = "users";
 const collection_two = "preferences";
 const collection_three = "filters";
 
-const uid = "Ay2YNO2JnYePExiVo7AMarkupE22";
+const uid = auth.currentUser?.uid;
 const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
 const useGetUserProfile = async (
