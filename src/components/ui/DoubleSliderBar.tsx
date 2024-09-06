@@ -2,14 +2,18 @@ import * as Slide from "@radix-ui/react-slider";
 import { useEffect, useState } from "react";
 
 interface DoubleSliderBarProps {
-  thumbColor: string;
-  rangeColor: string;
-  trackColor: string;
+  thumbColor?: string;
+  rangeColor?: string;
+  trackColor?: string;
   val: number[]
   getValue: (arr: number[]) => void;
 }
 
-const DoubleSliderBar: React.FC<DoubleSliderBarProps> = ({ thumbColor, rangeColor, trackColor, getValue, val }) => {
+const DoubleSliderBar: React.FC<DoubleSliderBarProps> = ({ 
+    rangeColor = '#C5C5C7',
+  trackColor = '#ffffff',
+  thumbColor = '#ffffff',
+   getValue, val }) => {
   const [value, setValue] = useState<number[]>(val);
   useEffect(() => {
     setValue(val)
