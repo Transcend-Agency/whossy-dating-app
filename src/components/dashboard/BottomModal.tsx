@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SliderBar from "../ui/SliderBar";
 import { useUpdateUserProfile } from "@/hooks/useUser";
-import { UserPrefences } from "@/types/user";
+import { UserFilters, UserPrefences } from "@/types/user";
 import {
   marital_status,
   relationship_preferences,
@@ -16,6 +16,7 @@ import {
   workout,
   education,
 } from "@/constants";
+import {motion as m} from "framer-motion"
 
 const BottomModal = ({
   item,
@@ -72,12 +73,19 @@ const BottomModal = ({
         close();
       },
       {
-        [item.id as keyof UserPrefences]: findValueInArrays(active)?.index,
+        [item.id as keyof (UserPrefences | UserFilters)]: findValueInArrays(active)?.index,
       }
     );
   };
+
+  const modalVariants = {
+    hidden: { opacity: 0, y: "100%" },
+    visible: { opacity: 1, y: "0%", transition: { duration: 0.5 } },
+    exit: { opacity: 0, y: "100%", transition: { duration: 1.5 } },
+  };
+
   return (
-    <div
+    <m.div
       className="bg-white text-black flex-1 fixed w-full bottom-0 z-50"
       style={{
         border: "1px solid",
@@ -85,6 +93,10 @@ const BottomModal = ({
         borderTopRightRadius: "1.8rem",
         borderTopLeftRadius: "1.8rem",
       }}
+      variants={modalVariants}
+      initial={"hidden"}
+      animate="visible"
+      exit="exit"
     >
       <header
         className="text-[1.6rem] flex justify-between p-[1.6rem]"
@@ -114,7 +126,7 @@ const BottomModal = ({
               onClick={() => {
                 setActive(_);
                 console.log(
-                  item.id as keyof UserPrefences,
+                  item.id as keyof (UserPrefences | UserFilters),
                   findValueInArrays(active)?.index
                 );
               }}
@@ -166,7 +178,7 @@ const BottomModal = ({
           </div>
         </div>
       )}
-    </div>
+    </m.div>
   );
 };
 

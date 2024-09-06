@@ -809,6 +809,8 @@ const preference = [
 
 const education = ['Not in school', 'Currently Schooling']
 
+const dietary = ['Vegetarian', 'Vegan', 'Pescatarian', 'Halal', 'Carnivore', 'Omnivore', 'Other']
+
 // const uploadImage = (file: File) => {
 //   if (!file) return;
 
@@ -848,6 +850,7 @@ const education = ['Not in school', 'Currently Schooling']
 
 export {
   alphabet,
+  dietary,
   drinking,
   meet,
   pets,

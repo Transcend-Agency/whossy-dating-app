@@ -20,7 +20,7 @@
                 @apply text-[1.8rem] ml-[1.2rem];
             }
             &__save-button {
-                @apply text-[1.8rem] text-[#485FE6] py-[4px];
+                @apply text-[1.8rem] text-[#485FE6] py-[4px] cursor-pointer;
             }
         }
         &__back-button {
@@ -40,6 +40,12 @@
         }
         &__input {
             @apply text-[#8A8A8E] outline-0 focus:outline-0 text-[1.6rem] leading-[1.1rem] bg-transparent;
+        }
+        &__image {
+            @apply size-[1.4rem];
+        }
+        &__image-container {
+            @apply bg-[#F6F6F6] py-[1.2rem] px-[1.6rem] rounded-[0.8rem] flex items-center space-x-3;
         }
     }
     &__gender-options {
@@ -66,7 +72,7 @@
             @apply text-center leading-[1.1rem] text-[1.6rem] underline mt-[2.4rem] cursor-pointer w-fit mx-auto;
         }
         &__input { 
-            @apply text-[1.8rem] text-[#8A8A8E] bg-transparent focus:outline-none text-right w-full;
+            @apply text-[1.8rem] text-[#8A8A8E] bg-transparent w-fit focus:outline-none text-right;
         }
     }
     &__verified-badge {
