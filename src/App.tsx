@@ -20,14 +20,9 @@ import Landing from "./pages/Landing";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import UserProfile from "./pages/dashboard/UserProfile";
 import Explore from "./pages/dashboard/Explore";
-import Matching from "./pages/Matching";
 import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
-import Profile from "./pages/MobileProfile";
-import EditProfile from "./pages/EditProfile";
-import Settings from "./pages/Settings";
-import Preferences from "./pages/Preferences";
 
 const queryClient = new QueryClient();
 
