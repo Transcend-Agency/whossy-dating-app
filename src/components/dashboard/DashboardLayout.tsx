@@ -25,7 +25,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container'>
                         <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/notification.svg' />
-                        <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/control.svg' />
+                        {/* <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/control.svg' /> */}
                     </div>
                 </div>
             </nav>
