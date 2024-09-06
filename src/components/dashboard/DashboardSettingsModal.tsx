@@ -6,9 +6,10 @@ export type DashboardSettingsModalProps = {
     children?: JSX.Element | JSX.Element[] | boolean;
     hideModal: () => void;
     title?: string;
+    save?: JSX.Element | JSX.Element[] | boolean;
 };
 
-const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, children, hideModal, title }) => {
+const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, children, hideModal, title, save }) => {
 
     return <>
         <AnimatePresence mode='wait'>
@@ -24,7 +25,7 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing
                                     </button>
                                     <h3 className='modal__body__header__title'>{title}</h3>
                                 </div>
-                                <button className='modal__body__header__save-button'>Save</button>
+                                {save}
                             </header>
                             <section className='modal__body__content'>
                                 {children}
