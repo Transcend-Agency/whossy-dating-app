@@ -1,5 +1,6 @@
 import { family_goal, preference } from "@/constants";
 import { useGetUserProfile } from "@/hooks/useUser";
+import { useAuthStore } from "@/store/UserId";
 import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +19,8 @@ const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage,
     const moreDetailsContainer = useRef(null)
     const profileContainer = useRef(null);
 
+    const {auth} = useAuthStore();
+
     const goToNextPost = () => {
         if (currentImage < profileImages.length - 1) {
             setCurrentImage(value => value + 1)
@@ -32,8 +35,8 @@ const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage,
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
     
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+    const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
+    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
     const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {

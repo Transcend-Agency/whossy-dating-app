@@ -49,6 +49,7 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
           }
         }}
       />
+      {/* <button className="w-full bg-black text-white">continue</button> */}
       {/* <button onClick={() => console.log(data)}>click</button> */}
     </OnboardingPage>
   );

@@ -39,7 +39,7 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           />
         ))}
       </div>
-      <div className="onboarding-page__section-one__buttons">
+      <div className="onboarding-page__section-one__buttons cursor-pointer">
         <OnboardingBackButton onClick={goBack} />
         <Button
           text="Continue"

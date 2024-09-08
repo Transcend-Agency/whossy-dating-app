@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { uploadPhotosToGetUrl, useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
 import { UserPrefences } from "@/types/user";
 import { useStorePictureFiles } from "@/store/EditProfileStore";
+import { useAuthStore } from "@/store/UserId";
 
 interface CardProps {
   photo?: string;
@@ -119,8 +120,10 @@ const Card: React.FC<CardProps & {onDelete: () => void; index: number}> = ({
 const Photos = () => {
   const [photo, setPhoto] = useState<string[]>([]);
 
-  const fetchUserPhotos = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setPhoto(data?.photos as string[]) }
-  const updateUserPhotos = (s: string[]) => {useUpdateUserProfile("preferences", () => {fetchUserPhotos(); }, {photos: s})}
+  const {auth} = useAuthStore();
+
+  const fetchUserPhotos = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setPhoto(data?.photos as string[]) }
+  const updateUserPhotos = (s: string[]) => {useUpdateUserProfile("preferences", auth as string, () => {fetchUserPhotos(); }, {photos: s})}
 
   useEffect(() => {fetchUserPhotos()}, [])
   useEffect(() => {setPhoto(photo)}, [photo])

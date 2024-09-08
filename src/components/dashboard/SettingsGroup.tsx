@@ -11,7 +11,10 @@ const SettingsGroup: React.FC<SettingsGroupProps> = ({ data }) => {
             <button onClick={item[2]} className="settings-page__settings-group__item">
                 <div className="settings-page__settings-group__item-container">
                     <div className="settings-page__settings-group__item__label">{item[0]}</div>
-                    {item[1] !== undefined ? <div className="settings-page__settings-group__item__value">{item[1]}{(item[0] !== "Birthday" && item[0] !== "Email") && <img src="/assets/icons/arrow-right.svg" />}</div> : <div className='settings-page__settings-group__item__value'>Choose</div>}
+                    {item[1] !== undefined ? <div className="settings-page__settings-group__item__value">{item[1].length > 40 ? item[1].substring(0, 40) + '...' : item[1]}{(item[0] !== "Birthday" && item[0] !== "Email") && <img src="/assets/icons/arrow-right.svg" />}</div> : <div className='flex gap-x-3'>
+                        <div className='settings-page__settings-group__item__value'>Choose</div>
+                        <img src="/assets/icons/arrow-right.svg" />
+                    </div>}
                 </div>
                 {index !== data.length - 1 && <div className="settings-page__settings-group__item-separator"></div>}
             </button>

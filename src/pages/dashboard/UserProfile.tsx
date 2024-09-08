@@ -15,6 +15,8 @@ import Preferences from './Preferences';
 import Interests from './Interests';
 import SettingsMobile from '../SettingsMobile';
 import PreferencesMobile from '../PreferencesMobile';
+import { useAuthStore } from '@/store/UserId';
+import Skeleton from '@/components/ui/Skeleton';
 
 type UserProfileProps = {
 };
@@ -23,11 +25,13 @@ const UserProfile: React.FC<UserProfileProps> = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests'>('user-profile');
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
 
-    useEffect(() => {fetchUser(); fetchUserPreferences()}, [])
+    const {auth} = useAuthStore();
+    
+    const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
+    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
+
+    useEffect(() => {fetchUser(); fetchUserPreferences()}, [userData, userPrefencesData])
 
     const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -56,16 +60,16 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                         <figure className='user-profile__profile-picture'>
                             <img src="/assets/images/auth-bg/1.webp" />
                         </figure>
-                        <button onClick={() => setActivePage('edit-profile')} className='user-profile__update-profile-button'>
+                        <button onClick={() => setActivePage('edit-profile')} className='user-profile__update-profile-button cursor-pointer'>
                             <img src="/assets/icons/update-profile.svg" />
                         </button>
                     </section>
                     <section className='user-profile__profile-details'>
-                        <div className='user-profile__profile-details'>
-                            <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+                        {/* <div className='user-profile__profile-details flex justify-center mt-2'>
+                          {userData ?  <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
                                 <img src="/assets/icons/verified-badge.svg" />
-                            </p>
-                        </div>
+                            </p> : <Skeleton width='150px' height='20px'/>}
+                        </div> */}
                         <div className='user-profile__profile-details__completion-status'>
                             20% Complete
                         </div>

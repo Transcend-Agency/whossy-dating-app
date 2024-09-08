@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { usePictureStore } from "../../store/onboarding/usePictureStore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Lottie from "lottie-react";
@@ -22,11 +22,11 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const navigate = useNavigate();
 
   const { pictures } = usePictureStore();
-  const { addPhotos, "onboarding-data": data } = useOnboardingStore();
+  const { addPhotos, "onboarding-data": data, reset } = useOnboardingStore();
   const uploadImage = (file: File, i: number) => {
     if (!file) return;
     const storage = getStorage();
-    const storageRef = ref(storage, `tests/userId/profile_pictures/image_${i}`);
+    const storageRef = ref(storage, `tests/${auth.currentUser?.uid}/profile_pictures/image_${i}`);
     uploadBytes(storageRef, file)
       .then(() => {
         // toast.success("Image has been uploaded successfully 🚀");
@@ -43,7 +43,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "preferences", "userId_190"), {
+      await setDoc(doc(db, "preferences", auth.currentUser?.uid as string), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -57,9 +57,11 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
       });
+      await setDoc(doc(db, "filters", auth.currentUser?.uid as string), {});
       toast.success("Account has been created successfully 🚀");
+      reset();
       // setOpenModal(false);
-      navigate('/dashboard');
+      navigate('/dashboard/user-profile');
     } catch (err) {
       console.log(err);
     }
@@ -72,7 +74,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
       <section className="max-h-screen overflow-y-scroll">
         <h1 className="onboarding-page__header">Share a snapshot of you</h1>
         <div className="onboarding-page__text">
-          <p>Add at least 2 recent photos of yourself 🤗</p>
+          <p>Add at least 2 recent photos of yourself 🤗 </p>
           <p>
             Hint: Using your best photo could give a great first impression and
             the beginning of something great
