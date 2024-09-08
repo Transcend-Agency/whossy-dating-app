@@ -19,6 +19,7 @@ const OnboardingButton: React.FC<OnboardingButtonProps> = ({
         if (selected !== null) advance();
         else toast.error(error ?? "Please select an option");
       }}
+      className="cursor-pointer"
       //   disabled={selected === null ? true : false}
       //   className="cursor-not-allowed"
       style={{

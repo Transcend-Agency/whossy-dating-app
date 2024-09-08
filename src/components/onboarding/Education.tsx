@@ -27,7 +27,7 @@ const Education: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         This would be shown on your profile
       </p>
       <EnterSchoolNameInput getSchool={(e) => setSchool(e)} />
-      <div className="onboarding-page__section-one__buttons">
+      <div className="onboarding-page__section-one__buttons cursor-pointer">
         <OnboardingBackButton onClick={goBack} />
         <Button
           text="Continue"

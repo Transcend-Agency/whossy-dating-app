@@ -27,7 +27,7 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing
                                 </div>
                                 {save}
                             </header>
-                            <section className='modal__body__content'>
+                            <section className='modal__body__content overflow-y-scroll'>
                                 {children}
                             </section>
                         </div>

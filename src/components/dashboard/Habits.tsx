@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
 import { UserFilters, UserPrefences } from "@/types/user";
 import HabitSearch from "./HabitSearch";
+import { useAuthStore } from "@/store/UserId";
 
 interface HabitsProps {
   path: string;
@@ -15,15 +16,17 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   const [initData, setInitData] = useState<string[]>([]);
   const [mutatedData, setMutatedData] = useState<string[]>([]);
 
+  const {auth} = useAuthStore();
+
   const fetchInterests = async () => {
-    const userProfile = (await useGetUserProfile(path as 'filters' | 'users' | 'preferences')) as
+    const userProfile = (await useGetUserProfile(path as 'filters' | 'users' | 'preferences', auth as string)) as
       | UserPrefences
       | UserFilters;
 
     if (userProfile) {
       const interests = userProfile.interests as string[];
-      setInitData(interests);
-      setMutatedData(interests);
+      interests && setInitData(interests);
+      interests && setMutatedData(interests);
     } else {
       console.log("No user profile data found.");
     }
@@ -48,7 +51,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   }, [mutatedData]);
 
   const handleUpdate = () => {
-    useUpdateUserProfile(path as 'filters' | 'users' | 'preferences', fetchInterests, {
+    useUpdateUserProfile(path as 'filters' | 'users' | 'preferences', auth as string, fetchInterests, {
       interests: mutatedData,
     });
   };

@@ -94,7 +94,7 @@
 
     &__chat-interface {
         &__drawer {
-            @apply flex justify-between items-center absolute w-[37.5rem] px-[1.6rem] pt-[1.6rem] pb-[2.4rem] rounded-t-[1.6rem] bg-[#F6F6F6] right-[5.6rem] bottom-0 text-[2.4rem] font-medium leading-[2.88rem];
+            @apply items-center absolute w-[37.5rem]  pt-[1.6rem]  rounded-t-[1.6rem] bg-[#F6F6F6] right-[5.6rem] bottom-0 text-[2.4rem] font-medium leading-[2.88rem];
             &__left {
                 @apply flex;
                 img {

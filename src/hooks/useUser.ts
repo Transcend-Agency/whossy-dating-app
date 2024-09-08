@@ -3,6 +3,7 @@ import { auth, db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { useAuthStore } from "@/store/UserId";
 
 type CollectionName = "users" | "preferences" | "filters";
 
@@ -10,11 +11,10 @@ const collection_one = "users";
 const collection_two = "preferences";
 const collection_three = "filters";
 
-const uid = auth.currentUser?.uid;
 // const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
 const useGetUserProfile = async (
-  path: CollectionName
+  path: CollectionName, uid: string
 ): Promise<UserProfile | undefined> => {
   const docRef = doc(db, path, uid as string);
   const docSnap = await getDoc(docRef);
@@ -33,7 +33,7 @@ const useGetUserProfile = async (
 };
 
 const useUpdateUserProfile = async (
-  path: CollectionName,
+  path: CollectionName, uid: string,
   success: () => void,
   updatedFields?: Partial<UserProfile>
 ) => {

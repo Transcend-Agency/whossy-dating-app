@@ -31,6 +31,7 @@ const ShortIntroduction: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           className="w-full border-b outline-none text-[1.6rem] resize-none"
           name=""
           id=""
+          value={value}
           onChange={(e) => {
             if (value.length <= 500 ) setValue(e.target.value);
             else{toast.error("You have reached the max lenght")}

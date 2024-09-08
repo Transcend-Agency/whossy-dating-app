@@ -10,6 +10,7 @@ import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
 import ProfilePlan from "@/components/dashboard/ProfilePlan";
 import TopNav from "@/components/dashboard/TopNav";
 import BottomNav from "@/components/dashboard/BottomNav";
+import { useAuthStore } from "@/store/UserId";
 
 interface CardsProps {
   src: string;
@@ -52,14 +53,13 @@ const Cards: React.FC<CardsProps> = ({
 };
 
 const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage}) => {
-  const percentage = 20;
-  const navigate = useNavigate();
+  const {auth} = useAuthStore()
 
   const [userData, setUserData] = useState<User>();
   const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
   
-  const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-  const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+  const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
+  const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
   useEffect(() => { fetchUser(); fetchUserPreferences();}, [])
 

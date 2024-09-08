@@ -4,6 +4,7 @@ import {
   usePictureStore,
 } from "../../store/onboarding/usePictureStore";
 import Modal from "../ui/Modal";
+import { AnimatePresence } from "framer-motion";
 // import { uploadImage } from "../../constants/onboarding";
 
 interface ImageProps {
@@ -44,7 +45,7 @@ const Image: React.FC<ImageProps> = ({ name }) => {
       {selected !== "" ? (
         <img
           className="absolute -top-[1rem] size-[2.5rem] cursor-pointer"
-          src="/assets/images/onboarding/show-more.svg"
+          src="/assets/images/onboarding/menu.png"
           onClick={() => setOpenModal(true)}
         />
       ) : (
@@ -55,39 +56,41 @@ const Image: React.FC<ImageProps> = ({ name }) => {
         />
       )}
       {openModal && (
-        <Modal onClose={() => setOpenModal(false)}>
-          <div className="bg-white w-[45rem] text-[1.8rem] p-6 space-y-8 rounded-2xl">
-            <header className="flex  items-center space-x-6">
-              <img
-                className="py-[8px] px-[12px] rounded-md cursor-pointer bg-[#F6F6F6]"
-                src="/assets/icons/left-arrow-black.svg"
-                alt="Go back"
-                onClick={() => setOpenModal(false)}
-              />
-              <h1 className=" font-medium">Edit Photo</h1>
-            </header>
-            <button
-              className="w-full py-[14px] rounded-lg font-medium text-[#8A8A8E]"
-              style={{ border: "1px solid #D9D9D9" }}
-              onClick={() => {
-                handleClick();
-                setOpenModal(false);
-              }}
-            >
-              Re-upload
-            </button>
-            <button
-              className="w-full py-[14px] rounded-lg font-medium text-[#8A8A8E]"
-              style={{ border: "1px solid #D9D9D9" }}
-              onClick={() => {
-                setSelected("");
-                setOpenModal(false);
-              }}
-            >
-              Remove photo
-            </button>
-          </div>
-        </Modal>
+        <AnimatePresence>
+          <Modal onClose={() => setOpenModal(false)}>
+            <div className="bg-white w-[45rem] text-[1.8rem] p-6 space-y-8 rounded-2xl">
+              <header className="flex  items-center space-x-6">
+                <img
+                  className="py-[8px] px-[12px] rounded-md cursor-pointer bg-[#F6F6F6]"
+                  src="/assets/icons/left-arrow-black.svg"
+                  alt="Go back"
+                  onClick={() => setOpenModal(false)}
+                />
+                <h1 className=" font-medium">Edit Photo</h1>
+              </header>
+              <button
+                className="w-full py-[14px] rounded-lg font-medium text-center text-[#8A8A8E]"
+                style={{ border: "1px solid #D9D9D9" }}
+                onClick={() => {
+                  handleClick();
+                  setOpenModal(false);
+                }}
+              >
+                Re-upload
+              </button>
+              <button
+                className="w-full py-[14px] rounded-lg font-medium text-[#8A8A8E] text-center"
+                style={{ border: "1px solid #D9D9D9" }}
+                onClick={() => {
+                  setSelected("");
+                  setOpenModal(false);
+                }}
+              >
+                Remove photo
+              </button>
+            </div>
+          </Modal>
+        </AnimatePresence>
       )}
       <input
         type="file"

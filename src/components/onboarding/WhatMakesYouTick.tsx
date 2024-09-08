@@ -28,7 +28,7 @@ const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         <OnboardingBackButton onClick={goBack} />
         {/* A */}
         <button
-          className="onboarding-page__section-one__buttons__select-button-inactive"
+          className="onboarding-page__section-one__buttons__select-button-inactive flex justify-center items-center cursor-pointer"
           onClick={() => {
             if (data.interests) {
               if (data.interests.length >= 5) advance();
