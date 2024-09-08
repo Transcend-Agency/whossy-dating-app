@@ -1,6 +1,4 @@
 import { family_goal, preference } from "@/constants";
-import { useGetUserProfile } from "@/hooks/useUser";
-import { useAuthStore } from "@/store/UserId";
 import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -8,18 +6,18 @@ import { useEffect, useRef, useState } from "react";
 interface PreviewProfileProps {
     activePage: boolean;
     closePage: () => void
+    userData: User | undefined;
+    userPrefencesData: UserPrefences | undefined;
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }) => {
+const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, userData, userPrefencesData }) => {
     const [currentImage, setCurrentImage] = useState(0)
     const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
     const [expanded, setExpanded] = useState(false)
     const moreDetailsContainer = useRef(null)
     const profileContainer = useRef(null);
-
-    const {auth} = useAuthStore();
 
     const goToNextPost = () => {
         if (currentImage < profileImages.length - 1) {
@@ -31,12 +29,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
             setCurrentImage(value => value - 1)
         }
     }
-
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
     const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -56,11 +48,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
     useEffect(() => {
         // console.log(moreDetailsContainer)
     }, [expanded])
-
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
 
     return (
         <>
@@ -138,7 +125,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest">{item}</div>)}
+                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {

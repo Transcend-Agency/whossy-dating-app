@@ -1,67 +1,54 @@
-import toast from "react-hot-toast";
-import Plans from "../components/dashboard/Plans";
-import { useNavigate } from "react-router-dom";
-import NavBar from "../components/dashboard/MobileNavBar";
-import { useEffect, useState } from "react";
-import { useGetUserProfile } from "@/hooks/useUser";
+// import toast from "react-hot-toast";
 import { User, UserPrefences } from "@/types/user";
 import {motion} from "framer-motion"
 import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
 import ProfilePlan from "@/components/dashboard/ProfilePlan";
 import TopNav from "@/components/dashboard/TopNav";
 import BottomNav from "@/components/dashboard/BottomNav";
-import { useAuthStore } from "@/store/UserId";
 
-interface CardsProps {
-  src: string;
-  title: string;
-  buttonText: string;
-  txtColor: string;
-  bgColor: string;
-}
+// interface CardsProps {
+//   src: string;
+//   title: string;
+//   buttonText: string;
+//   txtColor: string;
+//   bgColor: string;
+// }
 
 interface MobileProfileProps {
   activePage: string
   onEditProfilePage: () => void
   onSettingsPage: () => void
   onFiltersPage: () => void
+  userData: User | undefined;
+  userPrefencesData: UserPrefences | undefined;
 }
 
-const Cards: React.FC<CardsProps> = ({
-  src,
-  title,
-  buttonText,
-  txtColor,
-  bgColor,
-}) => {
-  return (
-    <div
-      className={`text-[1.6rem] flex items-center justify-center ${bgColor} py-4 w-full rounded-[12px]`}
-    >
-      <img src={src} alt="" />
-      <div className="h-[4rem] justify-between flex flex-col items-start">
-        <p className="font-medium">{title}</p>
-        <button
-          className={`${txtColor} underline`}
-          onClick={() => toast.success("Clicked")}
-        >
-          {buttonText}
-        </button>
-      </div>
-    </div>
-  );
-};
+// const Cards: React.FC<CardsProps> = ({
+//   src,
+//   title,
+//   buttonText,
+//   txtColor,
+//   bgColor,
+// }) => {
+//   return (
+//     <div
+//       className={`text-[1.6rem] flex items-center justify-center ${bgColor} py-4 w-full rounded-[12px]`}
+//     >
+//       <img src={src} alt="" />
+//       <div className="h-[4rem] justify-between flex flex-col items-start">
+//         <p className="font-medium">{title}</p>
+//         <button
+//           className={`${txtColor} underline`}
+//           onClick={() => toast.success("Clicked")}
+//         >
+//           {buttonText}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
 
-const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage}) => {
-  const {auth} = useAuthStore()
-
-  const [userData, setUserData] = useState<User>();
-  const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-  
-  const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
-  const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
-
-  useEffect(() => { fetchUser(); fetchUserPreferences();}, [])
+const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage, userData, userPrefencesData}) => {
 
   const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
     if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -129,19 +116,19 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
 
 export default MobileProfile;
 
-const cards = [
-  {
-    title: "Profile Boost",
-    btnText: "Get Now",
-    bgColor: "bg-[#FDFAE7]",
-    txtColor: "text-[#EECA0C]",
-    src: "/assets/icons/boost.svg",
-  },
-  {
-    title: "10 Super Likes",
-    btnText: "Add More",
-    bgColor: "bg-[#F3F3FF]",
-    txtColor: "text-[#8785FF]",
-    src: "/assets/icons/star.svg",
-  },
-];
+// const cards = [
+//   {
+//     title: "Profile Boost",
+//     btnText: "Get Now",
+//     bgColor: "bg-[#FDFAE7]",
+//     txtColor: "text-[#EECA0C]",
+//     src: "/assets/icons/boost.svg",
+//   },
+//   {
+//     title: "10 Super Likes",
+//     btnText: "Add More",
+//     bgColor: "bg-[#F3F3FF]",
+//     txtColor: "text-[#8785FF]",
+//     src: "/assets/icons/star.svg",
+//   },
+// ];

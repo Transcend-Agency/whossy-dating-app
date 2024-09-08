@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { useState } from "react";
+import { useUpdateUserProfile } from "@/hooks/useUser";
 import { User, UserPrefences, UserProfile } from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import { BioSettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "@/components/dashboard/EditProfileModals";
-import UserProfileImage from "@/components/dashboard/UserProfileImage";
 import SettingsGroup from "@/components/dashboard/SettingsGroup";
 import Photos from "@/components/dashboard/Photos";
 import { useAuthStore } from "@/store/UserId";
@@ -13,28 +12,22 @@ interface EditProfileProps {
     activePage: string;
     closePage: () => void;
     onPreviewProfile: () => void;
+    userData: User | undefined;
+    userPrefencesData: UserPrefences | undefined;
+    refetchUserData: () => void;
+    refetchUserPreferencesData: () => void;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
 
-const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile }) => {
+const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
 
     const {auth} = useAuthStore();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth as string, () => {hideModal(); fetchUser()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", auth as string, () => {hideModal(); fetchUserPreferences()}, s)}
-
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
+    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth as string, () => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", auth as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
     
 
     const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
