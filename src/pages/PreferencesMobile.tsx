@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { useUpdateUserProfile } from "@/hooks/useUser";
 import { User, UserFilters } from "@/types/user";
 import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
@@ -9,32 +9,28 @@ import SliderBar from "@/components/ui/SliderBar";
 import DoubleSliderBar from "@/components/ui/DoubleSliderBar";
 import SettingsGroup from "@/components/dashboard/SettingsGroup";
 import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "@/components/dashboard/EditProfileModals";
+import { useAuthStore } from "@/store/UserId";
 
 interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
     onInterests: () => void;
+    userData: User | undefined;
+    userPrefencesData: UserFilters | undefined;
+    refetchUserData: () => void;
+    refetchUserPreferencesData: () => void;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'country' | 'city' | 'communication_style' | 'dietary'
 
-const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, onInterests}) => {
+const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, onInterests, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData}) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserFilters>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("filters") as UserFilters; setuserPreferencesData(data) }
 
-    const updateUser =  (s: User) => {useUpdateUserProfile("users", () => {hideModal(); fetchUser()}, s)}
-    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters", () => {hideModal(); fetchUserPreferences()}, s)}
+    const {auth} = useAuthStore();
 
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
-    
+    const updateUser =  (s: User) => {useUpdateUserProfile("users", auth as string ,() => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters",auth as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
 
     // const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
     // const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
