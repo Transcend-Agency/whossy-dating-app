@@ -17,24 +17,28 @@ import SettingsMobile from '../SettingsMobile';
 import PreferencesMobile from '../PreferencesMobile';
 import { useAuthStore } from '@/store/UserId';
 import Skeleton from '@/components/ui/Skeleton';
+import PreferredInterestsDesktop from './PreferredInterestsDesktop';
+import PreferredInterestsMobile from './PreferredInterestsMobile';
+import UserInterestsDesktop from './UserInterestsDesktop';
+
 
 type UserProfileProps = {
 };
 
 const UserProfile: React.FC<UserProfileProps> = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests'>('user-profile');
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'user-interests'>('user-profile');
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
 
     const {auth} = useAuthStore();
     
-    const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
-    const fetchUserFilters = async () => {const data = await useGetUserProfile("filters", auth as string) as UserFilters; setUserFilters(data) }
+    const fetchUser = async () => { const data = await useGetUserProfile("users", auth?.uid as string) as User; setUserData(data); }
+    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth?.uid as string) as UserPrefences; setuserPreferencesData(data) }
+    const fetchUserFilters = async () => {const data = await useGetUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
 
     // useEffect(() => {fetchUser(); fetchUserPreferences()}, [userData, userPrefencesData])
-    useEffect(() => {fetchUser(); fetchUserPreferences(); console.log('fetching')}, [])
+    useEffect(() => {fetchUser(); fetchUserPreferences(); fetchUserFilters()}, [])
 
     const refetchUserData = async () => {await fetchUser()}
     const refetchUserPreferences = async () => {await fetchUserPreferences()}
@@ -101,10 +105,12 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                 </section>
 
             </motion.div>
-            <EditProfile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
+            <EditProfile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} onInterests={() => setActivePage('user-interests')}  userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
-            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
             <PreviewProfile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/>
+            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
+            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/>
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
         </DashboardPageContainer>
         <AnimatePresence mode="wait">
@@ -112,7 +118,9 @@ const UserProfile: React.FC<UserProfileProps> = () => {
             <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences}/> 
             <PreviewProfileMobile  activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/> 
             <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}/>
-            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferredInterestsMobile activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
+
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
 
         </AnimatePresence>

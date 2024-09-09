@@ -5,6 +5,7 @@ import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
 import ProfilePlan from "@/components/dashboard/ProfilePlan";
 import TopNav from "@/components/dashboard/TopNav";
 import BottomNav from "@/components/dashboard/BottomNav";
+import Skeleton from "@/components/ui/Skeleton";
 
 // interface CardsProps {
 //   src: string;
@@ -82,10 +83,10 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
             </button>
         </section>
         <section className='user-profile__profile-details'>
-            <div className='user-profile__profile-details'>
-                <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+            <div className='user-profile__profile-details flex justify-center mt-2'>
+                {(userData && userPrefencesData) ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
                     <img src="/assets/icons/verified-badge.svg" />
-                </p>
+                </p> : <Skeleton width='150px' height='20px'/>}
             </div>
             <div className='user-profile__profile-details__completion-status'>
                 20% Complete
@@ -103,12 +104,12 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
             <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
             <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
         </section>
-        <BottomNav />
     </div>
     <section className='user-profile__plans'>
         <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' />
         <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' />
     </section>
+        <BottomNav />
 
 </motion.div>
   );

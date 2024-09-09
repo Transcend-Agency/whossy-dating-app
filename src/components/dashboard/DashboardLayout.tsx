@@ -21,6 +21,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                         <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                         <DashboardNavIcon active={pathname === '/dashboard/explore'} icon='explore' />
                         <DashboardNavIcon active={pathname === '/dashboard/matches'} icon='matches' />
+                        <DashboardNavIcon active={pathname === '/dashboard/chat'} icon='chat' />
                         <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container'>

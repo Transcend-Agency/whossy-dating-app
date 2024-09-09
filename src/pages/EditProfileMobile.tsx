@@ -26,8 +26,8 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
 
     const {auth} = useAuthStore();
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", auth as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
+    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
     
 
     const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
@@ -96,7 +96,7 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
                         </div>
 
                     </div> */}
-                    <Photos />
+                    <Photos refetchUserPreferences={refetchUserPreferencesData}/>
                     <div className="space-y-3 mt-3">
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')

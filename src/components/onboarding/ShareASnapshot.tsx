@@ -5,8 +5,8 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import Button from "../ui/Button";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 import { usePictureStore } from "../../store/onboarding/usePictureStore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Lottie from "lottie-react";
@@ -16,17 +16,20 @@ import { useState } from "react";
 import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/UserId";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   // Add a new document in collection "cities"
   const navigate = useNavigate();
+
+  const {auth, setAuth} = useAuthStore();
 
   const { pictures } = usePictureStore();
   const { addPhotos, "onboarding-data": data, reset } = useOnboardingStore();
   const uploadImage = (file: File, i: number) => {
     if (!file) return;
     const storage = getStorage();
-    const storageRef = ref(storage, `tests/${auth.currentUser?.uid}/profile_pictures/image_${i}`);
+    const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${i}`);
     uploadBytes(storageRef, file)
       .then(() => {
         // toast.success("Image has been uploaded successfully 🚀");
@@ -43,7 +46,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "preferences", auth.currentUser?.uid as string), {
+      await setDoc(doc(db, "preferences", auth?.uid as string), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -57,7 +60,8 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
       });
-      await setDoc(doc(db, "filters", auth.currentUser?.uid as string), {});
+      await updateDoc(doc(db, "users", auth?.uid as string), {has_completed_onboarding: true}).then(() => setAuth({uid: auth?.uid as string, has_completed_onboarding: true}));
+      await setDoc(doc(db, "filters", auth?.uid as string), {});
       toast.success("Account has been created successfully 🚀");
       reset();
       // setOpenModal(false);

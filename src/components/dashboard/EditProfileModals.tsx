@@ -14,7 +14,7 @@ export const NameSettingsModal: React.FC<DashboardSettingsModalProps & {first_na
         setFullName({first_name, last_name})
     }, [first_name, last_name])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Name"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(fullName.first_name, fullName.last_name); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Name"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(fullName.first_name, fullName.last_name); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="">
                 <div className="modal__input-group">
                     <label className="modal__input-group__label">First Name</label>
@@ -34,7 +34,7 @@ export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & {userGe
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {setGender(userGender)}, [userGender]);
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(gender); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(gender); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__gender-options">
                 <div onClick={() => setGender("Male")} className={`modal__gender-option ${gender == 'Male' && 'modal__gender-option--selected'}`}>Male</div>
                 <div onClick={() => setGender("Female")} className={`modal__gender-option ${gender == 'Female' && 'modal__gender-option--selected'}`}>Female</div>
@@ -76,7 +76,7 @@ export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps & {p
     }, [showing])
     useEffect(() => {setPhoneNumber(phone_number)}, [phone_number])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Phone Number"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(phoneNumber); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Phone Number"  save={<button className="modal__body__header__save-button" onClick={() => {handleSave(phoneNumber); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__verified-changeable-input">
                 <div className="modal__verified-changeable-input__left">
                     <p>Phone Number</p>
@@ -97,7 +97,7 @@ export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModa
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {setSelectedOption(options[userPreference])}, [userPreference])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -113,7 +113,7 @@ export const LoveLanguageSettingsModal: React.FC<DashboardSettingsModalProps & {
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {setSelectedOption(options[userLoveLanguage])}, [userLoveLanguage])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Love Language" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Love Language" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -130,7 +130,7 @@ export const ZodiacSignSettingsModal: React.FC<DashboardSettingsModalProps & {us
     useEffect(() => {setSelectedOption(options[userZodiac])}, [userZodiac])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Zodiac Sign" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Zodiac Sign" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -146,7 +146,7 @@ export const FutureFamilyPlansSettingsModal: React.FC<DashboardSettingsModalProp
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {setSelectedOption(options[userFamilyGoal])}, [userFamilyGoal])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Future Family Plans" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Future Family Plans" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -163,7 +163,7 @@ export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps & {
     useEffect(() => {setSelectedOption(options[userSmoke])}, [userSmoke])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Smoker" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Smoker" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -179,7 +179,7 @@ export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps & {user
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {setSelectedOption(options[userReligion])}, [userReligion])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -196,7 +196,7 @@ export const DrinkingSettingsModal: React.FC<DashboardSettingsModalProps & {user
     useEffect(() => {setSelectedOption(options[userDrink])}, [userDrink])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Drinking" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Drinking" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -213,7 +213,7 @@ export const WorkoutSettingsModal: React.FC<DashboardSettingsModalProps & {userW
     useEffect(() => {setSelectedOption(options[userWorkout])}, [userWorkout])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Workout" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(()=>setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Workout" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(()=>setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -230,7 +230,7 @@ export const PetsSettingsModal: React.FC<DashboardSettingsModalProps & {userPet:
     useEffect(() => {setSelectedOption(options[userPet])}, [userPet])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Pets" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Pets" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -247,7 +247,7 @@ export const MaritalStatusSettingsModal: React.FC<DashboardSettingsModalProps & 
     useEffect(() => {setSelectedOption(options[userMaritalStatus])}, [userMaritalStatus])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -265,7 +265,7 @@ export const EducationSettingsModal: React.FC<DashboardSettingsModalProps & {use
     useEffect(() => {setSelectedOption(options[userEducation])}, [userEducation])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Education" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsloading(true); setTimeout(() => setIsloading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Education" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsloading(true); setTimeout(() => setIsloading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -289,7 +289,7 @@ export const HeightSettingsModal: React.FC<DashboardSettingsModalProps & {userHe
     }
     useEffect(() => {setHeightInCm([userHeight])}, [userHeight])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Height" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(heightInCm[0]); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Height" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(heightInCm[0]); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__slider-container">
                 <div className="modal__slider-container__value">
                     {heightInCm}cm ({cmToFeetAndInches(heightInCm[0])})
@@ -316,7 +316,7 @@ export const WeightSettingsModal: React.FC<DashboardSettingsModalProps & {userWe
     }
     useEffect(() => {setWeightInKg([userWeight])}, [userWeight])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Weight" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(weightInKg[0]); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Weight" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(weightInKg[0]); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__slider-container">
                 <div className="modal__slider-container__value">
                     {weightInKg}kg ({kilogramsToPounds(weightInKg[0])}lbs)
@@ -348,7 +348,7 @@ export const CountrySettingsModal: React.FC<DashboardSettingsModalProps & {prefe
 
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(selected); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(selected); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             {/* <div className="modal__input-group__image-container">
                 <img className="modal__input-group__image" src="/assets/icons/search.svg"/>
                 <input className="modal__input-group__input w-full" value={country} onChange={(e) => setCountry(e.target.value)}/>
@@ -381,7 +381,7 @@ export const CitySettingsModal: React.FC<DashboardSettingsModalProps & {preferre
     useEffect(() => {setCity(preferredCity)}, [preferredCity])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(city); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(city); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__input-group__image-container">
                 {/* <img className="modal__input-group__image" src="/assets/icons/search.svg"/> */}
                 <input className="modal__input-group__input w-full" value={city} placeholder="Please enter your city" onChange={(e) => setCity(e.target.value)}/>
@@ -402,7 +402,7 @@ export const CommunicationSettingsModal: React.FC<DashboardSettingsModalProps & 
     useEffect(() => {setSelectedOption(options[userCommunicationStyle])}, [userCommunicationStyle])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Communication Style" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Communication Style" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -419,7 +419,7 @@ export const DietarySettingsModal: React.FC<DashboardSettingsModalProps & {prefe
     useEffect(() => {setSelectedOption(options[preferredDietary])}, [preferredDietary])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Dietary" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Dietary" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -436,7 +436,7 @@ export const BioSettingsModal: React.FC<DashboardSettingsModalProps & {bio: stri
     useEffect(() => {setValue(bio)}, [bio])
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Bio" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(value); setIsLoading(true); setTimeout(() => setIsLoading(false), 1000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Bio" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(value); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
             <div className="modal__select-options">
                 {/* {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>

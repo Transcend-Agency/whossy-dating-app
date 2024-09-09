@@ -1,4 +1,4 @@
-import { auth } from "@/firebase";
+import { useAuthStore } from "@/store/UserId";
 import React from "react";
 import { Navigate } from "react-router-dom";
 
@@ -7,9 +7,9 @@ interface ProtectedRouteProps {
   };
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const user = auth.currentUser?.uid;
+  const {auth} = useAuthStore();
 
-  return user ? children : <Navigate to="/auth" />;
+  return auth?.uid ? auth.has_completed_onboarding ? children : <Navigate to="/onboarding" /> : <Navigate to="/auth" />;
 }
 
 export default ProtectedRoute;

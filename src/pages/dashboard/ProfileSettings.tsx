@@ -1,7 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import SettingsGroup from "../../components/dashboard/SettingsGroup";
 import SettingsToggleItem from "../../components/dashboard/SettingsToggleItem";
+import ProfileSettingsGroup from "@/components/dashboard/ProfileSettingsGroup";
+import SettingsModal from "@/components/dashboard/SettingsModal";
+import { useNavigate } from "react-router-dom";
+import { auth } from "@/firebase";
+import { useAuthStore } from "@/store/UserId";
+import toast from "react-hot-toast";
 
 interface ProfileSettingsProps {
     activePage: boolean;
@@ -18,8 +23,15 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
         read_receipts: false,
         online_status: false,
     })
+    const [showModal, setShowModal] = useState<'hidden' | 'logout'>('hidden')
+    const {reset} = useAuthStore();
+    const navigate = useNavigate()
     return (
         <>
+           
+
+                <SettingsModal show={showModal == 'logout'} onCloseModal={() => setShowModal('hidden')} onLogout={() => auth.signOut().then(() => {console.log('signed out'); reset(); navigate('/')}).catch((err) => console.log('error signing out,', err)) }/>
+
             <motion.div animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
@@ -27,7 +39,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Profile Settings</p>
                         </button>
-                        <button className="settings-page__title__save-button">Save</button>
+                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                     <div className="settings-page__settings-group">
                         <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages} onButtonToggle={() => setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages })} />
@@ -40,12 +52,19 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
 
                         <SettingsToggleItem title="Online status" subtext="Users won’t be able to see when you’re online." isActive={profileSettings.online_status} onButtonToggle={() => setProfileSettings({ ...profileSettings, online_status: !profileSettings.online_status })} isPremium />
                     </div>
-                    <SettingsGroup data={[['Blocked Contacts', 'none', () => { }]]} />
-                    <SettingsGroup data={[['Restore Purchases', '', () => { }]]} />
-                    <SettingsGroup data={[['Whossy Safety Center', '', () => { }]]} />
-                    <SettingsGroup data={[['Community Rules', '', () => { }]]} />
-                    <SettingsGroup data={[['Policies', '', () => { }]]} />
-                    <SettingsGroup data={[['Help & Support', '', () => { }]]} />
+                    <section className="mt-2 space-y-2">
+                       <ProfileSettingsGroup title="Blocked contacts"/>
+                       <ProfileSettingsGroup title="Restore Purchases"/>
+                       <ProfileSettingsGroup title="Whossy Safety Center"/>
+                       <ProfileSettingsGroup title="Community Rules"/>
+                       <ProfileSettingsGroup title="Policies"/>
+                       <ProfileSettingsGroup title="Help and Support"/>
+                    </section>
+                    <div className="flex mt-8 justify-center px-[2.8rem] gap-x-2 py-[1.6rem] cursor-pointer bg-[#F6F6F6] hover:bg-[#ececec]" onClick={() => setShowModal('logout')}>
+                        <img src="/assets/icons/logout.svg" alt="" />
+                        <p>Logout</p>
+                    </div>
+                    <div className="flex mt-8 justify-center px-[2.8rem] py-[1.6rem] bg-[#F6F6F6] text-[#F2243E] hover:bg-[#ececec]">Delete Account</div>
                 </div>
             </motion.div>
         </>
