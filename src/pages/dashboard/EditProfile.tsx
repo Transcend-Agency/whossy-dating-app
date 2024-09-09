@@ -8,11 +8,13 @@ import { User, UserPrefences, UserProfile } from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import Photos from "@/components/dashboard/Photos";
 import { useAuthStore } from "@/store/UserId";
+import SettingsInterest from "@/components/dashboard/SettingsInterests";
 
 interface EditProfileProps {
     activePage: string;
     closePage: () => void;
     onPreviewProfile: () => void;
+    onInterests: () => void;
     userData: User | undefined;
     userPrefencesData: UserPrefences | undefined;
     refetchUserData: () => void;
@@ -21,7 +23,7 @@ interface EditProfileProps {
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
 
-const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData, onInterests }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
     // const [userData, setUserData] = useState<User>();
@@ -32,8 +34,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
     // const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
     // const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => { useUpdateUserProfile("preferences", auth as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
+    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserPrefences) => { useUpdateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
 
     // useEffect(() => {
     //     fetchUser();
@@ -81,7 +83,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
             <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
             <BioSettingsModal showing={settingsModalShowing === 'bio'} hideModal={hideModal} bio={userPrefencesData?.bio as string}  handleSave={(bio) => updateUserPreferences({bio}) }/>
 
-            <motion.div animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
+            <motion.div animate={(activePage == 'preview-profile' || activePage == 'user-interests') ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
@@ -106,7 +108,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
                         </div>
 
                     </div> */}
-                    <Photos />
+                    <Photos refetchUserPreferences={refetchUserPreferencesData}/>
                     <div className="space-y-3">
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')
@@ -121,6 +123,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
                             setSettingsModalShowing('phone')
                         }],
                         ]} />
+                        <SettingsGroup data={[['Add personalized interests', 'Change', () => {onInterests()}]]}/>
                         <SettingsGroup data={[['Education', education[userPrefencesData?.education as number], () => {
                             setSettingsModalShowing('education')
                         }],

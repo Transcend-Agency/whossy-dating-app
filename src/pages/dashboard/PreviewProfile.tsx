@@ -14,13 +14,13 @@ interface PreviewProfileProps {
 
 const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, userData, userPrefencesData }) => {
     const [currentImage, setCurrentImage] = useState(0)
-    const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
+    const profileImages = userPrefencesData?.photos as string[]
     const [expanded, setExpanded] = useState(false)
     const moreDetailsContainer = useRef(null)
     const profileContainer = useRef(null);
 
     const goToNextPost = () => {
-        if (currentImage < profileImages.length - 1) {
+        if (currentImage < profileImages?.length - 1) {
             setCurrentImage(value => value + 1)
         }
     }
@@ -82,7 +82,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             {/* <div className="preview-profile__image-bg-wrapper">
 
                             </div> */}
-                            {userPrefencesData?.photos?.map((src, index) =>
+                            {profileImages?.map((src, index) =>
                             (
                                 <motion.img animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
@@ -94,12 +94,13 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
-                            <div onClick={goToNextPost} className={`next-button ${currentImage < profileImages.length - 1 && 'clickable'}`}>
+                            <div onClick={goToNextPost} className={`next-button ${currentImage < profileImages?.length - 1 && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
                         </div>
+                        {/* <div className="bg-red-400 size-[60rem]"></div> */}
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
                                 <div className="active-badge">Active</div>
@@ -134,7 +135,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {profileImages.map((image, index) => (
+                                {profileImages?.map((image, index) => (
                                     <div onClick={() => { setCurrentImage(index);  image}} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>

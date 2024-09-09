@@ -14,7 +14,7 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const {pathname} = useLocation();
   return (
-    <div className="fixed bottom-0 w-full bg-white text-white flex">
+    <div className="sticky bottom-0 w-full bg-white text-white flex">
       {icons.map((icon) => (
         <div
           className={` w-full py-[2rem] flex justify-center`}

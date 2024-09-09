@@ -18,7 +18,6 @@ import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
-import Button from '../components/ui/Button';
 import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
@@ -110,10 +109,10 @@ const Login: React.FC<LoginProps> = () => {
                     }
                     else if (!user.has_completed_onboarding) {
                         navigate('/onboarding')
-                        setAuth(res.user.uid)
+                        setAuth({uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding})
                     } else {
                         navigate('/dashboard/user-profile')
-                        setAuth(res.user.uid)
+                        setAuth({uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding})
                     }
                 }
             }

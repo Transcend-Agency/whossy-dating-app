@@ -66,7 +66,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = () => {
             </div>
            <AnimatePresence>
                {showChats &&
-               <motion.div className='bg-white p-[1.6rem] space-y-'
+               <motion.div className='bg-white '
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}

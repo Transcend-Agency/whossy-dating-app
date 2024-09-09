@@ -7,7 +7,7 @@
         @apply px-[2.4rem];
     }
     &__settings-button {
-        @apply hover:scale-110 active:scale-95 duration-200 transition;
+        @apply hover:scale-110 active:scale-95 duration-200 transition cursor-pointer;
         img {
             @apply w-[2.1rem];
         }
