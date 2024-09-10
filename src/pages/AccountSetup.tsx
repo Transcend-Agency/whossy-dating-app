@@ -185,7 +185,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                                 <ReactFlagsSelect
                                     selectButtonClassName={`${errors?.country_of_origin?.message && 'has-error'}`}
                                     placeholder="Nationality"
-                                    className='countries-select'
+                                    className='countries-select w-[40rem]'
                                     searchable
                                     selected={selected}
                                     onSelect={(code) => { setSelected(code); onChange(en[code as keyof Locale]) }}
