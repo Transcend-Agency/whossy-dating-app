@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
-import { usePictureStore } from "../../store/onboarding/usePictureStore";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
+import { usePhotoStore } from "@/store/PhotoStore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { useAuthStore } from "@/store/UserId";
 
 // interface Picture {
 //   fileName: string;
@@ -9,11 +11,12 @@ import { AnimatePresence } from "framer-motion";
 // }
 
 const BigSnapshots = () => {
-  // const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { setPictures } = usePictureStore();
-  const [selected, setSelected] = useState("");
   const [openModal, setOpenModal] = useState(false);
+
+  //new
+  const {setPhotos, photos} = usePhotoStore();
+  const {auth} = useAuthStore();
 
   // const [picture, setPicture] = useState<Picture>({
   //   fileName: "",
@@ -23,14 +26,21 @@ const BigSnapshots = () => {
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPictures({ imageOne: file });
-        setSelected(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const storage = getStorage();
+      const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
+      uploadBytes(storageRef, file)
+      .then(() => {
+        getDownloadURL(storageRef)
+          .then((url) => {
+            setPhotos({imageOne: url});
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((err) => console.log(err));
     }
   };
+
+
 
   const handleClick = () => {
     if (fileInputRef.current) {
@@ -39,13 +49,8 @@ const BigSnapshots = () => {
   };
   return (
     <figure className="relative h-[35rem] mt-10">
-      {selected !== "" && (
-        <img
-          className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer"
-          src="/assets/images/onboarding/menu.png"
-          alt="show more"
-          onClick={() => setOpenModal(true)}
-        />
+      {photos.imageOne && (
+        <img className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer" src="/assets/images/onboarding/menu.png" alt="show more" onClick={() => setOpenModal(true)}/>
       )}
       <AnimatePresence>
         {openModal && (
@@ -74,7 +79,7 @@ const BigSnapshots = () => {
                 className="w-full py-[14px] rounded-lg text-center font-medium cursor-pointer text-[#8A8A8E]"
                 style={{ border: "1px solid #D9D9D9" }}
                 onClick={() => {
-                  setSelected("");
+                  setPhotos({imageOne: null});
                   setOpenModal(false);
                 }}
               >
@@ -84,53 +89,18 @@ const BigSnapshots = () => {
           </Modal>
         )}
       </AnimatePresence>
-      {selected === "" && (
-        <img
-          className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer"
-          src="/assets/icons/camera.png"
-          alt="add pictures"
-          onClick={handleClick}
-        />
+      {!photos.imageOne && (
+        <img className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer" src="/assets/icons/camera.png" alt="add pictures" onClick={handleClick} />
       )}
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleImageSelect}
-      />
-      {selected !== "" && (
-        <img
-          src={selected}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: `30rem`,
-            height: `33.5rem`,
-            zIndex: 40,
-            borderRadius: "22px",
-            objectFit: "cover",
-          }}
-          alt="user image"
-        />
+      <input  type="file"  accept="image/*"  ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
+      {photos.imageOne && (
+        <img src={photos.imageOne} style={{ position: "absolute", top: 0, left: 0, width: `30rem`, height: `33.5rem`, zIndex: 40, borderRadius: "22px", objectFit: "cover",}}alt="user image"/>
       )}
       {images.map((item, i) => (
-        <div
-          style={{
-            position: "absolute",
-            top: `${i * 2}rem`,
-            left: `${i * 6}rem`,
-            width: `${30 - i * 3}rem`,
-            height: `${33.5 - i * 3}rem`,
-            zIndex: `${30 - i * 10}`,
-            borderRadius: "22px",
-            backgroundColor: item.color,
-            transform: `rotate(${0 + i * 5}deg)`,
-          }}
-          key={i}
-        />
+        <div style={{ position: "absolute", top: `${i * 2}rem`, left: `${i * 6}rem`, width: `${30 - i * 3}rem`, height: `${33.5 - i * 3}rem`, zIndex: `${30 - i * 10}`, borderRadius: "22px", backgroundColor: item.color, transform: `rotate(${0 + i * 5}deg)`,}} key={i}/>
       ))}
+
+      
     </figure>
   );
 };

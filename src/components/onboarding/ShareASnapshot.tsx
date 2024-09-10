@@ -7,8 +7,6 @@ import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { usePictureStore } from "../../store/onboarding/usePictureStore";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
 import { useOnboardingStore } from "../../store/onboarding/useStore";
@@ -17,6 +15,7 @@ import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/UserId";
+import { usePhotoStore } from "@/store/PhotoStore";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   // Add a new document in collection "cities"
@@ -24,24 +23,11 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
 
   const {auth, setAuth} = useAuthStore();
 
-  const { pictures } = usePictureStore();
-  const { addPhotos, "onboarding-data": data, reset } = useOnboardingStore();
-  const uploadImage = (file: File, i: number) => {
-    if (!file) return;
-    const storage = getStorage();
-    const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${i}`);
-    uploadBytes(storageRef, file)
-      .then(() => {
-        // toast.success("Image has been uploaded successfully 🚀");
-        console.log("File was uploaded was successfully!");
-        getDownloadURL(storageRef)
-          .then((url) => {
-            addPhotos(url);
-          })
-          .catch((error) => console.log(error));
-      })
-      .catch((err) => console.log(err));
-  };
+  //new
+  const {photos, reset: resetPhoto} = usePhotoStore();
+  //new
+
+  const { "onboarding-data": data, reset } = useOnboardingStore();
 
   const uploadToFirestore = async () => {
     console.log("Loading...");
@@ -55,16 +41,16 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         interests: data.interests,
         meet: data["gender-preference"],
         pets: data.pets,
-        photos: data.photos,
+        photos: Object.values(photos).filter(value => Boolean(value)),
         preference: data["relationship-preference"],
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
-      });
+      }).then(() => resetPhoto());
       await updateDoc(doc(db, "users", auth?.uid as string), {has_completed_onboarding: true}).then(() => setAuth({uid: auth?.uid as string, has_completed_onboarding: true}));
       await setDoc(doc(db, "filters", auth?.uid as string), {});
       toast.success("Account has been created successfully 🚀");
       reset();
-      // setOpenModal(false);
+      setOpenModal(false);
       navigate('/dashboard/user-profile');
     } catch (err) {
       console.log(err);
@@ -72,6 +58,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   };
 
   const [openModal, setOpenModal] = useState(false);
+  
   return (
     <OnboardingPage>
       <Skip advance={advance} />
@@ -93,23 +80,10 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         <Button
           text="Get Started"
           onClick={() => {
-            // advance();
             setOpenModal(true);
-            // console.log(pictures);
-            Object.values(pictures).forEach((item, i) => uploadImage(item, i));
-            // Promise.all(uploadPromises)
-            //   .then(() => {
-            //     // All images have been uploaded successfully
-            //     console.log("All images uploaded:", data.photos);
-            //     uploadToFirestore();
-            //   })
-            //   .catch((error) => {
-            //     console.error("Error uploading some images:", error);
-            //   });
-            setTimeout(() => uploadToFirestore(), 8000);
+            setTimeout(() => uploadToFirestore(), 5000);
           }}
         />
-        {/* <button onClick={() => console.log(data.photos)}>click</button> */}
       </div>
       {openModal && (
         <Modal>

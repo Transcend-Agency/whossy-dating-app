@@ -6,7 +6,6 @@ import SettingsModal from "@/components/dashboard/SettingsModal";
 import { useNavigate } from "react-router-dom";
 import { auth } from "@/firebase";
 import { useAuthStore } from "@/store/UserId";
-import toast from "react-hot-toast";
 
 interface ProfileSettingsProps {
     activePage: boolean;
