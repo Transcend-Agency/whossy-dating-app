@@ -1,5 +1,6 @@
 import {AnimatePresence, motion} from 'framer-motion'
 import { useEffect, useRef } from 'react';
+import DashboardSettingsModal from './DashboardSettingsModal';
 
 interface PhotoModalProps {
     showing: boolean;
@@ -31,9 +32,19 @@ export const PhotoModal: React.FC<PhotoModalProps> = ({onModalClose, showing, ch
 	}, []);
   return (
     <> 
-    <AnimatePresence mode='wait'>
+    <DashboardSettingsModal showing={showing} hideModal={onModalClose} title='Edit Photo'>
+    <div className="space-y-6 text-[1.4rem] text-[#8A8A8E]">
+              <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
+                Re-upload
+              </button>
+              <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={deleteImage}>
+                Delete Photo
+              </button>
+            </div>
+    </DashboardSettingsModal>
+    {/* <AnimatePresence mode='wait'>
         {showing && <motion.div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999]"
+          className="absolute inset-0 bg-[#0000004D] flex justify-center items-center z-[9999]"
           role="dialog"
           aria-modal="true"
           initial={{ opacity: 0 }}
@@ -57,7 +68,7 @@ export const PhotoModal: React.FC<PhotoModalProps> = ({onModalClose, showing, ch
             </header>
             <hr />
             {/* <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/> */}
-            <div className="p-[1.6rem] space-y-3 text-[1.4rem] text-[#8A8A8E]">
+            {/* <div className="p-[1.6rem] space-y-3 text-[1.4rem] text-[#8A8A8E]">
               <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
                 Re-upload
               </button>
@@ -67,7 +78,7 @@ export const PhotoModal: React.FC<PhotoModalProps> = ({onModalClose, showing, ch
             </div>
           </motion.div>
         </motion.div>}
-    </AnimatePresence>
+    </AnimatePresence> */}
     </>
   )
 }
@@ -89,8 +100,15 @@ export const UploadPhotoModal: React.FC<UploadPhotoModalProps> = ({onModalClose,
 	}, []);
   return (
     <> 
-    <AnimatePresence mode='wait'>
-        {showing && <motion.div
+    <DashboardSettingsModal showing={showing} hideModal={onModalClose} title='Edit Photo'>
+    <div className="text-[1.4rem] text-[#8A8A8E]">
+              <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={changeImage}>
+                Upload Photo
+              </button>
+    </div>
+    </DashboardSettingsModal>
+    {/* <AnimatePresence mode='wait'>
+        showing && <motion.div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999]"
           role="dialog"
           aria-modal="true"
@@ -114,15 +132,15 @@ export const UploadPhotoModal: React.FC<UploadPhotoModalProps> = ({onModalClose,
               </button>
             </header>
             <hr />
-            {/* <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/> */}
+            {/* <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
             <div className="p-[1.6rem] space-y-3 text-[1.4rem] text-[#8A8A8E]">
               <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={changeImage}>
                 Upload Photo
               </button>
             </div>
           </motion.div>
-        </motion.div>}
-    </AnimatePresence>
+        </motion.div>
+    </AnimatePresence> */}
     </>
   )
 }

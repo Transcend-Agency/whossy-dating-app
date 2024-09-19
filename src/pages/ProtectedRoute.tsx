@@ -17,3 +17,8 @@ export const ProtectedOnboarding: React.FC<ProtectedRoutesProps> = ({ children }
 
   return auth?.uid ? auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children : <Navigate to="/auth" />;
 }
+
+// export const ProtectedAuth: React.FC<ProtectedRoutesProps> = ({ children }) => {
+//   const {auth} = useAuthStore();
+//   return auth?.uid ? auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children : <Navigate to="/auth" />;
+// }

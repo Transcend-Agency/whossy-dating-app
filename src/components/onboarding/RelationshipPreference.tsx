@@ -3,7 +3,7 @@ import Options from "./Options";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { relationship_preferences } from "../../constants";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {

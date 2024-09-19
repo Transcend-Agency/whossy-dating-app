@@ -5,7 +5,6 @@ import DashboardSettingsModal, { DashboardSettingsModalProps } from "./Dashboard
 import { communication_style, countries, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants"
 import { Oval } from "react-loader-spinner"
 import toast from "react-hot-toast"
-import ReactFlagsSelect from "react-flags-select";
 
 export const NameSettingsModal: React.FC<DashboardSettingsModalProps & {first_name: string, last_name: string, handleSave: (first_name: string, last_name:string) => void}> = ({ showing, hideModal, first_name, last_name, handleSave }) => {
     const [fullName, setFullName] = useState<{first_name: string, last_name: string}>({first_name, last_name })

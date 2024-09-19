@@ -1,4 +1,4 @@
-import ProfileHeader from "./ProfileHeader";
+// import ProfileHeader from "./ProfileHeader";
 // import HabitSearch from "./HabitSearch";
 import { alphabet } from "@/constants";
 import { useEffect, useState } from "react";
