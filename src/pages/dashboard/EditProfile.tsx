@@ -8,7 +8,7 @@ import { User, UserPrefences, UserProfile } from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import Photos from "@/components/dashboard/Photos";
 import { useAuthStore } from "@/store/UserId";
-import SettingsInterest from "@/components/dashboard/SettingsInterests";
+// import SettingsInterest from "@/components/dashboard/SettingsInterests";
 
 interface EditProfileProps {
     activePage: string;
@@ -83,7 +83,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
             <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
             <BioSettingsModal showing={settingsModalShowing === 'bio'} hideModal={hideModal} bio={userPrefencesData?.bio as string}  handleSave={(bio) => updateUserPreferences({bio}) }/>
 
-            <motion.div animate={(activePage == 'preview-profile' || activePage == 'user-interests') ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
+            <motion.div animate={(activePage == 'preview-profile' || activePage == 'user-interests') ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page z-20">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">

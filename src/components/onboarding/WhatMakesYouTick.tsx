@@ -6,7 +6,7 @@ import OnboardingPage from "./OnboardingPage";
 import Interests from "./Interests";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
 import toast from "react-hot-toast";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {

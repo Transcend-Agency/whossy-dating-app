@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfileCreditButtton from '../../components/dashboard/ProfileCreditButtton';
@@ -6,19 +6,19 @@ import ProfilePlan from '../../components/dashboard/ProfilePlan';
 import EditProfile from './EditProfile';
 import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
-import MobileProfile from '../MobileProfile';
-import EditProfileMobile from '../EditProfileMobile';
+// import MobileProfile from '../MobileProfile';
+// import EditProfileMobile from '../EditProfileMobile';
 import { useGetUserProfile } from '@/hooks/useUser';
 import { User, UserFilters, UserPrefences } from '@/types/user';
-import PreviewProfileMobile from '../PreviewProfileMobile';
+// import PreviewProfileMobile from '../PreviewProfileMobile';
 import Preferences from './Preferences';
 // import Interests from './Interests';
-import SettingsMobile from '../SettingsMobile';
-import PreferencesMobile from '../PreferencesMobile';
+// import SettingsMobile from '../SettingsMobile';
+// import PreferencesMobile from '../PreferencesMobile';
 import { useAuthStore } from '@/store/UserId';
 import Skeleton from '@/components/ui/Skeleton';
 import PreferredInterestsDesktop from './PreferredInterestsDesktop';
-import PreferredInterestsMobile from './PreferredInterestsMobile';
+// import PreferredInterestsMobile from './PreferredInterestsMobile';
 import UserInterestsDesktop from './UserInterestsDesktop';
 
 
@@ -60,7 +60,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
       };
 
     return <>
-        <DashboardPageContainer className="hidden lg:block">
+        <DashboardPageContainer className="">
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page'>
                 <div className='user-profile__container'>
                     <div className='flex justify-end gap-x-4'>
@@ -113,17 +113,17 @@ const UserProfile: React.FC<UserProfileProps> = () => {
             <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/>
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
         </DashboardPageContainer>
-        <AnimatePresence mode="wait">
-            <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} userData={userData} userPrefencesData={userPrefencesData}/>
-            <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences}/> 
+        {/* <AnimatePresence mode="wait"> */}
+            {/* <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} userData={userData} userPrefencesData={userPrefencesData}/> */}
+            {/* <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences}/> 
             <PreviewProfileMobile  activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/> 
             <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}/>
             <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
-            <PreferredInterestsMobile activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferredInterestsMobile activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/> */}
 
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
 
-        </AnimatePresence>
+        {/* </AnimatePresence> */}
     </>
 }
 export default UserProfile;

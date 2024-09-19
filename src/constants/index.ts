@@ -1045,6 +1045,20 @@ const countries = [
 //     .catch((err) => console.log(err));
 // };
 
+const getTime = (timestamp: {seconds: number, nanoseconds: number}) =>  {
+  const seconds = timestamp.seconds;
+  const date = new Date(seconds * 1000); // Convert seconds to milliseconds
+
+  const hours = date.getUTCHours(); // Get hours in UTC
+  const minutes = date.getUTCMinutes(); // Get minutes in UTC
+
+  // Format hours and minutes to always show two digits
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(minutes).padStart(2, '0');
+
+  return `${formattedHours}:${formattedMinutes}`;
+}
+
 export {
   alphabet,
   dietary,
@@ -1056,5 +1070,5 @@ export {
   workout,
   marital_status,
   family_goal, preference,
-  religion, love_language, zodiac, communication_style, education, countries
+  religion, love_language, zodiac, communication_style, education, countries, getTime
 };

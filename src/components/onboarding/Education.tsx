@@ -1,10 +1,9 @@
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
 import Skip from "./Skip";
-import EnterSchoolNameInput from "./EnterSchoolNameInput";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { useEffect, useState } from "react";
 import { education } from "@/constants";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";

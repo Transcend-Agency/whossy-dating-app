@@ -9,7 +9,7 @@ import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { useState } from "react";
 import Modal from "../ui/Modal";
 import toast from "react-hot-toast";

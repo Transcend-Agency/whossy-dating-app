@@ -1,9 +1,7 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from "@/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { useAuthStore } from "@/store/UserId";
 
 type CollectionName = "users" | "preferences" | "filters";
 
@@ -44,33 +42,33 @@ const useUpdateUserProfile = async (
   });
 };
 
-const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) => void) => {
-  if (!file) return;
-  const storage = getStorage();
-  const storageRef = ref(storage, `tests/${uid as string}/profile_pictures/image_${i}`);
-  uploadBytes(storageRef, file)
-    .then(() => {
-      // toast.success("Image has been uploaded successfully 🚀");
-      console.log("File was uploaded was successfully!");
-      getDownloadURL(storageRef)
-        .then((url) => {
-          addPhotos(url);
-        })
-        .catch((error) => console.log(error));
-    })
-    .catch((err) => console.log(err));
-};
+// const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) => void) => {
+//   if (!file) return;
+//   const storage = getStorage();
+//   const storageRef = ref(storage, `tests/${uid as string}/profile_pictures/image_${i}`);
+//   uploadBytes(storageRef, file)
+//     .then(() => {
+//       // toast.success("Image has been uploaded successfully 🚀");
+//       console.log("File was uploaded was successfully!");
+//       getDownloadURL(storageRef)
+//         .then((url) => {
+//           addPhotos(url);
+//         })
+//         .catch((error) => console.log(error));
+//     })
+//     .catch((err) => console.log(err));
+// };
 
-const uploadPhotosToFirestore = async (photo: string[]) => {
-  console.log("Loading...");
-  try {
-    await setDoc(doc(db, collection_two, uid as string), {photo});
-    // toast.success("Account has been created successfully 🚀");
-    // setOpenModal(false);
-    // navigate('/dashboard');
-  } catch (err) {
-    console.log(err);
-  }
-};
+// const uploadPhotosToFirestore = async (photo: string[]) => {
+//   console.log("Loading...");
+//   try {
+//     await setDoc(doc(db, collection_two, uid as string), {photo});
+//     // toast.success("Account has been created successfully 🚀");
+//     // setOpenModal(false);
+//     // navigate('/dashboard');
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
-export { useGetUserProfile, useUpdateUserProfile, uploadPhotosToGetUrl, uploadPhotosToFirestore };
+export { useGetUserProfile, useUpdateUserProfile };
