@@ -4,12 +4,12 @@
     &__top-nav {
 
         &__container {
-            @apply w-full max-w-[1512px] mx-auto px-[5.6rem] py-[2.4rem] relative flex justify-between items-center;
+            @apply lg:w-full lg:max-w-[1512px] lg:mx-auto lg:px-[5.6rem] lg:py-[2.4rem] lg:relative flex justify-between items-center;
         }
 
 
         &__icon {
-            @apply fill-[#8A8A8E] h-[2.4rem] cursor-pointer active:scale-95 hover:scale-110;
+            @apply fill-[#8A8A8E] h-[3.5rem] lg:h-[2.4rem] cursor-pointer active:scale-95 hover:scale-110;
             transition: transform 0.2s, fill 0.3s;
             &--active {
                 @apply fill-[#F2243E];
@@ -17,7 +17,7 @@
         }
 
         &__icons-container {
-            @apply flex space-x-[5.6rem] absolute left-[50%] -translate-x-[50%] top-[50%] -translate-y-[50%];
+            @apply flex space-x-[5.6rem] absolute left-[50%] -translate-x-[50%] lg:top-[50%] -translate-y-[50%] bottom-0 w-full lg:w-auto justify-between lg:justify-normal px-10 max-w-[50rem] lg:max-w-none z-10;
         }
 
         &__control-icons-container {
@@ -30,13 +30,15 @@
     }
 
     &__main-app {
-        @apply w-full max-w-[151.2rem] px-[5.6rem] mx-auto h-[calc(100dvh-14.4rem)] grid grid-cols-[37.7rem_57.6rem_auto] gap-[2.4rem] relative;
+        @apply w-full max-w-[151.2rem] lg:px-[5.6rem] mx-auto h-screen lg:h-[calc(100dvh-14.4rem)] grid grid-cols-1 lg:grid-cols-[37.7rem_57.6rem_auto] gap-[2.4rem] relative ;
         &__body {
-            border: 1px solid #D9D9D980;
-            border-top-right-radius: 16px;
-            border-top-left-radius: 16px;
-            border-bottom-left-radius: 32px;
-            border-bottom-right-radius: 32px;
+            @media (min-width: 1024px) {
+                border: 1px solid #D9D9D980;
+                border-top-right-radius: 16px;
+                border-top-left-radius: 16px;
+                border-bottom-left-radius: 32px;
+                border-bottom-right-radius: 32px;
+            }
             @apply overflow-hidden relative;
 
             &.span-2 {
@@ -73,7 +75,7 @@
     }
 
     &__matches-wrapper {
-        @apply ml-[9.1rem];
+        @apply lg:ml-[9.1rem];
     }
 
     &__matches-container {
@@ -101,7 +103,7 @@
                     @apply w-[2.2rem] mr-[0.8rem];
                 }
                 &__unread-count {
-                    @apply text-[1.4rem] flex items-center justify-center h-[2.6rem] px-[0.8rem] rounded-[1.6rem] bg-[#F2243E] leading-[1.68rem] text-white ml-[1.2rem];
+                    @apply size-[2.5rem] rounded-full text-[1.4rem] flex items-center justify-center p-[0.8rem] bg-[#F2243E] leading-[1.68rem] text-white ml-[1.2rem];
                 }
             }
             &__open-button {
