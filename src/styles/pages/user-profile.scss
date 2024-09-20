@@ -130,7 +130,7 @@
                 }
             }
             &__cta {
-                @apply text-center w-full h-[4.1rem] my-[1.6rem] text-[1.7rem] text-white rounded-[0.8rem] active:scale-[0.98] transition duration-200;
+                @apply text-center w-full h-[4.1rem] my-[1.6rem] text-[1.7rem] text-white rounded-[0.8rem] active:scale-[0.98] transition duration-200 cursor-pointer hover:scale-[1.02];
             }
             &--free {
                 .user-profile__plans__plan__benefit {

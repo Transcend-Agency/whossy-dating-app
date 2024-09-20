@@ -22,8 +22,7 @@ import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 import UserInterestsDesktop from './UserInterestsDesktop';
 
 
-type UserProfileProps = {
-};
+type UserProfileProps = {};
 
 const UserProfile: React.FC<UserProfileProps> = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'user-interests'>('user-profile');
