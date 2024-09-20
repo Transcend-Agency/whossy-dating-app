@@ -30,6 +30,7 @@ const DistanceSearch: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         <OnboardingBackButton onClick={goBack} />
         <Button
           text="Continue"
+          className="cursor-pointer"
           onClick={() => {
             advance();
             // updateOnboardingData({ "distance-search": distance });

@@ -1,21 +1,22 @@
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
 import Skip from "./Skip";
-import EnterSchoolNameInput from "./EnterSchoolNameInput";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { useEffect, useState } from "react";
+import { education } from "@/constants";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const Education: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const { updateOnboardingData, "onboarding-data": data } =
     useOnboardingStore();
-  const [school, setSchool] = useState<string>("");
+
+  const [selected, setSelected] = useState<number | null>(null);
 
   useEffect(() => {
     if (data.education !== null && data.education !== undefined) {
-      setSchool(data.education);
+      setSelected(data.education);
     }
   }, []);
 
@@ -26,14 +27,17 @@ const Education: React.FC<OnboardingProps> = ({ advance, goBack }) => {
       <p className="onboarding-page__text">
         This would be shown on your profile
       </p>
-      <EnterSchoolNameInput getSchool={(e) => setSchool(e)} />
-      <div className="onboarding-page__section-one__buttons">
+      {/* <EnterSchoolNameInput getSchool={(e) => setSchool(e)} /> */}
+      <div className="my-8 flex gap-x-4">
+            {education.map((item, i) => <div key={i} className={` ${selected === i ? "bg-black text-white" : "bg-[#F6F6F6] text-black"} text-[1.8rem] px-6 py-3 w-fit rounded-lg cursor-pointer`} onClick={() => setSelected(i)}>{item}</div>)}
+     </div>
+      <div className="onboarding-page__section-one__buttons cursor-pointer">
         <OnboardingBackButton onClick={goBack} />
         <Button
           text="Continue"
           onClick={() => {
             advance();
-            updateOnboardingData({ education: school });
+            updateOnboardingData({ education: selected });
           }}
         />
       </div>

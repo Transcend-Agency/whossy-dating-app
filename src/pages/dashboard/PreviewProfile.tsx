@@ -1,5 +1,4 @@
 import { family_goal, preference } from "@/constants";
-import { useGetUserProfile } from "@/hooks/useUser";
 import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -7,19 +6,21 @@ import { useEffect, useRef, useState } from "react";
 interface PreviewProfileProps {
     activePage: boolean;
     closePage: () => void
+    userData: User | undefined;
+    userPrefencesData: UserPrefences | undefined;
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }) => {
+const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, userData, userPrefencesData }) => {
     const [currentImage, setCurrentImage] = useState(0)
-    const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
+    const profileImages = userPrefencesData?.photos as string[]
     const [expanded, setExpanded] = useState(false)
     const moreDetailsContainer = useRef(null)
     const profileContainer = useRef(null);
 
     const goToNextPost = () => {
-        if (currentImage < profileImages.length - 1) {
+        if (currentImage < profileImages?.length - 1) {
             setCurrentImage(value => value + 1)
         }
     }
@@ -28,12 +29,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
             setCurrentImage(value => value - 1)
         }
     }
-
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
 
     const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -54,11 +49,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
         // console.log(moreDetailsContainer)
     }, [expanded])
 
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
-
     return (
         <>
             <motion.div
@@ -74,14 +64,14 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                     console.log(expanded)
                 }}
                 ref={profileContainer}
-                animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page preview-profile settings-page">
+                animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page preview-profile settings-page z-20">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Preview Profile</p>
                         </button>
-                        <button className="settings-page__title__save-button">Save</button>
+                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                 </div>
 
@@ -92,7 +82,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                             {/* <div className="preview-profile__image-bg-wrapper">
 
                             </div> */}
-                            {userPrefencesData?.photos?.map((src, index) =>
+                            {profileImages?.map((src, index) =>
                             (
                                 <motion.img animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
@@ -104,12 +94,13 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
-                            <div onClick={goToNextPost} className={`next-button ${currentImage < profileImages.length - 1 && 'clickable'}`}>
+                            <div onClick={goToNextPost} className={`next-button ${currentImage < profileImages?.length - 1 && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
                         </div>
+                        {/* <div className="bg-red-400 size-[60rem]"></div> */}
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
                                 <div className="active-badge">Active</div>
@@ -135,7 +126,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest">{item}</div>)}
+                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
@@ -144,7 +135,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage }
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {profileImages.map((image, index) => (
+                                {profileImages?.map((image, index) => (
                                     <div onClick={() => { setCurrentImage(index);  image}} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>

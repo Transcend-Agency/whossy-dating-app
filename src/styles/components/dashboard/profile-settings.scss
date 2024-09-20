@@ -7,7 +7,7 @@
         @apply px-[2.4rem] h-[4.8rem] font-medium text-[1.8rem] leading-[1.6rem] flex justify-between bg-[#F6F6F6] mb-[0.8rem];
         border-bottom: 1px solid #D9D9D980;
         &__left {
-            @apply flex items-center;
+            @apply flex items-center cursor-pointer;
         }
         &__icon {
             @apply h-[1.6rem] mr-[1.2rem];
@@ -17,13 +17,13 @@
         }
     }
     &__preview {
-        @apply bg-[#F6F6F6] text-[1.8rem] w-full h-[4.5rem] leading-[1.3rem] font-medium text-[#F2243E] hover:bg-[#ececec] transition duration-[250ms] text-center;
+        @apply bg-[#F6F6F6] text-[1.8rem] w-full h-[4.5rem] leading-[1.3rem] font-medium text-[#F2243E] hover:bg-[#ececec] transition duration-[250ms] text-center cursor-pointer;
         border-top: 1px solid #D9D9D980;
         border-bottom: 1px solid #D9D9D980;
     }
 
     &__settings-group {
-        @apply flex flex-col w-full px-[1.3rem] bg-[#f6f6f6];
+        @apply flex flex-col w-full bg-[#f6f6f6];
         &__item {
             &:hover {
                 .settings-page__settings-group__item__value {
@@ -44,21 +44,16 @@
                     @apply mb-[1.4rem];
                 }
             }
-            &:first-of-type {
-                @apply mt-[0.8rem];
-            }
-            &:first-of-type {
-                @apply mt-[0.8rem];
-            }
-            @apply  text-[1.8rem] pt-[1.2rem] bg-[#F6F6F6] hover:bg-[#ececec] transition duration-[250ms] w-full ;
+      
+            @apply cursor-pointer  text-[1.8rem] pt-[1.2rem] bg-[#F6F6F6] hover:bg-[#ececec] transition duration-[250ms] w-full ;
             &-container {
-                @apply flex justify-between;
+                @apply flex justify-between items-center;
             }
             &-separator {
                 @apply w-full h-[1px] bg-[#D9D9D9] mt-[1.4rem];
             }
             &__value {
-                @apply text-[#8A8A8E] flex;
+                @apply text-[#8A8A8E] flex  ;
                 img {
                     @apply ml-[0.8rem] items-center transition duration-[250ms];
                 }

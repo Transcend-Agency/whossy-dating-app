@@ -3,7 +3,7 @@ import Options from "./Options";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { relationship_preferences } from "../../constants";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
@@ -49,6 +49,7 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
           }
         }}
       />
+      {/* <button className="w-full bg-black text-white">continue</button> */}
       {/* <button onClick={() => console.log(data)}>click</button> */}
     </OnboardingPage>
   );

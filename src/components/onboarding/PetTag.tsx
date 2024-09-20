@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 
 interface PetTagProps {
   text: string;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { alphabet } from "../../constants";
 
 interface HabitProps {
@@ -45,6 +45,27 @@ const HabitSearch: React.FC<HabitProps> = ({ initData, setInitData }) => {
   //     });
   //   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+	const dropdownRef = useRef<HTMLUListElement>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				inputRef.current &&
+				!inputRef.current.contains(event.target as Node) &&
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
   const [mutatedData, setMutatedData] = useState<string[]>(initData);
 
   const handleClick = (option: string) => {
@@ -73,11 +94,12 @@ const HabitSearch: React.FC<HabitProps> = ({ initData, setInitData }) => {
           placeholder="search"
           value={searchTerm}
           onChange={handleSearchChange}
+          ref={inputRef}
         />
       </div>
       {open && (
-        <ul className="w-full bg-[#f6f6f6] space-y-4 rounded-[1.2rem] text-white absolute top-24 text-[1.8rem] max-h-[34rem] overflow-y-scroll p-[0.9rem]">
-          {filteredAlphabet.map(({ options }) => (
+        <ul ref={dropdownRef} className="w-full bg-[#f6f6f6] space-y-4 rounded-[1.2rem] text-white absolute top-24 text-[1.8rem] max-h-[34rem] overflow-y-scroll p-[0.9rem]">
+          {filteredAlphabet.length !==0 ? filteredAlphabet.map(({ options }) => (
             <ul className=" space-y-4 inline-block">
               {options.map((option, index) => (
                 <li
@@ -92,8 +114,8 @@ const HabitSearch: React.FC<HabitProps> = ({ initData, setInitData }) => {
                   {option}
                 </li>
               ))}
-            </ul>
-          ))}
+            </ul> 
+          )) : <div className="text-red-600">Enter a valid field</div>}
         </ul>
       )}
     </div>
