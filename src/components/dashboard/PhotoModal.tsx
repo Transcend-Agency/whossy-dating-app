@@ -1,4 +1,4 @@
-import {AnimatePresence, motion} from 'framer-motion'
+// import {AnimatePresence, motion} from 'framer-motion'
 import { useEffect, useRef } from 'react';
 import DashboardSettingsModal from './DashboardSettingsModal';
 
@@ -34,11 +34,11 @@ export const PhotoModal: React.FC<PhotoModalProps> = ({onModalClose, showing, ch
     <> 
     <DashboardSettingsModal showing={showing} hideModal={onModalClose} title='Edit Photo'>
     <div className="space-y-6 text-[1.4rem] text-[#8A8A8E]">
-              <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
-                Re-upload
+              <button className="rounded-lg w-full gap-x-2 py-3 cursor-pointer flex justify-center items-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
+               <img src="/assets/icons/re-upload-photo.svg" alt="" /> <p>Re-upload</p>
               </button>
-              <button className="rounded-lg w-full py-3 cursor-pointer text-center" style={{ border: "1px solid #D9D9D9" }} onClick={deleteImage}>
-                Delete Photo
+              <button className="rounded-lg w-full gap-x-2 py-3 cursor-pointer flex justify-center items-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
+               <img src="/assets/icons/delete-photo.svg" alt="" /> <p>Delete photo</p>
               </button>
             </div>
     </DashboardSettingsModal>
