@@ -4,7 +4,7 @@ import { FacebookAuthProvider, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC4KtUH2ggeSOmcQ_7WJPQpO-WeeNhpJHQ",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "whossy-app.firebaseapp.com",
   projectId: "whossy-app",
   storageBucket: "whossy-app.appspot.com",

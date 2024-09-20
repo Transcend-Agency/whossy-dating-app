@@ -11,6 +11,7 @@ const Tag: React.FC<TagProps> = ({ arr, active, setGender }) => {
         <div
           className={`${item.text === active ? "bg-black text-white" : "bg-white text-black"} py-2 rounded-lg px-3 gap-2 cursor-pointer text-[1.4rem] items-center w-fit flex`}
           onClick={() => setGender(item.text)}
+          key={i}
         >
           {/* <img className="size-[1.2rem]" src={item.image} alt={item.text} /> */}
           <p>{item.text}</p>

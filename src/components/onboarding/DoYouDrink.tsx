@@ -5,7 +5,7 @@ import RegularOptions from "./RegularOptions";
 import { useEffect, useState } from "react";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import { drinking } from "../../constants";
 
 const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -39,7 +39,7 @@ const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           />
         ))}
       </div>
-      <div className="onboarding-page__section-one__buttons">
+      <div className="onboarding-page__section-one__buttons cursor-pointer">
         <OnboardingBackButton onClick={goBack} />
         <Button
           text="Continue"

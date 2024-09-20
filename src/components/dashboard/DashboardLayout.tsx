@@ -10,21 +10,22 @@ const Dashboard: React.FC<DashboardProps> = () => {
     const { pathname } = useLocation()
 
     return <>
-        <div className='dashboard-layout hidden lg:block'>
+        <div className='dashboard-layout'>
             <ChatInterface />
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
-                    <div className='dashboard-layout__top-nav__logo'>
+                    <div className='dashboard-layout__top-nav__logo hidden lg:block'>
                         Logo
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container'>
                         <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                         <DashboardNavIcon active={pathname === '/dashboard/explore'} icon='explore' />
                         <DashboardNavIcon active={pathname === '/dashboard/matches'} icon='matches' />
+                        <DashboardNavIcon active={pathname === '/dashboard/chat'} icon='chat' />
                         <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container'>
-                        <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/notification.svg' />
+                        <img className='dashboard-layout__top-nav__control-icon  hidden lg:block' src='/assets/icons/notification.svg' />
                         {/* <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/control.svg' /> */}
                     </div>
                 </div>
@@ -34,7 +35,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                 <Outlet />
             </main>
         </div>
-        <div className="h-screen flex flex-col lg:hidden">
+        <div className="lg:h-screen flex flex-col lg:hidden">
             <nav className="dashboard-layout__top-nav">
                 <div className="dashboard-layout__top-nav__logo"></div>
             </nav>

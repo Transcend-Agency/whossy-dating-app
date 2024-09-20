@@ -6,7 +6,7 @@ import OnboardingPage from "./OnboardingPage";
 import Interests from "./Interests";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
 import toast from "react-hot-toast";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -28,7 +28,7 @@ const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         <OnboardingBackButton onClick={goBack} />
         {/* A */}
         <button
-          className="onboarding-page__section-one__buttons__select-button-inactive"
+          className="onboarding-page__section-one__buttons__select-button-inactive flex justify-center items-center cursor-pointer"
           onClick={() => {
             if (data.interests) {
               if (data.interests.length >= 5) advance();

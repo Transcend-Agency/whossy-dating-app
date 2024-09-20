@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import React, { useState } from 'react';
 import Countdown from 'react-countdown';
 import { useNavigate } from 'react-router-dom';
-import Button from '../ui/Button';
+import {motion} from 'framer-motion';
 import AuthModalHeader from './AuthModalHeader';
 import AuthModalRequestMessage from './AuthModalRequestMessage';
 import AuthPage from './AuthPage';
@@ -65,7 +65,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = () => {
                 date={Date.now() + 40000}
                 renderer={renderer}
             />}</p>
-            <Button loading={loading} onClick={onContinue} className='auth-page__modal__form__button' text='Continue' />
+ <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center' onClick={() => navigate('/auth/login')}> {!loading ? "Continue" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
         </div>
     </AuthPage>
 }

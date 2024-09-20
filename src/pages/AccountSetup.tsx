@@ -87,7 +87,7 @@ const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, key }) =>
                 <form onSubmit={handleSubmit(onFormSubmit)} className='auth-page__modal__form'>
                     <AuthInput register={register} error={errors.first_name} name='first_name' placeholder='First Name' />
                     <AuthInput register={register} error={errors.last_name} name='last_name' placeholder='Last Name' />
-                    <Button className='auth-page__modal__form__button' text='Continue' />
+                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> Continue</button>
                 </form>
             </div>
         </AuthPage>
@@ -185,7 +185,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                                 <ReactFlagsSelect
                                     selectButtonClassName={`${errors?.country_of_origin?.message && 'has-error'}`}
                                     placeholder="Nationality"
-                                    className='countries-select'
+                                    className='countries-select w-[40rem]'
                                     searchable
                                     selected={selected}
                                     onSelect={(code) => { setSelected(code); onChange(en[code as keyof Locale]) }}
@@ -194,7 +194,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                             </>
                         )}
                     />
-                    <Button loading={loading} className='auth-page__modal__form__button' text='Continue' />
+                     <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Continue" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 </form>
             </div>
         </AuthPage>
@@ -226,6 +226,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
 
     const onFinishCreateAccount = async (data: any) => {
         setGender(data.gender)
+        await setDoc(doc(db, 'userchats', id), {chats: []})
         try {
             setLoading(true)
             if (auth_provider == 'phone') {
@@ -290,7 +291,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
                         )}
                     />
                     <div className='error-message-container'><motion.span animate={{ opacity: errors?.gender?.message ? 1 : 0, transition: { duration: 0.2 } }} className="error-message">{errors?.gender?.message as string}</motion.span></div>
-                    <Button loading={loading} className='auth-page__modal__form__button' text='Finish' />
+                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Finish" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 </form>
             </div>
         </AuthPage>

@@ -7,7 +7,7 @@ interface OnboardingData {
   "date-of-birth"?: Date | null | string;
   "distance-search"?: number;
   interests?: string[];
-  education?: string;
+  education?: number | null;
   "drinking-preference"?: number | null;
   "smoking-preference"?: number | null;
   pets?: string[];
@@ -34,7 +34,7 @@ const initialState = {
     "date-of-birth": null,
     "distance-search": 50,
     interests: [],
-    education: "",
+    education: null,
     "drinking-preference": null,
     "smoking-preference": null,
     pets: [],
