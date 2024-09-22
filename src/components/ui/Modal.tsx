@@ -6,6 +6,8 @@ interface ModalProps {
   className?: string;
 }
 
+import  {motion as m} from 'framer-motion';
+
 const Modal: React.FC<ModalProps> = ({ children, onClose, className = "" }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -26,14 +28,20 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, className = "" }) => {
     };
   }, [onClose]);
   return (
-    <div
+    <m.div
       className={`fixed inset-0 flex justify-center z-50 items-center transition-colors bg-black/20
       ${className}`}
+      role="dialog"
+      aria-modal="true"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <div ref={modalRef} className="mx-5">
         {children}
       </div>
-    </div>
+    </m.div>
   );
 };
 

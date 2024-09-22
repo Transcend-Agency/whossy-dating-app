@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfileCreditButtton from '../../components/dashboard/ProfileCreditButtton';
@@ -6,30 +6,48 @@ import ProfilePlan from '../../components/dashboard/ProfilePlan';
 import EditProfile from './EditProfile';
 import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
-import MobileProfile from '../MobileProfile';
-import EditProfileMobile from '../EditProfileMobile';
+// import MobileProfile from '../MobileProfile';
+// import EditProfileMobile from '../EditProfileMobile';
 import { useGetUserProfile } from '@/hooks/useUser';
-import { User, UserPrefences } from '@/types/user';
-import PreviewProfileMobile from '../PreviewProfileMobile';
+import { User, UserFilters, UserPrefences } from '@/types/user';
+// import PreviewProfileMobile from '../PreviewProfileMobile';
 import Preferences from './Preferences';
 import Interests from './Interests';
 import SettingsMobile from '../SettingsMobile';
 import PreferencesMobile from '../PreferencesMobile';
 import SafetyGuide from './SafetyGuide';
+// import Interests from './Interests';
+// import SettingsMobile from '../SettingsMobile';
+// import PreferencesMobile from '../PreferencesMobile';
+import { useAuthStore } from '@/store/UserId';
+import Skeleton from '@/components/ui/Skeleton';
+import PreferredInterestsDesktop from './PreferredInterestsDesktop';
+// import PreferredInterestsMobile from './PreferredInterestsMobile';
+import UserInterestsDesktop from './UserInterestsDesktop';
+
 
 type UserProfileProps = {
 };
 
 const UserProfile: React.FC<UserProfileProps> = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'safety-guide' | 'safety-item'>('user-profile');
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
+    const [userFilters, setUserFilters] = useState<UserFilters>();
 
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+    const { auth } = useAuthStore();
 
-    useEffect(() => { fetchUser(); fetchUserPreferences() }, [])
+    const fetchUser = async () => { const data = await useGetUserProfile("users", auth?.uid as string) as User; setUserData(data); }
+    const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences", auth?.uid as string) as UserPrefences; setuserPreferencesData(data) }
+    const fetchUserFilters = async () => { const data = await useGetUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
+
+    // useEffect(() => {fetchUser(); fetchUserPreferences()}, [userData, userPrefencesData])
+    useEffect(() => { fetchUser(); fetchUserPreferences(); fetchUserFilters() }, [])
+
+    const refetchUserData = async () => { await fetchUser() }
+    const refetchUserPreferences = async () => { await fetchUserPreferences() }
+    const refetchUserFilters = async () => { await fetchUserFilters() }
 
     const getYearFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -47,7 +65,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
     };
 
     return <>
-        <DashboardPageContainer className="hidden lg:block">
+        <DashboardPageContainer className="">
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page'>
                 <div className='user-profile__container'>
                     <div className='flex justify-end gap-x-4'>
@@ -58,15 +76,15 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                         <figure className='user-profile__profile-picture'>
                             <img src="/assets/images/auth-bg/1.webp" />
                         </figure>
-                        <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button'>
+                        <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button cursor-pointer'>
                             <img src="/assets/icons/update-profile.svg" />
                         </button>
                     </section>
                     <section className='user-profile__profile-details'>
-                        <div className='user-profile__profile-details'>
-                            <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+                        <div className='user-profile__profile-details flex justify-center mt-2'>
+                            {userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
                                 <img src="/assets/icons/verified-badge.svg" />
-                            </p>
+                            </p> : <Skeleton width='150px' height='20px' />}
                         </div>
                         <div className='user-profile__profile-details__completion-status'>
                             20% Complete
@@ -92,21 +110,42 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                 </section>
 
             </motion.div>
-            <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
+            <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
-            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} />
-            <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} />
-            <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} />
-        </DashboardPageContainer>
-        <AnimatePresence mode="wait">
-            <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} />
-            <EditProfileMobile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} />
-            <PreviewProfileMobile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} />
-            <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
-            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} />
-            <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} />
-        </AnimatePresence>
+            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters} />
+            <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} userPrefencesData={userPrefencesData} />
+            {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
+            <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters} />
+            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences} />
+        </DashboardPageContainer >
+        {/* <AnimatePresence mode="wait">
+        <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} />
+        <EditProfileMobile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} />
+        <PreviewProfileMobile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} />
+        <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
+        <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} />
+        <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} />
+    </AnimatePresence> */}
+        {/* <EditProfile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} onInterests={() => setActivePage('user-interests')}  userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
+            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
+            <PreviewProfile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/>
+            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
+            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/> */}
+        {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
+        {/* </DashboardPageContainer> */}
+        {/* <AnimatePresence mode="wait"> */}
+        {/* <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} userData={userData} userPrefencesData={userPrefencesData}/> */}
+        {/* <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences}/> 
+            <PreviewProfileMobile  activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/> 
+            <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}/>
+            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
+            <PreferredInterestsMobile activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/> */}
+
+        {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
+
+        {/* </AnimatePresence> */}
     </>
 }
 export default UserProfile;

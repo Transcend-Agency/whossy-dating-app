@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
-import { useOnboardingStore as useStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore as useStore } from "../../store/OnboaredingStore";
 
 interface InterestTagProps {
   text: string;
