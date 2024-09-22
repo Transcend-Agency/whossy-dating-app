@@ -1,17 +1,22 @@
 import React from 'react';
 import DashboardNavIcon from './DashboardNavIcon';
 import { Outlet, useLocation } from 'react-router-dom';
-import Matches from './Matches';
+import Matches from './MatchesSide';
 import ChatInterface from './ChatInterface';
+import ShortcutControls from './ShortcutControls';
+import { AnimatePresence } from 'framer-motion';
 
 type DashboardProps = {};
 
 const Dashboard: React.FC<DashboardProps> = () => {
     const { pathname } = useLocation()
-
+    console.log(pathname)
     return <>
         <div className='dashboard-layout hidden lg:block'>
             <ChatInterface />
+            <AnimatePresence>
+                {pathname == '/dashboard/swipe-and-match' && <ShortcutControls />}
+            </AnimatePresence>
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
                     <div className='dashboard-layout__top-nav__logo'>
@@ -34,11 +39,14 @@ const Dashboard: React.FC<DashboardProps> = () => {
                 <Outlet />
             </main>
         </div>
-        <div className="h-screen flex flex-col lg:hidden">
-            <nav className="dashboard-layout__top-nav">
-                <div className="dashboard-layout__top-nav__logo"></div>
-            </nav>
+        <div className="h-screen flex pb-[6rem] flex-col lg:hidden">
             <Outlet />
+            <div className='dashboard-layout__mobile-nav'>
+                <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
+                <DashboardNavIcon active={pathname === '/dashboard/explore'} icon='explore' />
+                <DashboardNavIcon active={pathname === '/dashboard/matches'} icon='matches' />
+                <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
+            </div>
         </div>
     </>
 };

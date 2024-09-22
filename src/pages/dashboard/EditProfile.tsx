@@ -12,52 +12,57 @@ interface EditProfileProps {
     activePage: string;
     closePage: () => void;
     onPreviewProfile: () => void;
+    activeSubPage: number;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, closePage, onPreviewProfile }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", () => {hideModal(); fetchUser()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", () => {hideModal(); fetchUserPreferences()}, s)}
+    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
+    const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+
+    const updateUser = (s: UserProfile) => { useUpdateUserProfile("users", () => { hideModal(); fetchUser() }, s) }
+    const updateUserPreferences = (s: UserPrefences) => { useUpdateUserProfile("preferences", () => { hideModal(); fetchUserPreferences() }, s) }
 
     useEffect(() => {
         fetchUser();
         fetchUserPreferences();
     }, [])
-    
 
-    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
-    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
+
+    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`; }
+    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2); }
     return (
         <>
-        
-            <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) => {updateUser({first_name, last_name})}}/>
-            <GenderSettingsModal showing={settingsModalShowing === 'gender'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({gender})}/>
-            <EmailSettingsModal showing={settingsModalShowing === 'email'} hideModal={hideModal} />
-            <PhoneNumberSettingsModal showing={settingsModalShowing === 'phone'} hideModal={hideModal} phone_number={userData?.phone_number as string} handleSave={(phone_number) => updateUser({phone_number})}/>
-            <RelationshipPreferenceSettingsModal showing={settingsModalShowing === 'relationship-preference'} hideModal={hideModal} userPreference={userPrefencesData?.preference as number} handleSave={(preference) => updateUserPreferences({preference}) }/>
-            <LoveLanguageSettingsModal showing={settingsModalShowing === 'love-language'} hideModal={hideModal} userLoveLanguage={userPrefencesData?.love_language as number}  handleSave={(love_language) => updateUserPreferences({love_language}) }/>
-            <ZodiacSignSettingsModal showing={settingsModalShowing === 'zodiac'} hideModal={hideModal} userZodiac={userPrefencesData?.zodiac as number} handleSave={(zodiac) => updateUserPreferences({zodiac}) } />
-            <FutureFamilyPlansSettingsModal showing={settingsModalShowing === 'future-family-plans'} hideModal={hideModal} userFamilyGoal={userPrefencesData?.family_goal as number} handleSave={(family_goal) => updateUserPreferences({family_goal}) } />
-            <SmokerStatusSettingsModal showing={settingsModalShowing === 'smoker'} hideModal={hideModal} userSmoke={userPrefencesData?.smoke as number} handleSave={(smoke) => updateUserPreferences({smoke}) }/>
-            <ReligionSettingsModal showing={settingsModalShowing === 'religion'} hideModal={hideModal} userReligion={userPrefencesData?.religion as number} handleSave={(religion) => updateUserPreferences({religion}) }/>
-            <DrinkingSettingsModal showing={settingsModalShowing === 'drinking'} hideModal={hideModal} userDrink={userPrefencesData?.drink as number} handleSave={(drink) => updateUserPreferences({drink}) }/>
-            <WorkoutSettingsModal showing={settingsModalShowing === 'workout'} hideModal={hideModal} userWorkout={userPrefencesData?.workout as number} handleSave={(workout) => updateUserPreferences({workout}) } />
-            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userPrefencesData?.pet_owner as number} handleSave={(pet_owner) => updateUserPreferences({pet_owner}) } />
-            <MaritalStatusSettingsModal showing={settingsModalShowing === 'marital-status'} hideModal={hideModal} userMaritalStatus={userPrefencesData?.marital_status as number}  handleSave={(marital_status) => updateUserPreferences({marital_status}) }/>
-            <HeightSettingsModal showing={settingsModalShowing === 'height'} hideModal={hideModal} userHeight={userPrefencesData?.height as number}  handleSave={(height) => updateUserPreferences({height}) }/>
-            <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userPrefencesData?.weight as number}  handleSave={(weight) => updateUserPreferences({weight}) }/>
-            <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
 
-            <motion.div animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
+            <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) => { updateUser({ first_name, last_name }) }} />
+            <GenderSettingsModal showing={settingsModalShowing === 'gender'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({ gender })} />
+            <EmailSettingsModal showing={settingsModalShowing === 'email'} hideModal={hideModal} />
+            <PhoneNumberSettingsModal showing={settingsModalShowing === 'phone'} hideModal={hideModal} phone_number={userData?.phone_number as string} handleSave={(phone_number) => updateUser({ phone_number })} />
+            <RelationshipPreferenceSettingsModal showing={settingsModalShowing === 'relationship-preference'} hideModal={hideModal} userPreference={userPrefencesData?.preference as number} handleSave={(preference) => updateUserPreferences({ preference })} />
+            <LoveLanguageSettingsModal showing={settingsModalShowing === 'love-language'} hideModal={hideModal} userLoveLanguage={userPrefencesData?.love_language as number} handleSave={(love_language) => updateUserPreferences({ love_language })} />
+            <ZodiacSignSettingsModal showing={settingsModalShowing === 'zodiac'} hideModal={hideModal} userZodiac={userPrefencesData?.zodiac as number} handleSave={(zodiac) => updateUserPreferences({ zodiac })} />
+            <FutureFamilyPlansSettingsModal showing={settingsModalShowing === 'future-family-plans'} hideModal={hideModal} userFamilyGoal={userPrefencesData?.family_goal as number} handleSave={(family_goal) => updateUserPreferences({ family_goal })} />
+            <SmokerStatusSettingsModal showing={settingsModalShowing === 'smoker'} hideModal={hideModal} userSmoke={userPrefencesData?.smoke as number} handleSave={(smoke) => updateUserPreferences({ smoke })} />
+            <ReligionSettingsModal showing={settingsModalShowing === 'religion'} hideModal={hideModal} userReligion={userPrefencesData?.religion as number} handleSave={(religion) => updateUserPreferences({ religion })} />
+            <DrinkingSettingsModal showing={settingsModalShowing === 'drinking'} hideModal={hideModal} userDrink={userPrefencesData?.drink as number} handleSave={(drink) => updateUserPreferences({ drink })} />
+            <WorkoutSettingsModal showing={settingsModalShowing === 'workout'} hideModal={hideModal} userWorkout={userPrefencesData?.workout as number} handleSave={(workout) => updateUserPreferences({ workout })} />
+            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userPrefencesData?.pet_owner as number} handleSave={(pet_owner) => updateUserPreferences({ pet_owner })} />
+            <MaritalStatusSettingsModal showing={settingsModalShowing === 'marital-status'} hideModal={hideModal} userMaritalStatus={userPrefencesData?.marital_status as number} handleSave={(marital_status) => updateUserPreferences({ marital_status })} />
+            <HeightSettingsModal showing={settingsModalShowing === 'height'} hideModal={hideModal} userHeight={userPrefencesData?.height as number} handleSave={(height) => updateUserPreferences({ height })} />
+            <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userPrefencesData?.weight as number} handleSave={(weight) => updateUserPreferences({ weight })} />
+            <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number} handleSave={(education) => updateUserPreferences({ education })} />
+
+            <motion.div
+                // animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })}
+                // animate={activePage === 'safety-guide' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 0.9, opacity: 0.3, x: "-100%" }) : { x: 0 }}
+                animate={activePage == 'edit-profile' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 0.9, opacity: 0.3, x: "-100%" }) : { x: 0 }}
+                transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
@@ -92,7 +97,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
                             setSettingsModalShowing('gender')
                         }],
                         ['Email', userData?.email as string,
-                        () => {}],
+                            () => { }],
                         ['Phone number', userData?.phone_number as string, () => {
                             setSettingsModalShowing('phone')
                         }],

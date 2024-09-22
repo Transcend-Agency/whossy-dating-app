@@ -1,8 +1,8 @@
+import ViewProfile from '@/components/dashboard/ViewProfile';
 import React, { useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
-import { education, relationship_preferences } from '@/constants';
-import { AnimatePresence } from 'framer-motion';
+import { profile } from 'console';
 
 type ExploreProps = {
 
@@ -17,11 +17,11 @@ const Explore: React.FC<ExploreProps> = () => {
         "Looking to date",
         "Outside my country",
         "Flirty",
-        "Advanced search"
     ]
     const [selectedOption, setSelectedOption] = useState(filterOptions[0])
     const [profiles, setProfiles] = useState([
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 1,
             name: "Stephanie",
             age: 21,
@@ -41,6 +41,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'Covenant University'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 2,
             name: "Michael",
             age: 28,
@@ -60,6 +61,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'University of Abuja'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 3,
             name: "Jane",
             age: 25,
@@ -78,6 +80,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'University of Ibadan'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 4,
             name: "John",
             age: 30,
@@ -96,6 +99,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'University of Port Harcourt'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 5,
             name: "Grace",
             age: 24,
@@ -114,6 +118,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'Lagos State University'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 6,
             name: "Samuel",
             age: 27,
@@ -132,6 +137,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'University of Nigeria, Nsukka'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 7,
             name: "Amaka",
             age: 26,
@@ -150,6 +156,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'Bayero University Kano'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 8,
             name: "Tunde",
             age: 29,
@@ -168,6 +175,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'University of Lagos'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 9,
             name: "Chioma",
             age: 23,
@@ -186,6 +194,7 @@ const Explore: React.FC<ExploreProps> = () => {
             education: 'Nnamdi Azikiwe University'
         },
         {
+            future_family_goals: 'I want to have 3 kids',
             id: 10,
             name: "David",
             age: 31,
@@ -209,91 +218,137 @@ const Explore: React.FC<ExploreProps> = () => {
     const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
 
     return <>
-        {/* <AnimatePresence mode="wait"> */}
-            {!selectedProfile &&
-                <DashboardPageContainer span={2}>
-                    <div className='explore'>
-                        <div className='filter'>
-                            <div className='filter__left'>
-                                {filterOptions.map(item => <div onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
+        {!selectedProfile &&
+            <DashboardPageContainer className='explore-page' span={2}>
+                <div className='explore'>
+                    <div className='filter'>
+                        <div className='filter__left'>
+                            {filterOptions.map(item => <div onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
+                            <div className='filter__item'>
+                                <img src="/assets/icons/advanced-search.svg" />
+                                Advanced Search
                             </div>
-                            <div className='filter__right'>
-                                <button className='filter__saved-search'>
-                                    <img src="/assets/icons/saved-search.svg" />
-                                </button>
-                            </div>
-                            <div className='explore-grid-gradient-top'></div>
                         </div>
-                        <div className='explore-grid-container'>
-                            <div className='explore-grid'>
-                                <div className='explore-grid__column'>
-                                    {profiles.map((profile, index) => (
-                                        (index % 5 === 0) &&
-                                        <ExploreGridProfile
-                                            profile_image={profile.profile_images[0]}
-                                            distance={profile.distance}
-                                            first_name={profile.name}
-                                            age={profile.age}
-                                            onProfileClick={() => setSelectedProfile(profile.id)}
-                                        />
-                                    ))}
-                                </div>
-                                <div className='explore-grid__column'>
-                                    {profiles.map((profile, index) => (
-                                        (index % 5 === 1) &&
-                                        <ExploreGridProfile
-                                            profile_image={profile.profile_images[0]}
-                                            distance={profile.distance}
-                                            first_name={profile.name}
-                                            age={profile.age}
-                                            onProfileClick={() => setSelectedProfile(profile.id)}
-                                        />
-                                    ))}
-                                </div>
-                                <div className='explore-grid__column'>
-                                    {profiles.map((profile, index) => (
-                                        (index % 5 == 2) &&
-                                        <ExploreGridProfile
-                                            profile_image={profile.profile_images[0]}
-                                            distance={profile.distance}
-                                            first_name={profile.name}
-                                            age={profile.age}
-                                            onProfileClick={() => setSelectedProfile(profile.id)}
-                                        />
-                                    ))}
-                                </div>
-                                <div className='explore-grid__column'>
-                                    {profiles.map((profile, index) => (
-                                        (index % 5 == 3) &&
-                                        <ExploreGridProfile
-                                            profile_image={profile.profile_images[0]}
-                                            distance={profile.distance}
-                                            first_name={profile.name}
-                                            age={profile.age}
-                                            onProfileClick={() => setSelectedProfile(profile.id)}
-                                        />
-                                    ))}
-                                </div>
-                                <div className='explore-grid__column'>
-                                    {profiles.map((profile, index) => (
-                                        (index % 5 == 4) &&
-                                        <ExploreGridProfile
-                                            profile_image={profile.profile_images[0]}
-                                            distance={profile.distance}
-                                            first_name={profile.name}
-                                            age={profile.age}
-                                            onProfileClick={() => setSelectedProfile(profile.id)}
-                                        />
-                                    ))}
-                                </div>
+                        <div className='filter__right'>
+                            <button className='filter__saved-search'>
+                                <img src="/assets/icons/saved-search.svg" />
+                            </button>
+                        </div>
+                        <div className='explore-grid-gradient-top'></div>
+                    </div>
+                    <div className='explore-grid-container'>
+                        <div className='explore-grid hidden md:grid'>
+                            <div className='explore-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 5 === 0) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='explore-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 5 === 1) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='explore-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 5 == 2) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='explore-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 5 == 3) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='explore-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 5 == 4) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className='mobile-grid'>
+                            <div className='mobile-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 3 == 0) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='mobile-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 3 == 1) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
+                            </div>
+                            <div className='mobile-grid__column'>
+                                {profiles.map((profile, index) => (
+                                    (index % 3 == 2) &&
+                                    <ExploreGridProfile
+                                        profile_image={profile.profile_images[0]}
+                                        distance={profile.distance}
+                                        first_name={profile.name}
+                                        age={profile.age}
+                                        onProfileClick={() => setSelectedProfile(profile.id)}
+                                    />
+                                ))}
                             </div>
                         </div>
                     </div>
-                </DashboardPageContainer>}
-            <DashboardPageContainer>
-                <div></div>
-            </DashboardPageContainer>
-        {/* </AnimatePresence> */}
+                </div>
+            </DashboardPageContainer>}
+        {selectedProfile && <ViewProfile onBackClick={() => {
+            setSelectedProfile(null)
+        }} onNextClick={() => {
+            const currentProfileIndex = profiles.findIndex(profile => profile.id === selectedProfile)
+            if (currentProfileIndex + 1 < profiles.length)
+                setSelectedProfile(profiles[currentProfileIndex + 1].id)
+        }}
+            userData={profiles.find(profile => selectedProfile === profile.id)!}
+        />}
     </>
 }
 export default Explore;

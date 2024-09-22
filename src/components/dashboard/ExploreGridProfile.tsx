@@ -17,7 +17,7 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
         <div onClick={onProfileClick} className='explore-grid__profile'>
             <figure className='explore-grid__profile-picture'>
                 <img className='explore-grid__profile-picture-image' src={profile_image} />
-                <img className='explore-grid__profile-picture-gradient' src="/assets/images/dashboard/bottom-gradient.png" />
+                <div className='explore-grid__profile-picture-gradient' />
             </figure>
             <div className='explore-grid__profile-info'>
                 <div className='explore-grid__profile-info-top'>

@@ -15,34 +15,36 @@ import Preferences from './Preferences';
 import Interests from './Interests';
 import SettingsMobile from '../SettingsMobile';
 import PreferencesMobile from '../PreferencesMobile';
+import SafetyGuide from './SafetyGuide';
 
 type UserProfileProps = {
 };
 
 const UserProfile: React.FC<UserProfileProps> = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests'>('user-profile');
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'safety-guide' | 'safety-item'>('user-profile');
+    const [activeSubPage, setActiveSubPage] = useState(0);
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
+
     const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
+    const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
 
-    useEffect(() => {fetchUser(); fetchUserPreferences()}, [])
+    useEffect(() => { fetchUser(); fetchUserPreferences() }, [])
 
-    const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
+    const getYearFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
-          throw new Error('Invalid Firebase date object');
+            throw new Error('Invalid Firebase date object');
         }
-      
+
         // Convert seconds to milliseconds
         const milliseconds = firebaseDate.seconds * 1000;
-      
+
         // Create a Date object
         const date = new Date(milliseconds);
-      
+
         // Get the year
         return date.getFullYear();
-      };
+    };
 
     return <>
         <DashboardPageContainer className="hidden lg:block">
@@ -56,13 +58,13 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                         <figure className='user-profile__profile-picture'>
                             <img src="/assets/images/auth-bg/1.webp" />
                         </figure>
-                        <button onClick={() => setActivePage('edit-profile')} className='user-profile__update-profile-button'>
+                        <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button'>
                             <img src="/assets/icons/update-profile.svg" />
                         </button>
                     </section>
                     <section className='user-profile__profile-details'>
                         <div className='user-profile__profile-details'>
-                            <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+                            <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
                                 <img src="/assets/icons/verified-badge.svg" />
                             </p>
                         </div>
@@ -74,8 +76,8 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                         <img src="/assets/icons/notification-alert.svg" />
                         <p>Add more info to your profile to stand out. Click on the edit button to get started.</p>
                     </div>
-                    <div className='user-profile__banner user-profile__banner--safety-guide'>
-                        <img src="/assets/icons/notification-alert.svg" />
+                    <div onClick={() => setActivePage('safety-guide')} className='user-profile__banner user-profile__banner--safety-guide'>
+                        <img src="/assets/icons/safety-guide.svg" />
                         <p>Whossy Safety Guide</p>
                     </div>
                     <section className='user-profile__credit-buttons'>
@@ -90,20 +92,20 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                 </section>
 
             </motion.div>
-            <EditProfile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} />
+            <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
+            <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
-            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')}/>
-            <PreviewProfile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} />
+            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} />
+            <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} />
             <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} />
         </DashboardPageContainer>
         <AnimatePresence mode="wait">
-            <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')}/>
-            <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} /> 
-            <PreviewProfileMobile  activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} /> 
-            <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}/>
-            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")}/>
+            <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} />
+            <EditProfileMobile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} />
+            <PreviewProfileMobile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} />
+            <SettingsMobile activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
+            <PreferencesMobile activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage("interests")} />
             <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} />
-
         </AnimatePresence>
     </>
 }

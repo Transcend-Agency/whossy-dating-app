@@ -1,4 +1,92 @@
 .preview-profile {
+    @include media('<=1023px'){
+        @apply min-h-full;
+    }
+    &--view-profile {
+        // overflow-y: scroll;
+        // position: relative;
+        overflow: visible;
+    }
+
+    &__parent-container {
+        @apply w-full h-full overflow-y-auto;
+        border-top-right-radius: 16px;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 32px;
+        border-bottom-right-radius: 32px;
+        @include media('<=1023px'){
+            border-top-right-radius: 0px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+    }
+
+    &__fake-next-card {
+        @apply w-[calc(100%-3.2rem)] left-[1.6rem] right-[1.6rem] h-full rounded-b-[1.6rem] absolute -bottom-[1rem] bg-[#E7E7E7];
+        &:nth-of-type(2) {
+            @apply left-[3.2rem] right-[3.2rem] w-[calc(100%-6.4rem)] -bottom-[2rem] bg-[#F2F2F2];
+        }
+    }
+
+    & > .preview-profile__action-buttons {
+        @apply hidden lg:block;
+    }
+
+    &__action-buttons {
+        @apply absolute z-10 -right-[3.6rem] top-[16.7rem];
+        @include media('<=1023px'){
+            @apply top-[45rem] flex items-center -translate-x-[8.4rem] left-[50%] ;
+        }
+    }
+
+    &__action-button {
+        @apply w-[7.2rem] h-[7.2rem] flex items-center justify-center rounded-full bg-white cursor-pointer;
+        box-shadow: 4px -4px 20px 0px #1212121A;
+        &:nth-of-type(2) {
+            @include media('<=1023px'){
+                @apply mt-0 ml-[2.4rem];
+            }
+            @apply mt-[1.6rem];
+        }
+        img {
+            @apply w-[4rem] h-[4rem] transition-all duration-300;
+        }
+        &:hover {
+            img {
+                @apply scale-110;
+            }
+        }
+        &:active {
+            img {
+                @apply scale-95;
+            }
+        }
+    }
+
+    &__navigation-buttons {
+        @apply px-[1.6rem] flex justify-between absolute top-[1.6rem] left-0 right-0 z-10;
+    }
+    &__navigation-button {
+        @apply flex items-center;
+        &:nth-of-type(2) {
+            .preview-profile__navigation-button-text {
+                @apply mr-[1.2rem] ml-0;
+            }
+            img {
+                @apply rotate-180;
+            }
+        }
+    }
+    &__navigation-button-icon-container {
+        @apply w-[3rem] h-[3rem] bg-[#FFFFFF33] rounded-[0.6rem] flex items-center justify-center;
+        svg {
+            @apply w-[0.8rem];
+        }
+    }
+    &__navigation-button-text {
+        @apply text-[1.8rem] text-white ml-[1.2rem] flex items-center justify-center;
+    }
 
     @apply bg-white max-h-full;
     .settings-page__title {
@@ -8,7 +96,10 @@
         @apply pb-0;
     }
     &__profile-container {
-        @apply h-full max-h-[calc(100%-4.8rem)] w-full px-[3.2rem] py-[2.4rem];
+        @apply h-full max-h-[calc(100%-4.8rem)] w-full px-[3.2rem] py-[2.4rem] relative;
+        .preview-profile__action-buttons {
+            @apply lg:hidden;
+        }
     }
     &__card {
         @apply w-full h-full rounded-t-[1.42rem] rounded-b-[2.84rem] overflow-hidden relative;
@@ -20,12 +111,20 @@
     }
     &__image-bg-container {
         @apply w-full h-full absolute flex;
+        img {
+            @include media('<=1023px') {
+                @apply rounded-b-[2.4rem] overflow-hidden;
+            }
+        }
     }
     &__profile-image {
         @apply min-w-full h-full object-cover absolute;
     }
     &__overlay {
         @apply w-full h-full bg-gradient-to-b from-[#08080800] from-[50%] to-[75%] to-[#080808] absolute grid grid-cols-2 gap-[1rem];
+        @include media('<=1023px') {
+            @apply rounded-b-[2.4rem] overflow-hidden;
+        }
         z-index: z('preview-profile__overlay');
         div {
             @apply bg-black w-full h-full bg-transparent cursor-pointer;
@@ -62,11 +161,11 @@
         .status-row {
             @apply flex items-center mb-[1.42rem];
             .active-badge {
-                @apply text-[#09B45A] bg-[#103B24] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem];
+                @apply text-[#09B45A] bg-[#103B24] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem] text-[1.8rem];
                 border: 1px solid #09B45A;
             }
             .location {
-                @apply text-white opacity-80;
+                @apply text-white opacity-80 text-[1.6rem];
             }
         }
         .name-row {
@@ -88,7 +187,7 @@
             }
         }
         .bio {
-            @apply mb-[1.6rem] text-white opacity-80 leading-[1.92rem];
+            @apply mb-[1.6rem] text-white opacity-80 leading-[1.92rem] text-[1.8rem];
         }
         .interests-row {
             @apply flex mb-[2rem];
@@ -119,21 +218,31 @@
         }
     }
     &__more-details {
-        @apply  bg-[#F6F6F6] px-[2.4rem] pt-[1.6rem] pb-[2.1rem];
+        @apply  bg-[#F6F6F6] px-[2.4rem] pt-[1.6rem] pb-[2.1rem] text-[1.8rem];
+
+        @include media('<=1023px') {
+            @apply bg-white mt-[7.2rem];
+        }
         .content-item {
             &:not(:first-of-type) {
                 @apply mt-[1.6rem];
             }
             @apply p-[1.6rem] bg-white rounded-[0.8rem];
+            @include media('<=1023px') {
+                @apply bg-[#F6F6F6];
+            }
             &__title {
                 @apply py-[1.1rem] px-[1.2rem] bg-[#F6F6F6] w-fit rounded-[0.8rem] text-[1.8rem] flex items-center leading-[1.3rem];
+                @include media('<=1023px') {
+                    @apply bg-white;
+                }
                 img {
                     @apply mr-[0.8rem]
                 }
             }
             &__value {
                 font-family:  $font-neue-montreal;
-                @apply mt-[1.2rem] font-normal leading-[2.16rem] flex items-center;
+                @apply mt-[1.2rem] font-normal leading-[2.16rem] flex items-center text-[1.8rem];
                 img {
                     @apply w-[4rem] mr-[0.5rem];
                 }
@@ -165,6 +274,9 @@
         }
         .action-button {
             @apply w-full flex items-center justify-center mt-[1.6rem] w-full py-[1.6rem] bg-white rounded-[1.2rem] cursor-pointer;
+            @include media('<=1023px') {
+                @apply bg-[#F6F6F6];
+            }
             img {
                 @apply mr-[1.25rem];
             }

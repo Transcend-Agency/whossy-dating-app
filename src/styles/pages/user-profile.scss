@@ -56,7 +56,7 @@
             }
         }
         &--safety-guide {
-            @apply bg-[#F6F6F6] mt-[0.8rem];
+            @apply bg-[#F6F6F6] mt-[0.8rem] cursor-pointer transition-all duration-200 active:scale-95;
         }
     }
 
