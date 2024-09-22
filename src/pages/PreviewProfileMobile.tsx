@@ -1,5 +1,4 @@
 import { family_goal, preference } from "@/constants";
-import { useGetUserProfile } from "@/hooks/useUser";
 import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -7,11 +6,13 @@ import { useEffect, useRef, useState } from "react";
 interface PreviewProfileMobileProps {
     activePage: boolean;
     closePage: () => void
+    userData: User | undefined;
+    userPrefencesData: UserPrefences | undefined;
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage, closePage }) => {
+const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage, closePage, userData, userPrefencesData }) => {
     const [currentImage, setCurrentImage] = useState(0)
     const profileImages = ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"]
     const [expanded, setExpanded] = useState(false)
@@ -28,12 +29,6 @@ const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage,
             setCurrentImage(value => value - 1)
         }
     }
-
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
 
     const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -53,11 +48,6 @@ const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage,
     useEffect(() => {
         // console.log(moreDetailsContainer)
     }, [expanded])
-
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
 
     return (
         <>
@@ -135,7 +125,7 @@ const PreviewProfileMobile: React.FC<PreviewProfileMobileProps> = ({ activePage,
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest">{item}</div>)}
+                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {

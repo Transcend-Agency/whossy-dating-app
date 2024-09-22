@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { alphabet } from "../../constants";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 
 const OnboardingSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");

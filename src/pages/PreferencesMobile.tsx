@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { useUpdateUserProfile } from "@/hooks/useUser";
 import { User, UserFilters } from "@/types/user";
 import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
@@ -9,40 +9,40 @@ import SliderBar from "@/components/ui/SliderBar";
 import DoubleSliderBar from "@/components/ui/DoubleSliderBar";
 import SettingsGroup from "@/components/dashboard/SettingsGroup";
 import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "@/components/dashboard/EditProfileModals";
+import { useAuthStore } from "@/store/UserId";
+import { Oval } from "react-loader-spinner";
 
 interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
     onInterests: () => void;
+    userData: User | undefined;
+    userPrefencesData: UserFilters | undefined;
+    refetchUserData: () => void;
+    refetchUserPreferencesData: () => void;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'country' | 'city' | 'communication_style' | 'dietary'
 
-const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, onInterests}) => {
+const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, onInterests, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData}) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
-    const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserFilters>();
-    
-    const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("filters") as UserFilters; setuserPreferencesData(data) }
 
-    const updateUser =  (s: User) => {useUpdateUserProfile("users", () => {hideModal(); fetchUser()}, s)}
-    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters", () => {hideModal(); fetchUserPreferences()}, s)}
+    const {auth} = useAuthStore();
 
-    useEffect(() => {
-        fetchUser();
-        fetchUserPreferences();
-    }, [])
-    
+    const updateUser =  (s: User) => {useUpdateUserProfile("users", auth?.uid as string ,() => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters",auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
 
     // const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
     // const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
     const [toggle, setToggle] = useState({similar_interest: userPrefencesData?.similar_interest, has_bio: userPrefencesData?.has_bio, outreach: userPrefencesData?.outreach})
     const [userValue, setUserValue] = useState({distance: userPrefencesData?.distance, age_range: userPrefencesData?.age_range})
 
-    useEffect(() => {setToggle({similar_interest: userPrefencesData?.similar_interest as boolean, has_bio: userPrefencesData?.has_bio as boolean, outreach: userPrefencesData?.outreach})}, [userPrefencesData?.similar_interest, userPrefencesData?.has_bio, userPrefencesData?.outreach])
+    useEffect(() => {setToggle({similar_interest: userPrefencesData?.similar_interest as boolean, has_bio: userPrefencesData?.has_bio as boolean, outreach: userPrefencesData?.outreach as boolean})}, [userPrefencesData?.similar_interest, userPrefencesData?.has_bio, userPrefencesData?.outreach])
     useEffect(() => {setUserValue({distance: userPrefencesData?.distance as number, age_range: userPrefencesData?.age_range})}, [userPrefencesData?.distance, userPrefencesData?.age_range])
+
+    const [isSavingDistance, setIsSavingDistance] = useState(false)
+    const [isSavingAge, setIsSavingAge] = useState(false)
 
     return (
         <>
@@ -72,35 +72,27 @@ const PreferencesMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePa
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                            <p>Preferences</p>
+                            <p>Preferences </p>
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
-                    {/* <div className="settings-page__profile-images">
-                        <div className="settings-page__profile-images__top">
-                            <UserProfileImage imageSrc="/assets/images/dashboard/sample-person.png" />
-                            <div className="settings-page__profile-images__top__right">
-                                <UserProfileImage imageSrc="" />
-                                <UserProfileImage imageSrc="" />
-                            </div>
-                        </div>
-                        <div className="settings-page__profile-images__bottom">
-                            <UserProfileImage imageSrc="" />
-                            <UserProfileImage imageSrc="" />
-                            <UserProfileImage imageSrc="" />
-                        </div>
-
-                    </div> */}
                     <div className="space-y-3">
                         <div className="bg-[#F6F6F6] py-2">
-                            <div className="px-5">
-                                <div className="flex justify-between  items-center"> <p>Distance Radius</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.distance} mi</div></div>
+                        <div className="px-5">
+                                <div className="flex justify-between">
+                                    <div className="flex gap-x-4 items-center"> <p>Distance Radius</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue.distance ?? 0} mi</div></div>
+                                    {userValue?.distance !== userPrefencesData?.distance && <button className="modal__body__header__save-button" onClick={() => {setIsSavingDistance(true);updateUserPreferences({distance: userValue.distance}); setTimeout(() => setIsSavingDistance(false), 1500)}}>{!isSavingDistance ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={14} height={14}/>}</button>}
+                                </div>
                                 <SliderBar val={userValue?.distance} getValue={(val) => setUserValue((prev) => ({...prev, distance: val}))}/>
                             </div>
                             <SettingsToggleItem title="Show people outside my distance radius and country for better reach" isActive={toggle?.outreach as boolean} onButtonToggle={() => {setToggle((prev) => ({...prev, outreach: !toggle.outreach}));updateUserPreferences({outreach: !userPrefencesData?.outreach})}}/>
                             <div className="px-5 pt-4">
-                                <div className="flex justify-between  items-center"> <p>Age range</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.age_range?.min} - {userValue?.age_range?.max}</div></div>
-                                <DoubleSliderBar val={[userValue?.age_range?.min as number, userValue?.age_range?.max as number]} getValue={(val) => setUserValue((prev) => ({...prev, age_range: {min: val[0], max: val[1]}}))}/>
+                                <div className="flex justify-between">
+                                {/* {JSON.stringify(userValue?.age_range)} {JSON.stringify(userPrefencesData?.age_range)} */}
+                                    <div className="flex gap-x-4 items-center"> <p>Age range</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.age_range?.min ?? 'NIL'} - {userValue?.age_range?.max ?? "NIL"}</div></div>
+                                    {JSON.stringify(userValue?.age_range) !== JSON.stringify(userPrefencesData?.age_range) && <button className="modal__body__header__save-button" onClick={() => {setIsSavingAge(true); updateUserPreferences({age_range: userValue.age_range}); setTimeout(() => setIsSavingAge(false), 1500)}}>{!isSavingAge ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={14} height={14}/>}</button>}
+                                </div>
+                                <DoubleSliderBar val={[userValue?.age_range?.min as number ?? 18, userValue?.age_range?.max as number ?? 20]} getValue={(val) => setUserValue((prev) => ({...prev, age_range: {min: val[0], max: val[1]}}))}/>
                             </div>
                         </div>
 

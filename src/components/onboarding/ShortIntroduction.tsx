@@ -4,7 +4,7 @@ import Skip from "./Skip";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/onboarding/useStore";
+import { useOnboardingStore } from "../../store/OnboaredingStore";
 import toast from "react-hot-toast";
 
 const ShortIntroduction: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -31,6 +31,7 @@ const ShortIntroduction: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           className="w-full border-b outline-none text-[1.6rem] resize-none"
           name=""
           id=""
+          value={value}
           onChange={(e) => {
             if (value.length <= 500 ) setValue(e.target.value);
             else{toast.error("You have reached the max lenght")}

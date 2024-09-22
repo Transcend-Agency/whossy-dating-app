@@ -1,67 +1,55 @@
-import toast from "react-hot-toast";
-import Plans from "../components/dashboard/Plans";
-import { useNavigate } from "react-router-dom";
-import NavBar from "../components/dashboard/MobileNavBar";
-import { useEffect, useState } from "react";
-import { useGetUserProfile } from "@/hooks/useUser";
+// import toast from "react-hot-toast";
 import { User, UserPrefences } from "@/types/user";
 import {motion} from "framer-motion"
 import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
 import ProfilePlan from "@/components/dashboard/ProfilePlan";
 import TopNav from "@/components/dashboard/TopNav";
 import BottomNav from "@/components/dashboard/BottomNav";
+import Skeleton from "@/components/ui/Skeleton";
 
-interface CardsProps {
-  src: string;
-  title: string;
-  buttonText: string;
-  txtColor: string;
-  bgColor: string;
-}
+// interface CardsProps {
+//   src: string;
+//   title: string;
+//   buttonText: string;
+//   txtColor: string;
+//   bgColor: string;
+// }
 
 interface MobileProfileProps {
   activePage: string
   onEditProfilePage: () => void
   onSettingsPage: () => void
   onFiltersPage: () => void
+  userData: User | undefined;
+  userPrefencesData: UserPrefences | undefined;
 }
 
-const Cards: React.FC<CardsProps> = ({
-  src,
-  title,
-  buttonText,
-  txtColor,
-  bgColor,
-}) => {
-  return (
-    <div
-      className={`text-[1.6rem] flex items-center justify-center ${bgColor} py-4 w-full rounded-[12px]`}
-    >
-      <img src={src} alt="" />
-      <div className="h-[4rem] justify-between flex flex-col items-start">
-        <p className="font-medium">{title}</p>
-        <button
-          className={`${txtColor} underline`}
-          onClick={() => toast.success("Clicked")}
-        >
-          {buttonText}
-        </button>
-      </div>
-    </div>
-  );
-};
+// const Cards: React.FC<CardsProps> = ({
+//   src,
+//   title,
+//   buttonText,
+//   txtColor,
+//   bgColor,
+// }) => {
+//   return (
+//     <div
+//       className={`text-[1.6rem] flex items-center justify-center ${bgColor} py-4 w-full rounded-[12px]`}
+//     >
+//       <img src={src} alt="" />
+//       <div className="h-[4rem] justify-between flex flex-col items-start">
+//         <p className="font-medium">{title}</p>
+//         <button
+//           className={`${txtColor} underline`}
+//           onClick={() => toast.success("Clicked")}
+//         >
+//           {buttonText}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
 
-const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage}) => {
-  const percentage = 20;
-  const navigate = useNavigate();
-
-  const [userData, setUserData] = useState<User>();
-  const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
-  
-  const fetchUser = async () => { const data = await useGetUserProfile("users") as User; setUserData(data); }
-  const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences") as UserPrefences; setuserPreferencesData(data) }
-
-  useEffect(() => { fetchUser(); fetchUserPreferences();}, [])
+const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfilePage, onSettingsPage, onFiltersPage, userData, userPrefencesData}) => {
 
   const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
     if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
@@ -95,10 +83,10 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
             </button>
         </section>
         <section className='user-profile__profile-details'>
-            <div className='user-profile__profile-details'>
-                <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+            <div className='user-profile__profile-details flex justify-center mt-2'>
+                {(userData && userPrefencesData) ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{ userPrefencesData?.date_of_birth ?(new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
                     <img src="/assets/icons/verified-badge.svg" />
-                </p>
+                </p> : <Skeleton width='150px' height='20px'/>}
             </div>
             <div className='user-profile__profile-details__completion-status'>
                 20% Complete
@@ -116,12 +104,12 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
             <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
             <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
         </section>
-        <BottomNav />
     </div>
     <section className='user-profile__plans'>
         <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' />
         <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' />
     </section>
+        <BottomNav />
 
 </motion.div>
   );
@@ -129,19 +117,19 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
 
 export default MobileProfile;
 
-const cards = [
-  {
-    title: "Profile Boost",
-    btnText: "Get Now",
-    bgColor: "bg-[#FDFAE7]",
-    txtColor: "text-[#EECA0C]",
-    src: "/assets/icons/boost.svg",
-  },
-  {
-    title: "10 Super Likes",
-    btnText: "Add More",
-    bgColor: "bg-[#F3F3FF]",
-    txtColor: "text-[#8785FF]",
-    src: "/assets/icons/star.svg",
-  },
-];
+// const cards = [
+//   {
+//     title: "Profile Boost",
+//     btnText: "Get Now",
+//     bgColor: "bg-[#FDFAE7]",
+//     txtColor: "text-[#EECA0C]",
+//     src: "/assets/icons/boost.svg",
+//   },
+//   {
+//     title: "10 Super Likes",
+//     btnText: "Add More",
+//     bgColor: "bg-[#F3F3FF]",
+//     txtColor: "text-[#8785FF]",
+//     src: "/assets/icons/star.svg",
+//   },
+// ];

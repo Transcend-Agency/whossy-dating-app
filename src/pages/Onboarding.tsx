@@ -53,76 +53,37 @@ const Onboarding = () => {
 
       <AnimatePresence mode="wait">
         {pageOrder[currentPage] == "relationship-preferences" && (
-          <RelationshipPreference
-            key={"relationship-preferences"}
-            advance={advance}
-          />
+          <RelationshipPreference key={"relationship-preferences"} advance={advance}/>
         )}
         {pageOrder[currentPage] == "who-do-you-want-to-meet" && (
-          <WhoDoYouWantToMeet
-            key={"who-do-you-want-to-meet"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <WhoDoYouWantToMeet key={"who-do-you-want-to-meet"} advance={advance} goBack={goBack} />
         )}
         {pageOrder[currentPage] == "how-old-are-you" && (
-          <HowOldAreYou
-            key={"how-old-are-you"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <HowOldAreYou key={"how-old-are-you"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "distance-search" && (
-          <DistanceSearch
-            key={"distance-search"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <DistanceSearch key={"distance-search"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "what-makes-you-tick" && (
-          <WhatMakesYouTick
-            key={"what-makes-you-tick"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <WhatMakesYouTick key={"what-makes-you-tick"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "is-education-your-thing" && (
-          <Education
-            key={"is-education-your-thing"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <Education key={"is-education-your-thing"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "do-you-drink" && (
           <DoYouDrink key={"do-you-drink"} advance={advance} goBack={goBack} />
         )}
         {pageOrder[currentPage] == "are-you-a-smoker" && (
-          <AreYouASmoker
-            key={"are-you-a-smoker"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <AreYouASmoker key={"are-you-a-smoker"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "pets-and-workout" && (
-          <PetsAndWorkout
-            key={"pets-and-workout"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <PetsAndWorkout key={"pets-and-workout"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "short-introduction" && (
-          <ShortIntroduction
-            key={"short-introduction"}
-            advance={advance}
-            goBack={goBack}
-          />
+          <ShortIntroduction key={"short-introduction"} advance={advance} goBack={goBack}/>
         )}
         {pageOrder[currentPage] == "snapshot" && (
-          <ShareASnapshot
-            key={"snapshot"}
-            advance={() => console.log("This is the last page")}
-            goBack={goBack}
-          />
+          <ShareASnapshot key={"snapshot"} advance={() => console.log("This is the last page")} goBack={goBack}/>
         )}
       </AnimatePresence>
     </>
