@@ -2,7 +2,7 @@
 // import HabitSearch from "./HabitSearch";
 import { alphabet } from "@/constants";
 import { useEffect, useState } from "react";
-import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { getUserProfile, updateUserProfile  } from "@/hooks/useUser";
 import { UserFilters, UserPrefences } from "@/types/user";
 import HabitSearch from "./HabitSearch";
 import { useAuthStore } from "@/store/UserId";
@@ -19,7 +19,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   const {auth} = useAuthStore();
 
   const fetchInterests = async () => {
-    const userProfile = (await useGetUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string)) as
+    const userProfile = (await getUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string)) as
       | UserPrefences
       | UserFilters;
 
@@ -51,7 +51,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   }, [mutatedData]);
 
   const handleUpdate = () => {
-    useUpdateUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string, fetchInterests, {
+    updateUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string, fetchInterests, {
       interests: mutatedData,
     });
   };

@@ -5,10 +5,11 @@ type ProfilePlanProps = {
     pricePerMonth: string;
     benefits: string[];
     type: string;
-    gradientSrc: string
+    gradientSrc: string;
+    goToPlansPage: () => void;
 };
 
-const ProfilePlan: React.FC<ProfilePlanProps> = ({ planTitle, type, pricePerMonth, benefits, gradientSrc }) => {
+const ProfilePlan: React.FC<ProfilePlanProps> = ({ planTitle, type, pricePerMonth, benefits, gradientSrc, goToPlansPage }) => {
 
     return <div className={`user-profile__plans__plan user-profile__plans__plan--${type}`}>
         <img className={'user-profile__plans__plan__gradient'} src={gradientSrc} />
@@ -23,7 +24,7 @@ const ProfilePlan: React.FC<ProfilePlanProps> = ({ planTitle, type, pricePerMont
                 <div className='user-profile__plans__plan__benefit'>{benefit}</div>
             ))}
         </div>
-        <button className='user-profile__plans__plan__cta'>See all features</button>
+        <button className='user-profile__plans__plan__cta' onClick={goToPlansPage}>See all features</button>
     </div>
 }
 export default ProfilePlan;

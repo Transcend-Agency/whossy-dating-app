@@ -42,6 +42,17 @@ export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & {userGe
     )
 }
 
+// export const BirthdaySettingsModal: React.FC<DashboardSettingsModalProps & {userGender: string, handleSave: (gender: string) => void}> = ({ showing, hideModal, userGender, handleSave }) => {
+//     const [gender, setGender] = useState(userGender);
+//     const [isLoading, setIsLoading] = useState(false)
+//     useEffect(() => {setGender(userGender)}, [userGender]);
+//     return (
+//         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Birthday" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(gender); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
+//            <Calendar />
+//         </DashboardSettingsModal>
+//     )
+// }
+
 export const EmailSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
     const [email, setEmail] = useState('ronaldosunmu@gmail.com')
     const [isEditable, setIsEditable] = useState(false)
