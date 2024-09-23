@@ -22,7 +22,7 @@ import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import {motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuthStore } from "@/store/UserId";
 
 type LoginProps = {
@@ -65,7 +65,7 @@ const Login: React.FC<LoginProps> = () => {
     const navigate = useNavigate()
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
 
-    const {setAuth} = useAuthStore();
+    const { setAuth } = useAuthStore();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
@@ -108,11 +108,11 @@ const Login: React.FC<LoginProps> = () => {
                         navigate('/auth/email-verification')
                     }
                     else if (!user.has_completed_onboarding) {
+                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
                         navigate('/onboarding')
-                        setAuth({uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding})
                     } else {
+                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
                         navigate('/dashboard/user-profile')
-                        setAuth({uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding})
                     }
                 }
             }
@@ -164,6 +164,7 @@ const Login: React.FC<LoginProps> = () => {
             }
             else if (result.docs.length === 1) {
                 const user = result.docs[0].data()
+                console.log(user)
                 if (!user.has_completed_account_creation) {
                     setId(result.docs[0].id)
                     setUserId(user.uid)
@@ -178,9 +179,10 @@ const Login: React.FC<LoginProps> = () => {
                     navigate('/auth/email-verification')
                 }
                 else if (!user.has_completed_onboarding) {
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
                     navigate('/onboarding')
-                    setAuth(res.user.uid)
                 } else {
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
                     navigate('/dashboard/user-profile')
                 }
             }
@@ -212,7 +214,7 @@ const Login: React.FC<LoginProps> = () => {
                 <AuthInput name="password"
                     register={register}
                     error={errors.password} placeholder='password' type='password' />
-                     <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Login" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
+                <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Login" : <motion.img key="loading-image" className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 <p className='auth-page__modal__form__cta'>Forgot Password? <Link to="/auth/forgot-password" className='underline'>Reset here</Link></p>
             </form>
             <div className='auth-page__modal__alternate-options'>
