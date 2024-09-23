@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { useUpdateUserProfile } from "@/hooks/useUser";
+import { updateUserProfile } from "@/hooks/useUser";
 import { User, UserFilters } from "@/types/user";
 import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
@@ -32,8 +32,8 @@ const Preferences: React.FC<ProfileSettingsProps> = ({ activePage, closePage, on
     const {auth} = useAuthStore();
 
 
-    const updateUser =  (s: User) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters",auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
+    const updateUser =  (s: User) => {updateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserFilters) => {updateUserProfile("filters",auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
     
 
     const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
