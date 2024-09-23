@@ -19,20 +19,21 @@ interface EditProfileProps {
     userPrefencesData: UserPrefences | undefined;
     refetchUserData: () => void;
     refetchUserPreferencesData: () => void;
+    activeSubPage: number;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'birthday' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
 
-const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData, onInterests }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData, onInterests }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
     // const [userData, setUserData] = useState<User>();
     // const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
 
-    const {auth} = useAuthStore();
+const {auth} = useAuthStore();
     
     // const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
-    // const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
+    // const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
     const updateUser =  (s: UserProfile) => {updateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
     const updateUserPreferences = (s: UserPrefences) => { updateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
@@ -84,7 +85,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
             <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
             <BioSettingsModal showing={settingsModalShowing === 'bio'} hideModal={hideModal} bio={userPrefencesData?.bio as string}  handleSave={(bio) => updateUserPreferences({bio}) }/>
 
-            <motion.div animate={(activePage == 'preview-profile' || activePage == 'user-interests') ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page z-20">
+            <motion.div
+                // animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })}
+                // animate={activePage === 'safety-guide' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 0.9, opacity: 0.3, x: "-100%" }) : { x: 0 }}
+                animate={activePage == 'edit-profile' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 0.9, opacity: 0.3, x: "-100%" }) : { x: 0 }}
+                transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
@@ -120,7 +125,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
                             setSettingsModalShowing('gender')
                         }],
                         ['Email', userData?.email as string,
-                        () => {}],
+                            () => { }],
                         ['Phone number', userData?.phone_number as string, () => {
                             setSettingsModalShowing('phone')
                         }],

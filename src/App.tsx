@@ -23,6 +23,8 @@ import Explore from "./pages/dashboard/Explore";
 import GlobalSearch from "./pages/GlobalSearch";
 import Favorites from "./pages/Favorites";
 import Chat from "./pages/Chat";
+import MatchesPage from "./components/dashboard/MatchesPage";
+import SwipingAndMatching from "./pages/dashboard/SwipingAndMatching";
 import { ProtectedDashboard, ProtectedOnboarding } from "./pages/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -54,8 +56,8 @@ function App() {
           <Route path="/dashboard" element={<ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
-            <Route path="swipe-and-match" element={<Explore />} />
-            <Route path="matches" element={<Explore />} />
+            <Route path="swipe-and-match" element={<SwipingAndMatching />} />
+            <Route path="matches" element={<MatchesPage />} />
             {/* <Route index element={<Matching />} /> */}
             <Route path="globalSearch" element={<GlobalSearch />} />
             <Route path="heart" element={<Favorites />} />

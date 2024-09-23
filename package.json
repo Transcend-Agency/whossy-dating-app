@@ -37,6 +37,7 @@
     "react-phone-number-input": "^3.4.3",
     "react-responsive": "^10.0.0",
     "react-router-dom": "^6.24.0",
+    "react-uid": "^2.3.3",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
