@@ -11,7 +11,7 @@ const collection_three = "filters";
 
 // const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
-const useGetUserProfile = async (
+const getUserProfile = async (
   path: CollectionName, uid: string
 ): Promise<UserProfile | undefined> => {
   const docRef = doc(db, path, uid as string);
@@ -30,7 +30,7 @@ const useGetUserProfile = async (
   }
 };
 
-const useUpdateUserProfile = async (
+const updateUserProfile = async (
   path: CollectionName, uid: string,
   success: () => void,
   updatedFields?: Partial<UserProfile>
@@ -71,4 +71,4 @@ const useUpdateUserProfile = async (
 //   }
 // };
 
-export { useGetUserProfile, useUpdateUserProfile };
+export { getUserProfile, updateUserProfile };

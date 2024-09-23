@@ -3,7 +3,7 @@ import { useState } from "react";
 import { BioSettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { useUpdateUserProfile } from "@/hooks/useUser";
+import { updateUserProfile } from "@/hooks/useUser";
 import { User, UserPrefences, UserProfile } from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import Photos from "@/components/dashboard/Photos";
@@ -21,7 +21,7 @@ interface EditProfileProps {
     refetchUserPreferencesData: () => void;
 }
 
-type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
+type SettingsModal = 'hidden' | 'name' | 'birthday' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
 
 const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData, onInterests }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
@@ -34,8 +34,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
     // const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
     // const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => { useUpdateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
+    const updateUser =  (s: UserProfile) => {updateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
+    const updateUserPreferences = (s: UserPrefences) => { updateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
 
     // useEffect(() => {
     //     fetchUser();
@@ -65,6 +65,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
         <>
         
             <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) => {updateUser({first_name, last_name})}}/>
+            {/* <BirthdaySettingsModal  showing={settingsModalShowing === 'birthday'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({gender})}/> */}
             <GenderSettingsModal  showing={settingsModalShowing === 'gender'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({gender})}/>
             <EmailSettingsModal showing={settingsModalShowing === 'email'} hideModal={hideModal} />
             <PhoneNumberSettingsModal showing={settingsModalShowing === 'phone'} hideModal={hideModal} phone_number={userData?.phone_number as string} handleSave={(phone_number) => updateUser({phone_number})}/>
@@ -109,11 +110,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, closePage, onPrev
 
                     </div> */}
                     <Photos refetchUserPreferences={refetchUserPreferencesData}/>
+
                     <div className="space-y-3">
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')
                         }],
-                        ['Birthday', userPrefencesData?.date_of_birth ? getFormattedDateFromFirebaseDate(userPrefencesData?.date_of_birth) : '', () => { }],
+                        ['Birthday', userPrefencesData?.date_of_birth ? getFormattedDateFromFirebaseDate(userPrefencesData?.date_of_birth) : '', () => {  }],
                         ['Gender', userData?.gender as string, () => {
                             setSettingsModalShowing('gender')
                         }],

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfileCreditButtton from '../../components/dashboard/ProfileCreditButtton';
 import ProfilePlan from '../../components/dashboard/ProfilePlan';
@@ -8,7 +8,7 @@ import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
 // import MobileProfile from '../MobileProfile';
 // import EditProfileMobile from '../EditProfileMobile';
-import { useGetUserProfile } from '@/hooks/useUser';
+import { getUserProfile } from '@/hooks/useUser';
 import { User, UserFilters, UserPrefences } from '@/types/user';
 // import PreviewProfileMobile from '../PreviewProfileMobile';
 import Preferences from './Preferences';
@@ -20,24 +20,30 @@ import Skeleton from '@/components/ui/Skeleton';
 import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 // import PreferredInterestsMobile from './PreferredInterestsMobile';
 import UserInterestsDesktop from './UserInterestsDesktop';
+import SubscriptionPlans from './SubscriptionPlans';
 
 
-type UserProfileProps = {};
+// type UserProfileProps = {};
 
-const UserProfile: React.FC<UserProfileProps> = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'user-interests'>('user-profile');
+const UserProfile = () => {
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preview-profile' | 'preferences' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [userData, setUserData] = useState<User>();
     const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
+    const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
 
     const {auth} = useAuthStore();
     
-    const fetchUser = async () => { const data = await useGetUserProfile("users", auth?.uid as string) as User; setUserData(data); }
-    const fetchUserPreferences = async () => {const data = await useGetUserProfile("preferences", auth?.uid as string) as UserPrefences; setuserPreferencesData(data) }
-    const fetchUserFilters = async () => {const data = await useGetUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
+    const fetchUser = async () => { const data = await getUserProfile("users", auth?.uid as string) as User; setUserData(data); }
+    const fetchUserPreferences = async () => {const data = await getUserProfile("preferences", auth?.uid as string) as UserPrefences; setuserPreferencesData(data) }
+    const fetchUserFilters = async () => {const data = await getUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
 
     // useEffect(() => {fetchUser(); fetchUserPreferences()}, [userData, userPrefencesData])
-    useEffect(() => {fetchUser(); fetchUserPreferences(); fetchUserFilters()}, [])
+    useEffect(() => {
+        fetchUser(); 
+        fetchUserPreferences(); 
+        fetchUserFilters()}, []
+    )
 
     const refetchUserData = async () => {await fetchUser()}
     const refetchUserPreferences = async () => {await fetchUserPreferences()}
@@ -99,8 +105,8 @@ const UserProfile: React.FC<UserProfileProps> = () => {
 
                 </div>
                 <section className='user-profile__plans'>
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' />
-                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => {setActivePage('subscription-plans'); setCurrentPlan('free')}}/>
+                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() =>{ setActivePage('subscription-plans'); setCurrentPlan('premium')}}/>
                 </section>
 
             </motion.div>
@@ -110,6 +116,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
             <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/>
+            <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'subscription-plans'} closePage={() => setActivePage('user-profile')} />
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
         </DashboardPageContainer>
         {/* <AnimatePresence mode="wait"> */}
