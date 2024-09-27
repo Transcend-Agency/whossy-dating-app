@@ -1,5 +1,5 @@
 import { family_goal, preference } from "@/constants";
-import { User, UserPrefences } from "@/types/user";
+import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,16 +7,15 @@ interface PreviewProfileProps {
     activePage: string;
     closePage: () => void;
     activeSubPage: number;
-    setActiveSubPage: () => void;
+    setActiveSubPage?: (val: number) => void;
     userData: User | undefined;
-    userPrefencesData: UserPrefences | undefined;
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, activeSubPage, userData, userPrefencesData }) => {
+const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, activeSubPage, userData }) => {
     const [currentImage, setCurrentImage] = useState(0)
-    const profileImages = userPrefencesData?.photos as string[]
+    const profileImages = userData?.photos as string[]
     const [expanded, setExpanded] = useState(false)
     const moreDetailsContainer = useRef(null)
     const profileContainer = useRef(null);
@@ -108,11 +107,11 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
                                 <div className="active-badge">Active</div>
-                                <p className="location">~ {userPrefencesData?.distance} miles away</p>
+                                <p className="location">~ {userData?.distance} miles away</p>
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
-                                    <p className="details">{userData?.first_name}, <span className="age">{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span></p>
+                                    <p className="details">{userData?.first_name}, <span className="age">{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span></p>
                                     <img src="/assets/icons/verified.svg" />
                                 </div>
                                 <AnimatePresence>
@@ -124,13 +123,13 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                 </AnimatePresence>
                             </motion.div>
                             <motion.div initial={{ height: 'auto' }} animate={expanded ? { height: 0, opacity: 0 } : { height: 'auto' }} ref={moreDetailsContainer} className="more-details">
-                                {userPrefencesData?.bio && <p className="bio">
-                                    {userPrefencesData.bio.slice(0, 200)}...
+                                {userData?.bio && <p className="bio">
+                                    {userData.bio.slice(0, 200)}...
                                 </p>}
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        {userPrefencesData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
+                                        {userData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
@@ -139,7 +138,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {profileImages.map((image, index) => (
+                                {profileImages?.map((image, index) => (
                                     <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
@@ -154,7 +153,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                         </div>
                         <div className="content-item__value">
                             {/* <img src="/assets/images/onboarding/onboarding-fun.svg" /> */}
-                            {preference[userPrefencesData?.preference as number]}
+                            {preference[userData?.preference as number]}
                         </div>
                     </div>
                     <div className="content-item">
@@ -162,8 +161,8 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             <img src="/assets/icons/relationship-preference.svg" />
                             Bio
                         </div>
-                        {userPrefencesData?.bio && <div className="content-item__value">
-                            {userPrefencesData.bio}
+                        {userData?.bio && <div className="content-item__value">
+                            {userData.bio}
                         </div>}
                     </div>
                     {/* <div className="content-item">
@@ -208,7 +207,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             Interests
                         </div>
                         <div className="content-item__multi-options-container">
-                            {userPrefencesData?.interests?.map((item, i) => <div key={i} className="content-item__multi-options-container__item">
+                            {userData?.interests?.map((item, i) => <div key={i} className="content-item__multi-options-container__item">
                                 {item}
                             </div>)}
                         </div>
@@ -220,15 +219,15 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Future family goals</p>
-                            {userPrefencesData?.family_goal && <p className="content-item__info__text">{family_goal[userPrefencesData?.family_goal as number]}</p>}
+                            {userData?.family_goal && <p className="content-item__info__text">{family_goal[userData?.family_goal as number]}</p>}
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Weight</p>
-                            {userPrefencesData?.weight ? <p className="content-item__info__text">{userPrefencesData.weight}kg</p> : <p className="content-item__info__text">Not specified</p>}
+                            {userData?.weight ? <p className="content-item__info__text">{userData?.weight}kg</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Height</p>
-                            {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
+                            {userData?.height ? <p className="content-item__info__text">{userData.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                     </div>
                     <div className="action-button">

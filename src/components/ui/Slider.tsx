@@ -1,6 +1,6 @@
 import * as Slide from "@radix-ui/react-slider";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 
 interface SliderProps {
   getDistance?: (s: any) => void;

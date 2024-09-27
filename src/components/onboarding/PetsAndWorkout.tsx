@@ -5,7 +5,7 @@ import Skip from "./Skip";
 import RegularOptions from "./RegularOptions";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import { workout } from "../../constants";
 import Pets from "./Pets";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
@@ -52,9 +52,7 @@ const PetsAndWorkout: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           text="Continue"
           onClick={() => {
             advance();
-            updateOnboardingData({
-              "workout-preference": active,
-            });
+            updateOnboardingData({ "workout-preference": active });
           }}
         />
       </div>

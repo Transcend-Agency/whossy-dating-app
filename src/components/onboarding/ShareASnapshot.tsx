@@ -9,7 +9,7 @@ import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import { useState } from "react";
 import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
@@ -32,7 +32,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "preferences", auth?.uid as string), {
+      await setDoc(doc(db, "users", auth?.uid as string), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -66,10 +66,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         <h1 className="onboarding-page__header">Share a snapshot of you</h1>
         <div className="onboarding-page__text">
           <p>Add at least 2 recent photos of yourself 🤗 </p>
-          <p>
-            Hint: Using your best photo could give a great first impression and
-            the beginning of something great
-          </p>
+          <p>Hint: Using your best photo could give a great first impression and the beginning of something great</p>
         </div>
         <BigSnapshots />
         <SmallSnapshots />
@@ -77,11 +74,12 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
 
       <div className="onboarding-page__section-one__buttons">
         <OnboardingBackButton onClick={goBack} />
-        <Button
-          text="Get Started"
+        <Button text="Get Started"
           onClick={() => {
+            if (Object.values(photos).filter(value => Boolean(value)).length > 2) {
             setOpenModal(true);
             setTimeout(() => uploadToFirestore(), 5000);
+            } else { toast.error("Please add at least 2 photos of yourself 🤗") }
           }}
         />
       </div>
@@ -89,12 +87,8 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
         <Modal>
           <div className="bg-white w-[47rem] pt-10 p-6 rounded-2xl text-center  flex flex-col relative">
             <div className="space-y-6">
-              <h1 className="text-[3.2rem] font-bold  ">
-                All set and ready 🔥
-              </h1>
-              <p className="text-[1.8rem] text-[#8A8A8E]">
-                We are setting up your profile and getting your match ready :)
-              </p>
+              <h1 className="text-[3.2rem] font-bold  ">All set and ready 🔥</h1>
+              <p className="text-[1.8rem] text-[#8A8A8E]">We are setting up your profile and getting your match ready :)</p>
             </div>
             <Lottie animationData={Cat} className="h-96" />
           </div>

@@ -8,6 +8,26 @@ export type User = {
   last_name?: string;
   phone_number?: string;
   email?: string;
+  bio?: string;
+  date_of_birth?: {nanoseconds: number, seconds: number};
+  distance?: number;
+  drink?: number;
+  education?: number;
+  interests?: string[];
+  height?: number;
+  meet?: number;
+  pets?: string;
+  photos?: string[];
+  preference?: number;
+  smoke?: number;
+  workout?: number;
+  marital_status?: number;
+  love_language?: number;
+  zodiac?: number;
+  family_goal?: number;
+  religion?: number;
+  pet_owner?: number;
+  weight?: number
 };
 
 export type UserPrefences = {

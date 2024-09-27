@@ -17,7 +17,6 @@ import ProgressBarItem from "../components/onboarding/ProgressBarItem";
 const Onboarding = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageOrder = [
-    "snapshot",
     "relationship-preferences",
     "who-do-you-want-to-meet",
     "how-old-are-you",
@@ -28,6 +27,7 @@ const Onboarding = () => {
     "are-you-a-smoker",
     "pets-and-workout",
     "short-introduction",
+    "snapshot",
   ];
 
   const advance = () => {

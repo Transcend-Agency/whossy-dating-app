@@ -5,7 +5,7 @@ import RegularOptions from "../components/onboarding/RegularOptions";
 import { useEffect, useState } from "react";
 import { OnboardingProps } from "../types/onboarding";
 import OnboardingPage from "../components/onboarding/OnboardingPage";
-import { useOnboardingStore } from "../store/OnboaredingStore";
+import { useOnboardingStore } from "../store/OnboardingStore";
 import { smoking } from "../constants";
 
 const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
