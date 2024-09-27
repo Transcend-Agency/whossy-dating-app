@@ -1,17 +1,18 @@
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardPageContainer from '@/components/dashboard/DashboardPageContainer';
 import ChatListItem from '@/components/dashboard/ChatListItem';
 import SelectedChat from '@/components/dashboard/SelectedChat';
-import { arrayUnion, collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { useChatIdStore, useUserChatsStore } from '@/store/ChatStore';
+import { useNavigate } from 'react-router-dom';
+import SelectedChatTwo from '@/components/dashboard/SelectedChatTwo';
 
-type UserProfileProps = {
-};
+// type UserProfileProps = {};
 
-const UserProfile: React.FC<UserProfileProps> = () => {
+const UserProfile = () => {
     const [activePage, setActivePage] = useState<'chats' | 'selected-chat'>('chats');
     const [selectedChatData, setSelectedChatData] = useState(null)
     const {auth} = useAuthStore();
@@ -72,6 +73,17 @@ const UserProfile: React.FC<UserProfileProps> = () => {
     }
   }
 
+  const navigate = useNavigate();
+
+  
+  const queryParams = new URLSearchParams(location.search);
+  const user_id = queryParams.get('user_id');
+  useEffect(() => {
+    if (queryParams.get('user_id')) {
+      setActivePage('selected-chat');
+    }
+  }, [user_id])
+
     return <>
        {/* <ImagesModalMobile show={true}/> */}
         <DashboardPageContainer className="block">
@@ -95,24 +107,17 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                 {/* <button className='bg-red-600 text-white rounded-lg p-4 cursor-pointer' onClick={() => {console.log(chats); }}>Chat With User</button> */}
                 <section>
                   <h1 className='text-[1.6rem] font-medium mb-4 px-[1.6rem]'>Messages</h1>
-                  {chats?.map((item: any, i: number) => (
-                    <ChatListItem key={i} contactName={item.user.first_name} message={item.lastMessage ? item.lastMessage : 'No messages'} profileImage={item.preferences.photos[0]} messageStatus={!item.isSeen} openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item)}}/>
-                  ))}
-                  {/* <ChatListItem contactName='Stephen' message='Hi, how are you' profileImage='/assets/images/matches/stephen.png' messageStatus={true} openChat={() => setActivePage('selected-chat')}/> */}
-                  {/* <ChatListItem contactName='Temidre' message='Hey, how are you' profileImage='/assets/images/matches/stephen.png' messageStatus={true} openChat={() => setActivePage('selected-chat')}/> */}
-                  {/* {JSON.stringify(chats)} */}
+                  {/* {chats?.map((item: any, i: number) => (
+                    <ChatListItem key={i} contactName={item.user.first_name} message={item.lastMessage ? item.lastMessage : 'No messages'} profileImage={item.preferences.photos[0]} messageStatus={!item.isSeen} openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item); navigate(`/dashboard/chat?user_id=${item.user.uid}`)}}/>
+                  ))} */}
+                  <ChatListItem contactName='Stephen' message='Hi, how are you' profileImage='/assets/images/matches/stephen.png' messageStatus={true} openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${'wHzgJSlbLVeRGBOyhDTINassljC2'}`);}}/>
                 </section>
 
             </motion.div>
-            {/* <EditProfile activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} onInterests={() => setActivePage('user-interests')}  userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
-            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} /> */}
-            {/* <AnimatePresence mode='wait'> */}
-              {/* <SelectedChat activePage={activePage === "selected-chat"}/> */}
-            {/* </AnimatePresence> */}
-            {/* <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/> */}
-            {/* <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
-            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/> */}
-            <SelectedChat chatData={selectedChatData} activePage={activePage === "selected-chat"} closePage={() => {setActivePage('chats'); setSelectedChatData(null)}} />
+            {/* <SelectedChat chatData={selectedChatData} activePage={activePage === "selected-chat"} closePage={() => {setActivePage('chats'); setSelectedChatData(null); navigate('/dashboard/chat')}} /> */}
+            {/* <SelectedChatTwo activePage={activePage === "selected-chat"} closePage={() => {setActivePage('chats'); setSelectedChatData(null); navigate('/dashboard/chat')}} /> */}
+
+            <SelectedChatTwo activePage={activePage === "selected-chat"} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}}/>
         </DashboardPageContainer>
         {/* <AnimatePresence mode="wait">
             <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} userData={userData} userPrefencesData={userPrefencesData}/>

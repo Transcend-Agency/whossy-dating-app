@@ -3,7 +3,7 @@ import Options from "./Options";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import { relationship_preferences } from "../../constants";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
@@ -42,9 +42,7 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
         selected={active}
         advance={() => {
           if (active !== null) {
-            updateOnboardingData({
-              "relationship-preference": active,
-            });
+            updateOnboardingData({ "relationship-preference": active });
             advance();
           }
         }}

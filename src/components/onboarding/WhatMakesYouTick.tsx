@@ -6,7 +6,7 @@ import OnboardingPage from "./OnboardingPage";
 import Interests from "./Interests";
 // import { useOnboardingStore } from "../../store/useOnboardingStore";
 import toast from "react-hot-toast";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -48,7 +48,7 @@ const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
             bottom: 0,
           }}
         >
-          Select {data.interests ? data.interests.length : 0}/5
+          Select {data.interests ? (data.interests.length > 5 ? 5 : data.interests.length) : 0}/5
         </button>
       </div>
     </OnboardingPage>

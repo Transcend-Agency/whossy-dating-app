@@ -5,7 +5,7 @@ import RegularOptions from "./RegularOptions";
 import { useEffect, useState } from "react";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import { drinking } from "../../constants";
 
 const DoYouDrink: React.FC<OnboardingProps> = ({ advance, goBack }) => {

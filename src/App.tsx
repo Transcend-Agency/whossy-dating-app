@@ -33,9 +33,7 @@ function App() {
   const location = useLocation();
   return (
     <QueryClientProvider client={queryClient}>
-      {location.pathname.startsWith("/auth") && (
-        <MarqueeImageSliderBackground />
-      )}
+      { location.pathname.startsWith("/auth") && ( <MarqueeImageSliderBackground />) }
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/auth" element={<AuthLayout />}>
