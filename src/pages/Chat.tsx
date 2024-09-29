@@ -207,7 +207,7 @@ const UserProfile = () => {
                     <ChatListItem key={i} contactName={item.user.first_name} message={item.lastMessage ? item.lastMessage : 'No messages'} profileImage={item.preferences.photos[0]} messageStatus={!item.isSeen} openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item); navigate(`/dashboard/chat?user_id=${item.user.uid}`)}}/>
                   ))} */}
                   {allChats.map((chat, i) => (
-                    chat ? <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0]} 
+                    chat ? <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
                     // messageStatus={chat.user.uid !== chat.participants[0] ? !chat.isSeenByInitiator : !chat.isSeenByReceiver} 
                     openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
                     //  updateSeenStatus(chat.participants, chat.user.uid as string)
