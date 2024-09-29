@@ -348,7 +348,7 @@ const SwipingAndMatching = () => {
                         <button onClick={likeProfile} className="action-buttons__button">
                             <img src="/assets/icons/heart.svg" />
                         </button>
-                        <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'wHzgJSlbLVeRGBOyhDTINassljC2'}`)}>
+                        <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'MWBawIlrsDarKK1Cjnm3FIGj8vz2'}`)}>
                             <img src="/assets/icons/message-heart.svg" />
                         </button>
                     </motion.div>
