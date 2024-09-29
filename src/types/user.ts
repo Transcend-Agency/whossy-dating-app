@@ -1,5 +1,6 @@
 export type User = {
   auth_provider?: string;
+  uid?: string;
   country_of_origin?: string;
   first_name?: string;
   gender?: string;
@@ -27,7 +28,12 @@ export type User = {
   family_goal?: number;
   religion?: number;
   pet_owner?: number;
-  weight?: number
+  weight?: number;
+  incoming_messages?: boolean;
+  hide_verification_badge?: boolean;
+  public_search?: boolean;
+  read_receipts?: boolean;
+  online_status?: boolean;
 };
 
 export type UserPrefences = {
