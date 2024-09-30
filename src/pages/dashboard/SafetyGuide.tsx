@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 
 type SafetyGuideProps = {
     activePage: string;
@@ -9,7 +9,12 @@ type SafetyGuideProps = {
     setActiveSubPage?: (num: number) => void;
 };
 
-const SafetyGuideItem = ({ icon, title, onClick }) => {
+interface SafetyGuideItemProps {
+    icon?: string;
+    title: string;
+    onClick?: () => void
+}
+const SafetyGuideItem: React.FC<SafetyGuideItemProps> = ({ icon, title, onClick }) => {
     return (
         <div onClick={onClick} className='safety-guide-item'>
             <div className='safety-guide-item__left'>
@@ -21,7 +26,14 @@ const SafetyGuideItem = ({ icon, title, onClick }) => {
     )
 }
 
-const SafetyItemPage = ({ activePage, activeSubPage, closePage, onSafetyItem, data }) => {
+interface SafetyItemPageProps {
+    activePage?: string;
+    activeSubPage?: number;
+    closePage?: () => void;
+    onSafetyItem?: () => void;
+    data?: { title: string; image?: string; points: { title: string; text: string }[] };
+}
+const SafetyItemPage: React.FC<SafetyItemPageProps> = ({ activePage, activeSubPage, closePage, data }) => {
     return (
         <motion.div
             animate={activePage === 'safety-guide' ? (activeSubPage == 1 ? { x: "-100%", opacity: 1 } : { x: 0 }) : { x: 0 }}
@@ -55,7 +67,6 @@ const SafetyItemPage = ({ activePage, activeSubPage, closePage, onSafetyItem, da
 }
 
 const SafetyGuide: React.FC<SafetyGuideProps> = ({ activePage, activeSubPage, closePage, onSafetyItem, setActiveSubPage }) => {
-    const [selectedSafetyGuidePage, setSelectedSafetyGuidePage] = useState()
     const safetyGuideInformation = {
         'general-safety-tips': {
             title: 'General Safety Tips',
@@ -180,6 +191,7 @@ const SafetyGuide: React.FC<SafetyGuideProps> = ({ activePage, activeSubPage, cl
             ]
         }
     };
+    const [selectedSafetyGuidePage, setSelectedSafetyGuidePage] = useState<keyof typeof safetyGuideInformation>()
     return <>
         <motion.div
             // animate={activePage == 'safety-item' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'safety-guide' ? { x: "-100%", opacity: 1 } : { x: 0 })}
@@ -205,7 +217,7 @@ const SafetyGuide: React.FC<SafetyGuideProps> = ({ activePage, activeSubPage, cl
                 </div>
             </div>
         </motion.div >
-        <SafetyItemPage data={safetyGuideInformation[selectedSafetyGuidePage]} activePage={activePage} closePage={() => { setActiveSubPage('') }} activeSubPage={activeSubPage} onSafetyItem={onSafetyItem} />
+        <SafetyItemPage data={safetyGuideInformation[selectedSafetyGuidePage as keyof typeof safetyGuideInformation]} activePage={activePage} closePage={() => { setActiveSubPage(0) }} activeSubPage={activeSubPage} onSafetyItem={onSafetyItem} />
     </>
 }
 export default SafetyGuide;

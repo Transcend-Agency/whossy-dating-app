@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { updateUserProfile } from "@/hooks/useUser";
-import { User, UserFilters } from "@/types/user";
-import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
-import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
 import SettingsInterest from "@/components/dashboard/SettingsInterests";
-import SliderBar from "@/components/ui/SliderBar";
+import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
 import DoubleSliderBar from "@/components/ui/DoubleSliderBar";
+import SliderBar from "@/components/ui/SliderBar";
+import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
+import { updateUserProfile } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/UserId";
+import { User, UserFilters } from "@/types/user";
 import { Oval } from "react-loader-spinner";
 
 interface ProfileSettingsProps {

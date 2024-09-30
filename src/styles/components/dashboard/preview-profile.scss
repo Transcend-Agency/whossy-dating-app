@@ -27,6 +27,9 @@
         &:nth-of-type(2) {
             @apply left-[3.2rem] right-[3.2rem] w-[calc(100%-6.4rem)] -bottom-[2rem] bg-[#F2F2F2];
         }
+        @include media('>=1024px') {
+            @apply hidden;
+        }
     }
 
     & > .preview-profile__action-buttons {
@@ -265,8 +268,11 @@
             &__multi-options-container {
                 @apply flex flex-wrap mt-[1.6rem] gap-x-[1.6rem] gap-y-[1.2rem];
                 &__item {
-                    @apply leading-[1.9rem] text-[1.6rem] py-[0.65rem] px-[1.2rem] rounded-[0.8rem];
+                    @apply leading-[1.9rem] text-[1.6rem] py-[0.65rem] px-[1.2rem] rounded-[0.8rem] relative;
                     border: 1px solid #D9D9D980;
+                    img {
+                        @apply absolute -top-[0.2rem] -right-[0.8rem];
+                    }
                 }
             }
 

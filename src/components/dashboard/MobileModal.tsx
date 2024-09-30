@@ -9,7 +9,7 @@ export type DashboardSettingsModalProps = {
     save?: JSX.Element | JSX.Element[] | boolean;
 };
 
-const MobileModal: React.FC<DashboardSettingsModalProps> = ({ showing, children, hideModal, title, save }) => {
+const MobileModal: React.FC<DashboardSettingsModalProps> = ({ showing, children, title, save }) => {
 
     return <>
         <AnimatePresence mode='wait'>

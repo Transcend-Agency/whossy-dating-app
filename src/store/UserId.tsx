@@ -1,11 +1,13 @@
+import { User } from "@/types/user";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-type AuthType = {uid: string, has_completed_onboarding: boolean};
+type AuthType = { uid: string, has_completed_onboarding: boolean };
 
 interface Picture {
   auth: AuthType | null;
-  setAuth: (auth: AuthType ) => void;
+  setAuth: (auth: AuthType, user: User) => void;
+  user?: User;
   reset: () => void;
 }
 
@@ -19,9 +21,9 @@ export const useAuthStore = create<
 >(
   persist(
     (set) => ({
-        ...initialState,
-        setAuth: (auth) => set(() => ({auth})),
-        reset: () => set(initialState),
+      ...initialState,
+      setAuth: (auth, user) => set(() => ({ auth, user })),
+      reset: () => set(initialState),
     }),
     {
       name: "user_id",

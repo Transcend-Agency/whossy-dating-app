@@ -10,7 +10,7 @@ const Dashboard: React.FC = () => {
     const { pathname } = useLocation()
     // console.log(pathname)
     return <>
-        <div className='dashboard-layout'>
+        <div className='dashboard-layout hidden lg:block'>
             <ChatInterface />
             <AnimatePresence>
                 {pathname == '/dashboard/swipe-and-match' && <ShortcutControls />}

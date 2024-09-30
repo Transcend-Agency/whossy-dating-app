@@ -3,11 +3,11 @@ import { useState } from "react";
 import { BioSettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { updateUserProfile } from "@/hooks/useUser";
-import { User, UserProfile } from "@/types/user";
-import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import Photos from "@/components/dashboard/Photos";
+import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
+import { updateUserProfile } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/UserId";
+import { User, UserProfile } from "@/types/user";
 // import SettingsInterest from "@/components/dashboard/SettingsInterests";
 
 interface EditProfileProps {
@@ -29,8 +29,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, cl
     // const [userData, setUserData] = useState<User>();
     // const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
 
-const {auth} = useAuthStore();
-    
+    const { auth } = useAuthStore();
+
     // const fetchUser = async () => { const data = await useGetUserProfile("users", auth as string) as User; setUserData(data); }
     // const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences", auth as string) as UserPrefences; setuserPreferencesData(data) }
 
@@ -40,22 +40,22 @@ const {auth} = useAuthStore();
     //     fetchUser();
     //     fetchUserPreferences();
     // }, [])
-    
 
-    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
-    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
+
+    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`; }
+    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2); }
 
     const getFormattedDateFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined): string => {
         if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
             throw new Error('Invalid Firebase date object');
         }
-    
+
         // Convert seconds to milliseconds
         const milliseconds = firebaseDate.seconds * 1000;
-    
+
         // Create a Date object
         const date = new Date(milliseconds);
-    
+
         // Format the date
         const formatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
         return formatter.format(date);
