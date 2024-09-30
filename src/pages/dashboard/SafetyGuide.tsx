@@ -6,7 +6,7 @@ type SafetyGuideProps = {
     activeSubPage: number;
     closePage: () => void;
     onSafetyItem: () => void;
-    setActiveSubPage: Dispatch<SetStateAction<number>>;
+    setActiveSubPage?: (num: number) => void;
 };
 
 interface SafetyGuideItemProps {

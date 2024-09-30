@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfileCreditButtton from '../../components/dashboard/ProfileCreditButtton';
 import ProfilePlan from '../../components/dashboard/ProfilePlan';
@@ -8,8 +8,8 @@ import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
 // import MobileProfile from '../MobileProfile';
 // import EditProfileMobile from '../EditProfileMobile';
-import { useGetUserProfile } from '@/hooks/useUser';
-import { User, UserFilters, UserPrefences } from '@/types/user';
+import { getUserProfile } from '@/hooks/useUser';
+import { User, UserFilters } from '@/types/user';
 // import PreviewProfileMobile from '../PreviewProfileMobile';
 import Preferences from './Preferences';
 import SafetyGuide from './SafetyGuide';
@@ -22,29 +22,30 @@ import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 // import PreferredInterestsMobile from './PreferredInterestsMobile';
 import UserInterestsDesktop from './UserInterestsDesktop';
 import { getYearFromFirebaseDate } from '@/utils/date';
+import SubscriptionPlans from './SubscriptionPlans';
 
 
-type UserProfileProps = {
-};
+// type UserProfileProps = {};
 
-const UserProfile: React.FC<UserProfileProps> = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests'>('user-profile');
+
+const UserProfile = () => {
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
     const [userData, setUserData] = useState<User>();
-    const [userPrefencesData, setuserPreferencesData] = useState<UserPrefences>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
+    const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
 
-    const { auth } = useAuthStore();
+    const {auth} = useAuthStore();
 
-    const fetchUser = async () => { const data = await useGetUserProfile("users", auth?.uid as string) as User; setUserData(data); }
-    const fetchUserPreferences = async () => { const data = await useGetUserProfile("preferences", auth?.uid as string) as UserPrefences; setuserPreferencesData(data) }
-    const fetchUserFilters = async () => { const data = await useGetUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
+    const fetchUserData = async () => { const data = await getUserProfile("users", auth?.uid as string) as User; setUserData(data); }
+    
+    const fetchUserFilters = async () => {const data = await getUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
 
     // useEffect(() => {fetchUser(); fetchUserPreferences()}, [userData, userPrefencesData])
-    useEffect(() => { fetchUser(); fetchUserPreferences(); fetchUserFilters() }, [])
+    useEffect(() => { fetchUserData(); fetchUserFilters()}, [] )
 
-    const refetchUserData = async () => { await fetchUser() }
-    const refetchUserPreferences = async () => { await fetchUserPreferences() }
+
+    const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
 
     return <>
@@ -65,7 +66,7 @@ const UserProfile: React.FC<UserProfileProps> = () => {
                     </section>
                     <section className='user-profile__profile-details'>
                         <div className='user-profile__profile-details flex justify-center mt-2'>
-                            {userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span>
+                            {userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span>
                                 <img src="/assets/icons/verified-badge.svg" />
                             </p> : <Skeleton width='150px' height='20px' />}
                         </div>
@@ -88,19 +89,20 @@ const UserProfile: React.FC<UserProfileProps> = () => {
 
                 </div>
                 <section className='user-profile__plans'>
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='free' gradientSrc='/assets/images/dashboard/free.svg' />
-                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']} type='free' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => {setActivePage('subscription-plans'); setCurrentPlan('free')}}/>
+                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() =>{ setActivePage('subscription-plans'); setCurrentPlan('premium')}}/>
                 </section>
 
             </motion.div>
-            <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences} />
+            <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
-            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} />
+            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.online_status, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge}} refetchUserData={refetchUserData}/>
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters} />
-            <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} userPrefencesData={userPrefencesData} />
+            <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
-            <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters} />
-            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences} />
+            <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userFilters={userFilters} refetchUserFilters={refetchUserFilters} />
+            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userData={userData} refetchUserData={refetchUserData} />
+            <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'subscription-plans'} closePage={() => setActivePage('user-profile')} />
         </DashboardPageContainer >
         {/* <AnimatePresence mode="wait">
         <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} />
@@ -115,9 +117,9 @@ const UserProfile: React.FC<UserProfileProps> = () => {
             <PreviewProfile activePage={activePage == 'preview-profile'} closePage={() => setActivePage('edit-profile')} userData={userData} userPrefencesData={userPrefencesData}/>
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters}/>
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userPrefencesData={userFilters} refetchUserPreferencesData={refetchUserFilters}/>
-            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/> */}
-        {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
-        {/* </DashboardPageContainer> */}
+            <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userPrefencesData={userPrefencesData} refetchUserPreferencesData={refetchUserPreferences}/>
+            <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'subscription-plans'} closePage={() => setActivePage('user-profile')} />
+            {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
         {/* <AnimatePresence mode="wait"> */}
         {/* <MobileProfile onEditProfilePage={() => setActivePage('edit-profile')} activePage='user-profile' onSettingsPage={() => setActivePage('profile-settings')} onFiltersPage={() => setActivePage('preferences')} userData={userData} userPrefencesData={userPrefencesData}/> */}
         {/* <EditProfileMobile  activePage={activePage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => setActivePage('preview-profile')} userData={userData} userPrefencesData={userPrefencesData} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserPreferences}/> 

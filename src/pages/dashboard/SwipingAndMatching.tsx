@@ -1,6 +1,7 @@
 import { family_goal, preference } from "@/constants";
 import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { uid } from 'react-uid';
 
 interface ProfileCardProps {
@@ -284,6 +285,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     )
 }
 const SwipingAndMatching = () => {
+    const navigate = useNavigate();
     const [profiles, setProfiles] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     const x = useMotionValue(0)
     const controls = useAnimationControls()
@@ -333,7 +335,6 @@ const SwipingAndMatching = () => {
             cancelProfile()
         else if (e.keyCode == 39)
             likeProfile()
-
     }
     useEffect(() => {
         window.addEventListener('keydown', handleShortcuts)
@@ -368,7 +369,7 @@ const SwipingAndMatching = () => {
                         <button onClick={likeProfile} className="action-buttons__button">
                             <img src="/assets/icons/heart.svg" />
                         </button>
-                        <button className="action-buttons__button action-buttons__button--small">
+                        <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'MWBawIlrsDarKK1Cjnm3FIGj8vz2'}`)}>
                             <img src="/assets/icons/message-heart.svg" />
                         </button>
                     </motion.div>

@@ -6,11 +6,9 @@ import ChatInterface from './ChatInterface';
 import ShortcutControls from './ShortcutControls';
 import { AnimatePresence } from 'framer-motion';
 
-type DashboardProps = {};
-
-const Dashboard: React.FC<DashboardProps> = () => {
+const Dashboard: React.FC = () => {
     const { pathname } = useLocation()
-    console.log(pathname)
+    // console.log(pathname)
     return <>
         <div className='dashboard-layout hidden lg:block'>
             <ChatInterface />

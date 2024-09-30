@@ -2,7 +2,7 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
 import { useEffect, useState } from "react";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import OnboardingButton from "./OnboardingButton";
 import toast from "react-hot-toast";
 

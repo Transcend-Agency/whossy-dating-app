@@ -7,7 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string;
     loading?: boolean;
     disabled?: boolean;
-};
+}
 
 const Button: React.FC<ButtonProps> = ({ text, className, loading, disabled, ...props }) => {
 

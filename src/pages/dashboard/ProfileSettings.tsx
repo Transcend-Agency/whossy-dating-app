@@ -1,30 +1,51 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SettingsToggleItem from "../../components/dashboard/SettingsToggleItem";
 import ProfileSettingsGroup from "@/components/dashboard/ProfileSettingsGroup";
 import SettingsModal from "@/components/dashboard/SettingsModal";
 import { useNavigate } from "react-router-dom";
 import { auth } from "@/firebase";
 import { useAuthStore } from "@/store/UserId";
+import { updateUserProfile } from "@/hooks/useUser";
+import { User } from "@/types/user";
 
 interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
+    userSettings: {
+        incoming_messages?: boolean;
+        hide_verification_badge?: boolean;
+        public_search?: boolean;
+        read_receipts?: boolean;
+        online_status?: boolean;
+    }
+    refetchUserData: () => void;
 }
 
 // type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
-const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, }) => {
-    const [profileSettings, setProfileSettings] = useState({
-        incoming_messages: false,
-        hide_verification_badge: false,
-        public_search: false,
-        read_receipts: false,
-        online_status: false,
-    })
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, refetchUserData}) => {
+    const [profileSettings, setProfileSettings] = useState(userSettings)
+    
     const [showModal, setShowModal] = useState<'hidden' | 'logout'>('hidden')
-    const {reset} = useAuthStore();
+    const {reset, auth: user} = useAuthStore();
     const navigate = useNavigate()
+
+    const updateUser =  (s: User) => {updateUserProfile("users", user?.uid as string, refetchUserData, s)}
+
+    useEffect(() => {   
+        setProfileSettings(
+            {
+                incoming_messages: userSettings.incoming_messages ?? false,
+                hide_verification_badge: userSettings.hide_verification_badge ?? false,
+                public_search: userSettings.public_search ?? false,
+                read_receipts: userSettings.read_receipts ?? false,
+                online_status: userSettings.online_status ?? false
+            } as User
+        )
+    }   
+    , [userSettings])
+
     return (
         <>
 
@@ -40,15 +61,15 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                     <div className="settings-page__settings-group">
-                        <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages} onButtonToggle={() => setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages })} />
+                        <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages }); updateUser({incoming_messages: !profileSettings.incoming_messages})}} isPremium/>
 
-                        <SettingsToggleItem title="Hide verification badge" subtext="This will hide the verification badge on your profile." isActive={profileSettings.hide_verification_badge} onButtonToggle={() => setProfileSettings({ ...profileSettings, hide_verification_badge: !profileSettings.hide_verification_badge })} />
+                        <SettingsToggleItem title="Hide verification badge" subtext="This will hide the verification badge on your profile." isActive={profileSettings.hide_verification_badge ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, hide_verification_badge: !profileSettings.hide_verification_badge }); updateUser({hide_verification_badge: !profileSettings.hide_verification_badge})}} />
 
-                        <SettingsToggleItem title="Public search" subtext="Other users will be able to find your profile online when they search the internet." isActive={profileSettings.public_search} onButtonToggle={() => setProfileSettings({ ...profileSettings, public_search: !profileSettings.public_search })} />
+                        <SettingsToggleItem title="Public search" subtext="Other users will be able to find your profile online when they search the internet." isActive={profileSettings.public_search ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, public_search: !profileSettings.public_search }); updateUser({public_search: !profileSettings.public_search})}} />
 
-                        <SettingsToggleItem title="Read receipts" subtext="Matches won’t be able to see when you have read their messages and you won’t be able to see theirs." isActive={profileSettings.read_receipts} onButtonToggle={() => setProfileSettings({ ...profileSettings, read_receipts: !profileSettings.read_receipts })} />
+                        <SettingsToggleItem title="Read receipts" subtext="Matches won’t be able to see when you have read their messages and you won’t be able to see theirs." isActive={profileSettings.read_receipts ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, read_receipts: !profileSettings.read_receipts }); updateUser({read_receipts: !profileSettings.read_receipts})}} />
 
-                        <SettingsToggleItem title="Online status" subtext="Users won’t be able to see when you’re online." isActive={profileSettings.online_status} onButtonToggle={() => setProfileSettings({ ...profileSettings, online_status: !profileSettings.online_status })} isPremium />
+                        <SettingsToggleItem title="Online status" subtext="Users won’t be able to see when you’re online." isActive={profileSettings.online_status ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, online_status: !profileSettings.online_status }); updateUser({online_status: !profileSettings.online_status})}} isPremium />
                     </div>
                     <section className="mt-2 space-y-2">
                        <ProfileSettingsGroup title="Blocked contacts"/>

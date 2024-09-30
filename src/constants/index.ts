@@ -1,3 +1,7 @@
+import { db } from "@/firebase";
+import { User } from "@/types/user";
+import { doc, getDoc } from "firebase/firestore";
+
 const alphabet = [
   {
     letter: "a",
@@ -1059,6 +1063,34 @@ const getTime = (timestamp: {seconds: number, nanoseconds: number}) =>  {
   return `${formattedHours}:${formattedMinutes}`;
 }
 
+const formatTime12Hour = (isoString: string) => {
+  const date = new Date(isoString);
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12; // Convert to 12-hour format, 12 being special case for midnight/noon
+  return `${hours}:${minutes} ${ampm}`;
+};
+
+const getUserDetails = async (user: string) => {
+  const userRef = doc(db, "users", user);
+  const userDoc = await getDoc(userRef);
+
+  if (userDoc.exists()) {
+    return userDoc.data();
+  } else {
+    console.log("No such user exists!");
+  }
+}
+
+const formatDate = (isoString: string) => {
+  const date = new Date(isoString);
+  const day = date.getDate().toString(); // Get the day
+  const month = (date.getMonth() + 1).toString(); // Get the month (0-indexed, so +1)
+  const year = date.getFullYear().toString(); // Get the full year
+  return `${day}/${month}/${year}`; // Return formatted as "day/month/year"
+};
+
 export {
   alphabet,
   dietary,
@@ -1070,5 +1102,5 @@ export {
   workout,
   marital_status,
   family_goal, preference,
-  religion, love_language, zodiac, communication_style, education, countries, getTime
+  religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate
 };

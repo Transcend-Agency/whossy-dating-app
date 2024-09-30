@@ -34,6 +34,11 @@ export type User = {
   }
   state?: string;
   family_goal?: number;
+  marital_status?: number;
+  zodiac?: number;
+  read_receipts?: boolean;
+  incoming_messages?: boolean;
+  public_search?: boolean;
 }
 
 export type UserPrefences = {
