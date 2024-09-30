@@ -67,10 +67,6 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const endRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {endRef.current?.scrollIntoView({behavior: 'smooth'})}, [activePage, text])
-
 
     useEffect(() => { 
         let isMounted = true;
@@ -103,50 +99,88 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
     //sending text message to the recipient
     const handleSendMessage = async () => {
         const allchats = await getDocs(collection(db, "allchats"));
-
         const recipientsId: string[] = [];
-
         let imgUrl: string | null = null;
-
+    
         allchats.forEach((doc) => {
             const result = doc.id;
             recipientsId.push(result);
-          });
+        });
     
-        // console.log(chats);
-        try { 
+        // Generate the messageId and timestamp upfront
+        const messageId = uuidv4();
+        const timestamp = new Date().toISOString();
+    
+        // Create optimistic message object with a placeholder for image if it's being uploaded
+        const optimisticMessage: Messages = {
+            id: messageId,
+            senderId: currentUserId,
+            message: text !== '' ? text : null,
+            photo: image.file ? 'loading_image_placeholder' : null, // Placeholder for image
+            timestamp,
+        };
+    
+        // Optimistically add the message to the chat array
+        setChats(prevChats => [...prevChats, optimisticMessage]);
+    
+        // Clear input fields
+        setText('');
+        setImage({ file: null, url: null });
+    
+        try {
             if (image.file) {
+                // Upload the image and get the URL
                 imgUrl = await upload(image.file);
+    
+                // Update the chat array with the real image URL after the upload is done
+                setChats(prevChats => prevChats.map(chat => 
+                    chat.id === messageId ? { ...chat, photo: imgUrl } : chat
+                ));
             }
+    
+            // Check if chat exists and send message to Firebase
             const existingChat = recipientsId.some((id) => id.includes(reciepientUserId as string) && id.includes(currentUserId));
-            const messageId = uuidv4();
-            if (existingChat) {
-                const messageRef = doc(db, `allchats/${chatId}/messages`, messageId);   
-                await updateDoc(doc(db, "allchats", chatId), {
-                lastMessage: text,
+            let chatToUpdateId = chatId;
+    
+            if (!existingChat) {
+                const newChatId = `${currentUserId}_${reciepientUserId}`;
+                chatToUpdateId = newChatId;
+                await setDoc(
+                    doc(db, "allchats", newChatId), {
+                        lastMessage: text || 'Sent a photo',
+                        lastMessageId: messageId,
+                        lastSenderId: currentUserId,
+                        userBlocked: [false, false],
+                        participants: [currentUserId, reciepientUserId],
+                    }
+                );
+                updateChatId(newChatId);
+            }
+    
+            // Send the message to Firebase
+            const messageRef = doc(db, `allchats/${chatToUpdateId}/messages`, messageId);
+            await setDoc(messageRef, {
+                id: messageId,
+                senderId: currentUserId,
+                message: text !== '' ? text : null,
+                photo: imgUrl ?? null,
+                timestamp,
+            });
+    
+            // Update chat with last message
+            await updateDoc(doc(db, "allchats", chatToUpdateId), {
+                lastMessage: text || 'Image',
                 lastMessageId: messageId,
                 lastSenderId: currentUserId,
-                // userBlocked: [false, false],
-                // participants: [currentUserId, reciepientUserId],
-                })
-                await setDoc(messageRef, {id: messageId, senderId: currentUserId, message: text !== '' ? text : null , photo: imgUrl ?? null, timestamp: new Date().toISOString()}).then(() => {console.log('Message sent')}).catch(() => {console.log('Messge wasn\'t sent')}); 
-            } else {
-                const newChatId = `${currentUserId}_${reciepientUserId}`;
-                await setDoc(
-                    doc(db, "allchats", newChatId),{ lastMessage: text,lastMessageId: messageId, lastSenderId: currentUserId, userBlocked: [false, false],participants: [currentUserId, reciepientUserId],}
-                  );
-            
-                  // Add the first message to the messages subcollection
-                  const messageRef = doc(db, `allchats/${newChatId}/messages`, messageId);
-                  await setDoc(messageRef, {id: messageId, senderId: currentUserId, message: text !== '' ? text : null , photo: imgUrl ?? null, timestamp: new Date().toISOString()}).then(() => {console.log('Message sent')}).catch(() => {console.log('Messge wasn\'t sent')});
-                  updateChatId(newChatId); 
-            }
-            setText('');
-            // console.log(existingChat);
+            });
+    
         } catch (err) {
-            console.log('Error sending message', err);
+            console.error('Error sending message:', err);
+    
+            // Remove the optimistic message if there was an error
+            setChats(prevChats => prevChats.filter(chat => chat.id !== optimisticMessage.id));
         }
-    }
+    };
 
     const [chats, setChats] = useState<any[]>([]);
 
@@ -160,8 +194,17 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
             }));
             setChats(messages);
         }, (err) => console.log(err))
-        return () => { unSub() }
+        return () => { unSub(); setChats([]) }
     }, [chatId])
+
+
+    const endRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (endRef.current) {
+            endRef.current.scrollIntoView({ behavior: 'auto' });
+        }
+    }, [chats])
 
 return (
     <AnimatePresence>
@@ -206,7 +249,7 @@ return (
                                 // key={message.createAt}
                                 >
                                     <div className="flex flex-col">
-                                        {message.photo && <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo ?? '/assets/images/matches/tutorial.png'} alt="profile picture" />}
+                                        {message.photo && message.photo !== 'loading_image_placeholder' ? <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo as string} alt="profile picture" /> : message.photo === 'loading_image_placeholder' && <Skeleton width="30rem" height="30rem"/>}
                                         {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#F6F6F6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem',borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ?  '0.4rem' : '1.2rem'}}>{message.message}</p>}
                                     </div>
                                     <p className="flex justify-end mt-2 text-[#cfcfcf]">
@@ -216,14 +259,14 @@ return (
                             }
                             {/* <div>hello {JSON.stringify(chatId)}</div> */}
                         
-                            {/* <div ref={endRef}/> */}
+                            <div ref={endRef}/>
                         </section>
                     </section>
                     <AnimatePresence>{openEmoji &&  <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 z-50"><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)}/> </m.div>}</AnimatePresence>
                     <footer className="flex justify-between z-50 text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
                         <div className="flex-1 flex gap-x-4">
                             <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()}/>
-                            <input type="file" className="hidden" ref={imageRef} onChange={handleImage}/>
+                            <input type="file" className="hidden"  ref={imageRef} onChange={handleImage} accept="image/*"/>
                             <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden"><input type="text" className="bg-inherit outline-none w-full" placeholder="say something nice"  value={image.url ? "" : text} onChange={(e) => setText(e.target.value)}
                                 onKeyDown={(e) => {if (e.key == 'Enter') {handleSendMessage()} else return;}}
                             /> <img className="size-[1.6rem] ml-4 cursor-pointer" src="/assets/icons/emoji.svg"  alt="Emoji selector" onClick={() => setOpenEmoji(true)} /> </div>
