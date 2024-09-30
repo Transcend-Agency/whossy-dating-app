@@ -2,14 +2,14 @@ import { AnimatePresence, motion as m } from "framer-motion"
 import { ActionsModal, ImagesModal } from "./ChatsModal"
 import { useEffect, useRef, useState } from "react"
 import EmojiPicker from "emoji-picker-react"
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "@/firebase"
 import { v4 as uuidv4 } from 'uuid';
 import Skeleton from "../ui/Skeleton"
 import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
-import { convertTo24HourTime, formatDate, formatTime12Hour, getTime } from "@/constants"
+import { formatDate, formatTime12Hour } from "@/constants"
 
 interface SelectedChatTwoProps { 
     activePage: boolean
@@ -117,12 +117,12 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
             const messageId = uuidv4();
             if (existingChat) {
                 const messageRef = doc(db, `allchats/${chatId}/messages`, messageId);   
-                await setDoc(doc(db, "allchats", chatId), {
+                await updateDoc(doc(db, "allchats", chatId), {
                 lastMessage: text,
                 lastMessageId: messageId,
                 lastSenderId: currentUserId,
-                userBlocked: [false, false],
-                participants: [currentUserId, reciepientUserId],
+                // userBlocked: [false, false],
+                // participants: [currentUserId, reciepientUserId],
                 })
                 await setDoc(messageRef, {id: messageId, senderId: currentUserId, message: text !== '' ? text : null , photo: imgUrl ?? null, timestamp: new Date().toISOString()}).then(() => {console.log('Message sent')}).catch(() => {console.log('Messge wasn\'t sent')}); 
             } else {
@@ -207,6 +207,7 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
                                  {/* <img src="/assets/icons/delivered.svg" alt="" />  */}
                                  {formatTime12Hour(message.timestamp)}</p>
                         </div>) }
+                        {/* <div>hello {JSON.stringify(chatId)}</div> */}
                         
                         {/* <div ref={endRef}/> */}
                 </section>
