@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import DashboardPageContainer from '@/components/dashboard/DashboardPageContainer';
 import ChatListItem from '@/components/dashboard/ChatListItem';
 import SelectedChat from '@/components/dashboard/SelectedChat';
-import { arrayUnion, collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { useChatIdStore, useUserChatsStore } from '@/store/ChatStore';
@@ -12,6 +12,7 @@ import SelectedChatTwo from '@/components/dashboard/SelectedChatTwo';
 import { getUserProfile } from '@/hooks/useUser';
 import { User } from '@/types/user';
 import { Chat } from '@/types/chat';
+import { set } from 'react-hook-form';
 
 // type UserProfileProps = {};
 
@@ -128,41 +129,47 @@ const UserProfile = () => {
 
   const [isLoadingChats, setIsLoadingChats] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     let isMounted = true;
     setIsLoadingChats(true);
-    const getAllChats = async () => {
-      const allChatsDoc = await getDocs(collection(db, "allchats"));
-      const chatIds: string[] = [];
+    const unSub = onSnapshot(collection(db, "allchats"), async (snapshot) => {
 
-      allChatsDoc.forEach((doc) => {
-        if (doc.id.includes(currentUserId)) {
-          chatIds.push(doc.id);
+        if (!isMounted) return;
+
+        const chatIds: string[] = [];
+
+        snapshot.forEach((doc) => {
+          if (doc.id.includes(currentUserId)) {
+            chatIds.push(doc.id);
+          }
+        });
+
+        const userChats = await Promise.all(
+            chatIds.map((chatUserId) => fetchUserChats(chatUserId))
+        );
+
+        const chatDataWithUserData = await Promise.all(
+            userChats
+            .filter(chat => chat !== null)
+            .map(async (chat: Chat) => {
+                const recipientData = chat?.participants?.filter((participant: string) => participant !== currentUserId);
+                const recipientUserData = await fetchUserData(recipientData[0]) as User;
+                return { ...chat, user: recipientUserData }; 
+            })
+        );
+
+        if (isMounted) {
+            setAllChats(chatDataWithUserData);  // Update the state with the chat data
         }
-      });
 
-      const userChats = await Promise.all(
-        chatIds.map((chatUserId) => fetchUserChats(chatUserId))
-      );
+        setIsLoadingChats(false);  
+    });
 
-      const chatDataWithUserData = await Promise.all(
-        userChats.filter(chat => chat !== null).map(async (chat: Chat) => { 
-          const recipientData = chat?.participants?.filter((participant: string) => participant !== currentUserId);
-          const recipientUserData = await fetchUserData(recipientData[0]) as User; 
-          return { ...chat, user: recipientUserData }; 
-        })
-      );
-
-      if (isMounted) {
-          setAllChats(chatDataWithUserData);
-      }
-      setIsLoadingChats(false);
-    }
-    if (isMounted) {
-      getAllChats();
-    }
-    return () => {isMounted = false}
-  }, [activePage === 'chats']);
+    return () => {
+        isMounted = false;
+        unSub();
+    };
+}, [])
   
   const queryParams = new URLSearchParams(location.search);
   const reciepientUserId = queryParams.get('recipient-user-id');
@@ -207,12 +214,15 @@ const UserProfile = () => {
                     <ChatListItem key={i} contactName={item.user.first_name} message={item.lastMessage ? item.lastMessage : 'No messages'} profileImage={item.preferences.photos[0]} messageStatus={!item.isSeen} openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item); navigate(`/dashboard/chat?user_id=${item.user.uid}`)}}/>
                   ))} */}
                   {allChats.map((chat, i) => (
-                    chat ? <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
+                    chat ? <><ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
                     // messageStatus={chat.user.uid !== chat.participants[0] ? !chat.isSeenByInitiator : !chat.isSeenByReceiver} 
                     openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
                     //  updateSeenStatus(chat.participants, chat.user.uid as string)
                     }}
-                     /> : null
+                     />
+                      {/* <button onClick={() => console.log(chat.participants[0] + '_' + chat.participants[1])}>click</button> */}
+                      </>
+                       : null
                   ))}
 
                   {!isLoadingChats && allChats.length === 0 && <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div>}
