@@ -67,6 +67,11 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    const endRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {endRef.current?.scrollIntoView({behavior: 'smooth'})}, [activePage, text])
+
+
     useEffect(() => { 
         let isMounted = true;
         const getUserDetails = async () => {
@@ -158,13 +163,13 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
         return () => { unSub() }
     }, [chatId])
 
-  return (
+return (
     <AnimatePresence>
         {activePage &&  
-          <>
-           <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')}/>
-           <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({file: null, url: null})} chatName="Davido" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)}/>
-           <m.div initial={{ opacity: 0, y:100 }}  animate={{ opacity: 1, y:0 }}  exit={{ opacity: 0, y:100 }}  transition={{ duration: 0.3 }} className='z-20 relative bg-white flex flex-col min-h-full'>
+            <>
+                <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')}/>
+                <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({file: null, url: null})} chatName="Davido" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)}/>
+                <m.div initial={{ opacity: 0, y:100 }}  animate={{ opacity: 1, y:0 }}  exit={{ opacity: 0, y:100 }}  transition={{ duration: 0.3 }} className='z-20 relative bg-white flex flex-col min-h-full'>
                     <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{borderBottom: '1px solid #F6F6F6'}}>
                         <button className="settings-page__title__left gap-x-1" onClick={closePage}>
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
@@ -181,55 +186,57 @@ const SelectedChatTwo:React.FC<SelectedChatTwoProps> = ({activePage, closePage, 
                         </button>
                     </header>
                     <section className="text-[1.6rem] text-[#121212] z-[30] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
-                    {chats && Array.isArray(chats) && chats.length!==0 && <header className=" my-[1.5rem] flex justify-center"><p>Conversation started on {formatDate(chats[0]?.timestamp)}</p></header>}
-                    <section className="messages flex flex-col gap-y-6">
-                        {/* <div className="max-w-[70%] flex gap-x-2 items-center">
-                            <div>
-                                <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
-                                <p className="flex justify-start mt-2 text-[#828181]"> <img src="/assets/icons/delivered.svg" alt="" /> Seen: 1 min ago</p>
-                            </div>
-                        </div>
-                        <div className="max-w-[70%] flex self-end">
-                             <div>
-                                <p className="bg-[#E5F2FF] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '1.2rem', borderBottomRightRadius: '0.4rem'}}>Hi, nice to meet you</p>
-                                <p className="flex justify-end mt-2 text-[#828181]"> <img src="/assets/icons/delivered.svg" alt="" /> Sent: 1 min ago</p>
-                            </div>
-                        </div> */}
-                        { chats && Array.isArray(chats) && chats?.map((message: Messages, i: number) =>  
-                       <div className={`max-w-[70%] flex ${message.senderId === auth?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}
-                        // key={message.createAt}
-                        >
-                            <div className="flex flex-col">
-                            {message.photo && <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo ?? '/assets/images/matches/tutorial.png'} alt="profile picture" />}
-                            {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#F6F6F6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem',borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ?  '0.4rem' : '1.2rem'}}>{message.message}</p>}
-                            </div>
-                            <p className="flex justify-end mt-2 text-[#cfcfcf]">
-                                 {/* <img src="/assets/icons/delivered.svg" alt="" />  */}
-                                 {formatTime12Hour(message.timestamp)}</p>
-                        </div>) }
-                        {/* <div>hello {JSON.stringify(chatId)}</div> */}
+                        <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
+                            {chats && Array.isArray(chats) && chats.length!==0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatDate(chats[0]?.timestamp)}</p></header>}
+                            {/* <div className="max-w-[70%] flex gap-x-2 items-center">
+                                    <div>
+                                        <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
+                                        <p className="flex justify-start mt-2 text-[#828181]"> <img src="/assets/icons/delivered.svg" alt="" /> Seen: 1 min ago</p>
+                                    </div>
+                                </div>
+                                <div className="max-w-[70%] flex self-end">
+                                    <div>
+                                        <p className="bg-[#E5F2FF] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '1.2rem', borderBottomRightRadius: '0.4rem'}}>Hi, nice to meet you</p>
+                                        <p className="flex justify-end mt-2 text-[#828181]"> <img src="/assets/icons/delivered.svg" alt="" /> Sent: 1 min ago</p>
+                                    </div>
+                                </div> 
+                            */}
+                            { chats && Array.isArray(chats) && chats?.map((message: Messages, i: number) =>  
+                                <div className={`max-w-[70%] flex ${message.senderId === auth?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}
+                                // key={message.createAt}
+                                >
+                                    <div className="flex flex-col">
+                                        {message.photo && <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo ?? '/assets/images/matches/tutorial.png'} alt="profile picture" />}
+                                        {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#F6F6F6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem',borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ?  '0.4rem' : '1.2rem'}}>{message.message}</p>}
+                                    </div>
+                                    <p className="flex justify-end mt-2 text-[#cfcfcf]">
+                                    {/* <img src="/assets/icons/delivered.svg" alt="" />  */}
+                                    {formatTime12Hour(message.timestamp)}</p>
+                                </div>) 
+                            }
+                            {/* <div>hello {JSON.stringify(chatId)}</div> */}
                         
-                        {/* <div ref={endRef}/> */}
-                </section>
-                </section>
-               <AnimatePresence>{openEmoji &&  <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 z-50"><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)}/> </m.div>}</AnimatePresence>
-                <footer className="flex justify-between z-50 text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
-                    <div className="flex-1 flex gap-x-4">
-                        <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()}/>
-                        <input type="file" className="hidden" ref={imageRef} onChange={handleImage}/>
-                        <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden"><input type="text" className="bg-inherit outline-none w-full" placeholder="say something nice"  value={image.url ? "" : text} onChange={(e) => setText(e.target.value)}
-                         onKeyDown={(e) => {if (e.key == 'Enter') {handleSendMessage()} else return;}}
-                         /> <img className="size-[1.6rem] ml-4 cursor-pointer" src="/assets/icons/emoji.svg"  alt="Emoji selector" onClick={() => setOpenEmoji(true)} /> </div>
-                    </div>
-                    <div className="space-x-4">
-                        <button className="bg-black text-white py-4 font-semibold px-4 rounded-full cursor-pointer"
-                        onClick={handleSendMessage}
-                         >Send</button>
-                        {/* <button><img src="/assets/icons/chat-gift.svg" alt="" /></button> */}
+                            {/* <div ref={endRef}/> */}
+                        </section>
+                    </section>
+                    <AnimatePresence>{openEmoji &&  <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 z-50"><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)}/> </m.div>}</AnimatePresence>
+                    <footer className="flex justify-between z-50 text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
+                        <div className="flex-1 flex gap-x-4">
+                            <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()}/>
+                            <input type="file" className="hidden" ref={imageRef} onChange={handleImage}/>
+                            <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden"><input type="text" className="bg-inherit outline-none w-full" placeholder="say something nice"  value={image.url ? "" : text} onChange={(e) => setText(e.target.value)}
+                                onKeyDown={(e) => {if (e.key == 'Enter') {handleSendMessage()} else return;}}
+                            /> <img className="size-[1.6rem] ml-4 cursor-pointer" src="/assets/icons/emoji.svg"  alt="Emoji selector" onClick={() => setOpenEmoji(true)} /> </div>
+                        </div>
+                        <div className="space-x-4">
+                            <button className="bg-black text-white py-4 font-semibold px-4 rounded-full cursor-pointer"
+                            onClick={handleSendMessage}
+                            >Send</button>
+                        </div>
+                    </footer>
+                                        {/* <button><img src="/assets/icons/chat-gift.svg" alt="" /></button> */}
                         {/* <button><img src="/assets/icons/mic.svg" alt="" /></button> */}
-                    </div>
-                </footer>
-            </m.div> 
+                </m.div> 
             </>}
     </AnimatePresence>
   )
