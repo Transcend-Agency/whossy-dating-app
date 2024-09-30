@@ -7,7 +7,7 @@ export type Chat = {
 
 export type Messages = {
     id: string;
-    message: string;
+    message: string | null;
     photo: string | null;
     senderId: string;
     timestamp: string;

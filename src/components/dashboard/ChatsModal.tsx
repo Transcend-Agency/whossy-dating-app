@@ -22,8 +22,8 @@ export const ActionsModal: React.FC<ActionsModalProps> = ({show, hide, chatName,
 export const ImagesModal: React.FC<ActionsModalProps & {imageUrl: string, sendImage: () => void, text: string, setText: (text: string) => void}> = ({show, hide, text, setText, imageUrl, sendImage}) => {
   return (
     <DashboardSettingsModal showing={show} title="Send Image" hideModal={hide}>
-         <div className="flex flex-col gap-y-4">
-          <img src={imageUrl} className='w-full h-96 object-contain' alt="Selected Image" />
+         <div className="flex flex-col gap-y-4 ">
+          <div className='bg-[#F6F6F6]' style={{border: '1px solid #F6F6F6'}}><img src={imageUrl} className='w-full h-96 object-contain' alt="Selected Image" /></div>
           <div className="flex bg-[#F6F6F6] text-[1.3rem] w-full rounded-l-full px-5 py-5 items-center rounded-r-full overflow-hidden"><input type="text" className="bg-inherit outline-none w-full" placeholder="Write a message... "  value={text} onChange={(e) => setText(e.target.value)}
           // onKeyDown={(e) => {if (e.key == 'Enter') {console.log('Enter was pressed')} else return;}}
           /> <IoSend className='cursor-pointer' onClick={sendImage}/> </div>
