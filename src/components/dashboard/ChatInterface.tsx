@@ -1,52 +1,85 @@
 import React, { useEffect, useState } from 'react';
 import ChatListItem from './ChatListItem';
 import {AnimatePresence, motion} from 'framer-motion'
-import { useUserChatsStore } from '@/store/ChatStore';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { useNavigate } from 'react-router-dom';
+import { Chat } from '@/types/chat';
+import { User } from '@/types/user';
 
-type ChatInterfaceProps = {
+interface ChatDataWithUserData extends Chat {
+    user: User;
+  }
 
-};
-
-const ChatInterface: React.FC<ChatInterfaceProps> = () => {
+const ChatInterface: React.FC = () => {
 
     const {auth} = useAuthStore();
 
-    const { setUserChats, userChats } = useUserChatsStore();
+    const [ allChats, setAllChats ] = useState<ChatDataWithUserData[]>([]);
 
     const [showChats, setShowChats] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
+    const currentUserId = auth?.uid as string;
+
+    const fetchUserChats = async (id: string) => {
+        const userChatsDocRef = doc(db, "allchats", id);
+        const userChatsDocSnap = await getDoc(userChatsDocRef);
+        if (userChatsDocSnap.exists()) {  return userChatsDocSnap.data() as Chat;} 
+        else {  console.log(`No such user chats document for user_id: ${id}`); return null;}
+    }
+
+    const fetchUserData = async (userId: string) => {
+        const userDocRef = doc(db, "users", userId);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {  return userDocSnap.data();} 
+        else {  console.log(`No such user document for user_id: ${userId}`); return null;}
+      };
+
     useEffect(() => {
-        const unSub = onSnapshot(doc(db, "userchats", auth?.uid as string), async (res) => {
-          // console.log(res.data());
-            if (res.exists()) {
-                const userChats = res.data();
-                const promises = userChats.chats.map( async (eachChat: any) => {
-                  const docRef = doc(db, "users", eachChat.receiverId);
-                  const preferencesDocRef = doc(db, 'preferences', eachChat.receiverId)
-                  const eachChatUserData = await getDoc(docRef);
-                  const eachChatPreferencesData = await getDoc(preferencesDocRef);
-  
-  
-                  const user = eachChatUserData.data()
-                  const preferences = eachChatPreferencesData.data()
-                  return {...eachChat, user, preferences}
+        let isMounted = true;
+        const unSub = onSnapshot(collection(db, "allchats"), async (snapshot) => {
+
+            if (!isMounted) return;
+
+            const chatIds: string[] = [];
+    
+            snapshot.forEach((doc) => {
+              if (doc.id.includes(currentUserId)) {
+                chatIds.push(doc.id);
+              }
+            });
+
+            const userChats = await Promise.all(
+                chatIds.map((chatUserId) => fetchUserChats(chatUserId))
+            );
+
+            const chatDataWithUserData = await Promise.all(
+                userChats
+                .filter(chat => chat !== null)
+                .map(async (chat: Chat) => {
+                    const recipientData = chat?.participants?.filter((participant: string) => participant !== currentUserId);
+                    const recipientUserData = await fetchUserData(recipientData[0]) as User;
+                    return { ...chat, user: recipientUserData }; 
                 })
-                const chatData = await Promise.all(promises)
-                setUserChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt))
-                // setChats(doc.data() as {})
+            );
+
+            if (isMounted) {
+                setAllChats(chatDataWithUserData);  // Update the state with the chat data
             }
-  
+
+            // setIsLoadingChats(false);  
         });
-        return () => {unSub()};
+
+        return () => {
+            isMounted = false;
+            unSub();
+        };
     }, [])
 
-    const unreadMessages = userChats?.filter((item: {isSeen: boolean}) => item.isSeen === false)
+    // const unreadMessages = userChats?.filter((item: {isSeen: boolean}) => item.isSeen === false)
 
     return ( 
     <div className='dashboard-layout__chat-interface hidden lg:block'>
@@ -60,7 +93,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = () => {
                 <div className="dashboard-layout__chat-interface__drawer__left">
                     <img src="/assets/images/dashboard/chat-heart.svg" />
                     <span className=''>Chat</span>
-                    <div className='dashboard-layout__chat-interface__drawer__left__unread-count'>{unreadMessages?.length} </div>
+                    <div className='dashboard-layout__chat-interface__drawer__left__unread-count'>{allChats?.length} </div>
                 </div>
                 <button
                         className={`dashboard-layout__chat-interface__drawer__open-button cursor-pointer transform transition-transform duration-300 ${showChats ? 'rotate-180' : ''}`}
@@ -80,8 +113,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = () => {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
                >
-                 {userChats?.slice(0,4)?.map((item: any, i: number) => (
-                    <ChatListItem key={i} contactName={item.user.first_name} message={item.lastMessage ? item.lastMessage : 'No messages'} profileImage={item.preferences.photos[0]} messageStatus={!item.isSeen} openChat={() => navigate('/dashboard/chat')}/>
+                 {allChats?.slice(0,4)?.map((chat, i: number) => (
+                    <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage ? chat.lastMessage : 'No messages'} profileImage={chat.user.photos && chat.user.photos[0]} openChat={() => navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`)}/>
                     // openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item)}}
                   ))}
                 </motion.div>}

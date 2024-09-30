@@ -3,7 +3,7 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import Skip from "./Skip";
 import { OnboardingProps } from "../../types/onboarding";
 import OnboardingPage from "./OnboardingPage";
-import { useOnboardingStore } from "../../store/OnboaredingStore";
+import { useOnboardingStore } from "../../store/OnboardingStore";
 import { useEffect, useState } from "react";
 import { education } from "@/constants";
 // import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";

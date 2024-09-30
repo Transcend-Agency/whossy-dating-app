@@ -95,9 +95,8 @@
     .settings-page__title {
         @apply mb-0;
     }
-    .settings-page__container {
-        @apply pb-0;
-    }
+   
+    
     &__profile-container {
         @apply h-full max-h-[calc(100%-4.8rem)] w-full px-[3.2rem] py-[2.4rem] relative;
         .preview-profile__action-buttons {

@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 
 type SettingsToggleItemProps = {
     title: string;
@@ -9,6 +10,7 @@ type SettingsToggleItemProps = {
 };
 
 const SettingsToggleItem: React.FC<SettingsToggleItemProps> = ({ onButtonToggle, title, isPremium, subtext, isActive }) => {
+    
     return (<div className="settings-page__settings-group__toggle-item">
         <div className="settings-page__settings-group__toggle-item-container">
             <div className="settings-page__settings-group__toggle-item__content">
@@ -17,7 +19,7 @@ const SettingsToggleItem: React.FC<SettingsToggleItemProps> = ({ onButtonToggle,
                 <div className="settings-page__settings-group__toggle-item__subtext">{subtext}</div>
                 </> : <div className="settings-page__settings-group__toggle-item__single-text">{title} {isPremium && <div className="premium-badge">Premium</div>}</div>}
             </div>
-            <div className={`settings-page__settings-group__toggle-item__toggle-button ${isActive && 'settings-page__settings-group__toggle-item__toggle-button--active'}`} onClick={onButtonToggle}>
+            <div className={`settings-page__settings-group__toggle-item__toggle-button ${isActive && 'settings-page__settings-group__toggle-item__toggle-button--active'}`} onClick={!isPremium ? onButtonToggle : () => toast.error('This setting is only available to premium users.')}>
                 <div className="settings-page__settings-group__toggle-item__toggle-button__toggle"></div>
             </div>
         </div>

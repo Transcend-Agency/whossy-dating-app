@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useGetUserProfile, useUpdateUserProfile } from "@/hooks/useUser";
+import { getUserProfile, updateUserProfile } from "@/hooks/useUser";
 import { UserPrefences } from "@/types/user";
 import { useAuthStore } from "@/store/UserId";
 import { PhotoModal, UploadPhotoModal } from "./PhotoModal";
@@ -57,7 +57,7 @@ const Card: React.FC<CardProps & {onDelete?: () => void; index?: number; onPress
 
 type PhotoModal = "hidden" | "photo-one" | "photo-two" | "photo-three" | "photo-four" | "photo-five" | "photo-six" | "photo-one-first-upload" | 'photo-two-first-upload' | 'photo-three-first-upload' | 'photo-four-first-upload' | 'photo-five-first-upload' | "photo-six-first-upload";
 
-const Photos: React.FC<{refetchUserPreferences: () => void}> = ({refetchUserPreferences}) => {
+const Photos: React.FC<{refetchUserData: () => void}> = ({refetchUserData}) => {
   const [photo, setPhoto] = useState<string[]>([]);
   const [mutatedPhoto, setMutatedPhoto] = useState<string[]>([]);
   const [fileMap, setFileMap] = useState<Map<number, File>>(new Map());
@@ -66,8 +66,8 @@ const Photos: React.FC<{refetchUserPreferences: () => void}> = ({refetchUserPref
 
   const [isUpdating, setIsUpdating] = useState(false)
 
-  const fetchUserPhotos = async () => {const data = await useGetUserProfile("preferences", auth?.uid as string) as UserPrefences; setPhoto(data?.photos as string[]) }
-  const updateUserPhotos = (s: string[]) => {useUpdateUserProfile("preferences", auth?.uid as string, () => { fetchUserPhotos();refetchUserPreferences(); setIsUpdating(false) }, {photos: s})}
+  const fetchUserPhotos = async () => {const data = await getUserProfile("preferences", auth?.uid as string) as UserPrefences; setPhoto(data?.photos as string[]) }
+  const updateUserPhotos = (s: string[]) => {updateUserProfile("preferences", auth?.uid as string, () => { fetchUserPhotos();refetchUserData(); setIsUpdating(false) }, {photos: s})}
 
   useEffect(() => {fetchUserPhotos()}, [])
   useEffect(() => {setPhoto(photo); setMutatedPhoto(photo)}, [photo])

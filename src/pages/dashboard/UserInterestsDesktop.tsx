@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
 import { alphabet } from "@/constants";
-import { useUpdateUserProfile } from "@/hooks/useUser";
+import { updateUserProfile } from "@/hooks/useUser";
 import { UserPrefences } from "@/types/user";
 
 import HabitSearch from "@/components/dashboard/HabitSearch";
@@ -14,23 +14,23 @@ interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
     onInterests: () => void;
-    userPrefencesData: UserPrefences | undefined;
-    refetchUserPreferencesData: () => void;
+    userData: UserPrefences | undefined;
+    refetchUserData: () => void;
 }
 
 
 
-const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userPrefencesData, refetchUserPreferencesData}) => {
+const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userData, refetchUserData}) => {
 
-    const [mutatedData, setMutatedData] = useState<string[]>(userPrefencesData?.interests || []);
+    const [mutatedData, setMutatedData] = useState<string[]>(userData?.interests || []);
 
     const {auth} = useAuthStore(); 
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences",auth?.uid as string, () => {refetchUserPreferencesData(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: UserPrefences) => {updateUserProfile("preferences",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
 
-    useEffect(() => setMutatedData(userPrefencesData?.interests || []), [userPrefencesData?.interests])
+    useEffect(() => setMutatedData(userData?.interests || []), [userData?.interests])
 
 
     const handleClick = (option: string) => {
@@ -55,7 +55,7 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Interests</p>
                         </button>
-                        {(JSON.stringify(userPrefencesData?.interests) !== JSON.stringify(mutatedData)) && <button className="settings-page__title__save-button cursor-pointer" onClick={() => {if (mutatedData.length > 4 ) {updateUserPreferences({interests: mutatedData}); setIsLoading(true)} else {toast.error("Pleae select at least 5")}}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}
+                        {(JSON.stringify(userData?.interests) !== JSON.stringify(mutatedData)) && <button className="settings-page__title__save-button cursor-pointer" onClick={() => {if (mutatedData.length > 4 ) {updateUserPreferences({interests: mutatedData}); setIsLoading(true)} else {toast.error("Pleae select at least 5")}}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}
                     </div>
                     <main className="px-6">
         <HabitSearch initData={mutatedData} setInitData={(arr) => setMutatedData(arr)} />
@@ -68,12 +68,8 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
                   key={i}
                   className="text-[1.6rem] inline-block mr-[1rem] w-fit rounded-md px-[0.6rem] py-[0.8rem] cursor-pointer transition-all duration-150"
                   style={{
-                    border: mutatedData?.includes(option)
-                      ? "1px solid black"
-                      : "1px solid #8A8A8E",
-                    backgroundColor: mutatedData?.includes(option)
-                      ? "black"
-                      : "transparent",
+                    border: mutatedData?.includes(option) ? "1px solid black" : "1px solid #8A8A8E",
+                    backgroundColor: mutatedData?.includes(option) ? "black" : "transparent",
                     color: mutatedData?.includes(option) ? "white" : "black",
                   }}
                   onClick={() => handleClick(option)}
