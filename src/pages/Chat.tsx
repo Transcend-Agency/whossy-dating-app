@@ -21,7 +21,8 @@ const UserProfile: React.FC<UserProfileProps> = () => {
     const {userChats: chats} = useUserChatsStore();
     const {setChatId} = useChatIdStore()
 
-    // Function for chatting with a user, that should be added on the likes and matches page, the id is the uid of the user that I want to chat with
+  // Function for chatting with a user, that should be added on the likes and matches page, the id is the uid of the user that I want to chat with
+  // @ts-expect-error unused function
     const handleChat = async (id: string) => {
       const chatRef = collection(db, 'chats');
       const userChatsRef = collection(db, 'userchats');

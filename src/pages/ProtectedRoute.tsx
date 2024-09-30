@@ -7,15 +7,15 @@ interface ProtectedRoutesProps {
 }
 
 export const ProtectedDashboard: React.FC<ProtectedRoutesProps> = ({ children }) => {
-  const { auth } = useAuthStore();
+  const { auth, user } = useAuthStore();
 
-  return auth?.uid ? auth.has_completed_onboarding ? children : <Navigate to="/onboarding" /> : <Navigate to="/auth" />;
+  return (auth?.uid && user) ? (auth.has_completed_onboarding ? children : <Navigate to="/onboarding" />) : <Navigate to="/auth" />;
 }
 
 export const ProtectedOnboarding: React.FC<ProtectedRoutesProps> = ({ children }) => {
-  const { auth } = useAuthStore();
+  const { auth, user } = useAuthStore();
 
-  return auth?.uid ? auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children : <Navigate to="/auth" />;
+  return (auth?.uid && user) ? auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children : <Navigate to="/auth" />;
 }
 
 // export const ProtectedAuth: React.FC<ProtectedRoutesProps> = ({ children }) => {
