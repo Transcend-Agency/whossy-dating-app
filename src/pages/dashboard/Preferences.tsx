@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
+import { CitySettingsModal, CommunicationSettingsModal, CountrySettingsModal, DietarySettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "../../components/dashboard/EditProfileModals";
 import SettingsGroup from "../../components/dashboard/SettingsGroup";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { useUpdateUserProfile } from "@/hooks/useUser";
-import { User, UserFilters } from "@/types/user";
-import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
-import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
 import SettingsInterest from "@/components/dashboard/SettingsInterests";
-import SliderBar from "@/components/ui/SliderBar";
+import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
 import DoubleSliderBar from "@/components/ui/DoubleSliderBar";
+import SliderBar from "@/components/ui/SliderBar";
+import { communication_style, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
+import { useUpdateUserProfile } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/UserId";
+import { User, UserFilters } from "@/types/user";
 import { Oval } from "react-loader-spinner";
 
 interface ProfileSettingsProps {
@@ -36,8 +36,8 @@ const Preferences: React.FC<ProfileSettingsProps> = ({ activePage, closePage, on
     const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters",auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
     
 
-    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
-    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
+    // const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
+    // const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
     const [toggle, setToggle] = useState({similar_interest: userPrefencesData?.similar_interest, has_bio: userPrefencesData?.has_bio, outreach: userPrefencesData?.outreach})
     const [userValue, setUserValue] = useState({distance: userPrefencesData?.distance, age_range: userPrefencesData?.age_range})
 

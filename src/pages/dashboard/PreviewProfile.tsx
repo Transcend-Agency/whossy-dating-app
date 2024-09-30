@@ -1,13 +1,13 @@
 import { family_goal, preference } from "@/constants";
 import { User, UserPrefences } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 interface PreviewProfileProps {
     activePage: string;
     closePage: () => void;
     activeSubPage: number;
-    setActiveSubPage: () => void;
+    setActiveSubPage: Dispatch<SetStateAction<number>>;
     userData: User | undefined;
     userPrefencesData: UserPrefences | undefined;
 }
@@ -139,7 +139,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {profileImages.map((image, index) => (
+                                {profileImages?.map((image, index) => (
                                     <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>

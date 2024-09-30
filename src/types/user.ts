@@ -1,14 +1,40 @@
 export type User = {
-  auth_provider?: string;
-  country_of_origin?: string;
-  first_name?: string;
-  gender?: string;
+  bio?: string | null;
+  date_of_birth?: {nanoseconds: number, seconds: number};
+  created_at?: Date;
+  currentLocation: string | null;
+  distance?: number | null;
+  drink?: number | null;
+  education?: number | null;
+  love_language?: number | null;
+  meet?: number | null;
+  pets?: string | null[];
+  photos?: string[] | null;
+  preference?: number | null;
+  smoke?: number | null;
+  workout?: number | null;
+  auth_provider?: string | null;
+  country_of_origin?: string | null;
+  email?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  gender?: string | null;
   has_completed_account_creation?: boolean;
-  has_completed_account_onboarding?: boolean;
-  last_name?: string;
-  phone_number?: string;
-  email?: string;
-};
+  has_completed_onboarding?: boolean;
+  phone_number?: string | null;
+  uid?: string | null;
+  weight?: number | null;
+  height?: number | null;
+  religion?: number | null;
+  interests?: string[] | null
+  is_verified?: boolean;
+  status?: {
+    online: boolean;
+    lastSeen: string;
+  }
+  state?: string;
+  family_goal?: number;
+}
 
 export type UserPrefences = {
   bio?: string;
