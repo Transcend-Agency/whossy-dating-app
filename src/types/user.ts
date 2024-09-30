@@ -1,5 +1,6 @@
 export type User = {
   auth_provider?: string;
+  uid?: string;
   country_of_origin?: string;
   first_name?: string;
   gender?: string;
@@ -8,6 +9,31 @@ export type User = {
   last_name?: string;
   phone_number?: string;
   email?: string;
+  bio?: string;
+  date_of_birth?: {nanoseconds: number, seconds: number};
+  distance?: number;
+  drink?: number;
+  education?: number;
+  interests?: string[];
+  height?: number;
+  meet?: number;
+  pets?: string;
+  photos?: string[];
+  preference?: number;
+  smoke?: number;
+  workout?: number;
+  marital_status?: number;
+  love_language?: number;
+  zodiac?: number;
+  family_goal?: number;
+  religion?: number;
+  pet_owner?: number;
+  weight?: number;
+  incoming_messages?: boolean;
+  hide_verification_badge?: boolean;
+  public_search?: boolean;
+  read_receipts?: boolean;
+  online_status?: boolean;
 };
 
 export type UserPrefences = {

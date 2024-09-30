@@ -6,7 +6,7 @@ type SafetyGuideProps = {
     activeSubPage: number;
     closePage: () => void;
     onSafetyItem: () => void;
-    setActiveSubPage: () => void;
+    setActiveSubPage?: (num: number) => void;
 };
 
 const SafetyGuideItem = ({ icon, title, onClick }) => {
