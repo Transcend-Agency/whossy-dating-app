@@ -19,13 +19,11 @@ const Card: React.FC<CardProps & {onDelete?: () => void; index?: number; onPress
   rowspan = "",
   colspan = "",
   height = "",
-  onDelete,
   onPress,
-  index,
 }) => {
-  const [showModal, setShowModal] = useState<boolean>(false);
+  // const [showModal, setShowModal] = useState<boolean>(false);
 
-  const handleModalToggle = () => { setShowModal((prev) => !prev);};
+  // const handleModalToggle = () => { setShowModal((prev) => !prev);};
 
   return (
     <>

@@ -1,8 +1,24 @@
 import ViewProfile from '@/components/dashboard/ViewProfile';
-import React, { useState } from 'react';
+import { deleteDoc, doc, getDoc, query, updateDoc, where } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
-import { profile } from 'console';
+import { motion } from 'framer-motion'
+// import profiles from '../../data/test-explore'
+import {
+    collection,
+    getDocs
+} from 'firebase/firestore';
+import { db } from "../../firebase";
+import { useAuthStore } from '@/store/UserId';
+import { User } from '@/types/user';
+import { getYearFromFirebaseDate } from '@/utils/date';
+import { AnimatePresence } from 'framer-motion';
+import useLikesAndMatchesStore from '@/store/LikesAndMatches';
+import { Like } from '@/types/likingAndMatching';
+import useSyncUserLikes from '@/hooks/useSyncUserLikes';
 
 type ExploreProps = {
 
@@ -10,212 +26,183 @@ type ExploreProps = {
 
 const Explore: React.FC<ExploreProps> = () => {
     const filterOptions = [
+        "Discover",
         "Similar interest",
         "Online",
         "New members",
         "Popular in my area",
         "Looking to date",
         "Outside my country",
-        "Flirty",
     ]
     const [selectedOption, setSelectedOption] = useState(filterOptions[0])
-    const [profiles, setProfiles] = useState([
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 1,
-            name: "Stephanie",
-            age: 21,
-            verified: false,
-            status: 'active',
-            distance: '22 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/women/1.jpg",
-                "https://randomuser.me/api/portraits/women/2.jpg",
-                "https://randomuser.me/api/portraits/women/3.jpg"
-            ],
-            relationship_preferences: 'Just for fun',
-            bio: 'I am very excited to meet new people and make friends. Let’s start with that and see where it takes us 🚀',
-            interests: ['Traveling', 'Movies', 'Hiking'],
-            stays_in: 'Lagos, Nigeria',
-            gender: 'Female',
-            education: 'Covenant University'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 2,
-            name: "Michael",
-            age: 28,
-            verified: true,
-            status: 'active',
-            distance: '5 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/men/4.jpg",
-                "https://randomuser.me/api/portraits/men/5.jpg",
-                "https://randomuser.me/api/portraits/men/6.jpg"
-            ],
-            relationship_preferences: 'Looking for something serious',
-            bio: 'Adventurous, food lover, and tech enthusiast. Let’s explore new places together!',
-            interests: ['Technology', 'Photography', 'Gaming'],
-            stays_in: 'Abuja, Nigeria',
-            gender: 'Male',
-            education: 'University of Abuja'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 3,
-            name: "Jane",
-            age: 25,
-            verified: false,
-            status: 'inactive',
-            distance: '10 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/women/7.jpg",
-                "https://randomuser.me/api/portraits/women/8.jpg"
-            ],
-            relationship_preferences: 'Friendship',
-            bio: 'I enjoy deep conversations and exploring nature. Let’s go for a hike!',
-            interests: ['Hiking', 'Reading', 'Cooking'],
-            stays_in: 'Ibadan, Nigeria',
-            gender: 'Female',
-            education: 'University of Ibadan'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 4,
-            name: "John",
-            age: 30,
-            verified: true,
-            status: 'active',
-            distance: '3 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/men/9.jpg",
-                "https://randomuser.me/api/portraits/men/10.jpg"
-            ],
-            relationship_preferences: 'Just for fun',
-            bio: 'Always up for an adventure and spontaneous trips! Let’s live in the moment 🌍',
-            interests: ['Traveling', 'Music', 'Movies'],
-            stays_in: 'Port Harcourt, Nigeria',
-            gender: 'Male',
-            education: 'University of Port Harcourt'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 5,
-            name: "Grace",
-            age: 24,
-            verified: false,
-            status: 'active',
-            distance: '15 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/women/11.jpg",
-                "https://randomuser.me/api/portraits/women/12.jpg"
-            ],
-            relationship_preferences: 'Long-term relationship',
-            bio: 'I’m a bookworm, animal lover, and passionate about environmental issues. Let’s make a difference together!',
-            interests: ['Books', 'Animals', 'Sustainability'],
-            stays_in: 'Lagos, Nigeria',
-            gender: 'Female',
-            education: 'Lagos State University'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 6,
-            name: "Samuel",
-            age: 27,
-            verified: true,
-            status: 'active',
-            distance: '8 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/men/13.jpg",
-                "https://randomuser.me/api/portraits/men/14.jpg"
-            ],
-            relationship_preferences: 'Looking for something serious',
-            bio: 'Entrepreneur, foodie, and sports enthusiast. I’m all about good vibes and meaningful connections.',
-            interests: ['Business', 'Football', 'Cooking'],
-            stays_in: 'Enugu, Nigeria',
-            gender: 'Male',
-            education: 'University of Nigeria, Nsukka'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 7,
-            name: "Amaka",
-            age: 26,
-            verified: false,
-            status: 'active',
-            distance: '12 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/women/15.jpg",
-                "https://randomuser.me/api/portraits/women/16.jpg"
-            ],
-            relationship_preferences: 'Just for fun',
-            bio: 'Lover of good music and meaningful conversations. Let’s vibe and share good times!',
-            interests: ['Music', 'Dancing', 'Art'],
-            stays_in: 'Kano, Nigeria',
-            gender: 'Female',
-            education: 'Bayero University Kano'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 8,
-            name: "Tunde",
-            age: 29,
-            verified: true,
-            status: 'inactive',
-            distance: '18 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/men/17.jpg",
-                "https://randomuser.me/api/portraits/men/18.jpg"
-            ],
-            relationship_preferences: 'Friendship',
-            bio: 'I’m a laid-back guy who enjoys playing guitar and watching football. Let’s catch up for coffee!',
-            interests: ['Music', 'Football', 'Coffee'],
-            stays_in: 'Lagos, Nigeria',
-            gender: 'Male',
-            education: 'University of Lagos'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 9,
-            name: "Chioma",
-            age: 23,
-            verified: true,
-            status: 'active',
-            distance: '7 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/women/19.jpg",
-                "https://randomuser.me/api/portraits/women/20.jpg"
-            ],
-            relationship_preferences: 'Looking for something serious',
-            bio: 'Fashion enthusiast, traveler, and lover of good food. Let’s explore life together!',
-            interests: ['Fashion', 'Traveling', 'Food'],
-            stays_in: 'Awka, Nigeria',
-            gender: 'Female',
-            education: 'Nnamdi Azikiwe University'
-        },
-        {
-            future_family_goals: 'I want to have 3 kids',
-            id: 10,
-            name: "David",
-            age: 31,
-            verified: true,
-            status: 'active',
-            distance: '25 miles away',
-            profile_images: [
-                "https://randomuser.me/api/portraits/men/21.jpg",
-                "https://randomuser.me/api/portraits/men/22.jpg"
-            ],
-            relationship_preferences: 'Friendship',
-            bio: 'Tech geek, gamer, and movie buff. I enjoy deep conversations and learning new things!',
-            interests: ['Gaming', 'Technology', 'Movies'],
-            stays_in: 'Jos, Nigeria',
-            gender: 'Male',
-            education: 'University of Jos'
+    const [profiles, setProfiles] = useState<User[]>([])
+    const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
+    const [loadingData, setLoadingData] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+    const [exploreDataLoading, setExploreDataLoading] = useState(true)
+    const { auth, user } = useAuthStore()
+    const { setLikes, likes } = useLikesAndMatchesStore()
+    const userLikes = useSyncUserLikes(user!.uid!)
+
+    useEffect(() => {
+        console.log(userLikes)
+    }, [userLikes])
+
+
+    const fetchUserWithSimilarInterests = async () => {
+        try {
+            setExploreDataLoading(true)
+            const currentUserInterests = user?.interests
+            const usersCollection = collection(db, 'users');
+            const q = query(usersCollection, where('interests', 'array-contains-any', currentUserInterests), where("has_completed_onboarding", "==", true));
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            const sortedUserData = userData.sort((a, b) => {
+                const interestsA = a.interests || [];
+                const interestsB = b.interests || [];
+
+                const sharedInterestsA = currentUserInterests?.filter(interest => interestsA.includes(interest)).length || 0;
+                const sharedInterestsB = currentUserInterests?.filter(interest => interestsB.includes(interest)).length || 0;
+
+                // We want users with more shared interests first, so we subtract sharedInterestsB from sharedInterestsA
+                return sharedInterestsB - sharedInterestsA;
+            })
+            console.log(sortedUserData)
+            setProfiles(sortedUserData as User[])
+            setExploreDataLoading(false)
+        } catch (err) {
+            console.log(err)
+        }
+        finally {
+            setExploreDataLoading(false)
         }
 
-    ]
-    )
-    const [selectedProfile, setSelectedProfile] = useState<number | null>(null)
+    }
+
+    const fetchProfilesToDiscover = async () => {
+        try {
+            setExploreDataLoading(true)
+            const usersCollection = collection(db, 'users');
+            const q = query(usersCollection, where("has_completed_onboarding", "==", true));
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            setProfiles(userData as User[])
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setExploreDataLoading(false)
+        }
+    }
+
+    const fetchUsersPopularInArea = async () => {
+        try {
+            setExploreDataLoading(true)
+            const usersCollection = collection(db, 'users');
+            const q = query(usersCollection, where("has_completed_onboarding", "==", true), where("country_of_origin", "==", user?.country_of_origin));
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            setProfiles(userData as User[])
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setExploreDataLoading(false)
+        }
+    }
+
+    const fetchOnlineUsers = async () => {
+        try {
+            setExploreDataLoading(true)
+            const usersCollection = collection(db, 'users');
+            const q = query(usersCollection, where("has_completed_onboarding", "==", true), where("status.online", "==", true));
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            setProfiles(userData as User[])
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setExploreDataLoading(false)
+        }
+    }
+
+    const fetchUsersLookingToDate = async () => {
+        try {
+            setExploreDataLoading(true)
+            const usersCollection = collection(db, 'users');
+            const q = query(usersCollection, where("has_completed_onboarding", "==", true), where("preference", "==", 0));
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            setProfiles(userData as User[])
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setExploreDataLoading(false)
+        }
+    }
+
+    const fetchUsersOutsideMyCountry = async () => {
+        try {
+            setExploreDataLoading(true)
+            const usersCollection = collection(db, 'users');
+            console.log(user?.country_of_origin)
+            const q = query(usersCollection, where("country_of_origin", "!=", user?.country_of_origin), where("has_completed_onboarding", "==", true));
+            console.log(user?.country_of_origin)
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            userData.forEach(user_item => console.log(user_item.country_of_origin, user?.country_of_origin))
+            setProfiles(userData as User[])
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setExploreDataLoading(false)
+        }
+    }
+
+    const fetchLikes = async () => {
+        const likesCollection = collection(db, 'likes');
+        const q = query(likesCollection, where("liker_id", "==", user?.uid));
+        const likesSnapshot = await getDocs(q);
+
+        const likes = likesSnapshot.docs.map(like => like.data() as Like)
+        setLikes(likes)
+        console.log(likes)
+    }
+
+    const hasUserBeenLiked = (id: string) => {
+        return Boolean(userLikes.filter(like => (like.liked_id === id)).length)
+    }
+
+    useEffect(() => {
+        fetchLikes()
+        console.log(selectedOption)
+        switch (selectedOption) {
+            case 'Discover':
+                fetchProfilesToDiscover()
+                break
+            case 'Similar interest':
+                fetchUserWithSimilarInterests()
+                break
+            case 'Online':
+                fetchOnlineUsers()
+                break
+            case 'Popular in my area':
+                fetchUsersPopularInArea()
+                break
+            case 'Looking to date':
+                fetchUsersLookingToDate()
+                break
+            case 'Outside my country':
+                fetchUsersOutsideMyCountry()
+                break
+            default:
+                console.log('no result')
+        }
+
+    }, [selectedOption])
 
     return <>
         {!selectedProfile &&
@@ -223,7 +210,7 @@ const Explore: React.FC<ExploreProps> = () => {
                 <div className='explore'>
                     <div className='filter'>
                         <div className='filter__left'>
-                            {filterOptions.map(item => <div onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
+                            {filterOptions.map(item => <div key={item} onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
                             <div className='filter__item'>
                                 <img src="/assets/icons/advanced-search.svg" />
                                 Advanced Search
@@ -237,117 +224,198 @@ const Explore: React.FC<ExploreProps> = () => {
                         <div className='explore-grid-gradient-top'></div>
                     </div>
                     <div className='explore-grid-container'>
-                        <div className='explore-grid hidden md:grid'>
-                            <div className='explore-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 5 === 0) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='explore-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 5 === 1) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='explore-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 5 == 2) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='explore-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 5 == 3) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='explore-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 5 == 4) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                        <div className='mobile-grid'>
-                            <div className='mobile-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 3 == 0) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='mobile-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 3 == 1) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                            <div className='mobile-grid__column'>
-                                {profiles.map((profile, index) => (
-                                    (index % 3 == 2) &&
-                                    <ExploreGridProfile
-                                        profile_image={profile.profile_images[0]}
-                                        distance={profile.distance}
-                                        first_name={profile.name}
-                                        age={profile.age}
-                                        onProfileClick={() => setSelectedProfile(profile.id)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        <AnimatePresence mode='wait'>
+                            {profiles.length === 0 && !exploreDataLoading && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='empty-state'>
+                                <img className="empty-state__icon" src="/assets/icons/like-empty-state.png" />
+                                <div className='empty-state__text'>No Search Results</div>
+                            </motion.div>}
+                            {exploreDataLoading && <>
+                                {exploreDataLoading && <motion.div key="explore-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='explore-grid hidden md:grid'>
+                                    <div className='explore-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 5 === 0) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='explore-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 5 === 1) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='explore-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 5 == 2) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='explore-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 5 == 3) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='explore-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 5 == 4) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                </motion.div>}
+                                {exploreDataLoading && <motion.div key="mobile-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
+                                    <div className='mobile-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 3 == 0) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='mobile-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 3 == 1) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                    <div className='mobile-grid__column'>
+                                        {loadingData?.map((profile, index) => (
+                                            (index % 3 == 2) &&
+                                            <Skeleton key={profile * index} containerClassName='explore-grid__profile' height={"100%"} />
+                                        ))}
+                                    </div>
+                                </motion.div>}
+                            </>}
+                            {!exploreDataLoading && <>
+                                {!exploreDataLoading && profiles.length !== 0 &&
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} key="explore-grid" className='explore-grid hidden md:grid'>
+                                        <div className='explore-grid__column'>
+                                            {profiles?.map((profile, index) => (
+                                                (index % 5 === 0) &&
+                                                <ExploreGridProfile
+                                                    profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                    // distance={profile?.distance}
+                                                    first_name={profile!.first_name!}
+                                                    age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                    onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                    isVerified={profile!.is_verified}
+                                                    hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                                    key={profile.uid}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className='explore-grid__column'>
+                                            {profiles?.map((profile, index) => (
+                                                (index % 5 === 1) &&
+                                                <ExploreGridProfile
+                                                    profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                    // distance={profile?.distance}
+                                                    first_name={profile!.first_name!}
+                                                    age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                    onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                    isVerified={profile!.is_verified}
+                                                    hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                                    key={profile.uid}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className='explore-grid__column'>
+                                            {profiles?.map((profile, index) => (
+                                                (index % 5 == 2) &&
+                                                <ExploreGridProfile
+                                                    profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                    // distance={profile?.distance}
+                                                    first_name={profile!.first_name!}
+                                                    age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                    onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                    isVerified={profile!.is_verified}
+                                                    hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                                    key={profile.uid}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className='explore-grid__column'>
+                                            {profiles?.map((profile, index) => (
+                                                (index % 5 == 3) &&
+                                                <ExploreGridProfile
+                                                    profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                    // distance={profile?.distance}
+                                                    first_name={profile!.first_name!}
+                                                    age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                    onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                    isVerified={profile!.is_verified}
+                                                    hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                                    key={profile.uid}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className='explore-grid__column'>
+                                            {profiles?.map((profile, index) => (
+                                                (index % 5 == 4) &&
+                                                <ExploreGridProfile
+                                                    profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                    // distance={profile?.distance}
+                                                    first_name={profile!.first_name!}
+                                                    age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                    onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                    isVerified={profile!.is_verified}
+                                                    hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                                    key={profile.uid}
+                                                />
+                                            ))}
+                                        </div>
+                                    </motion.div>}
+                                <motion.div key="mobile-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
+                                    <div className='mobile-grid__column'>
+                                        {profiles?.map((profile, index) => (
+                                            (index % 3 == 0) &&
+                                            <ExploreGridProfile
+                                                profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                // distance={profile?.distance}
+                                                first_name={profile!.first_name!}
+                                                age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                isVerified={profile!.is_verified}
+                                                hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className='mobile-grid__column'>
+                                        {profiles?.map((profile, index) => (
+                                            (index % 3 == 1) &&
+                                            <ExploreGridProfile
+                                                profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                // distance={profile?.distance}
+                                                first_name={profile!.first_name!}
+                                                age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                isVerified={profile!.is_verified}
+                                                hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className='mobile-grid__column'>
+                                        {profiles?.map((profile, index) => (
+                                            (index % 3 == 2) &&
+                                            <ExploreGridProfile
+                                                profile_image={profile.photos ? profile.photos![0] : undefined}
+                                                // distance={profile?.distance}
+                                                first_name={profile!.first_name!}
+                                                age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
+                                                onProfileClick={() => setSelectedProfile(profile?.uid)}
+                                                isVerified={profile!.is_verified}
+                                                hasBeenLiked={hasUserBeenLiked(profile.uid!)}
+                                            />
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            </>}
+                        </AnimatePresence>
                     </div>
                 </div>
             </DashboardPageContainer>}
         {selectedProfile && <ViewProfile onBackClick={() => {
             setSelectedProfile(null)
-        }} onNextClick={() => {
-            const currentProfileIndex = profiles.findIndex(profile => profile.id === selectedProfile)
-            if (currentProfileIndex + 1 < profiles.length)
-                setSelectedProfile(profiles[currentProfileIndex + 1].id)
         }}
-            userData={profiles.find(profile => selectedProfile === profile.id)!}
+            userData={profiles.find(profile => selectedProfile === profile?.uid)!}
+            profile_has_been_liked={hasUserBeenLiked(selectedProfile)}
         />}
     </>
 }

@@ -8,7 +8,7 @@ interface ChatListItemProps {
     openChat?: () => void;
 }
 
-const ChatListItem: React.FC<ChatListItemProps> = ({profileImage, contactName, message, messageStatus, openChat, onlineStatus}) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({profileImage, contactName, message, messageStatus, openChat}) => {
   return (
     <div className='flex justify-between cursor-pointer hover:bg-[#f9f8f8] px-[1.6rem] pb-[0.6rem] pt-[1.4rem] transition-all duration-300 ease-in-out transform hover:scale-[1.02]' style={{borderBottom: '1px solid #F6F6F6'}} onClick={openChat}>
         <div className='flex gap-x-[0.8rem]'> 

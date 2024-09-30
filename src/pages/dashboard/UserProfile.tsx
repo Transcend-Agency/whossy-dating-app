@@ -16,11 +16,12 @@ import SafetyGuide from './SafetyGuide';
 // import Interests from './Interests';
 // import SettingsMobile from '../SettingsMobile';
 // import PreferencesMobile from '../PreferencesMobile';
-import { useAuthStore } from '@/store/UserId';
 import Skeleton from '@/components/ui/Skeleton';
+import { useAuthStore } from '@/store/UserId';
 import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 // import PreferredInterestsMobile from './PreferredInterestsMobile';
 import UserInterestsDesktop from './UserInterestsDesktop';
+import { getYearFromFirebaseDate } from '@/utils/date';
 import SubscriptionPlans from './SubscriptionPlans';
 
 
@@ -46,21 +47,6 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
-
-    const getYearFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined) => {
-        if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
-            throw new Error('Invalid Firebase date object');
-        }
-
-        // Convert seconds to milliseconds
-        const milliseconds = firebaseDate.seconds * 1000;
-
-        // Create a Date object
-        const date = new Date(milliseconds);
-
-        // Get the year
-        return date.getFullYear();
-    };
 
     return <>
         <DashboardPageContainer className="">

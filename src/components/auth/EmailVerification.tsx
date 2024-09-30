@@ -16,8 +16,8 @@ type EmailVerificationProps = {
 const EmailVerification: React.FC<EmailVerificationProps> = () => {
     const [canResendCode, setCanResendCode] = useState(false)
     const auth = getAuth()
-    const [loading, setLoading] = useState(false)
-    const [requestError, setRequestError] = useState('')
+    const [loading ] = useState(false)
+    const [requestError] = useState('')
     const navigate = useNavigate()
 
     const renderer = ({ seconds, completed, }: { seconds: number, completed: boolean }) => {
@@ -38,18 +38,18 @@ const EmailVerification: React.FC<EmailVerificationProps> = () => {
         })
     }
 
-    const onContinue = async () => {
-        console.log(auth.currentUser)
-        setLoading(true)
-        const result = await auth.currentUser?.reload()
-        setLoading(false)
-        if (auth.currentUser?.emailVerified) {
-            navigate('/auth/finalize-setup')
-        } else {
-            setRequestError('Email Still Unverified')
-        }
-        console.log(result)
-    }
+    // const onContinue = async () => {
+    //     console.log(auth.currentUser)
+    //     setLoading(true)
+    //     const result = await auth.currentUser?.reload()
+    //     setLoading(false)
+    //     if (auth.currentUser?.emailVerified) {
+    //         navigate('/auth/finalize-setup')
+    //     } else {
+    //         setRequestError('Email Still Unverified')
+    //     }
+    //     console.log(result)
+    // }
 
     if (!auth.currentUser) {
         navigate('/auth/login')

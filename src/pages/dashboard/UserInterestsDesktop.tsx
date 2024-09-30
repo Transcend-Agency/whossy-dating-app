@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
+import { alphabet } from "@/constants";
 import { updateUserProfile } from "@/hooks/useUser";
 import { UserPrefences } from "@/types/user";
-import { alphabet } from "@/constants";
 
-import { useAuthStore } from "@/store/UserId";
 import HabitSearch from "@/components/dashboard/HabitSearch";
-import { Oval } from "react-loader-spinner";
+import { useAuthStore } from "@/store/UserId";
 import toast from "react-hot-toast";
+import { Oval } from "react-loader-spinner";
 
 interface ProfileSettingsProps {
     activePage: boolean;

@@ -1,7 +1,7 @@
 import { family_goal, preference } from "@/constants";
 import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 interface PreviewProfileProps {
     activePage: string;

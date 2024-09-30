@@ -11,7 +11,6 @@ const HabitSearch: React.FC<HabitProps> = ({ initData, setInitData }) => {
   const [filteredAlphabet, setFilteredAlphabet] = useState(alphabet);
   const [open, setOpen] = useState(false);
 
-  const [active, setActive] = useState<string[]>([]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();

@@ -20,7 +20,6 @@ import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
 import GenderButton from '../components/auth/GenderButton';
-import Button from '../components/ui/Button';
 import { db } from "../firebase";
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';

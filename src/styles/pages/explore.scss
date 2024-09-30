@@ -2,8 +2,28 @@
     @apply overflow-scroll mb-[1rem];
 }
 
+.preview-profile__action-button.liked {
+    @apply bg-[#F2243E] cursor-default;
+    &:hover {
+        img {
+            @apply scale-100;
+
+        }
+    }
+}
+
 .explore {
     @apply px-[1.6rem] pt-[2.4rem] w-full h-full;
+
+    .empty-state {
+        @apply w-full h-full flex items-center justify-center flex-col;
+        &__icon {
+            @apply w-[10.4rem] h-auto;
+        }
+        &__text {
+            @apply font-medium text-[1.6rem] mt-[1.6rem];
+        }
+    }
 
     .filter {
         @apply w-full flex justify-between relative;
@@ -11,7 +31,7 @@
             @apply mr-[]
         }
         &__left {
-            @apply w-full max-w-[62.7rem] flex flex-wrap gap-x-[1.6rem] gap-y-[1.6rem];
+            @apply w-full max-w-[70rem] flex flex-wrap gap-x-[1.6rem] gap-y-[1.6rem];
         }
         &__item {
             @apply leading-[1.1rem] text-[1.6rem] px-[1.6rem] py-[1.2rem] min-w-fit bg-[#F6F6F6] hover:bg-[#eeeeee] text-[#8A8A8E] rounded-full cursor-pointer active:scale-95 transition-all duration-200 flex items-center;
@@ -53,18 +73,16 @@
             }
         }
         &__profile {
-            @apply min-h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative transition duration-200 active:scale-100 cursor-pointer;
+            @apply min-h-[20rem] h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative transition duration-200 active:scale-100 cursor-pointer block mb-[0.8rem];
             &:hover {
                 .explore-grid__profile-picture {
                     @apply scale-110;
                 }
             }
-            &:not(:last-of-type) {
-                @apply mb-[0.8rem];
-            }
         }
         &__profile-picture {
-            @apply w-full h-full transition-all duration-[0.3s];
+            @apply w-full h-full transition-all duration-[0.3s] bg-[#ebebeb];
+            
         }
         &__profile-picture-image {
                 @apply w-full h-full object-cover min-h-[20rem];
@@ -73,10 +91,13 @@
                 @apply w-full h-full absolute inset-0 bg-gradient-to-b from-[transparent] to-black from-60% to-85% z-10;
         }
         &__profile-info {
-            @apply p-[1.2rem] pb-[1.6rem] h-full w-full absolute z-10 inset-0 flex flex-col justify-between;
+            @apply p-[1.2rem]  pb-[1.6rem] h-full w-full absolute z-10 inset-0 flex flex-col justify-between;
+        }
+        &__profile-info-top-left {
+            @apply flex items-center; 
         }
         &__profile-info-top {
-            @apply text-[1.4rem] flex text-white items-center;
+            @apply text-[1.4rem] flex text-white items-center justify-between min-h-[3.3rem];
             @include media('<=480px'){
                 @apply text-[1rem];
             }
@@ -114,7 +135,14 @@
     }
     .explore-grid {
         @apply hidden lg:grid;
+
+        &__profile-like-icon {
+            @apply w-[2.5rem];
+        }
     }
+    // .react-loading-skeleton.explore-grid__profile {
+    //     @apply mb-[0.8rem];
+    // }
     .mobile-grid {
         @apply w-full grid grid-cols-3 lg:hidden;
         &__column {
@@ -124,13 +152,16 @@
             }
             &:nth-of-type(2n + 2) {
                 .explore-grid__profile:nth-child(4n+3), 
-                .explore-grid__profile:nth-child(4n+4) {
+                .explore-grid__profile:nth-child(4n+4), 
+                span
+                 {
                     @apply min-h-[28rem] h-[28rem];
                 }
             }
             &:nth-of-type(2n + 1) {
                 .explore-grid__profile:nth-child(4n+1), 
-                .explore-grid__profile:nth-child(4n+2) {
+                .explore-grid__profile:nth-child(4n+2), 
+                span {
                     @apply min-h-[28rem] h-[28rem];
                 }
             }

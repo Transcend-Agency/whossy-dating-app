@@ -108,10 +108,10 @@ const Login: React.FC<LoginProps> = () => {
                         navigate('/auth/email-verification')
                     }
                     else if (!user.has_completed_onboarding) {
-                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
+                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                         navigate('/onboarding')
                     } else {
-                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
+                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                         navigate('/dashboard/user-profile')
                     }
                 }
@@ -179,10 +179,10 @@ const Login: React.FC<LoginProps> = () => {
                     navigate('/auth/email-verification')
                 }
                 else if (!user.has_completed_onboarding) {
-                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                     navigate('/onboarding')
                 } else {
-                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding })
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                     navigate('/dashboard/user-profile')
                 }
             }

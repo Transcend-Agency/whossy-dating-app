@@ -1,12 +1,22 @@
-import DashboardPageContainer from "@/components/dashboard/DashboardPageContainer"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { AnimatePresence, distance, motion, useAnimationControls, useMotionValue, useTransform } from 'framer-motion'
-import { uid } from 'react-uid';
 import { family_goal, preference } from "@/constants";
-import { profile } from "console";
+import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { uid } from 'react-uid';
 
-const ProfileCard = ({
+interface ProfileCardProps {
+    profiles: number[],
+    setProfiles: Dispatch<SetStateAction<number[]>>,
+    item: number
+    setActionButtonsOpacity: Dispatch<SetStateAction<MotionValue<number>>>
+    setChosenActionButtonOpacity: Dispatch<SetStateAction<MotionValue<number>>>
+    setChosenActionScale: Dispatch<SetStateAction<MotionValue<number>>>;
+    setActiveAction: Dispatch<SetStateAction<'like' | 'cancel'>>;
+    controls: AnimationControls;
+    index: number, nextCardOpacity: number, setNextCardOpacity: Dispatch<SetStateAction<MotionValue<number>>>
+}
+
+const ProfileCard: React.FC<ProfileCardProps> = ({
     profiles, setProfiles, item, setActiveAction, setActionButtonsOpacity, setChosenActionButtonOpacity, setChosenActionScale, controls, index, nextCardOpacity, setNextCardOpacity
 }) => {
     const x = useMotionValue(0)
@@ -17,13 +27,18 @@ const ProfileCard = ({
     const chosenActionScale = useTransform(x, [-160, -100, -10, 0, 10, 100, 160], [1.6, 1, 1, 1, 1, 1, 1.6])
     const nextCardOpacityValue = useTransform(x, [-160, 0, 160], [1, 0, 1])
 
-    const [userPreferencesData, setUserPreferencesData] = useState({
+    const [userPreferencesData] = useState({
         photos: ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"],
         distance: '24',
         bio: 'My name is ronald dosunmu',
-        interests: ['Ronald', 'Ronald', 'Ronald', 'Ronald', 'Ronald']
+        interests: ['Ronald', 'Ronald', 'Ronald', 'Ronald', 'Ronald'],
+        height: 0,
+        weight: 0,
+        family_goal: 1,
+        preference: 1,
+        date_of_birth: ''
     })
-    const [userData, setUserData] = useState({
+    const [userData] = useState({
         first_name: 'Ronald'
     })
     const profileContainer = useRef(null);
@@ -69,16 +84,18 @@ const ProfileCard = ({
         nextCardOpacityValue.set(0)
         setNextCardOpacity(nextCardOpacityValue)
     }, [profiles.length])
-    const handleShortcuts = useCallback((e) => {
-        if (e.keyCode == 32) {
-            if (currentImage < userPreferencesData.photos.length - 1) {
-                setCurrentImage(currentImage + 1)
-            } else {
-                setCurrentImage(0)
+    const handleShortcuts = useCallback(
+        (e: Event) => {
+            // @ts-expect-error type errpr
+            if (e.keyCode == 32) {
+                if (currentImage < userPreferencesData.photos.length - 1) {
+                    setCurrentImage(currentImage + 1)
+                } else {
+                    setCurrentImage(0)
+                }
             }
-        }
 
-    }, [currentImage])
+        }, [currentImage])
     useEffect(() => {
         window.addEventListener('keydown', handleShortcuts)
         return () => {
@@ -133,7 +150,8 @@ const ProfileCard = ({
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
-                                    <p className="details">{userData?.first_name}, <span className="age">{userPreferencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPreferencesData.date_of_birth) : 'NIL'}</span></p>
+                                    <p className="details">{userData?.first_name}, <span className="age">20</span></p>
+                                    {/* <p className="details">{userData?.first_name}, <span className="age">{userPreferencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPreferencesData.date_of_birth) : 'NIL'}</span></p> */}
                                     <img src="/assets/icons/verified.svg" />
                                 </div>
                                 <AnimatePresence>
@@ -276,6 +294,7 @@ const SwipingAndMatching = () => {
             x: item == profiles[profiles.length - 1] ? -180 : 0,
             transition: { duration: 0.5 }
         }))
+        // @ts-expect-error unused var
         await setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
         controls.start((item) => {
             return (item == profiles[profiles.length - 2] ? {
@@ -293,7 +312,9 @@ const SwipingAndMatching = () => {
             x: item == profiles[profiles.length - 1] ? 180 : 0,
             transition: { duration: 0.5 }
         }))
+        // @ts-expect-error unused vars
         await setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
+        // assert(profileI)
         controls.start((item) => {
             return (item == profiles[profiles.length - 2] ? {
                 y: 0,
@@ -309,7 +330,7 @@ const SwipingAndMatching = () => {
     const [chosenActionButtonOpacity, setChosenActionButtonOpacity] = useState(0)
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
-    const handleShortcuts = (e) => {
+    const handleShortcuts = (e: any) => {
         if (e.keyCode == 37)
             cancelProfile()
         else if (e.keyCode == 39)
@@ -356,6 +377,7 @@ const SwipingAndMatching = () => {
                         {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" />}
                         {activeAction == 'like' && <img src="/assets/icons/heart.svg" />}
                     </motion.div>
+                    {/* @ts-expect-error type errors */}
                     {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
                 </div>
             </AnimatePresence>
