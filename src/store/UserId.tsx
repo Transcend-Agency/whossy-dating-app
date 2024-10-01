@@ -6,7 +6,7 @@ type AuthType = { uid: string, has_completed_onboarding: boolean };
 
 interface Picture {
   auth: AuthType | null;
-  setAuth: (auth: AuthType, user: User) => void;
+  setAuth: (auth: AuthType, user?: User) => void;
   user?: User;
   reset: () => void;
 }
