@@ -21,7 +21,7 @@ export const ChatListItem: React.FC<ChatListItemProps> = ({profileImage, contact
             </div>
             <div>
                 <p className='text-[1.8rem] leading-[2.16rem]'>{contactName}</p>
-                <p className={` text-[1.6rem] leading-[1.92rem] ${!message ? 'italic text-[#c7c6c6]' : 'text-[#8A8A8E]'}`}>{ message !== "" ? message : 'sent a photo'}</p>
+                <p className={` text-[1.6rem] leading-[1.92rem] ${message === 'Image' ? 'italic text-[#b2b2b5]' : 'text-[#8A8A8E]'}`}>{ message !== "Image" ? message : 'sent a photo'}</p>
             </div>
         </div>
        {messageStatus && <p className='bg-[#F6F6F6] text-[1.4rem] flex items-center font-normal h-[28px] px-[0.6rem] rounded-[0.6rem]'>Unread</p>}
