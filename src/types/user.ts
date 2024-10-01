@@ -30,7 +30,7 @@ export type User = {
   is_verified?: boolean;
   status?: {
     online: boolean;
-    lastSeen: string;
+    lastSeen: number;
   }
   state?: string;
   family_goal?: number;

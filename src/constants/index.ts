@@ -1091,6 +1091,38 @@ const formatDate = (isoString: string) => {
   return `${day}/${month}/${year}`; // Return formatted as "day/month/year"
 };
 
+const formatServerTimeStamps = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  
+  // Get hours, minutes, and AM/PM format
+  const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  const formattedTime = `${hours % 12 || 12}:${minutes}${ampm}`;
+
+  // One day in milliseconds (used for yesterday comparison)
+  const oneDay = 24 * 60 * 60 * 1000;
+
+  // If the date is today
+  if (date.toDateString() === now.toDateString()) {
+      return `${formattedTime}, today`;
+  }
+
+  // If the date is yesterday
+  const yesterday = new Date(now.getTime() - oneDay);
+  if (date.toDateString() === yesterday.toDateString()) {
+      return `${formattedTime}, yesterday`;
+  }
+
+  // If not today or yesterday, return the formatted date as dd/mm/yyyy
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${formattedTime}, ${day}/${month}/${year}`;
+};
+
 export {
   alphabet,
   dietary,
@@ -1101,6 +1133,6 @@ export {
   smoking,
   workout,
   marital_status,
-  family_goal, preference,
+  family_goal, preference, formatServerTimeStamps,
   religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate
 };
