@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Chat } from '@/types/chat';
 import { User } from '@/types/user';
 import { ChatListItem } from './ChatListItem';
+import { useChatIdStore } from '@/store/ChatStore';
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -23,6 +24,8 @@ const ChatInterface: React.FC = () => {
     const navigate = useNavigate();
 
     const currentUserId = auth?.uid as string;
+
+    const {setChatId} = useChatIdStore();
 
     const fetchUserChats = async (id: string) => {
         const userChatsDocRef = doc(db, "allchats", id);
@@ -114,7 +117,7 @@ const ChatInterface: React.FC = () => {
                 transition={{ duration: 0.3 }}
                >
                  {allChats?.slice(0,4)?.map((chat, i: number) => (
-                    <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage ? chat.lastMessage : 'No messages'} profileImage={chat.user.photos && chat.user.photos[0]} openChat={() => navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`)}/>
+                    <ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage ? chat.lastMessage : 'No messages'} profileImage={chat.user.photos && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1])}}/>
                     // openChat={() => {setActivePage('selected-chat'); setSelectedChatData(item); setChatId(item.chatId); handleSelectedChat(item)}}
                   ))}
                 </motion.div>}
