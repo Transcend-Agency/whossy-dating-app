@@ -12,9 +12,10 @@ import { formatDate, formatServerTimeStamps, formatTime12Hour } from "@/constant
 import { useChatIdStore } from "@/store/ChatStore"
 import toast from "react-hot-toast"
 import Skeleton from "react-loading-skeleton"
+import { IoCheckmarkDone } from "react-icons/io5"
 
 interface SelectedChatTwoProps {
-    activePage: boolean
+    activePage: string
     closePage: () => void
     updateChatId: (newChatId: string) => void;
 }
@@ -122,6 +123,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
             message: text !== '' ? text : null,
             photo: image.file ? 'loading_image_placeholder' : null, // Placeholder for image
             timestamp,
+            status: 'sent',
         };
 
         // Optimistically add the message to the chat array
@@ -156,6 +158,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                     lastSenderId: currentUserId,
                     userBlocked: [false, false],
                     participants: [currentUserId, reciepientUserId],
+                    status: 'sent',
                 }
                 );
                 updateChatId(newChatId);
@@ -169,6 +172,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                 message: text !== '' ? text : null,
                 photo: imgUrl ?? null,
                 timestamp,
+                status: "sent"
             });
 
             // Update chat with last message
@@ -176,6 +180,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                 lastMessage: text || 'Image',
                 lastMessageId: messageId,
                 lastSenderId: currentUserId,
+                status: "sent",
             });
 
         } catch (err) {
@@ -188,31 +193,92 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
     const [chats, setChats] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (!chatId) return;
-        const messagesRef = query(collection(db, `allchats/${chatId}/messages`), orderBy("timestamp", "asc"));
-        const unSub = onSnapshot(messagesRef, (snapshot) => {
-            const messages = snapshot.docs.map(doc => ({
-                id: doc.id, // Get the document id
-                ...doc.data() // Spread the document data
-            }));
-            setChats(messages);
-        }, (err) => console.log(err))
-        return () => { unSub(); setChats([]) }
-    }, [chatId])
+//     const [isChatOpen, setIsChatOpen] = useState(false);
+
+// useEffect(() => {
+//     const handleChatOpen = () => setIsChatOpen(true);
+//     const handleChatClose = () => setIsChatOpen(false);
+
+//     // Add listeners when the chat is opened and closed
+//     window.addEventListener('focus', handleChatOpen);
+//     window.addEventListener('blur', handleChatClose);
+
+//     return () => {
+//         window.removeEventListener('focus', handleChatOpen);
+//         window.removeEventListener('blur', handleChatClose);
+//     };
+// }, []);
+
+useEffect(() => {
+    // Ensure the chatId, currentUserId, and activePage are correct before proceeding
+    // console.log("useEffect triggered: chatId", chatId, "activePage", activePage);
+    if (!chatId || !currentUserId || activePage !== "selected-chat") return;
+
+    const messagesRef = query(collection(db, `allchats/${chatId}/messages`), orderBy("timestamp", "asc"));
+    const chatDocRef = doc(db, "allchats", chatId);
+
+    // Listen to changes in the chat messages
+    const unSub = onSnapshot(messagesRef, async (snapshot) => {
+        const messages = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // Set the messages to state
+        setChats(messages);
+
+        // Fetch the chat document (used to get lastSenderId)
+        const chatDocSnap = await getDoc(chatDocRef);
+        if (chatDocSnap.exists()) {
+            const chatData = chatDocSnap.data();
+            const lastSenderId = chatData.lastSenderId;
+
+            // Check if the current user is not the last sender and the chat is open
+            if (lastSenderId !== currentUserId && chatData.status !== "seen" && activePage === "selected-chat") {
+                // Update the seen status in 'allchats' collection
+                await updateDoc(chatDocRef, { status: "seen" })
+                    .then(() => console.log(`Chat ${chatId} marked as seen`))
+                    .catch((err) => console.error(`Error updating chat ${chatId}:`, err));
+            }
+        }
+
+        // Check each message to see if it should be marked as 'seen'
+        snapshot.docs.forEach(async (doc) => {
+            const messageData = doc.data();
+            const messageSenderId = messageData.senderId;
+
+            // Only update the message if the sender is not the current user and status is not 'seen'
+            if (messageSenderId !== currentUserId && messageData.status !== "seen" && activePage === "selected-chat") {
+                try {
+                    // Update the status field of the message to "seen"
+                    await updateDoc(doc.ref, { status: "seen" });
+                    console.log(`Message ${doc.id} marked as seen`);
+                } catch (err) {
+                    console.error(`Error updating message ${doc.id}:`, err);
+                }
+            }
+        });
+    }, (err) => console.log(err));
+
+    // Cleanup function to unsubscribe from the snapshot listener
+    return () => {
+        unSub();
+        setChats([]); // Reset the chats when unmounting or changing chatId
+    };
+}, [activePage === 'selected-chat']);
 
 
     const endRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (endRef.current) {
-            endRef.current.scrollIntoView({ behavior: 'smooth' });
+            endRef.current.scrollIntoView({ behavior: 'auto' });
         }
     }, [chats])
 
     return (
         <AnimatePresence>
-            {activePage &&
+            {activePage === 'selected-chat' &&
                 <>
                     <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => toast.error('This function isn\'t available yet')} reportUser={() => toast.error('This function isn\'t available yet')} />
                     <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({ file: null, url: null })} chatName="Davido" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)} />
@@ -252,11 +318,12 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                                     >
                                         <div className="flex flex-col">
                                             {message.photo && message.photo !== 'loading_image_placeholder' ? <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo as string} alt="profile picture" /> : message.photo === 'loading_image_placeholder' && <Skeleton width="30rem" height="30rem" />}
-                                            {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#F6F6F6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
+                                            {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#f6f6f6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
                                         </div>
                                         <p className="flex justify-end mt-2 text-[#cfcfcf]">
                                             {/* <img src="/assets/icons/delivered.svg" alt="" />  */}
-                                            {formatTime12Hour(message.timestamp)}</p>
+                                            {message.senderId === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}<span>{formatTime12Hour(message.timestamp)}</span>
+                                        </p>
                                     </div>)
                                 }
                                 {/* <button onClick={() => console.log(Timestamp.now())}>click</button> */}
