@@ -158,7 +158,7 @@ const ChatPage = () => {
 
                   {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
                   allChats.map((chat, i) => (
-                    chat ? <><ChatListItem key={i} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
+                    chat ? <><ChatListItem key={i} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
                     // messageStatus={chat.user.uid !== chat.participants[0] ? !chat.isSeenByInitiator : !chat.isSeenByReceiver} 
                     openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
                     //  updateSeenStatus(chat.participants, chat.user.uid as string)
