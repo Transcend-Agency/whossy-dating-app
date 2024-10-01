@@ -58,6 +58,7 @@ export const useChatStore = create<
 interface ChatId {
     chatId: string | null,
     setChatId: (chatId: string) => void;
+    reset: () => void;
 }
 
 const initialStateChatId = {
@@ -75,7 +76,7 @@ export const useChatIdStore = create<
         reset: () => set(initialState),
     }),
     {
-      name: "chat_user_id",
+      name: "chat__id",
       storage: createJSONStorage(() => localStorage),
     }
   )

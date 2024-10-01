@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ChatListItem from './ChatListItem';
 import {AnimatePresence, motion} from 'framer-motion'
 import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -7,6 +6,7 @@ import { useAuthStore } from '@/store/UserId';
 import { useNavigate } from 'react-router-dom';
 import { Chat } from '@/types/chat';
 import { User } from '@/types/user';
+import { ChatListItem } from './ChatListItem';
 
 interface ChatDataWithUserData extends Chat {
     user: User;
