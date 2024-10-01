@@ -5,13 +5,13 @@ import EmojiPicker from "emoji-picker-react"
 import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from "firebase/firestore"
 import { db } from "@/firebase"
 import { v4 as uuidv4 } from 'uuid';
-import Skeleton from "../ui/Skeleton"
 import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
-import { formatDate, formatTime12Hour } from "@/constants"
+import { formatDate, formatServerTimeStamps, formatTime12Hour } from "@/constants"
 import { useChatIdStore } from "@/store/ChatStore"
 import toast from "react-hot-toast"
+import Skeleton from "react-loading-skeleton"
 
 interface SelectedChatTwoProps {
     activePage: boolean
@@ -66,7 +66,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
     const queryParams = new URLSearchParams(location.search);
     const reciepientUserId = queryParams.get('recipient-user-id');
 
-    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null, status: {online: boolean, lastSeen: string} | null }>({ name: null, profilePicture: null, status: null });
+    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null, status: {online: boolean, lastSeen: number} | null }>({ name: null, profilePicture: null, status: null });
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -220,10 +220,10 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                         <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{ borderBottom: '1px solid #F6F6F6' }}>
                             <button className="settings-page__title__left gap-x-1" onClick={closePage}>
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                                {!isLoading ? userDetails.profilePicture ? <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={userDetails.profilePicture} alt="profile picture" /> : <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2" >{userDetails.name?.charAt(0)}</div> : <Skeleton width="4.8rem" height="4.8rem" className="rounded-full" />}
+                                {!isLoading ? userDetails.profilePicture ? <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={userDetails.profilePicture} alt="profile picture" /> : <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2" >{userDetails.name?.charAt(0)}</div> : <Skeleton width="4.8rem" height="4.8rem" circle />}
                                 <div className="space-y-1">
                                     {userDetails.name ? <p className="font-bold">{userDetails.name}</p> : <Skeleton width="8rem" height="1.6rem" />}
-                                    {userDetails.status?.online && <p className="text-[#8A8A8E] font-normal">online</p>}
+                                    {userDetails.status?.online ?  <p className="text-[#8A8A8E] font-normal font-sans italic text-[1.5rem]">online</p> : <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">{userDetails.status?.lastSeen ? `last seen ${formatServerTimeStamps(userDetails.status?.lastSeen)}` : !isLoading ? 'last seen recently' :  <Skeleton width={'10rem'} height={'1.2rem'}/>}</p>}
                                 </div>
                             </button>
                             <button className="cursor-pointer" onClick={() => setShowActionsModal('action')}>
