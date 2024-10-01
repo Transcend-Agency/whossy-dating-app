@@ -2,7 +2,7 @@ import { AnimatePresence, motion as m } from "framer-motion"
 import { ActionsModal, ImagesModal } from "./ChatsModal"
 import { useEffect, useRef, useState } from "react"
 import EmojiPicker from "emoji-picker-react"
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from "firebase/firestore"
 import { db } from "@/firebase"
 import { v4 as uuidv4 } from 'uuid';
 import Skeleton from "../ui/Skeleton"
@@ -11,6 +11,7 @@ import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
 import { formatDate, formatTime12Hour } from "@/constants"
 import { useChatIdStore } from "@/store/ChatStore"
+import toast from "react-hot-toast"
 
 interface SelectedChatTwoProps {
     activePage: boolean
@@ -65,7 +66,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
     const queryParams = new URLSearchParams(location.search);
     const reciepientUserId = queryParams.get('recipient-user-id');
 
-    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null }>({ name: null, profilePicture: null });
+    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null, status: {online: boolean, lastSeen: string} | null }>({ name: null, profilePicture: null, status: null });
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -81,7 +82,8 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                     const data = docSnap.data();
                     setUserDetails({
                         name: data?.first_name || null,
-                        profilePicture: (data?.photos && Array.isArray(data.photos) && data.photos.length > 0) ? data.photos[0] : null
+                        profilePicture: (data?.photos && Array.isArray(data.photos) && data.photos.length > 0) ? data.photos[0] : null,
+                        status: {online: data?.status?.online, lastSeen: data?.status?.lastSeen}
                     });
                 } else { console.log('Selectedchat: No such document'); }
                 setIsLoading(false);
@@ -94,7 +96,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
         return () => {
             isMounted = false;
-            setUserDetails({ name: null, profilePicture: null });
+            setUserDetails({ name: null, profilePicture: null, status: null });
         };
     }, [reciepientUserId]);
 
@@ -212,25 +214,23 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
         <AnimatePresence>
             {activePage &&
                 <>
-                    <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} />
+                    <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => toast.error('This function isn\'t available yet')} reportUser={() => toast.error('This function isn\'t available yet')} />
                     <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({ file: null, url: null })} chatName="Davido" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)} />
-                    <m.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 100 }} transition={{ duration: 0.3 }} className='z-20 relative bg-white flex flex-col min-h-full'>
+                    <m.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 100 }} transition={{ duration: 0.3 }} className=' relative bg-white flex flex-col min-h-full'>
                         <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{ borderBottom: '1px solid #F6F6F6' }}>
                             <button className="settings-page__title__left gap-x-1" onClick={closePage}>
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                                 {!isLoading ? userDetails.profilePicture ? <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={userDetails.profilePicture} alt="profile picture" /> : <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2" >{userDetails.name?.charAt(0)}</div> : <Skeleton width="4.8rem" height="4.8rem" className="rounded-full" />}
                                 <div className="space-y-1">
                                     {userDetails.name ? <p className="font-bold">{userDetails.name}</p> : <Skeleton width="8rem" height="1.6rem" />}
-                                    <p className="text-[#8A8A8E] font-normal">last seen recently
-                                        {/* {chatId} */}
-                                    </p>
+                                    {userDetails.status?.online && <p className="text-[#8A8A8E] font-normal">online</p>}
                                 </div>
                             </button>
                             <button className="cursor-pointer" onClick={() => setShowActionsModal('action')}>
                                 <img src="/assets/icons/three-dots.svg" alt="" />
                             </button>
                         </header>
-                        <section className="text-[1.6rem] text-[#121212] z-[30] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
+                        <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
                             <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
                                 {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatDate(chats[0]?.timestamp)}</p></header>}
                                 {/* <div className="max-w-[70%] flex gap-x-2 items-center">
@@ -259,13 +259,14 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                                             {formatTime12Hour(message.timestamp)}</p>
                                     </div>)
                                 }
+                                {/* <button onClick={() => console.log(Timestamp.now())}>click</button> */}
                                 {/* <div>hello {JSON.stringify(chatId)}</div> */}
 
                                 <div ref={endRef} />
                             </section>
                         </section>
-                        <AnimatePresence>{openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 z-50"><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)} /> </m.div>}</AnimatePresence>
-                        <footer className="flex justify-between z-50 text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
+                        <AnimatePresence>{openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 "><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)} /> </m.div>}</AnimatePresence>
+                        <footer className="flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
                             <div className="flex-1 flex gap-x-4">
                                 <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()} />
                                 <input type="file" className="hidden" ref={imageRef} onChange={handleImage} accept="image/*" />
