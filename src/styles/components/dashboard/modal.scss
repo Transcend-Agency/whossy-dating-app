@@ -1,19 +1,19 @@
 .modal {
     @apply absolute top-0 left-0 inset-0;
-    // z-index: z('modal');
-    z-index: 40;
+    z-index: z('modal');
+    // z-index: 40;
     &__container {
         @apply top-0 left-0 absolute w-full h-full flex items-center justify-center;
     }
     &__overlay {
         @apply bg-[#0000004D] w-full h-full absolute inset-0;
-        // z-index: z('modal__overlay');
-        z-index: 30;
+        z-index: z('modal__overlay');
+        // z-index: 30;
     }
     &__body {
         @apply w-full max-w-[48.7rem] rounded-[1.6rem] overflow-hidden;
-        z-index: 50;
-        // z-index: z('modal__body');
+        // z-index: 50;
+        z-index: z('modal__body');
         &__header {
             @apply p-[1.6rem] bg-[#F6F6F6] flex justify-between;
             &__left {

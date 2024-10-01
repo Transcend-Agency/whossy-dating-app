@@ -16,13 +16,14 @@ import SafetyGuide from './SafetyGuide';
 // import Interests from './Interests';
 // import SettingsMobile from '../SettingsMobile';
 // import PreferencesMobile from '../PreferencesMobile';
-import Skeleton from '@/components/ui/Skeleton';
+
 import { useAuthStore } from '@/store/UserId';
 import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 // import PreferredInterestsMobile from './PreferredInterestsMobile';
 import UserInterestsDesktop from './UserInterestsDesktop';
 import { getYearFromFirebaseDate } from '@/utils/date';
 import SubscriptionPlans from './SubscriptionPlans';
+import Skeleton from 'react-loading-skeleton';
 
 
 // type UserProfileProps = {};
