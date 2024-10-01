@@ -10,19 +10,21 @@ import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
 import { formatDate, formatTime12Hour } from "@/constants"
+import { useChatIdStore } from "@/store/ChatStore"
 
 interface SelectedChatTwoProps {
     activePage: boolean
     closePage: () => void
-    chatId: string
     updateChatId: (newChatId: string) => void;
 }
 
-const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage, chatId, updateChatId }) => {
+const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage, updateChatId }) => {
     const [showActionsModal, setShowActionsModal] = useState<'action' | 'hidden'>("hidden");
     const [text, setText] = useState<string>('');
     const [openEmoji, setOpenEmoji] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const {chatId, reset} = useChatIdStore();
 
 
     //images
@@ -140,7 +142,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
             // Check if chat exists and send message to Firebase
             const existingChat = recipientsId.some((id) => id.includes(reciepientUserId as string) && id.includes(currentUserId));
-            let chatToUpdateId = chatId;
+            let chatToUpdateId = chatId as string;
 
             if (!existingChat) {
                 const newChatId = `${currentUserId}_${reciepientUserId}`;
@@ -202,7 +204,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
     useEffect(() => {
         if (endRef.current) {
-            endRef.current.scrollIntoView({ behavior: 'auto' });
+            endRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [chats])
 
