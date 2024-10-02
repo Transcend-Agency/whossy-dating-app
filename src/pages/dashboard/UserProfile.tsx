@@ -51,7 +51,7 @@ const UserProfile = () => {
 
     return <>
         <DashboardPageContainer className="">
-            <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page'>
+            <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page'>
                 <div className='user-profile__container'>
                     <div className='flex justify-end gap-x-4'>
                         <button onClick={() => setActivePage('profile-settings')} className='user-profile__settings-button'><img src="/assets/images/dashboard/settings.svg" /></button>
@@ -97,8 +97,8 @@ const UserProfile = () => {
             </motion.div>
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
-            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.online_status, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge}} refetchUserData={refetchUserData}/>
-            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userPrefencesData={userFilters} refetchUserData={refetchUserData} refetchUserPreferencesData={refetchUserFilters} />
+            <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.status?.online, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge}} refetchUserData={refetchUserData}/>
+            <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userFilters={userFilters} refetchUserData={refetchUserData} refetchUserFilters={refetchUserFilters} />
             <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
             {/* <Interests activePage={activePage === "interests"} closePage={() => setActivePage('preferences')} /> */}
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userFilters={userFilters} refetchUserFilters={refetchUserFilters} />

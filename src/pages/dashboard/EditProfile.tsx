@@ -76,7 +76,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, cl
             <ReligionSettingsModal showing={settingsModalShowing === 'religion'} hideModal={hideModal} userReligion={userData?.religion as number} handleSave={(religion) => updateUser({religion}) }/>
             <DrinkingSettingsModal showing={settingsModalShowing === 'drinking'} hideModal={hideModal} userDrink={userData?.drink as number} handleSave={(drink) => updateUser({drink}) }/>
             <WorkoutSettingsModal showing={settingsModalShowing === 'workout'} hideModal={hideModal} userWorkout={userData?.workout as number} handleSave={(workout) => updateUser({workout}) } />
-            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userData?.pet_owner as number} handleSave={(pet_owner) => updateUser({pet_owner}) } />
+            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userData?.pets as number} handleSave={(pets) => updateUser({pets}) } />
             <MaritalStatusSettingsModal showing={settingsModalShowing === 'marital-status'} hideModal={hideModal} userMaritalStatus={userData?.marital_status as number}  handleSave={(marital_status) => updateUser({marital_status}) }/>
             <HeightSettingsModal showing={settingsModalShowing === 'height'} hideModal={hideModal} userHeight={userData?.height ? userData?.height as number : 0}  handleSave={(height) => updateUser({height}) }/>
             <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userData?.weight ? userData?.weight as number : 0}  handleSave={(weight) => updateUser({weight}) }/>
@@ -162,7 +162,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, cl
                         ['Workout', workout[userData?.workout as number], () => {
                             setSettingsModalShowing('workout')
                         }],
-                        ['Pet owner', pets[userData?.pet_owner as number], () => {
+                        ['Pet owner', pets[userData?.pets as number], () => {
                             setSettingsModalShowing('pet')
                         }],
                         ['Marital status', marital_status[userData?.marital_status as number], () => {

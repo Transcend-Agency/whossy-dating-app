@@ -32,44 +32,26 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing
         <AnimatePresence mode='wait'>
             {showing && <>
                 <div className='modal'>
-                    <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }} 
-                    exit={{ opacity: 0 }}
-                    // initial={{ opacity: 0, y: 100 }} 
-                    // animate={{ opacity: 1, y: 0 }}    
-                    // exit={{ opacity: 0, y: 100 }}      
-                    // transition={{ duration: 0.2 }}
-                    className='modal__overlay'></motion.div>
-                    <motion.div 
-                    // initial={{ scale: 0.85, opacity: 0 }} 
-                    // animate={{ opacity: 1, scale: 1 }} 
-                    // exit={{ opacity: 0, scale: 0.85 }}
-                    // transition={{ duration: 0.2 }}
-                    initial={isDesktop ? { scale: 0.85, opacity: 0 } : { y: 100 }}               // Start below
-                    animate={isDesktop ? { opacity: 1, scale: 1 } : { y: 0 }}                 // Slide up
-                    exit={isDesktop ? { opacity: 0, scale: 0.85 } :{ y: 100 }}                   // Slide down
-                    transition={{ duration: 0.2 }} 
-                    className='modal__container' ref={dropdownRef}>
-                        <div className='modal__body hidden lg:block'>
-                            <header className='modal__body__header'>
-                                <div className='modal__body__header__left'>
-                                    <button onClick={hideModal} className='modal__body__back-button'>
-                                        <img src="/assets/icons/back-arrow-black.svg" className='' />
-                                    </button>
-                                    <h3 className='modal__body__header__title'>{title}</h3>
-                                </div>
-                                {save}
-                            </header>
-                            <section className='modal__body__content overflow-y-scroll'>
-                                {children}
-                            </section>
-                        </div>
-                        <div className='bg-white fixed bottom-0 w-full lg:hidden z-50' style={{borderTopLeftRadius: '1.6rem', borderTopRightRadius: '1.6rem'}}>
-                            <header className='flex p-[1.6rem] justify-between items-center' style={{borderBottom: '1px solid #F6F6F6'}}><h3 className='text-[1.6rem] font-medium'> {title} </h3> {save} </header>
-                            <section className='px-[1.6rem] pt-[1.6rem] pb-[2.4rem]'>{children}</section>
-                        </div>
+                    <motion.div  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}  exit={{ opacity: 0 }} className='modal__overlay'></motion.div>
+                        <motion.div initial={isDesktop ? { scale: 0.85, opacity: 0 } : { y: 100 }} animate={isDesktop ? { opacity: 1, scale: 1 } : { y: 0 }} exit={isDesktop ? { opacity: 0, scale: 0.85 } :{ y: 100 }} className='modal__container' ref={dropdownRef}>
+                            <div className='modal__body hidden lg:block'>
+                                <header className='modal__body__header'>
+                                    <div className='modal__body__header__left'>
+                                        <button onClick={hideModal} className='modal__body__back-button'>
+                                            <img src="/assets/icons/back-arrow-black.svg" className='' />
+                                        </button>
+                                        <h3 className='modal__body__header__title'>{title}</h3>
+                                    </div>
+                                    {save}
+                                </header>
+                                <section className='modal__body__content overflow-y-scroll'>
+                                    {children}
+                                </section>
+                            </div>
+                            <div className='bg-white fixed bottom-0 w-full lg:hidden z-50' style={{borderTopLeftRadius: '1.6rem', borderTopRightRadius: '1.6rem'}}>
+                                <header className='flex p-[1.6rem] justify-between items-center' style={{borderBottom: '1px solid #F6F6F6'}}><h3 className='text-[1.6rem] font-medium'> {title} </h3> {save} </header>
+                                <section className='px-[1.6rem] pt-[1.6rem] pb-[2.4rem]'>{children}</section>
+                            </div>
                     </motion.div>
                 </div>
             </>}
