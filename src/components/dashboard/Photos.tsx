@@ -21,36 +21,18 @@ const Card: React.FC<CardProps & {onDelete?: () => void; index?: number; onPress
   height = "",
   onPress,
 }) => {
-  // const [showModal, setShowModal] = useState<boolean>(false);
-
-  // const handleModalToggle = () => { setShowModal((prev) => !prev);};
 
   return (
     <>
-      <div
-        className={`relative w-full ${colspan} ${rowspan} xs:h-[128px] ${height} cursor-pointer hover:scale-[0.95] transition ease-in-out duration-200`}
+      <div className={`relative w-full ${colspan} ${rowspan} xs:h-[128px] ${height} cursor-pointer hover:scale-[0.95] transition ease-in-out duration-200`}
         onClick={onPress}
       >
-        <img
-          className="size-[18px] absolute z-20 -top-3 cursor-pointer"
-          src={ photo ? "/assets/icons/more.png" : "/assets/icons/camera-gray.png"}
-          alt=""
-        />
-        {photo ? (
-          <img
-            className={`object-cover xs:h-[128px] ${height} w-full rounded-2xl `}
-            src={photo}
-            alt=""
-          />
+        <img className="size-[18px] absolute  -top-3 cursor-pointer" src={ photo ? "/assets/icons/more.png" : "/assets/icons/camera-gray.png"}alt=""/>
+        {photo ? ( <img className={`object-cover xs:h-[128px] ${height} w-full rounded-2xl`} src={photo} alt=""/>
         ) : (
-          <div
-            className={`bg-gray-300 absolute w-full xs:h-[128px] ${height} rounded-2xl `}
-          />
+          <div className={`bg-gray-300  w-full xs:h-[128px] ${height} rounded-2xl  `}/>
         )}
       </div>
-      {/* <AnimatePresence>
-        {showModal && <CardModal onClose={handleModalToggle} index={index} onDelete={onDelete}/>}
-      </AnimatePresence> */}
     </>
   );
 };

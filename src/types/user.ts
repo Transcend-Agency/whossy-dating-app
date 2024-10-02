@@ -2,13 +2,13 @@ export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
   created_at?: Date;
-  currentLocation: string | null;
+  currentLocation?: string | null;
   distance?: number | null;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
   meet?: number | null;
-  pets?: string | null[];
+  pets?: number | null[];
   photos?: string[] | null;
   preference?: number | null;
   smoke?: number | null;
@@ -39,30 +39,8 @@ export type User = {
   read_receipts?: boolean;
   incoming_messages?: boolean;
   public_search?: boolean;
+  hide_verification_badge?: boolean;
 }
-
-export type UserPrefences = {
-  bio?: string;
-  date_of_birth?: {nanoseconds: number, seconds: number};
-  distance?: number;
-  drink?: number;
-  education?: number;
-  interests?: string[];
-  height?: number;
-  meet?: number;
-  pets?: string;
-  photos?: string[];
-  preference?: number;
-  smoke?: number;
-  workout?: number;
-  marital_status?: number;
-  love_language?: number;
-  zodiac?: number;
-  family_goal?: number;
-  religion?: number;
-  pet_owner?: number;
-  weight?: number
-};
 
 export type UserFilters = {
   age_range?: { max: number; min: number };
@@ -84,7 +62,7 @@ export type UserFilters = {
   love_language?: number;
   meet?: number;
   outreach?: boolean;
-  pet_owner?: number;
+  pets?: number | null;
   preference?: number;
   religion?: number;
   similar_interest?: boolean;
@@ -94,5 +72,5 @@ export type UserFilters = {
   zodiac?: number;
 };
 
-export type UserProfile = User | UserFilters | UserPrefences;
+export type UserProfile = User | UserFilters;
 
