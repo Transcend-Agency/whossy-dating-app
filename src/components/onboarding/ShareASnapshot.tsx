@@ -1,4 +1,3 @@
-import Skip from "./Skip";
 import BigSnapshots from "./BigSnapshots";
 import SmallSnapshots from "./SmallSnapshots";
 import OnboardingBackButton from "./OnboardingBackButton";
@@ -17,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/UserId";
 import { usePhotoStore } from "@/store/PhotoStore";
 
-const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
+const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   // Add a new document in collection "cities"
   const navigate = useNavigate();
 
@@ -61,7 +60,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack, advance }) => {
   
   return (
     <OnboardingPage>
-      <Skip advance={advance} />
+      {/* <Skip advance={advance} /> */}
       <section className="max-h-screen overflow-y-scroll">
         <h1 className="onboarding-page__header">Share a snapshot of you</h1>
         <div className="onboarding-page__text">
