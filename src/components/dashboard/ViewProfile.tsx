@@ -130,19 +130,19 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                     <motion.div initial={{ borderRadius: 0, height: '46rem' }} className="preview-profile__card">
                         <figure
                             className="preview-profile__image-bg-container">
-                            {userData.photos?.map((src, index) =>
+                            {userData?.photos?.map((src, index) =>
                             (
                                 <motion.img key={index} initial={{ opacity: currentImage == index ? 1 : 0 }} animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
                             )}
                         </figure>
-                        {userData.photos?.length !== 0 && <div className="preview-profile__overlay">
+                        {userData?.photos?.length !== 0 && <div className="preview-profile__overlay">
                             <div onClick={goToPreviousPost} className={`previous-button ${currentImage > 0 && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
-                            <div onClick={goToNextPost} className={`next-button ${currentImage < userData.photos.length - 1 && 'clickable'}`}>
+                            <div onClick={goToNextPost} className={`next-button ${currentImage < userData?.photos?.length - 1 && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
@@ -184,7 +184,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                             <div className="interest">Travelling</div>
                                             <div className="interest">Travelling</div>
                                             <div className="interest">Travelling</div>
-                                            {userData.interests.map((interest: string) => (<div className="interest">{interest}</div>))}
+                                            {userData?.interests?.map((interest: string) => (<div className="interest">{interest}</div>))}
                                             {/* <div className="interest">Travelling</div> */}
                                         </div>
                                     </div>
@@ -194,7 +194,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {userData.photos!?.map((image, index) => (
+                                {userData?.photos?.map((image, index) => (
                                     <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
