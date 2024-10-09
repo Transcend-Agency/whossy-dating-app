@@ -22,4 +22,4 @@ const realtimeDb = getDatabase()
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
-export {auth, db, googleProvider, facebookProvider, realtimeDb}
+export {auth, db, googleProvider, facebookProvider, realtimeDb }
