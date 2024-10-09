@@ -8,11 +8,7 @@ type LandingProps = {
 const Landing: React.FC<LandingProps> = () => {
     return <div>
         <div className='h-screen '>
-            {/* <Storytelling.Root>
-                <Storytelling.Animation>
-
-                </Storytelling.Animation>
-            </Storytelling.Root> */}
+   
 
         </div>
         <div className='w-screen h-[400dvh] relative'>
