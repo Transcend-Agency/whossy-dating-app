@@ -1,8 +1,12 @@
 import { family_goal, preference } from "@/constants";
+import { db } from "@/firebase";
+import { useAuthStore } from "@/store/UserId";
+import { collection, doc, GeoPoint, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { uid } from 'react-uid';
+import { GeoFirestore, GeoCollectionReference } from "geofirestore";
 
 interface ProfileCardProps {
     profiles: number[],
@@ -26,6 +30,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     const chosenActionButtonOpacity = useTransform(x, [-160, -140, -20, -10, 0, 10, 20, 140, 160], [0, 1, 1, 0, 0, 0, 1, 1, 0])
     const chosenActionScale = useTransform(x, [-160, -100, -10, 0, 10, 100, 160], [1.6, 1, 1, 1, 1, 1, 1.6])
     const nextCardOpacityValue = useTransform(x, [-160, 0, 160], [1, 0, 1])
+    const { user } = useAuthStore()
 
     const [userPreferencesData] = useState({
         photos: ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"],
@@ -72,6 +77,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             setNextCardOpacity(nextCardOpacityValue)
         }
     }
+
     x.on("change", latest => {
         setActionButtonsOpacity(actionButtonsOpacity)
         setChosenActionButtonOpacity(chosenActionButtonOpacity)
@@ -80,10 +86,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         if (latest < 0) setActiveAction('cancel')
         else setActiveAction('like')
     })
+
     useEffect(() => {
         nextCardOpacityValue.set(0)
         setNextCardOpacity(nextCardOpacityValue)
     }, [profiles.length])
+
     const handleShortcuts = useCallback(
         (e: Event) => {
             // @ts-expect-error type errpr
@@ -108,7 +116,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 
     return (
         <>
-            <motion.div onDragEnd={handleDragEnd} style={{ x, opacity: activeCardOpacity, rotate: activeCardRotation, overflowY: expanded ? 'scroll' : 'hidden' }} ref={profileContainer} custom={item} initial={{ y: item == profiles[profiles.length - 1] ? 0 : (item == profiles[profiles.length - 2] ? 12 : 24), width: item == profiles[profiles.length - 1] ? '100%' : (profiles[profiles.length - 2] == item ? 'calc(100% - 48px)' : 'calc(100% - 96px)') }} animate={controls} drag={index == profiles.length - 1 ? "x" : undefined} dragConstraints={{ left: 0, right: 0 }} className="profile-card preview-profile">
+            {<motion.div onDragEnd={handleDragEnd} style={{ x, opacity: activeCardOpacity, rotate: activeCardRotation, overflowY: expanded ? 'scroll' : 'hidden' }} ref={profileContainer} custom={item} initial={{ y: item == profiles[profiles.length - 1] ? 0 : (item == profiles[profiles.length - 2] ? 12 : 24), width: item == profiles[profiles.length - 1] ? '100%' : (profiles[profiles.length - 2] == item ? 'calc(100% - 48px)' : 'calc(100% - 96px)') }} animate={controls} drag={index == profiles.length - 1 ? "x" : undefined} dragConstraints={{ left: 0, right: 0 }} className="profile-card preview-profile">
                 <motion.div initial={{ opacity: item == profiles[profiles.length - 1] ? 1 : 0 }}
                     style={index == profiles.length - 2 ? { opacity: nextCardOpacity } : {}}
                     // animate={{ opacity: item == profiles[profiles.length - 1] ? 1 : 0 }}
@@ -280,7 +288,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         Report Stephanie
                     </div>
                 </div>
-            </motion.div>
+            </motion.div>}
         </>
     )
 }
@@ -289,6 +297,18 @@ const SwipingAndMatching = () => {
     const [profiles, setProfiles] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     const x = useMotionValue(0)
     const controls = useAnimationControls()
+    const { user } = useAuthStore()
+    const [currentLocation, setCurrentLocation] = useState({
+        latitude: 0,
+        longitude: 0
+    })
+
+    // Initialize GeoFirestore
+    const geoFirestore = new GeoFirestore(db);
+
+    // Reference to your 'users' collection in Firestore
+    const geoCollectionRef = geoFirestore.collection('users');
+
     const cancelProfile = async () => {
         await controls.start((item) => ({
             x: item == profiles[profiles.length - 1] ? -180 : 0,
@@ -330,6 +350,8 @@ const SwipingAndMatching = () => {
     const [chosenActionButtonOpacity, setChosenActionButtonOpacity] = useState(0)
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
+    const [profilesShowing, setProfilesShowing] = useState(false)
+
     const handleShortcuts = (e: any) => {
         if (e.keyCode == 37)
             cancelProfile()
@@ -346,6 +368,146 @@ const SwipingAndMatching = () => {
         if (latest < 0) setActiveAction('cancel')
         else setActiveAction('like')
     })
+
+    const saveUserLocationToFirebase = async (latitude: number, longitude: number) => {
+        try {
+            const userId = user?.uid;  // Get the current user's ID
+
+            // Create a document reference for the user
+            const userDocRef = doc(db, 'users', userId!);
+
+            // Save location data under the user document with merge option
+            await setDoc(userDocRef, {
+                location: new GeoPoint(latitude, longitude)
+            }, { merge: true });
+            setProfilesShowing(true)
+            // await updateAllUsersLocation()
+            console.log("Location saved successfully!");
+        } catch (error) {
+            console.error("Error saving location: ", error);
+        }
+    }
+
+
+    async function queryUsersNearLocation(latitude, longitude, radiusInMiles = 50) {
+        // Initialize GeoFirestore
+        const geoFirestore = new GeoFirestore(db);
+
+        const geoCollectionRef = geoFirestore.collection('users');
+
+        try {
+            // Convert miles to kilometers (GeoFirestore uses kilometers)
+            const radiusInKm = radiusInMiles * 1.60934;
+
+            // Perform a geospatial query using GeoFirestore
+            const query = geoCollectionRef.near({
+                center: new GeoPoint(latitude, longitude),  // Center point
+                radius: radiusInKm,  // Radius in kilometers
+                field: 'location'  // The location field in Firestore
+            });
+
+            // Get query results
+            const querySnapshot = await query.get();
+
+            // Process the query results
+            querySnapshot.forEach((doc) => {
+                console.log(doc.id, " => ", doc.data());
+            });
+
+        } catch (error) {
+            console.error("Error querying users by location: ", error);
+        }
+    }
+
+    // function toRadians(degrees) {
+    //     return degrees * (Math.PI / 180);
+    // }
+
+    // // Function to convert radians to degrees
+    // function toDegrees(radians) {
+    //     return radians * (180 / Math.PI);
+    // }
+
+
+
+    // Function to generate a random location within a 50-mile radius
+    // function generateRandomLocation(latitude, longitude, radiusInMiles) {
+    //     const earthRadiusMiles = 3958.8;  // Radius of the Earth in miles
+
+    //     // Convert distance to radians
+    //     const radiusInRadians = radiusInMiles / earthRadiusMiles;
+
+    //     // Generate a random bearing (direction)
+    //     const bearing = Math.random() * 2 * Math.PI;
+
+    //     // Generate a random distance from the center point
+    //     const distance = Math.random() * radiusInRadians;
+
+    //     const newLatitude = Math.asin(Math.sin(toRadians(latitude)) * Math.cos(distance) +
+    //         Math.cos(toRadians(latitude)) * Math.sin(distance) * Math.cos(bearing));
+
+    //     const newLongitude = toRadians(longitude) + Math.atan2(
+    //         Math.sin(bearing) * Math.sin(distance) * Math.cos(toRadians(latitude)),
+    //         Math.cos(distance) - Math.sin(toRadians(latitude)) * Math.sin(newLatitude)
+    //     );
+
+    //     return {
+    //         latitude: toDegrees(newLatitude),
+    //         longitude: toDegrees(newLongitude)
+    //     };
+    // }
+
+    // async function updateAllUsersLocation(radiusInMiles = 50) {
+    //     try {
+    //         const usersCollection = collection(db, 'users');
+
+    //         // Fetch all users from Firestore
+    //         const querySnapshot = await getDocs(usersCollection);
+
+    //         // Loop through all users
+    //         querySnapshot.forEach(async (userDoc) => {
+    //             const userData = userDoc.data();
+
+    //             const { latitude, longitude } = currentLocation;
+
+    //             // Generate a random location within the radius
+    //             const randomLocation = generateRandomLocation(latitude, longitude, radiusInMiles);
+
+    //             // Update the user's location in Firestore
+    //             const userDocRef = doc(db, 'users', userData.uid);
+    //             await updateDoc(userDocRef, {
+    //                 location: new GeoPoint(randomLocation.latitude, randomLocation.longitude)
+    //             });
+
+    //             console.log(`Updated location for user: ${userDoc.id}`);
+
+    //         });
+
+    //         console.log("All user locations updated successfully!");
+
+    //     } catch (error) {
+    //         console.error("Error updating user locations: ", error);
+    //     }
+    // }
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                setCurrentLocation({
+                    latitude, longitude
+                })
+                // Save the location data to Firebase
+                saveUserLocationToFirebase(latitude, longitude);
+                console.log(latitude, longitude)
+            }, function (error) {
+                console.error("Error getting location: ", error);
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
+    }, [])
     return (
         <>
             <nav className="dashboard-layout__mobile-top-nav">
@@ -356,30 +518,32 @@ const SwipingAndMatching = () => {
                 </div>
             </nav>
             <AnimatePresence mode="sync">
-                <div className="swipe-and-match-page">
-                    <motion.div
-                        style={{ opacity: actionButtonsOpacity }}
-                        className="action-buttons">
-                        <button className="action-buttons__button action-buttons__button--small">
-                            <img src="/assets/icons/redo.svg" />
-                        </button>
-                        <button onClick={cancelProfile} className="action-buttons__button">
-                            <img src="/assets/icons/cancel.svg" />
-                        </button>
-                        <button onClick={likeProfile} className="action-buttons__button">
-                            <img src="/assets/icons/heart.svg" />
-                        </button>
-                        <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'MWBawIlrsDarKK1Cjnm3FIGj8vz2'}`)}>
-                            <img src="/assets/icons/message-heart.svg" />
-                        </button>
-                    </motion.div>
-                    <motion.div style={{ opacity: chosenActionButtonOpacity, scale: chosenActionScale }} className="chosen-action-button">
-                        {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" />}
-                        {activeAction == 'like' && <img src="/assets/icons/heart.svg" />}
-                    </motion.div>
-                    {/* @ts-expect-error type errors */}
-                    {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
-                </div>
+                {profilesShowing &&
+                    <div className="swipe-and-match-page">
+                        <motion.div
+                            style={{ opacity: actionButtonsOpacity }}
+                            className="action-buttons">
+                            <button className="action-buttons__button action-buttons__button--small">
+                                <img src="/assets/icons/redo.svg" />
+                            </button>
+                            <button onClick={cancelProfile} className="action-buttons__button">
+                                <img src="/assets/icons/cancel.svg" />
+                            </button>
+                            <button onClick={likeProfile} className="action-buttons__button">
+                                <img src="/assets/icons/heart.svg" />
+                            </button>
+                            <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'MWBawIlrsDarKK1Cjnm3FIGj8vz2'}`)}>
+                                <img src="/assets/icons/message-heart.svg" />
+                            </button>
+                        </motion.div>
+                        <motion.div style={{ opacity: chosenActionButtonOpacity, scale: chosenActionScale }} className="chosen-action-button">
+                            {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" />}
+                            {activeAction == 'like' && <img src="/assets/icons/heart.svg" />}
+                        </motion.div>
+                        {/* @ts-expect-error type errors */}
+                        {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
+                    </div>
+                }
             </AnimatePresence>
         </>
     )

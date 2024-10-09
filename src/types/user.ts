@@ -2,7 +2,7 @@ export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
   created_at?: Date;
-  currentLocation?: string | null;
+  location?: string | null;
   distance?: number | null;
   drink?: number | null;
   education?: number | null;
