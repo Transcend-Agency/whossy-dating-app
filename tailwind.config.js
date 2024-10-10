@@ -1,14 +1,42 @@
-/** @type {import('tailwindcss').Config} */
+// /** @type {import('tailwindcss').Config} */
 
+// export default {
+//   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+//   theme: {
+//     extend: {
+//       screens: {
+//         xs: "475px",
+//         // ...defaultTheme.screens,
+//       },
+//     },
+//   },
+//   plugins: [],
+// };
+
+/** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
-      screens: {
-        xs: "475px",
-        // ...defaultTheme.screens,
+      colors: {
+        red: "#F2243E",
+        gray: "#8A8A8E",
+        white: "#FFFFFF",
+      },
+      fontSize:{
+        '7.5xl': ['88px','92px']
       },
     },
   },
   plugins: [],
-};
+}
