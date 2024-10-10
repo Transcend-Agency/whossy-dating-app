@@ -8,7 +8,7 @@ type LandingProps = {
 };
 
 
-const WebsiteFeatures = () => {
+const DesktopWebsiteFeatures = () => {
     gsap.registerPlugin(useGSAP);
     gsap.registerPlugin(ScrollTrigger);
 
@@ -61,11 +61,7 @@ const WebsiteFeatures = () => {
     );
     return (
         <div>
-            <div className='h-screen '>
-
-
-            </div>
-            <div className='w-screen h-[400dvh] relative features-section'>
+            <div className='w-screen h-[400dvh] relative features-section hidden lg:block'>
                 <div className='w-full sticky bottom-0 top-0 h-[100dvh] hidden lg:flex items-end justify-center'>
                     <div className='relative'>
                         <div className='h-[94dvh] relative top-[8dvh] aspect-[0.49]'>
@@ -142,14 +138,7 @@ const WebsiteFeatures = () => {
                         </div>
                     </div>
                 </div>
-                <div className='lg:hidden flex flex-col'>
-                    <div className='min-h-[]'></div>
-                    <div className='flex flex-1'></div>
-                </div>
             </div>
-
-            <div className='h-screen'></div>
-
         </div>
     )
 }
@@ -158,7 +147,7 @@ const Landing: React.FC<LandingProps> = () => {
     return <div>
         <div className='h-screen '>
         </div>
-        <WebsiteFeatures />
+        <DesktopWebsiteFeatures />
         <div className='h-screen'></div>
 
     </div>
