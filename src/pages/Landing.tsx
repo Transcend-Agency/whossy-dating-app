@@ -167,8 +167,8 @@ const Landing = () => {
 
             <div className="w-4/5 flex items-end ">
                 <div>
-                    <p className="text-3xl">STEPHANIE & DAVID</p>
-                    <p className="text-sm text-gray lg:text-lg">
+                    <p className="text-[3rem]">STEPHANIE & DAVID</p>
+                    <p className="text-gray text-[1.8rem]">
                       He was my first thought when I woke up in the morning.
                     </p>
                 </div>
