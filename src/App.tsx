@@ -27,6 +27,7 @@ import OnboardingLayout from "./pages/OnboardingLayout";
 import PhoneNumber from "./pages/PhoneNumber";
 import { ProtectedDashboard, ProtectedOnboarding } from "./pages/ProtectedRoute";
 import ResetPassword from "./pages/ResetPassword";
+import Notification from "./pages/Notification";
 
 const queryClient = new QueryClient();
 
@@ -53,7 +54,7 @@ function App() {
             <Route index element={<Onboarding />} />
           </Route>
           {/* <Route path="/dashboard" element={<DashboardLayout />}> */}
-          <Route path="/dashboard" element={<ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
+          <Route path="/dashboard" element={<DashboardLayout />}>
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<SwipingAndMatching />} />
@@ -62,6 +63,7 @@ function App() {
             <Route path="globalSearch" element={<GlobalSearch />} />
             <Route path="heart" element={<Favorites />} />
             <Route path="chat" element={<Chat />} />
+            <Route path="notification" element={<Notification />} />
             {/* <Route path="settings" element={<Settings />} /> */}
             {/* <Route path="profile/preferences" element={<Preferences />} /> */}
             {/* <Route path="profile/edit" element={<EditProfile />} /> */}
