@@ -58,7 +58,7 @@ const Navbar = () => {
             <p className="text-[1.6rem]">whossy</p>
           </div>
 
-          <div className="h-[3.4rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
+          <div className="h-[3rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
 
           <nav className="flex items-center space-x-[2.4rem]">
             <a href="#login" className="text-[1.6rem]">Login</a>
@@ -70,7 +70,7 @@ const Navbar = () => {
             </a>
           </nav>
 
-          <div className="h-[3.4rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
+          <div className="h-[3rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
 
           <div className="flex items-center text-[1.6rem] space-x-[1.6rem]">
             <p>Download on</p>

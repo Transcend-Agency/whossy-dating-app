@@ -1,7 +1,10 @@
-
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+const navigate = useNavigate();
+
   return (
+
     <div className="lg:flex lg:justify-center px-[8rem] bg-red w-full lg:h-[25rem]">
       <footer className=" text-white py-[4rem] w-full space-y-[1.6rem] lg:grid lg:grid-cols-3 lg:items-center">
         <div className="space-y-[2.4rem]">
@@ -29,8 +32,8 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col space-y-[2.4rem] text-[1.6rem]">
-          <a href="#faq">FAQ</a>
-          <a href="#contact">Contact Us</a>
+          <button onClick={() => navigate('/faq')}>FAQ</button>
+          <button onClick={() => navigate('/contact')}>Contact Us</button>
         </div>
 
         <div className="flex flex-col space-y-[4rem] ">
@@ -52,6 +55,7 @@ const Footer = () => {
 
       </footer>
     </div>
+
   );
 };
 
