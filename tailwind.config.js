@@ -31,6 +31,7 @@ export default {
       colors: {
         red: "#F2243E",
         gray: "#8A8A8E",
+        lightgray: "#F6F6F6",
         white: "#FFFFFF",
       },
       fontSize:{
