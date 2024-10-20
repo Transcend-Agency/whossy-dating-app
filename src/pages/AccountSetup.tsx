@@ -3,6 +3,7 @@ import { getAuth, sendEmailVerification, updateProfile, verifyBeforeUpdateEmail 
 import {
     collection,
     doc,
+    getDoc,
     getDocs, query, setDoc, updateDoc, where
 } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -23,6 +24,7 @@ import GenderButton from '../components/auth/GenderButton';
 import { db } from "../firebase";
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
+import { useAuthStore } from '@/store/UserId';
 type AccountSetupProps = {
 
 };
@@ -30,7 +32,7 @@ type AccountSetupProps = {
 interface AccountSetupFormPage {
     advance: () => void
     goBack: () => void
-    key: string
+    pageKey: string
 }
 
 const AccountNamesFormSchema: ZodType<{ first_name: string; last_name: string }> = z
@@ -58,7 +60,7 @@ const AccountGenderFormSchema: ZodType<{ gender: string; }> = z
     })
 
 
-const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, key }) => {
+const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, pageKey }) => {
     const first_name = useAccountSetupFormStore(state => state.userData.first_name)
     const last_name = useAccountSetupFormStore(state => state.userData.last_name)
     const setNames = useAccountSetupFormStore(state => state.setNames)
@@ -79,7 +81,7 @@ const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, key }) =>
         advance()
     }
     return (
-        <AuthPage key={key} className='names'>
+        <AuthPage key={pageKey} className='names'>
             <div className='auth-page__modal'>
                 <AuthModalBackButton />
                 <AuthModalHeader title='Welcome to Whossy, Let’s get you Started' subtitle="Ensure to enter the correct data as some will appear on your profile." />
@@ -93,7 +95,7 @@ const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, key }) =>
     )
 }
 
-const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key }) => {
+const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, pageKey }) => {
     const phone_number = useAccountSetupFormStore(state => state.userData.phone_number)
     const country_of_origin = useAccountSetupFormStore(state => state.userData.country_of_origin)
     const setCountryAndPhoneData = useAccountSetupFormStore(state => state.setCountryAndPhoneData)
@@ -161,7 +163,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
 
 
     return (
-        <AuthPage key={key} className='phone-and-countries'>
+        <AuthPage key={pageKey} className='phone-and-countries'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -184,7 +186,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                                 <ReactFlagsSelect
                                     selectButtonClassName={`${errors?.country_of_origin?.message && 'has-error'}`}
                                     placeholder="Nationality"
-                                    className='countries-select w-[40rem]'
+                                    className='countries-select w-[calc(100%-3rem)]'
                                     searchable
                                     selected={selected}
                                     onSelect={(code) => { setSelected(code); onChange(en[code as keyof Locale]) }}
@@ -193,14 +195,14 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, key 
                             </>
                         )}
                     />
-                     <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Continue" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
+                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Continue" : <motion.img key="loading-image" className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 </form>
             </div>
         </AuthPage>
     )
 }
 
-const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
+const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
     const gender = useAccountSetupFormStore(state => state.userData.gender)
     const setGender = useAccountSetupFormStore(state => state.setGender)
     const [loading, setLoading] = useState(false)
@@ -222,10 +224,11 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
         }
     });
     const auth = getAuth()
+    const { setAuth } = useAuthStore();
 
     const onFinishCreateAccount = async (data: any) => {
         setGender(data.gender)
-        await setDoc(doc(db, 'userchats', id), {chats: []})
+        await setDoc(doc(db, 'userchats', id), { chats: [] })
         try {
             setLoading(true)
             if (auth_provider == 'phone') {
@@ -244,6 +247,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
                 navigate('/auth/email-verification')
             } else {
                 const userRef = doc(db, "users", id);
+                const user = await getDoc(userRef)
                 await updateDoc(userRef, {
                     ...getAccountSetupData(),
                     gender: data.gender,
@@ -258,6 +262,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
                     })
                     navigate('/auth/email-verification')
                 } else {
+                    setAuth({ uid: id, has_completed_onboarding: false }, user.data())
                     navigate('/auth/finalize-setup')
                 }
             }
@@ -271,7 +276,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
     }
 
     return (
-        <AuthPage key={key} className='gender'>
+        <AuthPage key={pageKey} className='gender'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -290,7 +295,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, key }) => {
                         )}
                     />
                     <div className='error-message-container'><motion.span animate={{ opacity: errors?.gender?.message ? 1 : 0, transition: { duration: 0.2 } }} className="error-message">{errors?.gender?.message as string}</motion.span></div>
-                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Finish" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
+                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center'> {!loading ? "Finish" : <motion.img key="loading-image" className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 </form>
             </div>
         </AuthPage>
@@ -318,9 +323,9 @@ const AccountSetup: React.FC<AccountSetupProps> = () => {
     return (
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.2 } }} exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } }} >
             <AnimatePresence mode='wait'>
-                {pageOrder[currentPage] == 'names' && <FillInAccountNames key="create-account-names" advance={advance} goBack={goBack} />}
-                {pageOrder[currentPage] == 'countries' && <FillInCountries key="create-account-countries" advance={advance} goBack={goBack} />}
-                {pageOrder[currentPage] == 'gender' && <FillInGender key="create-account-gender" advance={advance} goBack={goBack} />}
+                {pageOrder[currentPage] == 'names' && <FillInAccountNames pageKey="create-account-names" advance={advance} goBack={goBack} />}
+                {pageOrder[currentPage] == 'countries' && <FillInCountries pageKey="create-account-countries" advance={advance} goBack={goBack} />}
+                {pageOrder[currentPage] == 'gender' && <FillInGender pageKey="create-account-gender" advance={advance} goBack={goBack} />}
                 {/* {pageOrder[currentPage] == 'welcome' && <AgreeToTerms key="create-account-agree-to-terms" advance={advance} goBack={goBack} />} */}
             </AnimatePresence>
         </motion.div>
