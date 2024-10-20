@@ -66,6 +66,12 @@
 
 /*=====  End of Pages  ======*/
 
+@layer components{
+    .bg-img{
+        @apply bg-cover bg-[top] bg-no-repeat
+    }
+}
+
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
