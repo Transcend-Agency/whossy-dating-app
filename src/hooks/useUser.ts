@@ -1,6 +1,6 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
+import { AdvancedSearchPreferences, User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
 
 type CollectionName = "users" | "preferences" | "filters";
@@ -8,8 +8,6 @@ type CollectionName = "users" | "preferences" | "filters";
 const collection_one = "users";
 const collection_two = "preferences";
 const collection_three = "filters";
-
-// const uid2 = "Ay2YNO2JnYePExiVo7AGnrkupE22";
 
 const getUserProfile = async (
   path: CollectionName, uid: string
@@ -42,6 +40,37 @@ const updateUserProfile = async (
   });
 };
 
+const updateAdvancedSearchPreferences = async (
+ uid: string,
+  success: () => void,
+  updatedFields?: Partial<UserProfile>
+) => {
+  const userRef = doc(db, "advancedSearchPreferences", uid as string);
+  await updateDoc(userRef, updatedFields as UserProfile).then(() => {
+    success();
+    toast.success("Updated!");
+  });
+}
+
+const getAdvancedSearchPreferences = async (uid: string) => {
+  const docRef = doc(db, "advancedSearchPreferences", uid as string);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // console.log("Document data:", docSnap.data() as User);
+
+    // check the path i.e the collection name that was pased
+    return docSnap.data() as AdvancedSearchPreferences;
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+    await setDoc(doc(db, "advancedSearchPreferences", uid as string), {
+      gender: '',
+      age_range: { min: 18, max: 100 }
+
+    } as AdvancedSearchPreferences);
+  }
+}
 // const uploadPhotosToGetUrl = (file: File, i: number, addPhotos: (url: string) => void) => {
 //   if (!file) return;
 //   const storage = getStorage();
@@ -71,4 +100,4 @@ const updateUserProfile = async (
 //   }
 // };
 
-export { getUserProfile, updateUserProfile };
+export { getUserProfile, updateUserProfile, updateAdvancedSearchPreferences, getAdvancedSearchPreferences };

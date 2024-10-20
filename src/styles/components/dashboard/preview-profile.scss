@@ -68,10 +68,10 @@
     }
 
     &__navigation-buttons {
-        @apply px-[1.6rem] flex justify-between absolute top-[1.6rem] left-0 right-0 z-10;
+        @apply px-[1.6rem] flex justify-between rounded-[0.6rem] absolute top-[1.6rem] left-0 right-0 z-10;
     }
     &__navigation-button {
-        @apply flex items-center;
+        @apply flex items-center bg-[#65656572] pr-[1.2rem] rounded-[0.6rem];
         &:nth-of-type(2) {
             .preview-profile__navigation-button-text {
                 @apply mr-[1.2rem] ml-0;
@@ -82,13 +82,13 @@
         }
     }
     &__navigation-button-icon-container {
-        @apply w-[3rem] h-[3rem] bg-[#FFFFFF33] rounded-[0.6rem] flex items-center justify-center;
+        @apply w-[3rem] h-[3rem] rounded-[0.6rem] flex items-center justify-center;
         svg {
-            @apply w-[0.8rem];
+            @apply w-[0.8rem] invert;
         }
     }
     &__navigation-button-text {
-        @apply text-[1.8rem] text-white ml-[1.2rem] flex items-center justify-center mix-blend-difference;
+        @apply text-[1.8rem] text-white ml-[0.6rem] flex items-center justify-center ;
     }
 
     @apply bg-white max-h-full;
