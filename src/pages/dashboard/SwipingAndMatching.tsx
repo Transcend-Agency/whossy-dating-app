@@ -490,24 +490,24 @@ const SwipingAndMatching = () => {
     //     }
     // }
 
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                setCurrentLocation({
-                    latitude, longitude
-                })
-                // Save the location data to Firebase
-                saveUserLocationToFirebase(latitude, longitude);
-                console.log(latitude, longitude)
-            }, function (error) {
-                console.error("Error getting location: ", error);
-            });
-        } else {
-            console.log("Geolocation is not supported by this browser.");
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(function (position) {
+    //             const latitude = position.coords.latitude;
+    //             const longitude = position.coords.longitude;
+    //             setCurrentLocation({
+    //                 latitude, longitude
+    //             })
+    //             // Save the location data to Firebase
+    //             saveUserLocationToFirebase(latitude, longitude);
+    //             console.log(latitude, longitude)
+    //         }, function (error) {
+    //             console.error("Error getting location: ", error);
+    //         });
+    //     } else {
+    //         console.log("Geolocation is not supported by this browser.");
+    //     }
+    // }, [])
     return (
         <>
             <nav className="dashboard-layout__mobile-top-nav">

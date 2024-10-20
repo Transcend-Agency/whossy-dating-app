@@ -15,15 +15,16 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/UserId";
 import { usePhotoStore } from "@/store/PhotoStore";
+import { serverTimestamp } from "firebase/database";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   // Add a new document in collection "cities"
   const navigate = useNavigate();
 
-  const {auth, setAuth} = useAuthStore();
+  const { auth, setAuth } = useAuthStore();
 
   //new
-  const {photos, reset: resetPhoto} = usePhotoStore();
+  const { photos, reset: resetPhoto } = usePhotoStore();
   //new
 
   const { "onboarding-data": data, reset } = useOnboardingStore();
@@ -44,8 +45,9 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         preference: data["relationship-preference"],
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
+        created_at: serverTimestamp(),
       }).then(() => resetPhoto());
-      await updateDoc(doc(db, "users", auth?.uid as string), {has_completed_onboarding: true}).then(() => setAuth({uid: auth?.uid as string, has_completed_onboarding: true}));
+      await updateDoc(doc(db, "users", auth?.uid as string), { has_completed_onboarding: true }).then(() => setAuth({ uid: auth?.uid as string, has_completed_onboarding: true }));
       await setDoc(doc(db, "filters", auth?.uid as string), {});
       toast.success("Account has been created successfully 🚀");
       reset();
@@ -57,7 +59,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   };
 
   const [openModal, setOpenModal] = useState(false);
-  
+
   return (
     <OnboardingPage>
       {/* <Skip advance={advance} /> */}
@@ -76,8 +78,8 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         <Button text="Get Started"
           onClick={() => {
             if (Object.values(photos).filter(value => Boolean(value)).length > 2) {
-            setOpenModal(true);
-            setTimeout(() => uploadToFirestore(), 5000);
+              setOpenModal(true);
+              setTimeout(() => uploadToFirestore(), 5000);
             } else { toast.error("Please add at least 2 photos of yourself 🤗") }
           }}
         />
