@@ -24,6 +24,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const likeControls = useAnimationControls()
     const { user } = useAuthStore()
 
+    console.log(userData)
+
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
             setCurrentImage(value => value + 1)
@@ -124,7 +126,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             <div className="preview-profile__navigation-button-icon-container">
                                 <img src="/assets/icons/arrow-left-white.svg" />
                             </div>
-                            <span className="preview-profile__navigation-button-text">Back</span>
+                            <span className="preview-profile__navigation-button-text text-white">Back</span>
                         </button>
                     </div>
                     <motion.div initial={{ borderRadius: 0, height: '46rem' }} className="preview-profile__card">
@@ -194,9 +196,11 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {userData?.photos?.map((image, index) => (
-                                    <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
-                                ))}
+                                {userData.photos?.length !== 1 && <>
+                                    {userData?.photos?.map((image, index) => (
+                                        <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
+                                    ))}
+                                </>}
                             </div>
                         </div>
                     </motion.div>
@@ -286,13 +290,13 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 {/* {userPrefencesData?.weight ? <p className="content-item__info__text">{userPrefencesData.weight}kg</p> : <p className="content-item__info__text">Not specified</p>} */}
                                 <p className="content-item__info__text">{userData.gender}</p>
                             </div>
-                            {userData.education || userData.education == 0 && <div className="content-item__info">
+                            {![null, undefined].includes(userData.education as unknown as any) && <div className="content-item__info">
                                 <p className="content-item__info__title">Education</p>
                                 {/* {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>} */}
                                 <p className="content-item__info__text">{education[userData.education]}</p>
                             </div>}
                         </div>
-                        {(userData.family_goal || userData.family_goal! >= 0) || Boolean(userData.weight) || Boolean(userData.height) && <div className="content-item">
+                        {([userData.family_goal, userData.weight, userData.height].some(item => item !== null && item !== undefined)) && <div className="content-item">
                             <div className="content-item__title">
                                 <img src="/assets/icons/need-to-know.svg" />
                                 Need To Know
@@ -313,7 +317,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 <p className="content-item__info__text">{userData.height ? `${Math.round(userData.height)}cm` : null}</p>
                             </div>}
                         </div>}
-                        {(userData.smoke || userData.smoke! >= 0) || (userData.drink || userData.drink! >= 0) || (userData.workout || userData.workout >= 0) && <div className="content-item">
+                        {([userData.smoke, userData.drink, userData.workout].some(item => item !== null && item !== undefined)) && <div className="content-item">
                             <div className="content-item__title">
                                 <img src="/assets/icons/personal-habits.svg" />
                                 Personal habits

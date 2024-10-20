@@ -1,3 +1,4 @@
+import { relationship_preferences } from '@/constants';
 export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
@@ -71,6 +72,13 @@ export type UserFilters = {
   workout?: number;
   zodiac?: number;
 };
+
+export type AdvancedSearchPreferences = {
+  age_range?: { max: number; min: number };
+  gender?: string;
+  relationship_preference?: number;
+  height?: number;
+}
 
 export type UserProfile = User | UserFilters;
 
