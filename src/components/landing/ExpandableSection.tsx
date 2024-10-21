@@ -8,18 +8,9 @@ interface SectionProps {
 const ExpandableSection: React.FC<SectionProps> = ({ placeholder }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState('');
-  const [sentMessage, setSentMessage] = useState('');
 
   const toggleExpand = () => {
     setIsExpanded(true); 
-  };
-
-  const handleSendMessage = () => {
-    if (message.trim() !== '') {
-      setSentMessage(message);
-      setMessage(''); 
-      setIsExpanded(false); 
-    }
   };
 
   return (
@@ -41,15 +32,6 @@ const ExpandableSection: React.FC<SectionProps> = ({ placeholder }) => {
           className="w-full border px-4 py-2 rounded-lg"
           placeholder="Type your message"
         />
-        <button  
-          onClick={handleSendMessage}
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        >
-          Send
-        </button>
-        {sentMessage && (
-          <p className="mt-2 text-green-500">Message sent: {sentMessage}</p>
-        )}
       </div>
     )}
   </div>

@@ -18,7 +18,8 @@ const Dashboard: React.FC = () => {
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
                     <div className='dashboard-layout__top-nav__logo hidden lg:block'>
-                        Logo
+                    <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='dashboard-layout__top-nav__control-icon' />
+    
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container'>
                         <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
