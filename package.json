@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bsmnt/scrollytelling": "^0.3.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@gsap/react": "^2.1.1",
     "@hookform/resolvers": "^3.9.0",
     "@mui/material": "^6.1.1",
     "@mui/x-date-pickers": "^7.18.0",
@@ -25,6 +27,9 @@
     "firebase": "^10.12.2",
     "form": "^0.2.4",
     "framer-motion": "^11.2.12",
+    "geofirestore": "^5.2.0",
+    "gsap": "^3.12.5",
+    "iconsax-react": "^0.0.8",
     "lottie-react": "^2.4.0",
     "react": "^18.3.1",
     "react-countdown": "^2.3.5",

@@ -25,7 +25,9 @@ import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
+import { useAuthStore } from '@/store/UserId';
+import { serverTimestamp } from 'firebase/database';
 
 
 const CreateAccountFormSchema: ZodType<FormData> = z
@@ -64,6 +66,8 @@ const CreateAccount: React.FC<{}> = () => {
     const setId = useAccountSetupFormStore(state => state.setId)
     const setAuthProvider = useAccountSetupFormStore(state => state.setAuthProvider)
 
+    const { setAuth } = useAuthStore();
+
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         console.log(data)
         try {
@@ -86,7 +90,9 @@ const CreateAccount: React.FC<{}> = () => {
                         auth_provider: "local",
                         email: user.email,
                         has_completed_account_creation: false,
-                        has_completed_onboarding: false
+                        has_completed_onboarding: false,
+                        is_verified: false,
+                        craeted_at: serverTimestamp()
                     });
                     setId(user.uid)
                     setAuthProvider('email')
@@ -123,7 +129,9 @@ const CreateAccount: React.FC<{}> = () => {
                     auth_provider: "google",
                     email: res.user.email,
                     has_completed_account_creation: false,
-                    has_completed_onboarding: false
+                    has_completed_onboarding: false, 
+                    is_verified: false, 
+                    created_at: serverTimestamp()
                 });
                 setId(res.user.uid)
                 setAuthProvider('google')
@@ -144,9 +152,11 @@ const CreateAccount: React.FC<{}> = () => {
                     setCountryAndPhoneData({ phone_number: '', country_of_origin: '' })
                     navigate('/auth/account-setup')
                 } else if (!user.has_completed_onboarding) {
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                     navigate('/onboarding')
                 } else {
-                    navigate('/')
+                    setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
+                    navigate('/dashboard/user-profile')
                 }
             }
         } catch (err) {
@@ -173,7 +183,7 @@ const CreateAccount: React.FC<{}> = () => {
                         error={errors.password} placeholder='Password' type='password' />
                     <AuthInput name='confirmPassword' register={register}
                         error={errors.confirmPassword} type='password' placeholder='Confirm Password' />
-                     <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center mt-3 justify-center'> {!loading ? "Create Account" : <motion.img key="loading-image"className='button__loader' src='/assets/icons/loader.gif' />} </button>
+                    <button className='w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center mt-3 justify-center'> {!loading ? "Create Account" : <motion.img key="loading-image" className='button__loader' src='/assets/icons/loader.gif' />} </button>
                 </form>
                 <AlternateSignupOptions google={() => signInWithGoogle(onGoogleSignIn)} facebook={() => signInWithFacebook(onFacebookSignIn)} phone={() => navigate('/auth/phone-number')} text='or sign up with' />
                 <div className="auth-page__modal__terms-and-conditions">

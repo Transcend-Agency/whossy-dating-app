@@ -28,6 +28,8 @@ import PhoneNumber from "./pages/PhoneNumber";
 import { ProtectedDashboard, ProtectedOnboarding } from "./pages/ProtectedRoute";
 import ResetPassword from "./pages/ResetPassword";
 import Notification from "./pages/Notification";
+import Faq from "./pages/Faq";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,8 @@ function App() {
             {/* <Route path="profile/edit" element={<EditProfile />} /> */}
           </Route>
           <Route path="" element={<Landing />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
         <ToastContainer />
       </AnimatePresence>

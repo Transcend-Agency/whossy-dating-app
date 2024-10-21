@@ -2,9 +2,14 @@ import { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase'; // Adjust the path to your Firebase config
 import { Match } from '@/types/likingAndMatching';
+import { User } from '@/types/user';
+
+interface PopulatedMatchData extends Match {
+    matchedUserData: User; // Adjust this type to match your user data
+}
 
 const useSyncUserMatches = (userId: string) => {
-    const [matches, setMatches] = useState<Match[]>([]);
+    const [matches, setMatches] = useState<PopulatedMatchData[]>([]);
     const [loading, setLoading] = useState<boolean>(true); // Loading state
 
     useEffect(() => {
@@ -18,44 +23,68 @@ const useSyncUserMatches = (userId: string) => {
         // Query 2: where user2_id matches the current user
         const user2Query = query(matchesRef, where('user2_id', '==', userId));
 
-        let isFirstSnapshot = true; // To track the first snapshot for both queries
+        let user1QueryFetched = false;
+        let user2QueryFetched = false;
+
+        const uniqueMatchIds = new Set<string>();
 
         const populateUserData = async (match: Match) => {
-            // Fetch user1 and user2 details from the 'users' collection
-            const user1Doc = await getDoc(doc(db, 'users', match.user1_id));
-            const user2Doc = await getDoc(doc(db, 'users', match.user2_id));
+            const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
+            const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
 
             return {
                 ...match,
-                user1: user1Doc.exists() ? user1Doc.data() : null,
-                user2: user2Doc.exists() ? user2Doc.data() : null,
+                matchedUserData: matchedUserDoc.exists() ? matchedUserDoc.data() : null,
             };
         };
 
+        const updateMatches = (newMatches: PopulatedMatchData[]) => {
+            const filteredMatches = newMatches.filter((match) => {
+                // Create a unique key by combining user1_id and user2_id
+                const matchKey = [match.user1_id, match.user2_id].sort().join('_');
+                
+                // Check if the combination of user1_id and user2_id is already in the Set
+                if (!uniqueMatchIds.has(matchKey)) {
+                    uniqueMatchIds.add(matchKey); // Add the unique match to the Set
+                    return true; // Include the match in the results
+                }
+                return false; // Exclude duplicate matches
+            });
+
+            // Update state with filtered matches
+            setMatches(filteredMatches);
+        };
+
         // Listen to both queries and merge the results
-        const unsubscribeUser1 = onSnapshot(user1Query, (snapshot) => {
-            const user1Matches: Match[] = snapshot.docs.map((doc) => ({
-                ...doc.data(),
-            }));
-            setMatches((prevMatches) => [...prevMatches, ...user1Matches]);
+        const unsubscribeUser1 = onSnapshot(user1Query, async (snapshot) => {
+            const user1Matches = await Promise.all(
+                snapshot.docs.map(async (doc) => {
+                    const match = doc.data() as Match;
+                    return await populateUserData(match);
+                })
+            ) as PopulatedMatchData[];
+            updateMatches(user1Matches);
+            user1QueryFetched = true;
 
             // If both queries have fetched for the first time, set loading to false
-            if (isFirstSnapshot) {
+            if (user1QueryFetched && user2QueryFetched) {
                 setLoading(false);
-                isFirstSnapshot = false;
             }
+
         });
 
-        const unsubscribeUser2 = onSnapshot(user2Query, (snapshot) => {
-            const user2Matches: Match[] = snapshot.docs.map((doc) => ({
-                ...doc.data(),
-            }));
-            setMatches((prevMatches) => [...prevMatches, ...user2Matches]);
-
+        const unsubscribeUser2 = onSnapshot(user2Query, async (snapshot) => {
+            const user2Matches = await Promise.all(
+                snapshot.docs.map(async (doc) => {
+                    const match = doc.data() as Match;
+                    return await populateUserData(match);
+                })
+            ) as PopulatedMatchData[]  ;
+            updateMatches(user2Matches);
+            user2QueryFetched = true;
             // If both queries have fetched for the first time, set loading to false
-            if (isFirstSnapshot) {
+            if (user1QueryFetched && user2QueryFetched) {
                 setLoading(false);
-                isFirstSnapshot = false;
             }
         });
 
@@ -65,6 +94,9 @@ const useSyncUserMatches = (userId: string) => {
             unsubscribeUser2();
         };
     }, [userId]);
+    useEffect(() => {
+        console.log(matches, loading)
+    }, [matches, loading])
 
     return { matches, loading }; // Return both matches and loading state
 };
