@@ -24,6 +24,8 @@ import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
 import { motion } from 'framer-motion';
 import { useAuthStore } from "@/store/UserId";
+import { create } from "domain";
+import { serverTimestamp } from "firebase/database";
 
 type LoginProps = {
 
@@ -91,7 +93,6 @@ const Login: React.FC<LoginProps> = () => {
             // console.log(res)
             if (res.user) {
                 console.log(res.user)
-                // setLoading(false)
                 const q = query(collection(db, "users"), where("uid", "==", res.user.uid as string));
                 const result = await getDocs(q);
                 if (result.docs.length == 1) {
@@ -157,7 +158,9 @@ const Login: React.FC<LoginProps> = () => {
                     auth_provider: "google",
                     email: res.user.email,
                     has_completed_account_creation: false,
-                    has_completed_onboarding: false
+                    has_completed_onboarding: false, 
+                    is_verified: false,
+                    created_at: serverTimestamp()
                 });
                 setId(res.user.uid)
                 navigate('/auth/account-setup')

@@ -15,15 +15,17 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/UserId";
 import { usePhotoStore } from "@/store/PhotoStore";
+import { serverTimestamp, update } from "firebase/database";
+import { uid } from "react-uid";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   // Add a new document in collection "cities"
   const navigate = useNavigate();
 
-  const {auth, setAuth} = useAuthStore();
+  const { auth, setAuth } = useAuthStore();
 
   //new
-  const {photos, reset: resetPhoto} = usePhotoStore();
+  const { photos, reset: resetPhoto } = usePhotoStore();
   //new
 
   const { "onboarding-data": data, reset } = useOnboardingStore();
@@ -31,7 +33,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "users", auth?.uid as string), {
+      await updateDoc(doc(db, "users", auth?.uid as string), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -44,12 +46,15 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         preference: data["relationship-preference"],
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
+        uid: auth?.uid as string,
+        created_at: serverTimestamp(),
       }).then(() => resetPhoto());
-      await updateDoc(doc(db, "users", auth?.uid as string), {has_completed_onboarding: true}).then(() => setAuth({uid: auth?.uid as string, has_completed_onboarding: true}));
+      await updateDoc(doc(db, "users", auth?.uid as string), { has_completed_onboarding: true }).then(() => setAuth({ uid: auth?.uid as string, has_completed_onboarding: true }));
       await setDoc(doc(db, "filters", auth?.uid as string), {});
       toast.success("Account has been created successfully 🚀");
       reset();
       setOpenModal(false);
+      setAuth({ uid: auth?.uid as string, has_completed_onboarding: true })
       navigate('/dashboard/user-profile');
     } catch (err) {
       console.log(err);
@@ -57,7 +62,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   };
 
   const [openModal, setOpenModal] = useState(false);
-  
+
   return (
     <OnboardingPage>
       {/* <Skip advance={advance} /> */}
@@ -75,9 +80,9 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         <OnboardingBackButton onClick={goBack} />
         <Button text="Get Started"
           onClick={() => {
-            if (Object.values(photos).filter(value => Boolean(value)).length > 2) {
-            setOpenModal(true);
-            setTimeout(() => uploadToFirestore(), 5000);
+            if (Object.values(photos).filter(value => Boolean(value)).length > 1) {
+              setOpenModal(true);
+              setTimeout(() => uploadToFirestore(), 5000);
             } else { toast.error("Please add at least 2 photos of yourself 🤗") }
           }}
         />
