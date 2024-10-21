@@ -77,11 +77,14 @@ const UserProfile = () => {
                         <div className='user-profile__profile-details flex justify-center mt-2'>
                             {userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span>
                                 <img src="/assets/icons/verified-badge.svg" />
-                            </p> : <Skeleton width='21rem' height='3rem' />}
+                            </p> : <Skeleton width='21rem' height='2.9rem' />}
                         </div>
-                       {completed &&  
+                       {completed ?  
                        <div className='user-profile__profile-details__completion-status'>
                             {Math.ceil(completed / 19 * 100)}% Complete 
+                        </div> : 
+                        <div className='mt-[1.2rem] flex justify-center'>
+                            <Skeleton width='14rem' height='3.3rem' />
                         </div>}
                     </section>
                     <div className='user-profile__banner user-profile__banner--info'>
