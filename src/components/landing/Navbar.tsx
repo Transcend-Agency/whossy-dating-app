@@ -1,8 +1,12 @@
 
 import { motion, useCycle } from "framer-motion";
 import { useRef } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router";
 
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> origin/staging
 
 const Navbar = () => {
   const [mobileNav, toggleMobileNav] = useCycle(false, true);
@@ -20,14 +24,14 @@ const Navbar = () => {
             <p className="text-[1.6rem]">whossy</p>
           </div>
 
-          <div className="h-[2rem]" style={{borderLeft: '1px solid #FFFFFF'}} />
+          <div className="h-[2rem]" style={{ borderLeft: '1px solid #FFFFFF' }} />
           <motion.button
             animate={mobileNav ? "open" : "closed"}
             ref={buttonRef}
             onClick={() => toggleMobileNav()}
             className="flex flex-col space-y-[0.6rem] px-[1.6rem] "
           >
-            
+
             <motion.span
               variants={{
                 closed: { rotate: 0, y: 0 },
@@ -61,19 +65,25 @@ const Navbar = () => {
             <p className="text-[1.6rem]">whossy</p>
           </div>
 
-          <div className="h-[3rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
+          <div className="h-[3rem]" style={{ borderLeft: '1px solid #FFFFFF' }}></div>
 
           <nav className="flex items-center space-x-[2.4rem]">
+<<<<<<< HEAD
             <button onClick={() => navigate('/auth/login')} className="text-[1.6rem]">Login</button>
             <button
             onClick={() => navigate('/auth/create-account')}
+=======
+            <button onClick={() => navigate('/auth')} className="text-[1.6rem]">Login</button>
+            <button
+              onClick={() => navigate('/auth')}
+>>>>>>> origin/staging
               className="border bg-white text-red text-[1.6rem] px-[1.2rem] py-[1.4rem] rounded-[0.8rem]"
             >
               Create account
             </button>
           </nav>
 
-          <div className="h-[3rem]" style={{borderLeft: '1px solid #FFFFFF'}}></div>
+          <div className="h-[3rem]" style={{ borderLeft: '1px solid #FFFFFF' }}></div>
 
           <div className="flex items-center text-[1.6rem] space-x-[1.6rem]">
             <p>Download on</p>

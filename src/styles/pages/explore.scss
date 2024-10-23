@@ -38,7 +38,15 @@
             &--active {
                 @apply bg-[#F2243E] hover:bg-[#F2243E]  text-white;
             }
-            img {
+            &--active {
+                path {
+                    fill: white;
+                }
+            }
+            path {
+                transition: all 0.3s;
+            }
+            svg {
                 @apply mr-[0.4rem];
             }
         }
