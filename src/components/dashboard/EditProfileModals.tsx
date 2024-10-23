@@ -51,10 +51,13 @@ export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number
             min,
             max
         })
-    },)
+    }, [])
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Age Range" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(range); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
-            <DoubleSliderBar val={[min, max]} getValue={(val) => setRange({ min: val[0], max: val[1] })} />
+            <div className="mb-[24px] text-center">
+                {range.min} - {range.max} years old
+            </div>
+            <DoubleSliderBar trackColor="black" rangeColor="black" thumbColor="black" val={[range.min, range.max]} getValue={(val) => setRange({ min: val[0], max: val[1] })} />
         </DashboardSettingsModal>
     )
 }
