@@ -22,6 +22,8 @@ const Card: React.FC<CardProps & { onDelete?: () => void; index?: number; onPres
   onPress,
 }) => {
 
+  console.log(photo)
+
   return (
     <>
       <div className={`relative w-full ${colspan} ${rowspan} xs:h-[128px] ${height} cursor-pointer hover:scale-[0.95] transition ease-in-out duration-200`}

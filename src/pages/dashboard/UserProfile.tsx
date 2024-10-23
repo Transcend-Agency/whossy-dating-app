@@ -66,7 +66,7 @@ const UserProfile = () => {
                         <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" /></button>
                     </div>
                     <div className='self-center relative'>
-                        <Circle percentage={completed ? Math.ceil(completed / 19 * 100) : 0} imageUrl={userData?.photos && Array.isArray(userData.photos) && userData.photos.length > 0 ? userData.photos[0] : '/assets/images/auth-bg/1.webp'}/>
+                        <Circle percentage={completed ? Math.ceil(completed / 19 * 100) : 0} imageUrl={userData?.photos && Array.isArray(userData.photos) && userData.photos.length > 0 ? userData.photos[0] : null}/>
                         <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button '>
                             <img src="/assets/icons/update-profile.svg" />
                         </button>
