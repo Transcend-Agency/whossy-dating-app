@@ -1,21 +1,20 @@
-import BigSnapshots from "./BigSnapshots";
-import SmallSnapshots from "./SmallSnapshots";
-import OnboardingBackButton from "./OnboardingBackButton";
-import Button from "../ui/Button";
-import { OnboardingProps } from "../../types/onboarding";
-import OnboardingPage from "./OnboardingPage";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { usePhotoStore } from "@/store/PhotoStore";
+import { useAuthStore } from "@/store/UserId";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Lottie from "lottie-react";
-import Cat from "../../Cat.json";
-import { useOnboardingStore } from "../../store/OnboardingStore";
 import { useState } from "react";
-import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/UserId";
-import { usePhotoStore } from "@/store/PhotoStore";
-import { serverTimestamp } from "firebase/database";
+import Cat from "../../Cat.json";
+import { db } from "../../firebase";
+import { useOnboardingStore } from "../../store/OnboardingStore";
+import { OnboardingProps } from "../../types/onboarding";
+import Button from "../ui/Button";
+import Modal from "../ui/Modal";
+import BigSnapshots from "./BigSnapshots";
+import OnboardingBackButton from "./OnboardingBackButton";
+import OnboardingPage from "./OnboardingPage";
+import SmallSnapshots from "./SmallSnapshots";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   // Add a new document in collection "cities"
@@ -32,7 +31,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   const uploadToFirestore = async () => {
     console.log("Loading...");
     try {
-      await setDoc(doc(db, "users", auth?.uid as string), {
+      await updateDoc(doc(db, "users", auth?.uid as string), {
         bio: data["short-introduction"],
         date_of_birth: data["date-of-birth"],
         distance: data["distance-search"],
@@ -45,6 +44,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         preference: data["relationship-preference"],
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
+        uid: auth?.uid as string,
         created_at: serverTimestamp(),
       }).then(() => resetPhoto());
       await updateDoc(doc(db, "users", auth?.uid as string), { has_completed_onboarding: true }).then(() => setAuth({ uid: auth?.uid as string, has_completed_onboarding: true }));
@@ -52,6 +52,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
       toast.success("Account has been created successfully 🚀");
       reset();
       setOpenModal(false);
+      setAuth({ uid: auth?.uid as string, has_completed_onboarding: true })
       navigate('/dashboard/user-profile');
     } catch (err) {
       console.log(err);
@@ -77,7 +78,7 @@ const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
         <OnboardingBackButton onClick={goBack} />
         <Button text="Get Started"
           onClick={() => {
-            if (Object.values(photos).filter(value => Boolean(value)).length > 2) {
+            if (Object.values(photos).filter(value => Boolean(value)).length > 1) {
               setOpenModal(true);
               setTimeout(() => uploadToFirestore(), 5000);
             } else { toast.error("Please add at least 2 photos of yourself 🤗") }
