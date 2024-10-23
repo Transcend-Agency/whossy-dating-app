@@ -27,7 +27,7 @@ import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/store/UserId';
-import { serverTimestamp } from 'firebase/database';
+import { serverTimestamp } from 'firebase/firestore';
 
 
 const CreateAccountFormSchema: ZodType<FormData> = z

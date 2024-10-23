@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {
@@ -5,10 +6,11 @@ import {
     doc,
     getDocs,
     query,
+    serverTimestamp,
     setDoc,
     where,
 } from 'firebase/firestore';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
@@ -22,10 +24,6 @@ import { auth, db } from "../firebase";
 import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { motion } from 'framer-motion';
-import { useAuthStore } from "@/store/UserId";
-import { create } from "domain";
-import { serverTimestamp } from "firebase/database";
 
 type LoginProps = {
 
@@ -158,7 +156,7 @@ const Login: React.FC<LoginProps> = () => {
                     auth_provider: "google",
                     email: res.user.email,
                     has_completed_account_creation: false,
-                    has_completed_onboarding: false, 
+                    has_completed_onboarding: false,
                     is_verified: false,
                     created_at: serverTimestamp()
                 });
