@@ -1,34 +1,32 @@
 import ViewProfile from '@/components/dashboard/ViewProfile';
 import { query, Timestamp, where } from "firebase/firestore";
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
 // import profiles from '../../data/test-explore'
+import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal } from '@/components/dashboard/EditProfileModals';
+import SettingsGroup from '@/components/dashboard/SettingsGroup';
+import { preference } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
+import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
 import useLikesAndMatchesStore from '@/store/LikesAndMatches';
 import { useAuthStore } from '@/store/UserId';
 import { Like } from '@/types/likingAndMatching';
-import { AdvancedSearchPreferences, User, UserFilters } from '@/types/user';
+import { AdvancedSearchPreferences, User } from '@/types/user';
 import { getYearFromFirebaseDate } from '@/utils/date';
 import {
     collection,
     getDocs
 } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
+import { Oval } from 'react-loader-spinner';
 import { db } from "../../firebase";
-import { AgeRangeModal, GenderSettingsModal } from '@/components/dashboard/EditProfileModals';
-import SettingsGroup from '@/components/dashboard/SettingsGroup';
-import DoubleSliderBar from '@/components/ui/DoubleSliderBar';
-import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
 
-type ExploreProps = {
 
-};
-
-const Explore: React.FC<ExploreProps> = () => {
+const Explore = () => {
     const filterOptions = [
         "Discover",
         "Similar interest",
@@ -52,12 +50,10 @@ const Explore: React.FC<ExploreProps> = () => {
     const [advancedSearchPreferences, setAdvancedSearchPreferences] = useState<AdvancedSearchPreferences>({
         gender: '',
         age_range: { min: 18, max: 100 },
+        country: '',
+        relationship_preference: undefined
     })
-
-    useEffect(() => {
-        console.log(userLikes)
-    }, [userLikes])
-
+    const [resetLoading, setResetLoading] = useState(false)
 
     const fetchUserWithSimilarInterests = async () => {
         try {
@@ -187,6 +183,24 @@ const Explore: React.FC<ExploreProps> = () => {
         return Boolean(userLikes.filter(like => (like.liked_id === id)).length)
     }
 
+    const resetAdvancedSearch = async () => {
+        console.log('this is being called')
+        try {
+            setResetLoading(true)
+            await updateAdvancedSearchPreferences(auth?.uid as string, () => { refetchSearchPreferences() }, {
+                gender: '',
+                age_range: { min: 18, max: 100 },
+                country: '',
+                relationship_preference: null
+            })
+        } catch (err) {
+            console.log(err)
+        }
+        finally {
+            setResetLoading(false)
+        }
+    }
+
     const fetchNewUsers = async () => {
         // Get the current timestamp
         const currentTime = Timestamp.now();
@@ -212,6 +226,45 @@ const Explore: React.FC<ExploreProps> = () => {
             setExploreDataLoading(false)
         }
     }
+
+    const onAdvancedSearch = async () => {
+        try {
+            setExploreDataLoading(true);
+            const usersCollection = collection(db, 'users');
+
+            // Create the initial query
+            let q = query(usersCollection, where("has_completed_onboarding", "==", true));
+
+            // Apply gender filter if selected
+            if (advancedSearchPreferences.gender) {
+                q = query(q, where("gender", "==", advancedSearchPreferences.gender));
+            }
+
+            // Apply age range filter
+            if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
+                q = query(q, where("age", ">=", advancedSearchPreferences.age_range.min));
+                q = query(q, where("age", "<=", advancedSearchPreferences.age_range.max));
+            }
+
+            // Apply country filter if selected
+            if (advancedSearchPreferences.country) {
+                q = query(q, where("country", "==", advancedSearchPreferences.country));
+            }
+
+            // Apply relationship preference filter if selected
+            if (advancedSearchPreferences.relationship_preference !== undefined) {
+                q = query(q, where("relationship_preference", "==", advancedSearchPreferences.relationship_preference));
+            }
+
+            const querySnapshot = await getDocs(q);
+            const userData = querySnapshot.docs.map((user) => user.data());
+            setProfiles(userData as User[]);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setExploreDataLoading(false);
+        }
+    };
 
     const fetchSearchPreferences = async () => { const data = await getAdvancedSearchPreferences(user?.uid as string) as AdvancedSearchPreferences; setAdvancedSearchPreferences(data) }
 
@@ -245,6 +298,9 @@ const Explore: React.FC<ExploreProps> = () => {
             case 'Outside my country':
                 fetchUsersOutsideMyCountry()
                 break
+            case 'Advanced Search':
+                onAdvancedSearch()
+                break
             default:
                 console.log('no result')
         }
@@ -260,8 +316,11 @@ const Explore: React.FC<ExploreProps> = () => {
                             <div className='filter'>
                                 <div className='filter__left'>
                                     {filterOptions.map(item => <div key={item} onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
-                                    <div className='filter__item'>
-                                        <img src="/assets/icons/advanced-search.svg" />
+                                    <div onClick={() => setSelectedOption('Advanced Search')} className={`filter__item ${selectedOption == 'Advanced Search' && 'filter__item--active'}`}>
+                                        <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6.09199 2.21897C5.78713 2.98164 5.55868 3.77267 5.41001 4.58044H10.8699C10.7212 3.77267 10.4928 2.98164 10.1879 2.21897C9.88155 1.47287 9.52834 0.901839 9.16191 0.526242C8.79751 0.151664 8.45245 0 8.13996 0C7.82747 0 7.48241 0.151664 7.11801 0.526242C6.75157 0.902856 6.39939 1.47287 6.09199 2.21897ZM5.99224 0.286023C5.67263 0.719639 5.39169 1.24385 5.14944 1.83116C4.82372 2.6251 4.55907 3.55544 4.37382 4.58044H0.815319C1.32375 3.53785 2.04853 2.61558 2.94137 1.87508C3.83422 1.13459 4.8736 0.592868 5.99224 0.286023ZM11.1295 1.83116C10.9119 1.28418 10.6293 0.765393 10.2877 0.286023C11.4061 0.592997 12.4463 1.13477 13.339 1.87526C14.2317 2.61575 14.9563 3.53796 15.4646 4.58044H11.9051C11.7198 3.55544 11.4572 2.62307 11.1295 1.83116ZM15.8779 5.59832H12.0588C12.1585 6.40753 12.2115 7.26153 12.2115 8.14301C12.2115 9.02449 12.1585 9.87849 12.0588 10.6877H15.8779C16.1471 9.86635 16.2838 9.00737 16.283 8.14301C16.2838 7.27866 16.1471 6.41967 15.8779 5.59832ZM11.9051 11.7056H15.4646C14.9563 12.7481 14.2317 13.6703 13.339 14.4108C12.4463 15.1513 11.4061 15.693 10.2877 16C10.6293 15.5206 10.9119 15.0018 11.1295 14.4549C11.4562 13.6609 11.7198 12.7306 11.9051 11.7056ZM7.69413 12.1534C7.76334 12.0075 7.8251 11.8583 7.87938 11.7056H10.8699C10.7212 12.5134 10.4928 13.3044 10.1879 14.0671C10.1248 14.2218 10.0569 14.3745 9.98435 14.5251C9.91515 14.4018 9.82916 14.2888 9.72886 14.1892L7.69413 12.1534ZM8.11146 10.6877H11.0328C11.1366 9.88765 11.1936 9.03365 11.1936 8.14301C11.1936 7.25237 11.1366 6.39735 11.0328 5.59832H5.24715L5.20949 5.90368C6.15406 6.26815 6.95125 6.9353 7.47647 7.80085C8.0017 8.6664 8.22433 9.68157 8.11146 10.6877ZM4.22215 5.59832L4.21604 5.64514C3.99861 5.61381 3.7792 5.59816 3.55951 5.59832H4.22215ZM0.403079 5.59832H3.55951C2.8897 5.59777 2.22795 5.74446 1.62111 6.02801C1.01427 6.31155 0.477177 6.72502 0.0478397 7.23914C0.10993 6.6732 0.231058 6.12355 0.404097 5.59832M3.56155 13.7413C4.3616 13.7413 5.10058 13.4767 5.69502 13.0319L8.2906 15.6275C8.33786 15.6748 8.39397 15.7123 8.45573 15.738C8.51749 15.7636 8.5837 15.7768 8.65057 15.7769C8.71744 15.7769 8.78367 15.7638 8.84547 15.7382C8.90727 15.7127 8.96343 15.6752 9.01075 15.628C9.05807 15.5807 9.09562 15.5246 9.12125 15.4628C9.14689 15.4011 9.16011 15.3349 9.16015 15.268C9.1602 15.2011 9.14708 15.1349 9.12153 15.0731C9.09598 15.0113 9.05851 14.9551 9.01126 14.9078L6.41568 12.3122C6.89607 11.6698 7.14559 10.884 7.12383 10.0821C7.10207 9.28024 6.81031 8.50916 6.29578 7.89372C5.78125 7.27828 5.07408 6.8545 4.28873 6.69099C3.50338 6.52748 2.68583 6.63381 1.96843 6.99276C1.25104 7.35172 0.675782 7.94229 0.335795 8.66886C-0.00419237 9.39544 -0.0890106 10.2155 0.0950709 10.9963C0.279152 11.7771 0.721359 12.4729 1.3501 12.9711C1.97885 13.4692 2.75732 13.7406 3.55951 13.7413M3.55951 12.7235C2.88462 12.7235 2.23737 12.4554 1.76015 11.9781C1.28292 11.5009 1.01482 10.8537 1.01482 10.1788C1.01482 9.50387 1.28292 8.85662 1.76015 8.3794C2.23737 7.90217 2.88462 7.63407 3.55951 7.63407C4.23441 7.63407 4.88166 7.90217 5.35888 8.3794C5.8361 8.85662 6.10421 9.50387 6.10421 10.1788C6.10421 10.8537 5.8361 11.5009 5.35888 11.9781C4.88166 12.4554 4.23441 12.7235 3.55951 12.7235Z" fill="#121212" />
+                                        </svg>
+
                                         Advanced Search
                                     </div>
                                 </div>
@@ -469,8 +528,11 @@ const Explore: React.FC<ExploreProps> = () => {
                                     <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                                     <p>Advanced Search Preferences</p>
                                 </button>
+                                <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
                                 <GenderSettingsModal showing={advancedSearchModalShowing === 'gender'} hideModal={hideModal} userGender={advancedSearchPreferences?.gender as string} handleSave={(gender) => updateSearchPreferences({ gender })} />
-                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} range={advancedSearchPreferences?.age_range} handleSave={(age_range) => updateSearchPreferences({ age_range })} />
+                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number} max={advancedSearchPreferences.age_range?.max as number} handleSave={(age_range) => updateSearchPreferences({ age_range })} />
+                                <CountrySettingsModal showing={advancedSearchModalShowing === 'country'} hideModal={hideModal} preferredCountry={advancedSearchPreferences?.country as string} handleSave={(country) => updateSearchPreferences({ country })} />
+                                <RelationshipPreferenceSettingsModal userPreference={advancedSearchPreferences.relationship_preference as number} hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'} handleSave={(relationship_preference) => updateSearchPreferences({ relationship_preference })} />
                                 {/* <button className="settings-page__title__save-button">Save</button> */}
                             </div>
                             <div className="px-5 pt-4">
@@ -485,7 +547,13 @@ const Explore: React.FC<ExploreProps> = () => {
                                     setAdvancedSearchModalShowing('gender')
                                 }],
                                 ['Age', `${advancedSearchPreferences.age_range?.min} - ${advancedSearchPreferences.age_range?.max} years old` || 'Choose', () => {
-                                    setAdvancedSearchModalShowing('gender')
+                                    setAdvancedSearchModalShowing('age-range')
+                                }],
+                                ['Countr of Residence', advancedSearchPreferences.country || 'Choose', () => {
+                                    setAdvancedSearchModalShowing('country')
+                                }],
+                                ['Relationship Preference', advancedSearchPreferences.relationship_preference ? preference[advancedSearchPreferences.relationship_preference] : 'Choose', () => {
+                                    setAdvancedSearchModalShowing('relationship_preference')
                                 }],
                             ]} />
                         </div>
