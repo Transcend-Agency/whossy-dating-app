@@ -533,14 +533,10 @@ const Explore = () => {
                                 <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number} max={advancedSearchPreferences.age_range?.max as number} handleSave={(age_range) => updateSearchPreferences({ age_range })} />
                                 <CountrySettingsModal showing={advancedSearchModalShowing === 'country'} hideModal={hideModal} preferredCountry={advancedSearchPreferences?.country as string} handleSave={(country) => updateSearchPreferences({ country })} />
                                 <RelationshipPreferenceSettingsModal userPreference={advancedSearchPreferences.relationship_preference as number} hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'} handleSave={(relationship_preference) => updateSearchPreferences({ relationship_preference })} />
-                                {/* <button className="settings-page__title__save-button">Save</button> */}
                             </div>
                             <div className="px-5 pt-4">
                                 <div className="flex justify-between">
-                                    {/* <div className="flex gap-x-4 items-center"> <p>Age range</p> <div className="bg-white py-2 px-3 rounded-[4px]">{userValue?.age_range?.min ?? 'NIL'} - {userValue?.age_range?.max ?? "NIL"}</div></div> */}
-                                    {/* {JSON.stringify(userValue?.age_range) !== JSON.stringify(userFilters?.age_range) && <button className="modal__body__header__save-button" onClick={() => { setIsSavingAge(true); updateUserPreferences({ age_range: userValue.age_range }); setTimeout(() => setIsSavingAge(false), 1500) }}>{!isSavingAge ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={14} height={14} />}</button>} */}
                                 </div>
-                                {/* <DoubleSliderBar val={[userValue?.age_range?.min as number || 18, userValue?.age_range?.max as number ?? 20]} getValue={(val) => setUserValue((prev) => ({ ...prev, age_range: { min: val[0], max: val[1] } }))} /> */}
                             </div>
                             <SettingsGroup data={[
                                 ['Gender', advancedSearchPreferences?.gender || 'Choose', () => {
@@ -549,7 +545,7 @@ const Explore = () => {
                                 ['Age', `${advancedSearchPreferences.age_range?.min} - ${advancedSearchPreferences.age_range?.max} years old` || 'Choose', () => {
                                     setAdvancedSearchModalShowing('age-range')
                                 }],
-                                ['Countr of Residence', advancedSearchPreferences.country || 'Choose', () => {
+                                ['Country of Residence', advancedSearchPreferences.country || 'Choose', () => {
                                     setAdvancedSearchModalShowing('country')
                                 }],
                                 ['Relationship Preference', advancedSearchPreferences.relationship_preference ? preference[advancedSearchPreferences.relationship_preference] : 'Choose', () => {
