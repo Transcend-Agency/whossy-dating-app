@@ -152,6 +152,7 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
       <UploadPhotoModal showing={photoModalShowing === 'photo-six-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
 
 
+
       <section className="bg-[#F6F6F6] py-[1.2rem] px-[1.6rem] flex flex-col">
         <div className="grid grid-cols-6 grid-rows-2 gap-4">
           <input ref={fileInputRef} accept="image/*" type="file" className="hidden" onChange={handleImageUpload} />
