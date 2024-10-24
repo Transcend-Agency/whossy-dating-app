@@ -113,9 +113,5 @@ const options = [
 
 const viewMore = [
   "Blocked contacts",
-  "Restore purchases",
-  "Whossy safety center",
-  "Community rules",
-  "Policies",
   "Help & Support",
 ];
