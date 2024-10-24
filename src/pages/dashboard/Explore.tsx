@@ -7,9 +7,9 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
 // import profiles from '../../data/test-explore'
-import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal } from '@/components/dashboard/EditProfileModals';
+import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal } from '@/components/dashboard/EditProfileModals';
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
-import { preference } from '@/constants';
+import { preference, religion } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
 import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
 import useLikesAndMatchesStore from '@/store/LikesAndMatches';
@@ -51,9 +51,26 @@ const Explore = () => {
         gender: '',
         age_range: { min: 18, max: 100 },
         country: '',
-        relationship_preference: undefined
+        relationship_preference: null,
+        religion: undefined
     })
     const [resetLoading, setResetLoading] = useState(false)
+
+    const calculateDOBRange = (minAge, maxAge) => {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+
+        // Calculate the range of birth years for the age range
+        const minDOB = new Date(currentYear - maxAge, today.getMonth(), today.getDate()); // For oldest age (e.g., 30)
+        const maxDOB = new Date(currentYear - minAge, today.getMonth(), today.getDate()); // For youngest age (e.g., 25)
+
+        // Convert to Firestore Timestamps
+        return {
+            minDOB: Timestamp.fromDate(minDOB),
+            maxDOB: Timestamp.fromDate(maxDOB),
+        };
+    };
+
 
     const fetchUserWithSimilarInterests = async () => {
         try {
@@ -191,7 +208,8 @@ const Explore = () => {
                 gender: '',
                 age_range: { min: 18, max: 100 },
                 country: '',
-                relationship_preference: null
+                relationship_preference: null,
+                religion: null
             })
         } catch (err) {
             console.log(err)
@@ -242,8 +260,11 @@ const Explore = () => {
 
             // Apply age range filter
             if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
-                q = query(q, where("age", ">=", advancedSearchPreferences.age_range.min));
-                q = query(q, where("age", "<=", advancedSearchPreferences.age_range.max));
+                const { minDOB, maxDOB } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
+
+                // Filter by date_of_birth range
+                q = query(q, where("date_of_birth", "<=", maxDOB)); // For younger users
+                q = query(q, where("date_of_birth", ">=", minDOB)); // For older users
             }
 
             // Apply country filter if selected
@@ -270,7 +291,9 @@ const Explore = () => {
 
     const refetchSearchPreferences = async () => { await fetchSearchPreferences() }
 
-    const updateSearchPreferences = (s: AdvancedSearchPreferences) => { updateAdvancedSearchPreferences(user?.uid as string, () => { hideModal(); refetchSearchPreferences() }, s) }
+    const updateSearchPreferences = async (s: AdvancedSearchPreferences) => {
+        await updateAdvancedSearchPreferences(user?.uid as string, () => { hideModal(); refetchSearchPreferences() }, s)
+    }
 
     useEffect(() => {
         fetchLikes()
@@ -306,6 +329,16 @@ const Explore = () => {
         }
 
     }, [selectedOption])
+
+    const isNewUserFromDate = (timestampDate: Timestamp) => {
+        const timestamp = Timestamp.fromDate(new Date(timestampDate.toDate()));
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
+        const twoDaysAgoTimestamp = Timestamp.fromDate(twoDaysAgo);
+        console.log(timestamp, twoDaysAgoTimestamp)
+        return timestamp >= twoDaysAgoTimestamp
+    }
+
 
     return <>
         {!selectedProfile &&
@@ -398,6 +431,7 @@ const Explore = () => {
                                                     {profiles?.map((profile, index) => (
                                                         (index % 5 === 0) &&
                                                         <ExploreGridProfile
+                                                            isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             // distance={profile?.distance}
                                                             first_name={profile!.first_name!}
@@ -413,6 +447,7 @@ const Explore = () => {
                                                     {profiles?.map((profile, index) => (
                                                         (index % 5 === 1) &&
                                                         <ExploreGridProfile
+                                                            isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             // distance={profile?.distance}
                                                             first_name={profile!.first_name!}
@@ -428,6 +463,7 @@ const Explore = () => {
                                                     {profiles?.map((profile, index) => (
                                                         (index % 5 == 2) &&
                                                         <ExploreGridProfile
+                                                            isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             // distance={profile?.distance}
                                                             first_name={profile!.first_name!}
@@ -443,6 +479,7 @@ const Explore = () => {
                                                     {profiles?.map((profile, index) => (
                                                         (index % 5 == 3) &&
                                                         <ExploreGridProfile
+                                                            isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             // distance={profile?.distance}
                                                             first_name={profile!.first_name!}
@@ -458,6 +495,7 @@ const Explore = () => {
                                                     {profiles?.map((profile, index) => (
                                                         (index % 5 == 4) &&
                                                         <ExploreGridProfile
+                                                            isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             // distance={profile?.distance}
                                                             first_name={profile!.first_name!}
@@ -475,6 +513,7 @@ const Explore = () => {
                                                 {profiles?.map((profile, index) => (
                                                     (index % 3 == 0) &&
                                                     <ExploreGridProfile
+                                                        isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                         profile_image={profile.photos ? profile.photos![0] : undefined}
                                                         // distance={profile?.distance}
                                                         first_name={profile!.first_name!}
@@ -489,6 +528,7 @@ const Explore = () => {
                                                 {profiles?.map((profile, index) => (
                                                     (index % 3 == 1) &&
                                                     <ExploreGridProfile
+                                                        isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                         profile_image={profile.photos ? profile.photos![0] : undefined}
                                                         // distance={profile?.distance}
                                                         first_name={profile!.first_name!}
@@ -503,6 +543,7 @@ const Explore = () => {
                                                 {profiles?.map((profile, index) => (
                                                     (index % 3 == 2) &&
                                                     <ExploreGridProfile
+                                                        isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                         profile_image={profile.photos ? profile.photos![0] : undefined}
                                                         // distance={profile?.distance}
                                                         first_name={profile!.first_name!}
@@ -524,15 +565,16 @@ const Explore = () => {
                     advancedSearchShowing && <DashboardPageContainer className='explore-page' span={1}>
                         <div className="settings-page__container">
                             <div className="settings-page__title">
-                                <button onClick={() => setAdvancedSearchShowing(false)} className="settings-page__title__left">
+                                <button onClick={() => { setAdvancedSearchShowing(false); if (selectedOption == 'Advanced Search') { onAdvancedSearch() } }} className="settings-page__title__left">
                                     <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                                     <p>Advanced Search Preferences</p>
                                 </button>
                                 <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
-                                <GenderSettingsModal showing={advancedSearchModalShowing === 'gender'} hideModal={hideModal} userGender={advancedSearchPreferences?.gender as string} handleSave={(gender) => updateSearchPreferences({ gender })} />
-                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number} max={advancedSearchPreferences.age_range?.max as number} handleSave={(age_range) => updateSearchPreferences({ age_range })} />
-                                <CountrySettingsModal showing={advancedSearchModalShowing === 'country'} hideModal={hideModal} preferredCountry={advancedSearchPreferences?.country as string} handleSave={(country) => updateSearchPreferences({ country })} />
-                                <RelationshipPreferenceSettingsModal userPreference={advancedSearchPreferences.relationship_preference as number} hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'} handleSave={(relationship_preference) => updateSearchPreferences({ relationship_preference })} />
+                                <GenderSettingsModal showing={advancedSearchModalShowing === 'gender'} hideModal={hideModal} userGender={advancedSearchPreferences?.gender as string} handleSave={async (gender) => await updateSearchPreferences({ gender })} />
+                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number} max={advancedSearchPreferences.age_range?.max as number} handleSave={async (age_range) => await updateSearchPreferences({ age_range })} />
+                                <CountrySettingsModal showing={advancedSearchModalShowing === 'country'} hideModal={hideModal} preferredCountry={advancedSearchPreferences?.country as string} handleSave={async (country) => await updateSearchPreferences({ country })} />
+                                <RelationshipPreferenceSettingsModal userPreference={advancedSearchPreferences.relationship_preference as number} hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'} handleSave={async (relationship_preference) => await updateSearchPreferences({ relationship_preference })} />
+                                <ReligionSettingsModal userReligion={advancedSearchPreferences.religion as number} showing={advancedSearchModalShowing == 'religion'} hideModal={hideModal} handleSave={async religion => await updateSearchPreferences({ religion })} />
                             </div>
                             <div className="px-5 pt-4">
                                 <div className="flex justify-between">
@@ -548,8 +590,11 @@ const Explore = () => {
                                 ['Country of Residence', advancedSearchPreferences.country || 'Choose', () => {
                                     setAdvancedSearchModalShowing('country')
                                 }],
-                                ['Relationship Preference', advancedSearchPreferences.relationship_preference ? preference[advancedSearchPreferences.relationship_preference] : 'Choose', () => {
+                                ['Relationship Preference', advancedSearchPreferences.relationship_preference !== null ? preference[advancedSearchPreferences.relationship_preference as number] : 'Choose', () => {
                                     setAdvancedSearchModalShowing('relationship_preference')
+                                }],
+                                ['Religion', advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', () => {
+                                    setAdvancedSearchModalShowing('religion')
                                 }],
                             ]} />
                         </div>
