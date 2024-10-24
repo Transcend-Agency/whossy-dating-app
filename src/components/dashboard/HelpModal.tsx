@@ -19,8 +19,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ show, onCloseModal }) => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="bg-white text opacity-100 z-[9999] py-[2rem] px-[4rem] space-y-[3rem] rounded-[2rem]">
             <div>
                 <h1 className='text-3xl font-bold flex justify-center mb-[2rem]'>Help & Support</h1>
-                <textarea name="help-box" id="help-box" placeholder="Enter your proble
-                m" className="bg-white border border-gray focus:outline-none rounded-lg px-4 py-4 w-[369px] h-[169px] placeholder:text-2xl text-2xl"></textarea>
+                <textarea name="help-box" id="help-box" placeholder="Enter your problem" className="bg-white border border-gray focus:outline-none rounded-lg px-4 py-4 w-[369px] h-[169px] placeholder:text-2xl text-2xl"></textarea>
             </div>
 
             <div className="flex flex-row gap-x-4"> 
