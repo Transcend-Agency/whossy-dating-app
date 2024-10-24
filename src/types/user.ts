@@ -1,8 +1,9 @@
+import { religion } from '@/constants';
 import { relationship_preferences } from '@/constants';
 export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
-  created_at?: Date;
+  created_at?: string;
   location?: string | null;
   distance?: number | null;
   drink?: number | null;
@@ -79,6 +80,7 @@ export type AdvancedSearchPreferences = {
   relationship_preference?: number | null;
   height?: number;
   country?: string;
+  religion?: number | null
 }
 
 export type UserProfile = User | UserFilters;
