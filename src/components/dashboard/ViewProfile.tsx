@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { db } from "../../firebase";
 import DashboardPageContainer from "./DashboardPageContainer";
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -93,6 +94,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         addLike()
     };
 
+    const navigate = useNavigate();
+
     return (
         <DashboardPageContainer className="preview-profile preview-profile--view-profile">
             <div className="preview-profile__action-buttons">
@@ -116,7 +119,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             <img src="/assets/icons/heart.svg" />
                         </div>
                         <div className="preview-profile__action-button">
-                            <img src="/assets/icons/message-heart.svg" />
+                            <img src="/assets/icons/message-heart.svg" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)} />
                         </div>
                     </div>
                     <div className="preview-profile__fake-next-card"></div>
