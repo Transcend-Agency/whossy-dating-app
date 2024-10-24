@@ -105,7 +105,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 {profile_has_been_liked && <div className="preview-profile__action-button liked">
                     <motion.img src="/assets/icons/white-heart.png" />
                 </div>}
-                <div className="preview-profile__action-button">
+                <div className="preview-profile__action-button" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                     <img src="/assets/icons/message-heart.svg" />
                 </div>
             </div>
@@ -118,7 +118,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <div className="preview-profile__action-button">
                             <img src="/assets/icons/heart.svg" />
                         </div>
-                        <div className="preview-profile__action-button" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                        <div className="preview-profile__action-button" >
                             <img src="/assets/icons/message-heart.svg" />
                         </div>
                     </div>
