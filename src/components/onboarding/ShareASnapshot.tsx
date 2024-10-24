@@ -1,22 +1,20 @@
-import BigSnapshots from "./BigSnapshots";
-import SmallSnapshots from "./SmallSnapshots";
-import OnboardingBackButton from "./OnboardingBackButton";
-import Button from "../ui/Button";
-import { OnboardingProps } from "../../types/onboarding";
-import OnboardingPage from "./OnboardingPage";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { usePhotoStore } from "@/store/PhotoStore";
+import { useAuthStore } from "@/store/UserId";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import Lottie from "lottie-react";
-import Cat from "../../Cat.json";
-import { useOnboardingStore } from "../../store/OnboardingStore";
 import { useState } from "react";
-import Modal from "../ui/Modal";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/UserId";
-import { usePhotoStore } from "@/store/PhotoStore";
-import { serverTimestamp, update } from "firebase/database";
-import { uid } from "react-uid";
+import Cat from "../../Cat.json";
+import { db } from "../../firebase";
+import { useOnboardingStore } from "../../store/OnboardingStore";
+import { OnboardingProps } from "../../types/onboarding";
+import Button from "../ui/Button";
+import Modal from "../ui/Modal";
+import BigSnapshots from "./BigSnapshots";
+import OnboardingBackButton from "./OnboardingBackButton";
+import OnboardingPage from "./OnboardingPage";
+import SmallSnapshots from "./SmallSnapshots";
 
 const ShareASnapshot: React.FC<OnboardingProps> = ({ goBack }) => {
   // Add a new document in collection "cities"

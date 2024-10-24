@@ -76,8 +76,9 @@ export type UserFilters = {
 export type AdvancedSearchPreferences = {
   age_range?: { max: number; min: number };
   gender?: string;
-  relationship_preference?: number;
+  relationship_preference?: number | null;
   height?: number;
+  country?: string;
 }
 
 export type UserProfile = User | UserFilters;
