@@ -1,21 +1,24 @@
 import { motion } from 'framer-motion';
+import Skeleton from 'react-loading-skeleton';
 
 interface CircleProps {
     percentage: number;
-    imageUrl: string;
+    imageUrl: string | null;
 }
 
-const Circle: React.FC<CircleProps> = ({ percentage, imageUrl }) => {
+const Circle: React.FC<CircleProps> = ({ percentage,imageUrl}) => {
     return (
-        <div className="flex h-[200px] w-[200px] self-center">
-            <svg width="200" height="200">
+        <div className="flex h-[200px] w-[200px] self-center items-center justify-center">
+            {!imageUrl && <div className='rounded-full h-[140px] w-[140px] overflow-hidden'>
+                <Skeleton width={"140px"} height={"140px"} />
+            </div>}
+            {imageUrl && <svg width="200" height="200">
                 <defs>
                     <clipPath id="clip-circle">
                         <circle r="70" cx="100" cy="100" />
                     </clipPath>
                 </defs>
                 <g transform="rotate(-90, 100, 100)">
-                    {/* Background circle */}
                     <circle
                         r="70"
                         cx="100"
@@ -25,9 +28,8 @@ const Circle: React.FC<CircleProps> = ({ percentage, imageUrl }) => {
                         strokeWidth={10}
                         strokeDasharray="439.8"
                         strokeDashoffset="0"
-                        className="text-gray-200"
+                        className="text-[#E5E5E5]"
                     />
-                    {/* Animated progress circle */}
                     <motion.circle
                         r="70"
                         cx="100"
@@ -43,17 +45,16 @@ const Circle: React.FC<CircleProps> = ({ percentage, imageUrl }) => {
                         transition={{ duration: 1, ease: "easeInOut" }} // Customize the transition
                     />
                 </g>
-                {/* Center the image inside the circle */}
-                <image
-                    href={imageUrl}
+                {imageUrl && <image
+                    href={imageUrl as string}
                     x="30"
                     y="30"
                     width="140"
                     height="140"
                     clipPath="url(#clip-circle)"
                     preserveAspectRatio="xMidYMid slice"
-                />
-            </svg>
+                />}
+            </svg>}
         </div>
     );
 };
