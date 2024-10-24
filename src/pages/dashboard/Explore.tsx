@@ -49,10 +49,10 @@ const Explore = () => {
     const hideModal = () => setAdvancedSearchModalShowing('hidden')
     const [advancedSearchPreferences, setAdvancedSearchPreferences] = useState<AdvancedSearchPreferences>({
         gender: '',
-        age_range: { min: 18, max: 100 },
+        age_range: { min: null, max: null },
         country: '',
         relationship_preference: null,
-        religion: undefined
+        religion: null
     })
     const [resetLoading, setResetLoading] = useState(false)
 
@@ -206,7 +206,7 @@ const Explore = () => {
             setResetLoading(true)
             await updateAdvancedSearchPreferences(auth?.uid as string, () => { refetchSearchPreferences() }, {
                 gender: '',
-                age_range: { min: 18, max: 100 },
+                age_range: { min: null, max: null },
                 country: '',
                 relationship_preference: null,
                 religion: null
@@ -220,17 +220,13 @@ const Explore = () => {
     }
 
     const fetchNewUsers = async () => {
-        // Get the current timestamp
-        const currentTime = Timestamp.now();
-
-        // Calculate the timestamp for 14 days ago
-        const fourteenDaysAgo = new Date();
-        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-        const fourteenDaysAgoTimestamp = Timestamp.fromDate(fourteenDaysAgo);
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const sevenDaysAgoTimestamp = Timestamp.fromDate(sevenDaysAgo);
 
         // Query the 'users' collection for users created within the last 14 days
         const usersRef = collection(db, 'users');
-        const recentUsersQuery = query(usersRef, where('created_at', '>=', fourteenDaysAgoTimestamp));
+        const recentUsersQuery = query(usersRef, where('created_at', '>=', sevenDaysAgoTimestamp));
 
         try {
             setExploreDataLoading(true)
@@ -262,19 +258,32 @@ const Explore = () => {
             if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
                 const { minDOB, maxDOB } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
 
+                console.log(minDOB, maxDOB)
                 // Filter by date_of_birth range
                 q = query(q, where("date_of_birth", "<=", maxDOB)); // For younger users
                 q = query(q, where("date_of_birth", ">=", minDOB)); // For older users
             }
 
             // Apply country filter if selected
+            // if (advancedSearchPreferences.age_range?.min) {
+            //     const { maxDOB } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
+            //     console.log(maxDOB.toDate())
+            //     q = query(q, where("date_of_birth", "<=", maxDOB));
+            // }
+
+            // Apply country filter if selected
             if (advancedSearchPreferences.country) {
-                q = query(q, where("country", "==", advancedSearchPreferences.country));
+                q = query(q, where("country_of_origin", "==", advancedSearchPreferences.country));
             }
 
             // Apply relationship preference filter if selected
-            if (advancedSearchPreferences.relationship_preference !== undefined) {
-                q = query(q, where("relationship_preference", "==", advancedSearchPreferences.relationship_preference));
+            if (advancedSearchPreferences.relationship_preference !== null) {
+                q = query(q, where("preference", "==", advancedSearchPreferences.relationship_preference));
+            }
+
+            // Apply relationship preference filter if selected
+            if (advancedSearchPreferences.religion !== null) {
+                q = query(q, where("religion", "==", advancedSearchPreferences.religion));
             }
 
             const querySnapshot = await getDocs(q);
@@ -332,11 +341,10 @@ const Explore = () => {
 
     const isNewUserFromDate = (timestampDate: Timestamp) => {
         const timestamp = Timestamp.fromDate(new Date(timestampDate.toDate()));
-        const twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 1);
-        const twoDaysAgoTimestamp = Timestamp.fromDate(twoDaysAgo);
-        console.log(timestamp, twoDaysAgoTimestamp)
-        return timestamp >= twoDaysAgoTimestamp
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const sevenDaysAgoTimestamp = Timestamp.fromDate(sevenDaysAgo);
+        return timestamp >= sevenDaysAgoTimestamp
     }
 
 
@@ -571,7 +579,7 @@ const Explore = () => {
                                 </button>
                                 <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
                                 <GenderSettingsModal showing={advancedSearchModalShowing === 'gender'} hideModal={hideModal} userGender={advancedSearchPreferences?.gender as string} handleSave={async (gender) => await updateSearchPreferences({ gender })} />
-                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number} max={advancedSearchPreferences.age_range?.max as number} handleSave={async (age_range) => await updateSearchPreferences({ age_range })} />
+                                <AgeRangeModal showing={advancedSearchModalShowing === 'age-range'} hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number || 18} max={advancedSearchPreferences.age_range?.max as number || 100} handleSave={async (age_range) => await updateSearchPreferences({ age_range })} />
                                 <CountrySettingsModal showing={advancedSearchModalShowing === 'country'} hideModal={hideModal} preferredCountry={advancedSearchPreferences?.country as string} handleSave={async (country) => await updateSearchPreferences({ country })} />
                                 <RelationshipPreferenceSettingsModal userPreference={advancedSearchPreferences.relationship_preference as number} hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'} handleSave={async (relationship_preference) => await updateSearchPreferences({ relationship_preference })} />
                                 <ReligionSettingsModal userReligion={advancedSearchPreferences.religion as number} showing={advancedSearchModalShowing == 'religion'} hideModal={hideModal} handleSave={async religion => await updateSearchPreferences({ religion })} />
@@ -584,7 +592,7 @@ const Explore = () => {
                                 ['Gender', advancedSearchPreferences?.gender || 'Choose', () => {
                                     setAdvancedSearchModalShowing('gender')
                                 }],
-                                ['Age', `${advancedSearchPreferences.age_range?.min} - ${advancedSearchPreferences.age_range?.max} years old` || 'Choose', () => {
+                                ['Age', advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max ? `${advancedSearchPreferences.age_range?.min} - ${advancedSearchPreferences.age_range?.max} years old` : 'Choose', () => {
                                     setAdvancedSearchModalShowing('age-range')
                                 }],
                                 ['Country of Residence', advancedSearchPreferences.country || 'Choose', () => {

@@ -25,8 +25,6 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
     isNewUser
 }) => {
 
-    console.log(isNewUser)
-
     return (
         <div onClick={onProfileClick} className='explore-grid__profile'>
             <figure className='explore-grid__profile-picture'>
