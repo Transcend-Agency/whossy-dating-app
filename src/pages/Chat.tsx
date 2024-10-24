@@ -38,7 +38,7 @@ const ChatPage = () => {
   };
 
   const fetchUserChats = async (id: string) => {
-    const userChatsDocRef = doc(db, "allchats", id);
+    const userChatsDocRef = doc(db, "chats", id);
     const userChatsDocSnap = await getDoc(userChatsDocRef);
     if (userChatsDocSnap.exists()) {  return userChatsDocSnap.data() as Chat;} 
     else {  console.log(`No such user chats document for user_id: ${id}`); return null;}
@@ -73,7 +73,7 @@ const ChatPage = () => {
   useEffect(() => {
     let isMounted = true;
     setIsLoadingChats(true);
-    const unSub = onSnapshot(collection(db, "allchats"), async (snapshot) => {
+    const unSub = onSnapshot(collection(db, "chats"), async (snapshot) => {
 
         if (!isMounted) return;
 

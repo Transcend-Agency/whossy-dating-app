@@ -103,7 +103,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
     //sending text message to the recipient
     const handleSendMessage = async () => {
-        const allchats = await getDocs(collection(db, "allchats"));
+        const allchats = await getDocs(collection(db, "chats"));
         const recipientsId: string[] = [];
         let imgUrl: string | null = null;
 
@@ -152,7 +152,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                 const newChatId = `${currentUserId}_${reciepientUserId}`;
                 chatToUpdateId = newChatId;
                 await setDoc(
-                    doc(db, "allchats", newChatId), {
+                    doc(db, "chats", newChatId), {
                     lastMessage: text || 'Sent a photo',
                     lastMessageId: messageId,
                     lastSenderId: currentUserId,
@@ -165,7 +165,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
             }
 
             // Send the message to Firebase
-            const messageRef = doc(db, `allchats/${chatToUpdateId}/messages`, messageId);
+            const messageRef = doc(db, `chats/${chatToUpdateId}/messages`, messageId);
             await setDoc(messageRef, {
                 id: messageId,
                 senderId: currentUserId,
@@ -176,7 +176,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
             });
 
             // Update chat with last message
-            await updateDoc(doc(db, "allchats", chatToUpdateId), {
+            await updateDoc(doc(db, "chats", chatToUpdateId), {
                 lastMessage: text || 'Image',
                 lastMessageId: messageId,
                 lastSenderId: currentUserId,
@@ -214,8 +214,8 @@ useEffect(() => {
     // console.log("useEffect triggered: chatId", chatId, "activePage", activePage);
     if (!chatId || !currentUserId || activePage !== "selected-chat") return;
 
-    const messagesRef = query(collection(db, `allchats/${chatId}/messages`), orderBy("timestamp", "asc"));
-    const chatDocRef = doc(db, "allchats", chatId);
+    const messagesRef = query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp", "asc"));
+    const chatDocRef = doc(db, "chats", chatId);
 
     // Listen to changes in the chat messages
     const unSub = onSnapshot(messagesRef, async (snapshot) => {
