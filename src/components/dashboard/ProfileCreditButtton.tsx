@@ -5,9 +5,11 @@ type ProfileCreditButttonProps = {
     linkText: string;
     onLinkClick: () => void;
     imgSrc: string
+
 };
 
-const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText,  imgSrc }) => {
+const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText,  imgSrc, onLinkClick }) => {
+
 
     return <div className='user-profile__credit-buttons__button'>
         <img src={imgSrc} />
@@ -15,8 +17,13 @@ const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description
             <p className='user-profile__credit-buttons__button__description'>
                 {description}
             </p>
-            <p className='user-profile__credit-buttons__button__link'>{linkText}</p>
+            <button className='user-profile__credit-buttons__button__link' onClick={onLinkClick}>{linkText}</button>
+
         </div>
     </div>
 }
 export default ProfileCreditButtton;
+
+function useState(arg0: boolean): [any, any] {
+    throw new Error('Function not implemented.');
+}

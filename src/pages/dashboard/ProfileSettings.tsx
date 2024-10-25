@@ -27,7 +27,6 @@ interface ProfileSettingsProps {
 
 const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, refetchUserData}) => {
     const [profileSettings, setProfileSettings] = useState(userSettings)
-    
     const [showModal, setShowModal] = useState<'hidden' | 'logout'>('hidden');
     const [openModal, setOpenModal] = useState(false);
     const {reset, auth: user} = useAuthStore();
@@ -52,7 +51,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
         <>
 
             <SettingsModal show={showModal == 'logout'} onCloseModal={() => setShowModal('hidden')} onLogout={() => auth.signOut().then(() => {console.log('signed out'); reset(); navigate('/')}).catch((err) => console.log('error signing out,', err)) }/>
-            <HelpModal show={openModal} onCloseModal={() => setOpenModal(false)}  />
+            <HelpModal show={openModal} onCloseModal={() => setOpenModal(false)} />
+            
 
             <motion.div animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page z-20">
                 <div className="settings-page__container">
@@ -81,7 +81,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                        <button onClick={() => setOpenModal(true)} >
                            <ProfileSettingsGroup title="Help and Support"/>
                        </button>
-                       
+
                     </section>
                     <div className="flex mt-8 justify-center px-[2.8rem] gap-x-2 py-[1.6rem] cursor-pointer bg-[#F6F6F6] hover:bg-[#ececec]" onClick={() => setShowModal('logout')}>
                         <img src="/assets/icons/logout.svg" alt="" />

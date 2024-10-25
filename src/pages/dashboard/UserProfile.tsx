@@ -26,6 +26,8 @@ import SubscriptionPlans from './SubscriptionPlans';
 import Skeleton from 'react-loading-skeleton';
 import Circle from '@/components/dashboard/Circle';
 import { checkUserProfileCompletion } from '@/constants';
+import ProfileBoostModal from '@/components/dashboard/ProfileBoostModal';
+
 
 
 // type UserProfileProps = {};
@@ -34,6 +36,15 @@ import { checkUserProfileCompletion } from '@/constants';
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
     const [userData, setUserData] = useState<User>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
@@ -58,7 +69,9 @@ const UserProfile = () => {
     const refetchUserFilters = async () => { await fetchUserFilters() }
 
     return <>
+        
         <DashboardPageContainer>
+        
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
                 <div className='user-profile__container flex flex-col'>
                     <div className='flex justify-end gap-x-4'>
@@ -96,7 +109,8 @@ const UserProfile = () => {
                         <p>Whossy Safety Guide</p>
                     </div>
                     <section className='user-profile__credit-buttons'>
-                        <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
+                        <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
+                        <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
                         <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
                     </section>
 
