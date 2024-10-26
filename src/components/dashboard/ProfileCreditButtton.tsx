@@ -5,8 +5,8 @@ type ProfileCreditButttonProps = {
     linkText: string;
     onLinkClick: () => void;
     imgSrc: string
-
 };
+
 
 const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText,  imgSrc, onLinkClick }) => {
 
@@ -22,6 +22,10 @@ const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description
         </div>
     </div>
 }
+
+// const AddCreditPage: React.FC<AddCreditPageProps> = () => {
+
+// }
 export default ProfileCreditButtton;
 
 function useState(arg0: boolean): [any, any] {

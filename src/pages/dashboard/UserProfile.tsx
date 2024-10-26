@@ -27,6 +27,7 @@ import Skeleton from 'react-loading-skeleton';
 import Circle from '@/components/dashboard/Circle';
 import { checkUserProfileCompletion } from '@/constants';
 import ProfileBoostModal from '@/components/dashboard/ProfileBoostModal';
+import AddCredits from './AddCredits';
 
 
 
@@ -34,9 +35,10 @@ import ProfileBoostModal from '@/components/dashboard/ProfileBoostModal';
 
 
 const UserProfile = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeCredits, setActiveCredits] = useState(0);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -67,6 +69,8 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
+
+    console.log(activePage)
 
     return <>
         
@@ -111,7 +115,7 @@ const UserProfile = () => {
                     <section className='user-profile__credit-buttons'>
                         <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
+                        <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
@@ -121,6 +125,7 @@ const UserProfile = () => {
                 </section>
 
             </motion.div>
+            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} />
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.status?.online, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge}} refetchUserData={refetchUserData}/>

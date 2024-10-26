@@ -39,7 +39,7 @@ interface ProfileBoostModalProps {
 
             <div className="text-center space-y-2">
                 <h3 className="font-bold text-[1.8rem]">Profile Boosts</h3>
-                <p className="text-gray-600 text-[1.6rem] text-gray">
+                <p className="text-[1.6rem] text-gray">
                   Boosts your profile with your available credits and be a top profile in your area for a limited time
                 </p>
             </div>
@@ -65,13 +65,7 @@ interface ProfileBoostModalProps {
             </div>
           </motion.div>
           ) : (
-           <motion.div
-           initial={{ opacity: 0 }}
-           animate={{ opacity: 1 }}
-           exit={{ opacity: 0 }}
-           transition={{ duration: 0.3 }}
-           className="bg-white rounded-[1.6rem] shadow-lg w-[350px] sm:w-[450px] p-6 space-y-6 relative"
-         >
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="bg-white rounded-[1.6rem] shadow-lg w-[350px] sm:w-[450px] p-6 space-y-6 relative" >
            <div className="settings-page__title">
              <button onClick={handleCloseModal} className="settings-page__title__left">
                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt="Back" />
