@@ -61,7 +61,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                             <p>Profile Settings</p>
                         </button>
-                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                     <div className="settings-page__settings-group">
                         <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages }); updateUser({incoming_messages: !profileSettings.incoming_messages})}} isPremium/>
