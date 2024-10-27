@@ -38,7 +38,6 @@ const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [activeCredits, setActiveCredits] = useState(0);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

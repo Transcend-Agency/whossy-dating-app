@@ -65,8 +65,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                     <div className="settings-page__settings-group">
                         <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages }); updateUser({incoming_messages: !profileSettings.incoming_messages})}} isPremium/>
 
-                        <SettingsToggleItem title="Hide verification badge" subtext="This will hide the verification badge on your profile." isActive={profileSettings.hide_verification_badge ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, hide_verification_badge: !profileSettings.hide_verification_badge }); updateUser({hide_verification_badge: !profileSettings.hide_verification_badge})}} />
-
                         <SettingsToggleItem title="Public search" subtext="Other users will be able to find your profile online when they search the internet." isActive={profileSettings.public_search ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, public_search: !profileSettings.public_search }); updateUser({public_search: !profileSettings.public_search})}} />
 
                         <SettingsToggleItem title="Read receipts" subtext="Matches won’t be able to see when you have read their messages and you won’t be able to see theirs." isActive={profileSettings.read_receipts ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, read_receipts: !profileSettings.read_receipts }); updateUser({read_receipts: !profileSettings.read_receipts})}} />
