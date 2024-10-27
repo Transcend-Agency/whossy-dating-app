@@ -1,10 +1,9 @@
-import { relationship_preferences } from '@/constants';
 export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
-  created_at?: Date;
-  location?: string | null;
+  created_at?: string;
   distance?: number | null;
+  geohash?: string;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
@@ -41,6 +40,9 @@ export type User = {
   incoming_messages?: boolean;
   public_search?: boolean;
   hide_verification_badge?: boolean;
+  location: Geolocation, 
+  latitude: number, 
+  longitude: number
 }
 
 export type UserFilters = {
@@ -74,11 +76,12 @@ export type UserFilters = {
 };
 
 export type AdvancedSearchPreferences = {
-  age_range?: { max: number; min: number };
+  age_range?: { max: number | null; min: number | null };
   gender?: string;
   relationship_preference?: number | null;
   height?: number;
   country?: string;
+  religion?: number | null
 }
 
 export type UserProfile = User | UserFilters;

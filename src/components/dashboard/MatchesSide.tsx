@@ -84,7 +84,7 @@ const Matches: React.FC<MatchesProps> = () => {
                     <div className='rounded-[1.2rem] w-[15.8rem] h-[17.4rem]  mt-[1.2rem] overflow-hidden'>
                         <Skeleton height={"100%"} width={'100%'} />
                     </div>
-                    {[1, 2].map(() => <Skeleton containerClassName='matches__matched-profiles' width={'100%'} height={'100%'} />)}
+                    {[1, 2].map((item) => <Skeleton key={item} containerClassName='matches__matched-profiles' width={'100%'} height={'100%'} />)}
                 </motion.div>}
 
             </>

@@ -1,12 +1,14 @@
 import { family_goal, preference } from "@/constants";
 import { db } from "@/firebase";
 import { useAuthStore } from "@/store/UserId";
-import { collection, doc, GeoPoint, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt } from "firebase/firestore";
 import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
+import { distanceBetween, geohashForLocation, geohashQueryBounds } from 'geofire-common';
+import Lottie from "lottie-react";
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { uid } from 'react-uid';
-import { GeoFirestore, GeoCollectionReference } from "geofirestore";
+import Cat from "../../Cat.json";
 
 interface ProfileCardProps {
     profiles: number[],
@@ -302,12 +304,7 @@ const SwipingAndMatching = () => {
         latitude: 0,
         longitude: 0
     })
-
-    // Initialize GeoFirestore
-    const geoFirestore = new GeoFirestore(db);
-
-    // Reference to your 'users' collection in Firestore
-    const geoCollectionRef = geoFirestore.collection('users');
+    const { updateUser } = useAuthStore()
 
     const cancelProfile = async () => {
         await controls.start((item) => ({
@@ -326,6 +323,7 @@ const SwipingAndMatching = () => {
             } : { y: 24, width: 'calc(100% - 96px)' }))
         })
     }
+
     const likeProfile = async () => {
         // controls.start((item) => ({ y: item == profiles[profiles.length - 1] ? 0 : (item == profiles[profiles.length - 2] ? 12 : 24), width: item == profiles[profiles.length - 1] ? '100%' : (profiles[profiles.length - 2] == item ? 'calc(100% - 48px)' : 'calc(100% - 96px)') }))
         await controls.start((item) => ({
@@ -350,7 +348,6 @@ const SwipingAndMatching = () => {
     const [chosenActionButtonOpacity, setChosenActionButtonOpacity] = useState(0)
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
-    const [profilesShowing, setProfilesShowing] = useState(false)
 
     const handleShortcuts = (e: any) => {
         if (e.keyCode == 37)
@@ -369,55 +366,9 @@ const SwipingAndMatching = () => {
         else setActiveAction('like')
     })
 
-    const saveUserLocationToFirebase = async (latitude: number, longitude: number) => {
-        try {
-            const userId = user?.uid;  // Get the current user's ID
-
-            // Create a document reference for the user
-            const userDocRef = doc(db, 'users', userId!);
-
-            // Save location data under the user document with merge option
-            await setDoc(userDocRef, {
-                location: new GeoPoint(latitude, longitude)
-            }, { merge: true });
-            setProfilesShowing(true)
-            // await updateAllUsersLocation()
-            console.log("Location saved successfully!");
-        } catch (error) {
-            console.error("Error saving location: ", error);
-        }
-    }
+    const [profilesLoading, setProfilesLoading] = useState(true)
 
 
-    async function queryUsersNearLocation(latitude, longitude, radiusInMiles = 50) {
-        // Initialize GeoFirestore
-        const geoFirestore = new GeoFirestore(db);
-
-        const geoCollectionRef = geoFirestore.collection('users');
-
-        try {
-            // Convert miles to kilometers (GeoFirestore uses kilometers)
-            const radiusInKm = radiusInMiles * 1.60934;
-
-            // Perform a geospatial query using GeoFirestore
-            const query = geoCollectionRef.near({
-                center: new GeoPoint(latitude, longitude),  // Center point
-                radius: radiusInKm,  // Radius in kilometers
-                field: 'location'  // The location field in Firestore
-            });
-
-            // Get query results
-            const querySnapshot = await query.get();
-
-            // Process the query results
-            querySnapshot.forEach((doc) => {
-                console.log(doc.id, " => ", doc.data());
-            });
-
-        } catch (error) {
-            console.error("Error querying users by location: ", error);
-        }
-    }
 
     // function toRadians(degrees) {
     //     return degrees * (Math.PI / 180);
@@ -490,24 +441,88 @@ const SwipingAndMatching = () => {
     //     }
     // }
 
-    // useEffect(() => {
-    //     if (navigator.geolocation) {
-    //         navigator.geolocation.getCurrentPosition(function (position) {
-    //             const latitude = position.coords.latitude;
-    //             const longitude = position.coords.longitude;
-    //             setCurrentLocation({
-    //                 latitude, longitude
-    //             })
-    //             // Save the location data to Firebase
-    //             saveUserLocationToFirebase(latitude, longitude);
-    //             console.log(latitude, longitude)
-    //         }, function (error) {
-    //             console.error("Error getting location: ", error);
-    //         });
-    //     } else {
-    //         console.log("Geolocation is not supported by this browser.");
-    //     }
-    // }, [])
+    const fetchUsersWithinSpecifiedRadius = async () => {
+        const center = [user?.latitude as number, user?.longitude as number] as [number, number];
+        const radiusInM = (user?.distance as number) * 1000;
+        // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+        // a separate query for each pair. There can be up to 9 pairs of bounds
+        // depending on overlap, but in most cases there are 4.
+        const bounds = geohashQueryBounds(center, radiusInM);
+        const promises = [];
+        for (const b of bounds) {
+            const q = query(
+                collection(db, 'users'),
+                orderBy('geohash'),
+                startAt(b[0]),
+                endAt(b[1]));
+
+            promises.push(getDocs(q));
+        }
+        const snapshots = await Promise.all(promises);
+        const matchingDocs = [];
+
+        for (const snap of snapshots) {
+            for (const doc of snap.docs) {
+                const lat = doc.get('latitude');
+                const lng = doc.get('longitude');
+
+                // We have to filter out a few false positives due to GeoHash
+                // accuracy, but most will match
+                const distanceInKm = distanceBetween([lat, lng], center);
+                const distanceInM = distanceInKm * 1000;
+                if (distanceInM <= radiusInM) {
+                    matchingDocs.push(doc.data());
+                }
+            }
+        }
+        console.log(matchingDocs);
+    }
+
+    const saveUserLocationToFirebase = async (latitude: number, longitude: number) => {
+        try {
+            const userId = user?.uid;  // Get the current user's ID
+
+            // Create a document reference for the user
+            const userDocRef = doc(db, 'users', userId!);
+
+            // Save location data under the user document with merge option
+            await setDoc(userDocRef, {
+                location: new GeoPoint(latitude, longitude),
+                latitude, longitude,
+                geohash: geohashForLocation([latitude, longitude])
+            }, { merge: true });
+
+            updateUser({ location: new GeoPoint(latitude, longitude), geohash: geohashForLocation([latitude, longitude]), latitude, longitude })
+
+            fetchUsersWithinSpecifiedRadius()
+
+            // setProfilesShowing(true)
+            // await updateAllUsersLocation()
+            console.log("Location saved successfully!");
+        } catch (error) {
+            console.error("Error saving location: ", error);
+        }
+    }
+
+    useEffect(() => {
+        console.log("Getting location")
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                setCurrentLocation({
+                    latitude, longitude
+                })
+                // Save the location data to Firebase
+                saveUserLocationToFirebase(latitude, longitude);
+                console.log(latitude, longitude)
+            }, function (error) {
+                console.error("Error getting location: ", error);
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
+    }, [])
     return (
         <>
             <nav className="dashboard-layout__mobile-top-nav">
@@ -518,8 +533,8 @@ const SwipingAndMatching = () => {
                 </div>
             </nav>
             <AnimatePresence mode="sync">
-                {profilesShowing &&
-                    <div className="swipe-and-match-page">
+                {!profilesLoading &&
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="swipe-and-match-page">
                         <motion.div
                             style={{ opacity: actionButtonsOpacity }}
                             className="action-buttons">
@@ -542,8 +557,13 @@ const SwipingAndMatching = () => {
                         </motion.div>
                         {/* @ts-expect-error type errors */}
                         {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
-                    </div>
+                    </motion.div>
                 }
+                {profilesLoading && <motion.div className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
+                    <Lottie animationData={Cat} className="h-[150px]" />
+                    <p className="text-[2rem] font-medium">Finding Nearby Profiles</p>
+                    <p className="text-[1.2rem] mt-[1.2rem]">Please give us permission to access your location</p>
+                </motion.div>}
             </AnimatePresence>
         </>
     )
