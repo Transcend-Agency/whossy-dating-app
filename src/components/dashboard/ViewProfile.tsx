@@ -1,4 +1,4 @@
-import { drinking, education, family_goal, preference, relationship_preferences, smoking, workout } from '@/constants';
+import { drinking, education, family_goal, preference, relationship_preferences, religion, smoking, workout } from '@/constants';
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
 import { getYearFromFirebaseDate } from '@/utils/date';
@@ -301,6 +301,11 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 <p className="content-item__info__title">Education</p>
                                 {/* {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>} */}
                                 <p className="content-item__info__text">{education[userData.education]}</p>
+                            </div>}
+                            {![null, undefined].includes(userData.religion as unknown as any) && <div className="content-item__info">
+                                <p className="content-item__info__title">Religion</p>
+                                {/* {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>} */}
+                                <p className="content-item__info__text">{religion[userData.religion]}</p>
                             </div>}
                         </div>
                         {([userData.family_goal, userData.weight, userData.height].some(item => item !== null && item !== undefined)) && <div className="content-item">

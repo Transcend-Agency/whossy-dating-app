@@ -30,6 +30,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Notification from "./pages/Notification";
 import Faq from "./pages/Faq";
 import Contact from "./pages/Contact";
+import DashboardHome from "./pages/dashboard/DashboardHome";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +39,7 @@ function App() {
   useTrackUserPresence();
   return (
     <QueryClientProvider client={queryClient}>
-      { location.pathname.startsWith("/auth") && ( <MarqueeImageSliderBackground />) }
+      {location.pathname.startsWith("/auth") && (<MarqueeImageSliderBackground />)}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/auth" element={<AuthLayout />}>
@@ -56,6 +57,7 @@ function App() {
             <Route index element={<Onboarding />} />
           </Route>
           <Route path="/dashboard" element={<ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
+            <Route index element={<DashboardHome /> } />
             <Route path="user-profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<SwipingAndMatching />} />
