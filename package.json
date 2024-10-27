@@ -27,6 +27,7 @@
     "firebase": "^10.12.2",
     "form": "^0.2.4",
     "framer-motion": "^11.2.12",
+    "geofire-common": "^6.0.0",
     "geofirestore": "^5.2.0",
     "gsap": "^3.12.5",
     "iconsax-react": "^0.0.8",
