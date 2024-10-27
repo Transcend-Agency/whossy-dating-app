@@ -792,8 +792,16 @@ const family_goal = [
 ]
 
 const religion = [
-  "Chirstianity", "Muslim", "Iraq"
-]
+  "Christianity", 
+  "Islam", 
+  "Judaism", 
+  "Hinduism", 
+  "Buddhism", 
+  "Sikhism", 
+  "Atheism", 
+  "Agnosticism", 
+  "Other"
+];
 
 const communication_style = [
   "Direct and to the point",

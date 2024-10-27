@@ -29,12 +29,12 @@ export const NameSettingsModal: React.FC<DashboardSettingsModalProps & { first_n
     )
 }
 
-export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & { userGender: string, handleSave: (gender: string) => void }> = ({ showing, hideModal, userGender, handleSave }) => {
+export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & { userGender: string, handleSave: (gender: string) => Promise<void> }> = ({ showing, hideModal, userGender, handleSave }) => {
     const [gender, setGender] = useState(userGender);
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => { setGender(userGender) }, [userGender]);
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(gender); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Gender" save={<button className="modal__body__header__save-button" onClick={async () => { setIsLoading(true); await handleSave(gender); setIsLoading(false) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__gender-options">
                 <div onClick={() => setGender("Male")} className={`modal__gender-option ${gender == 'Male' && 'modal__gender-option--selected'}`}>Male</div>
                 <div onClick={() => setGender("Female")} className={`modal__gender-option ${gender == 'Female' && 'modal__gender-option--selected'}`}>Female</div>
@@ -43,7 +43,7 @@ export const GenderSettingsModal: React.FC<DashboardSettingsModalProps & { userG
     )
 }
 
-export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number, max: number, handleSave: (range: { min: number, max: number }) => void }> = ({ showing, hideModal, min, max, handleSave }) => {
+export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number, max: number, handleSave: (range: { min: number, max: number }) => Promise<void> }> = ({ showing, hideModal, min, max, handleSave }) => {
     const [range, setRange] = useState({ min, max });
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
@@ -53,7 +53,7 @@ export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number
         })
     }, [])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Age Range" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(range); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Age Range" save={<button className="modal__body__header__save-button" onClick={async () => { setIsLoading(true); await handleSave(range); setIsLoading(false) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="mb-[24px] text-center">
                 {range.min} - {range.max} years old
             </div>
@@ -121,13 +121,17 @@ export const PhoneNumberSettingsModal: React.FC<DashboardSettingsModalProps & { 
     )
 }
 
-export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModalProps & { userPreference: number, handleSave: (preference: number) => void }> = ({ showing, hideModal, userPreference, handleSave }) => {
+export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModalProps & { userPreference: number, handleSave: (preference: number) => Promise<void> }> = ({ showing, hideModal, userPreference, handleSave }) => {
     const [options] = useState(preference)
     const [selectedOption, setSelectedOption] = useState(options[userPreference]);
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => { setSelectedOption(options[userPreference]) }, [userPreference])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Relationship Preference" save={<button className="modal__body__header__save-button" onClick={async () => {
+            setIsLoading(true);
+            await handleSave(options.findIndex(option => option === selectedOption));
+            setIsLoading(false)
+        }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -203,13 +207,17 @@ export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps & {
     )
 }
 
-export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps & { userReligion: number, handleSave: (religion: number) => void }> = ({ showing, hideModal, userReligion, handleSave }) => {
+export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps & { userReligion: number, handleSave: (religion: number) => Promise<void> }> = ({ showing, hideModal, userReligion, handleSave }) => {
     const [options] = useState(religion)
     const [selectedOption, setSelectedOption] = useState(options[userReligion])
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => { setSelectedOption(options[userReligion]) }, [userReligion])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Religion" save={<button className="modal__body__header__save-button" onClick={async () => {
+            setIsLoading(true);
+            await handleSave(options.findIndex(option => option === selectedOption));
+            setIsLoading(false)
+        }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
                 {options.map(option => (
                     <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
@@ -364,7 +372,7 @@ export const WeightSettingsModal: React.FC<DashboardSettingsModalProps & { userW
     )
 }
 
-export const CountrySettingsModal: React.FC<DashboardSettingsModalProps & { preferredCountry: string; handleSave: (country: string) => void }> = ({ showing, hideModal, preferredCountry, handleSave }) => {
+export const CountrySettingsModal: React.FC<DashboardSettingsModalProps & { preferredCountry: string; handleSave: (country: string) => Promise<void> }> = ({ showing, hideModal, preferredCountry, handleSave }) => {
     // const [options] = useState(education)
     // const [selectedOption, setSelectedOption] = useState('')
     // useEffect(() => {setSelectedOption(options[userEducation])}, [userEducation])
@@ -378,7 +386,11 @@ export const CountrySettingsModal: React.FC<DashboardSettingsModalProps & { pref
 
 
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(selected); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Country of residence" save={<button className="modal__body__header__save-button" onClick={async () => {
+            setIsLoading(true);
+            await handleSave(selected);
+            setIsLoading(false)
+        }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             {/* <div className="modal__input-group__image-container">
                 <img className="modal__input-group__image" src="/assets/icons/search.svg"/>
                 <input className="modal__input-group__input w-full" value={country} onChange={(e) => setCountry(e.target.value)}/>
