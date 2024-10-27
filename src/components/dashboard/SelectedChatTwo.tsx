@@ -2,17 +2,18 @@ import { AnimatePresence, motion as m } from "framer-motion"
 import { ActionsModal, ImagesModal } from "./ChatsModal"
 import { useEffect, useRef, useState } from "react"
 import EmojiPicker from "emoji-picker-react"
-import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from "firebase/firestore"
+import { collection, doc, FieldValue, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc } from "firebase/firestore"
 import { db } from "@/firebase"
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
-import { formatDate, formatServerTimeStamps, formatTime12Hour } from "@/constants"
+import { formatDate, formatFirebaseTimestampToDate, formatFirebaseTimestampToTime, formatServerTimeStamps, formatTime12Hour } from "@/constants"
 import { useChatIdStore } from "@/store/ChatStore"
 import toast from "react-hot-toast"
 import Skeleton from "react-loading-skeleton"
 import { IoCheckmarkDone } from "react-icons/io5"
+import { serverTimestamp } from "firebase/firestore";
 
 interface SelectedChatTwoProps {
     activePage: string
@@ -114,7 +115,10 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
 
         // Generate the messageId and timestamp upfront
         const messageId = uuidv4();
-        const timestamp = new Date().toISOString();
+        const temporaryTimestamp = {
+            seconds: Math.floor(Date.now() / 1000),
+            nanoseconds: 0
+        };
 
         // Create optimistic message object with a placeholder for image if it's being uploaded
         const optimisticMessage: Messages = {
@@ -122,7 +126,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
             senderId: currentUserId,
             message: text !== '' ? text : null,
             photo: image.file ? 'loading_image_placeholder' : null, // Placeholder for image
-            timestamp,
+            timestamp: temporaryTimestamp,
             status: 'sent',
         };
 
@@ -171,7 +175,7 @@ const SelectedChatTwo: React.FC<SelectedChatTwoProps> = ({ activePage, closePage
                 senderId: currentUserId,
                 message: text !== '' ? text : null,
                 photo: imgUrl ?? null,
-                timestamp,
+                timestamp: serverTimestamp(),
                 status: "sent"
             });
 
@@ -298,7 +302,7 @@ useEffect(() => {
                         </header>
                         <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
                             <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
-                                {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatDate(chats[0]?.timestamp)}</p></header>}
+                                {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatFirebaseTimestampToDate(chats[0]?.timestamp)}</p></header>}
                                 {/* <div className="max-w-[70%] flex gap-x-2 items-center">
                                     <div>
                                         <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
@@ -321,8 +325,13 @@ useEffect(() => {
                                             {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#f6f6f6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
                                         </div>
                                         <p className="flex justify-end mt-2 text-[#cfcfcf]">
-                                            {/* <img src="/assets/icons/delivered.svg" alt="" />  */}
-                                            {message.senderId === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}<span>{formatTime12Hour(message.timestamp)}</span>
+                                            {message.senderId === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}
+                                            <span>
+  {message.timestamp && 
+    // typeof message.timestamp === 'object' && 
+    // 'seconds' in message.timestamp &&
+    formatFirebaseTimestampToTime(message.timestamp as { seconds: number, nanoseconds: number })}
+</span>
                                         </p>
                                     </div>)
                                 }

@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 export type Chat = {
     lastMessage: string;
     lastMessageId: string;
@@ -13,6 +15,6 @@ export type Messages = {
     message: string | null;
     photo: string | null;
     senderId: string;
-    timestamp: string;
+    timestamp: FieldValue | { seconds: number, nanoseconds: number };
     status: 'sent' | 'seen'
 }
