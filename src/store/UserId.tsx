@@ -7,6 +7,7 @@ type AuthType = { uid: string, has_completed_onboarding: boolean };
 interface Picture {
   auth: AuthType | null;
   setAuth: (auth: AuthType, user?: User) => void;
+  setUser: (user: User) => void;
   user?: User;
   reset: () => void;
 }
@@ -24,6 +25,8 @@ export const useAuthStore = create<
       ...initialState,
       setAuth: (auth, user) => set(() => ({ auth, user })),
       reset: () => set(initialState),
+      setUser: (user) => set((state) => ({ ...state, user })),
+      updateUser: (userUpdate: Partial<User>) => set((state) => ({ ...state, user: { ...state.user, ...userUpdate } })),
     }),
     {
       name: "user_id",

@@ -1,11 +1,9 @@
-import { religion } from '@/constants';
-import { relationship_preferences } from '@/constants';
 export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number};
   created_at?: string;
-  location?: string | null;
   distance?: number | null;
+  geohash?: string;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
@@ -42,6 +40,9 @@ export type User = {
   incoming_messages?: boolean;
   public_search?: boolean;
   hide_verification_badge?: boolean;
+  location: Geolocation, 
+  latitude: number, 
+  longitude: number
 }
 
 export type UserFilters = {
