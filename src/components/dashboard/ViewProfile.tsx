@@ -9,6 +9,7 @@ import { db } from "../../firebase";
 import DashboardPageContainer from "./DashboardPageContainer";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import ReportModal from './ReportModal';
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -24,6 +25,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const moreDetailsContainer = useRef(null)
     const likeControls = useAnimationControls()
     const { user } = useAuthStore()
+    const [openModal, setOpenModal] = useState(false);
 
     console.log(userData)
 
@@ -97,6 +99,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const navigate  = useNavigate();
 
     return (
+        <>
+        <ReportModal show={openModal} onCloseModal={() => setOpenModal(false)} />
         <DashboardPageContainer className="preview-profile preview-profile--view-profile">
             <div className="preview-profile__action-buttons">
                 {!profile_has_been_liked && <div className="preview-profile__action-button">
@@ -345,15 +349,16 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             <img src="/assets/icons/block.svg" />
                             Block {userData.first_name}
                         </div>
-                        <div className="action-button action-button--danger">
+                        <button className="action-button action-button--danger" onClick={() => setOpenModal(true)}>
                             <img src="/assets/icons/report.svg" />
                             Report {userData.first_name}
-                        </div>
+                        </button>
                     </div>
                 </motion.div>
 
             </div>
         </DashboardPageContainer>
+        </>
     )
 }
 export default ViewProfile;
