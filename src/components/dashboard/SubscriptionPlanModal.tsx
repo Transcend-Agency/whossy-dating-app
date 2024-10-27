@@ -17,12 +17,12 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <div className="flex flex-col gap-y-4">
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex  items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#8A8A8E'}}
          onClick={() => setSelectedPaymentMethod('naira')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'naira' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
             <p className='text-center w-full'>Pay using Naira (Paystack)</p>
         </div>
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex  items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#8A8A8E'}}
          onClick={() => setSelectedPaymentMethod('usd')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
             <p className='text-center w-full'>Pay using USD (Stripe)</p>

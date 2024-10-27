@@ -3,7 +3,8 @@ import Footer from '../components/landing/Footer'
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import React from 'react';
+import React, { useRef } from 'react';
+import { useNavigate } from 'react-router';
 
 type LandingProps = {
 
@@ -241,6 +242,15 @@ const DesktopWebsiteFeatures = () => {
 }
 
 const Landing: React.FC<LandingProps> = () => {
+    const secondPageRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate()
+
+    const handleStartSwiping = () => {
+        if (secondPageRef.current) {
+          secondPageRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
 return (
   <>
    <div className="flex flex-col items-center">
@@ -263,7 +273,7 @@ return (
           <p className="text-[4.8rem] leading-[5.2rem] lg:text-[8.8rem] lg:leading-[9.2rem] text-center px-[2rem] ">
             SWIPE, MATCH, LOVE - YOUR PERFECT PARTNER AWAITS!
           </p>
-          <button className="mt-[2rem] bg-red text-white py-[0.8rem] px-[1.2rem] rounded-lg text-[1.6rem]">
+          <button onClick={handleStartSwiping} className="mt-[2rem] bg-red text-white py-[0.8rem] px-[1.2rem] rounded-lg text-[1.6rem]">
             Start Swiping
           </button>     
         </div>
@@ -278,12 +288,11 @@ return (
       </section>
 
       {/* SECOND PAGE */}
-
-       <section className="relative w-full bg-white overflow-hidden space-y-[2rem] lg:grid lg:grid-cols-2 justify-center max-w-[122rem] items-center">
+       <section ref={secondPageRef} className="relative w-full bg-white overflow-hidden space-y-[2rem] lg:grid lg:grid-cols-2 justify-center max-w-[122rem] items-center">
         <div className="text-center lg:text-start px-[2rem] space-y-[2rem]">
             <p className="text-[4.8rem] leading-[5.2rem] lg:text-[8.8rem] lg:leading-[9.2rem] ">LOVE, NO PASSPORT REQUIRED</p>
             <p className="text-[1.4rem] leading-[1.68rem] lg:text-[2.4rem] lg:leading-[2.88rem] text-gray">Explore connections that span continents without leaving home. Our app brings you closer to people abroad, creating meaningful relationships no matter where you are.</p>
-            <button className="mt-5 bg-red text-white py-[0.8rem] px-[1.2rem] text-[1.6rem] rounded-[0.8rem]">
+            <button onClick={() => navigate('/auth/create-account')} className="mt-5 bg-red text-white py-[0.8rem] px-[1.2rem] text-[1.6rem] rounded-[0.8rem]">
             Join Now
           </button>         
         </div>
@@ -296,7 +305,7 @@ return (
 
         {/* LAST PAGE */}
 
-    {/* MOBILE */}
+   {/* MOBILE */}
     <section className="block lg:hidden relative w-full py-[12.8rem] space-y-[8rem]">
 
         <div className="mx-8 w-3/5 max-w-[50rem]">

@@ -1,7 +1,8 @@
 
 import { motion, useCycle } from "framer-motion";
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
+
 
 const Navbar = () => {
   const [mobileNav, toggleMobileNav] = useCycle(false, true);
@@ -45,7 +46,7 @@ const Navbar = () => {
               variants={{
                 closed: { rotate: 0, y: 0 },
                 open: { rotate: -45, y: -6 },
-              }}
+              }} 
               className="w-[2.8rem] h-[0.2rem] bg-white"
             ></motion.span>
           </motion.button>
@@ -63,9 +64,9 @@ const Navbar = () => {
           <div className="h-[3rem]" style={{ borderLeft: '1px solid #FFFFFF' }}></div>
 
           <nav className="flex items-center space-x-[2.4rem]">
-            <button onClick={() => navigate('/auth')} className="text-[1.6rem]">Login</button>
+            <button onClick={() => navigate('/auth/login')} className="text-[1.6rem]">Login</button>
             <button
-              onClick={() => navigate('/auth')}
+            onClick={() => navigate('/auth/create-account')}
               className="border bg-white text-red text-[1.6rem] px-[1.2rem] py-[1.4rem] rounded-[0.8rem]"
             >
               Create account
