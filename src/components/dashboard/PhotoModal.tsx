@@ -37,7 +37,7 @@ export const PhotoModal: React.FC<PhotoModalProps> = ({onModalClose, showing, ch
               <button className="rounded-lg w-full gap-x-2 py-3 cursor-pointer flex justify-center items-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
                <img src="/assets/icons/re-upload-photo.svg" alt="" /> <p>Re-upload</p>
               </button>
-              <button className="rounded-lg w-full gap-x-2 py-3 cursor-pointer flex justify-center items-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage(); changeImage()}}>
+              <button className="rounded-lg w-full gap-x-2 py-3 cursor-pointer flex justify-center items-center" style={{ border: "1px solid #D9D9D9" }} onClick={() =>  {deleteImage()}}>
                <img src="/assets/icons/delete-photo.svg" alt="" /> <p>Delete photo</p>
               </button>
             </div>
