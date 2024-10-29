@@ -27,7 +27,7 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
     const {auth} = useAuthStore();
 
     const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("preferences", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
+    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
     
 
     const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}

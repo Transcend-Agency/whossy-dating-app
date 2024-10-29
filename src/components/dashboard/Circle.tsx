@@ -51,9 +51,11 @@ const Circle: React.FC<CircleProps> = ({ percentage,imageUrl}) => {
                     y="30"
                     width="140"
                     height="140"
+                    overflow={'hidden'}
+                    style={{borderRadius: '100%'}}
                     clipPath="url(#clip-circle)"
                     preserveAspectRatio="xMidYMid slice"
-                />}
+                 />}
             </svg>}
         </div>
     );
