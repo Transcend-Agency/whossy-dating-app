@@ -97,9 +97,9 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
-                    <section className="py-[0.8rem] flex relative h-[12rem]" >
+                    <section className="py-[0.8rem] flex relative  h-[12rem]" >
                         <div className="w-full px-[2.4rem]">
-                               <div className=" min-w-full px-[1.2rem] py-[1.6rem] text-[#FF5C00] bg-gradient-to-r from-[#ff5e0030] to-white  " style={{border: '1.5px solid #FF5C00', borderRadius: '1.2rem'}}>
+                               <div className=" min-w-full px-[1.2rem] py-[1.6rem] text-[#AAAAAA] bg-gradient-to-r from-[#E3E3E3] to-white " style={{border: '1.5px solid #AAAAAA', borderRadius: '1.2rem'}}>
                                     <h1 className="text-[2.4rem] font-bold ">Whossy Free Plan</h1>
                                     <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">$</span><span className="text-[3.2rem] font-medium self-end">0</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
                                 </div>
@@ -107,8 +107,8 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
                        <PremiumPlansHeader plan={plan === 'premium'}/>
                     </section>
                     <div className="flex justify-center gap-x-[0.8rem] relative">
-                        <div className={`${plan !== 'free' ? 'w-[1rem]' : 'w-[2.4rem] bg-gradient-to-b from-[#FF5C00] to-[#F0174B] '} h-[1rem] cursor-pointer transition-all duration-700 ease-in-out`} style={{border: plan !== 'free' ? '1px solid #8A8A8E' : '', borderRadius: plan !== 'free' ? '100%' : '9999px'}} onClick={() => setPlan('free')}/>
-                        <div className={`${plan !== 'premium' ? 'w-[1rem]' : 'w-[2.4rem] bg-gradient-to-b from-[#8A8A8E] to-[#E3E3E3] '} h-[1rem] cursor-pointer transition-all duration-700 ease-in-out`} style={{border: plan !== 'premium' ? '1px solid #FF5C00' : '', borderRadius: plan !== 'premium' ? '100%' : '9999px'}} onClick={() => setPlan('premium')}/>
+                        <div className={`${plan !== 'free' ? 'w-[1rem]' : 'w-[2.4rem] bg-gradient-to-b from-[#8A8A8E] to-[#E3E3E3] '} h-[1rem] cursor-pointer transition-all duration-700 ease-in-out`} style={{border: plan !== 'free' ? '1px solid #8A8A8E' : '', borderRadius: plan !== 'free' ? '100%' : '9999px'}} onClick={() => setPlan('free')}/>
+                        <div className={`${plan !== 'premium' ? 'w-[1rem]' : 'w-[2.4rem] bg-gradient-to-b  from-[#FF5C00] to-[#F0174B]'} h-[1rem] cursor-pointer transition-all duration-700 ease-in-out`} style={{border: plan !== 'premium' ? '1px solid #FF5C00' : '', borderRadius: plan !== 'premium' ? '100%' : '9999px'}} onClick={() => setPlan('premium')}/>
                     </div>
                     <section className="py-[1.6rem] flex relative space-y-4">
                         <FreePlanBenefit plan={plan === 'free'} onSubscribe={() => setShowPaymentOptionsModal('plan')}/>

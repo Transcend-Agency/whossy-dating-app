@@ -158,19 +158,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, chat
                 <section className="text-[1.6rem] text-[#121212] flex-1 mx-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
                     <header className=" my-[1.5rem] text-center">Conversation started on 1/8/2024</header>
                     <section className="messages flex flex-col gap-y-6">
-                        {/* <div className="max-w-[70%] flex gap-x-2 items-center">
-                            <img className='w-[4.8rem] h-[4.8rem] flex-shrink-0 object-cover rounded-full' src={'/assets/images/matches/stephen.png'} alt="profile picture" />
-                            <div>
-                                <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
-                                <p className="flex justify-start mt-2"> <img src="/assets/icons/delivered.svg" alt="" /> Seen: 1 min ago</p>
-                            </div>
-                        </div>
-                        <div className="max-w-[70%] flex self-end">
-                             <div>
-                                <p className="bg-[#E5F2FF] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '1.2rem', borderBottomRightRadius: '0.4rem'}}>Hi, nice to meet you</p>
-                                <p className="flex justify-end mt-2"> <img src="/assets/icons/delivered.svg" alt="" /> Sent: 1 min ago</p>
-                            </div>
-                        </div> */}
+
                        { chats && chats?.messages?.map((message: any, i: number) =>  
                        <div className={`max-w-[70%] flex ${message.senderId === auth?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}
                         // key={message.createAt}
@@ -222,8 +210,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, chat
                         <button className="bg-black text-white py-4 font-semibold px-4 rounded-full cursor-pointer"
                          onClick={handleSendMessage}
                          >Send</button>
-                        {/* <button><img src="/assets/icons/chat-gift.svg" alt="" /></button> */}
-                        {/* <button><img src="/assets/icons/mic.svg" alt="" /></button> */}
+                        {/* <button><img src="/assets/icons/chat-gift.svg" alt="" /></button>
+                        <button><img src="/assets/icons/mic.svg" alt="" /></button> */}
                     </div>
                 </footer>
             </motion.div>

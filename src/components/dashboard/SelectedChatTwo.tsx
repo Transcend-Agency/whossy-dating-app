@@ -293,7 +293,7 @@ useEffect(() => {
                                 </div>
                             </button>
                             <button className="cursor-pointer" onClick={() => setShowActionsModal('action')}>
-                                <img src="/assets/icons/three-dots.svg" alt="" />
+                                <img src="/assets/icons/three-dots.svg" alt="options-button" />
                             </button>
                         </header>
                         <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
@@ -333,7 +333,7 @@ useEffect(() => {
                             </section>
                         </section>
                         <AnimatePresence>{openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 "><EmojiPicker onEmojiClick={(e) => setText((prev) => prev + e.emoji)} /> </m.div>}</AnimatePresence>
-                        <footer className="flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
+                        <footer className="flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-32 lg:bottom-10">
                             <div className="flex-1 flex gap-x-4">
                                 <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()} />
                                 <input type="file" className="hidden" ref={imageRef} onChange={handleImage} accept="image/*" />

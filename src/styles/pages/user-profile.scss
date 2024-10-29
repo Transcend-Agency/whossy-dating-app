@@ -134,19 +134,6 @@
             }
             &--free {
                 .user-profile__plans__plan__benefit {
-                    border-image-source: linear-gradient(to left, #FFFFFF99, #FF5C0099);
-                }
-                .user-profile__plans__plan__cta {
-                    @apply bg-[#FF5C00];
-                }
-                border: 1px solid #FF5C00;
-                @apply text-[#FF5C00];
-                .user-profile__plans__plan__title {
-                    
-                }
-            }
-            &--premium {
-                .user-profile__plans__plan__benefit {
                     border-image-source: linear-gradient(to left, #FFFFFF99, #AAAAAA99);
                 }
                 .user-profile__plans__plan__cta {
@@ -158,6 +145,20 @@
                     
                 }
             }
+            &--premium {
+                .user-profile__plans__plan__benefit {
+                    border-image-source: linear-gradient(to left, #FFFFFF99, #FF5C0099);
+                }
+                .user-profile__plans__plan__cta {
+                    @apply bg-[#FF5C00];
+                }
+                border: 1px solid #FF5C00;
+                @apply text-[#FF5C00];
+                .user-profile__plans__plan__title {
+                    
+                }
+            }
+            
         }
     }
 
