@@ -1,8 +1,9 @@
-import { religion } from '@/constants';
-import { relationship_preferences } from '@/constants';
+// import { religion } from '@/constants';
+// import { relationship_preferences } from '@/constants';
+
 export type User = {
   bio?: string | null;
-  date_of_birth?: {nanoseconds: number, seconds: number};
+  date_of_birth?: {nanoseconds: number, seconds: number} | null
   created_at?: string;
   location?: string | null;
   distance?: number | null;
@@ -24,7 +25,7 @@ export type User = {
   has_completed_account_creation?: boolean;
   has_completed_onboarding?: boolean;
   phone_number?: string | null;
-  uid?: string | null;
+  uid?: string
   weight?: number | null;
   height?: number | null;
   religion?: number | null;
@@ -42,6 +43,8 @@ export type User = {
   incoming_messages?: boolean;
   public_search?: boolean;
   hide_verification_badge?: boolean;
+  online_status?: boolean
+  blockedIds?: string[]
 }
 
 export type UserFilters = {
@@ -83,5 +86,5 @@ export type AdvancedSearchPreferences = {
   religion?: number | null
 }
 
-export type UserProfile = User | UserFilters;
+export type UserProfile = User | UserFilters | AdvancedSearchPreferences;
 

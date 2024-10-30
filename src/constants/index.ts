@@ -2,6 +2,8 @@ import { db } from "@/firebase";
 import { User } from "@/types/user";
 import { doc, getDoc } from "firebase/firestore";
 
+const filterOptions = ["Discover", "Similar interest", "Online", "New members", "Popular in my area", "Looking to date", "Outside my country"]
+
 const alphabet = [
   {
     letter: "a",
@@ -1178,5 +1180,6 @@ export {
   workout,
   marital_status,
   family_goal, preference, formatServerTimeStamps,
-  religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion
+  religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion,
+    filterOptions
 };

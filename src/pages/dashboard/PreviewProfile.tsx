@@ -1,7 +1,8 @@
 import { family_goal, preference } from "@/constants";
 import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import {getYearFromFirebaseDate} from "@/utils/date.ts";
 
 interface PreviewProfileProps {
     activePage: string;
@@ -30,21 +31,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
             setCurrentImage(value => value - 1)
         }
     }
-
-    const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
-        if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
-            throw new Error('Invalid Firebase date object');
-        }
-
-        // Convert seconds to milliseconds
-        const milliseconds = firebaseDate.seconds * 1000;
-
-        // Create a Date object
-        const date = new Date(milliseconds);
-
-        // Get the year
-        return date.getFullYear();
-    };
 
     useEffect(() => {
         // console.log(moreDetailsContainer)
@@ -87,7 +73,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             </div> */}
                             {profileImages?.map((src, index) =>
                             (
-                                <motion.img animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
+                                <motion.img key={index} animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
                             )}
                         </figure>

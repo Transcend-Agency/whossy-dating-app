@@ -133,8 +133,8 @@ export const RelationshipPreferenceSettingsModal: React.FC<DashboardSettingsModa
             setIsLoading(false)
         }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -149,8 +149,8 @@ export const LoveLanguageSettingsModal: React.FC<DashboardSettingsModalProps & {
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Love Language" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -166,8 +166,8 @@ export const ZodiacSignSettingsModal: React.FC<DashboardSettingsModalProps & { u
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Zodiac Sign" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -182,8 +182,8 @@ export const FutureFamilyPlansSettingsModal: React.FC<DashboardSettingsModalProp
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Future Family Plans" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -199,8 +199,8 @@ export const SmokerStatusSettingsModal: React.FC<DashboardSettingsModalProps & {
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Smoker" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -219,8 +219,8 @@ export const ReligionSettingsModal: React.FC<DashboardSettingsModalProps & { use
             setIsLoading(false)
         }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -236,8 +236,8 @@ export const DrinkingSettingsModal: React.FC<DashboardSettingsModalProps & { use
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Drinking" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -253,8 +253,8 @@ export const WorkoutSettingsModal: React.FC<DashboardSettingsModalProps & { user
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Workout" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option , i)=> (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -270,8 +270,8 @@ export const PetsSettingsModal: React.FC<DashboardSettingsModalProps & { userPet
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Pets" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -287,8 +287,8 @@ export const MaritalStatusSettingsModal: React.FC<DashboardSettingsModalProps & 
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Marital Status" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -305,8 +305,8 @@ export const EducationSettingsModal: React.FC<DashboardSettingsModalProps & { us
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Education" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsloading(true); setTimeout(() => setIsloading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -446,8 +446,8 @@ export const CommunicationSettingsModal: React.FC<DashboardSettingsModalProps & 
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Communication Style" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
@@ -463,8 +463,8 @@ export const DietarySettingsModal: React.FC<DashboardSettingsModalProps & { pref
     return (
         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Dietary" save={<button className="modal__body__header__save-button" onClick={() => { handleSave(options.findIndex(option => option === selectedOption)); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="modal__select-options">
-                {options.map(option => (
-                    <div onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
+                {options.map((option, i) => (
+                    <div key={`${option}-${i}`} onClick={() => setSelectedOption(option)} className={`modal__select-options__option ${selectedOption == option && 'modal__select-options__option--selected'}`}>{option}</div>
                 ))}
             </div>
         </DashboardSettingsModal>
