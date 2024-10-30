@@ -25,51 +25,88 @@ import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
 import OnboardingLayout from "./pages/OnboardingLayout";
 import PhoneNumber from "./pages/PhoneNumber";
-import { ProtectedDashboard, ProtectedOnboarding } from "./pages/ProtectedRoute";
+import { ProtectedDashboard } from "./pages/ProtectedRoute";
 import ResetPassword from "./pages/ResetPassword";
 import Notification from "./pages/Notification";
 import Faq from "./pages/Faq";
 import Contact from "./pages/Contact";
+import React, {useEffect} from "react";
+// import {useAuthStore} from "@/store/UserId.tsx";
+import {getAuth} from "firebase/auth";
+// import {DashboardProvider} from "@/components/dashboard/DashboardProvider.tsx";
+import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
+import useAutoLogout from "@/store/UserId.tsx";
 
 const queryClient = new QueryClient();
 
 function App() {
   const location = useLocation();
   useTrackUserPresence();
+  useAutoLogout()
+
+  const { fetchProfilesBasedOnOption } = useProfileFetcher()
+  const { selectedOption, blockedUsers } = useDashboardContext()
+
+  // const { setAuth } = useAuthStore();
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt_token");
+
+    if (token) {
+      // Auto sign-in the user by fetching their details (or decode the JWT to get user details)
+      const auth = getAuth();
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          // const token = await user.getIdToken();
+          // setAuth({ uid: user.uid, has_completed_onboarding: true }); // Example state update
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
+  }, [selectedOption, blockedUsers]);
+
   return (
+
     <QueryClientProvider client={queryClient}>
       { location.pathname.startsWith("/auth") && ( <MarqueeImageSliderBackground />) }
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/auth" element={<AuthLayout />}>
-            <Route index element={<Home />} />
-            <Route path="login" element={<Login />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
-            <Route path="create-account" element={<CreateAccount />} />
-            <Route path="account-setup" element={<AccountSetup />} />
-            <Route path="phone-number" element={<PhoneNumber />} />
-            <Route path="finalize-setup" element={<FinalizeSetup />} />
-            <Route path="email-verification" element={<EmailVerification />} />
-          </Route>
-          <Route path="/onboarding" element={<ProtectedOnboarding><OnboardingLayout /></ProtectedOnboarding>}>
-            <Route index element={<Onboarding />} />
-          </Route>
-          <Route path="/dashboard" element={<ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
-            <Route path="user-profile" element={<UserProfile />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="swipe-and-match" element={<SwipingAndMatching />} />
-            <Route path="matches" element={<MatchesPage />} />
-            <Route path="globalSearch" element={<GlobalSearch />} />
-            <Route path="heart" element={<Favorites />} />
-            <Route path="chat" element={<Chat />} />
-            <Route path="notification" element={<Notification />} />
-          </Route>
-          <Route path="" element={<Landing />} />
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-        <ToastContainer />
+      <AnimatePresence>
+        {/*<DashboardProvider>*/}
+            <Routes location={location} key={location.pathname}>
+              <Route path="/auth" element={<AuthLayout />}>
+                <Route index element={<Home />} />
+                <Route path="login" element={<Login />} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route path="reset-password" element={<ResetPassword />} />
+                <Route path="create-account" element={<CreateAccount />} />
+                <Route path="account-setup" element={<AccountSetup />} />
+                <Route path="phone-number" element={<PhoneNumber />} />
+                <Route path="finalize-setup" element={<FinalizeSetup />} />
+                <Route path="email-verification" element={<EmailVerification />} />
+              </Route>
+              <Route path="/onboarding" element={<OnboardingLayout />}>
+                <Route index element={<Onboarding />} />
+              </Route>
+              <Route path="/dashboard" element={
+                  <ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
+                <Route path="user-profile" element={<UserProfile />} />
+                <Route path="explore" element={<Explore />} />
+                <Route path="swipe-and-match" element={<SwipingAndMatching />} />
+                <Route path="matches" element={<MatchesPage />} />
+                <Route path="globalSearch" element={<GlobalSearch />} />
+                <Route path="heart" element={<Favorites />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="notification" element={<Notification />} />
+              </Route>
+              <Route path="" element={<Landing />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+          <ToastContainer />
+        {/*</DashboardProvider>*/}
       </AnimatePresence>
     </QueryClientProvider>
   );

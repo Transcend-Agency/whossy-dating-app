@@ -72,7 +72,7 @@ const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key })
             setLoading(false)
         }
     }
-    return <AuthPage key={key} className='forgot-password'>
+    return <AuthPage identifier={key} className='forgot-password'>
         <div className='auth-page__modal'>
             <AnimatePresence mode='wait'>
                 {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -90,7 +90,7 @@ const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key })
 const ForgotPasswordSuccessPage: React.FC<ForgotPasswordPage> = ({ key, goBack }) => {
     const navigate = useNavigate()
 
-    return <AuthPage key={key} className='forgot-password'>
+    return <AuthPage identifier={key} className='forgot-password'>
         <div className='auth-page__modal'>
             <AuthModalBackButton onClick={goBack} />
             <AuthModalHeader title='Successful' subtitle="A link has been sent to your email to reset your password." />
