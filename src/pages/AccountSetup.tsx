@@ -1,11 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getAuth, sendEmailVerification, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
-import {
-    collection,
-    doc,
-    getDoc,
-    getDocs, query, setDoc, updateDoc, where
-} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import ReactFlagsSelect from "react-flags-select";
@@ -21,13 +16,10 @@ import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
 import GenderButton from '../components/auth/GenderButton';
-import { db } from "../firebase";
+import { db } from "@/firebase";
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
 import { useAuthStore } from '@/store/UserId';
-type AccountSetupProps = {
-
-};
 
 interface AccountSetupFormPage {
     advance: () => void
@@ -64,24 +56,17 @@ const FillInAccountNames: React.FC<AccountSetupFormPage> = ({ advance, pageKey }
     const first_name = useAccountSetupFormStore(state => state.userData.first_name)
     const last_name = useAccountSetupFormStore(state => state.userData.last_name)
     const setNames = useAccountSetupFormStore(state => state.setNames)
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<FormData>({
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(AccountNamesFormSchema),
         mode: 'onBlur',
-        defaultValues: {
-            first_name,
-            last_name
-        }
+        defaultValues: { first_name, last_name }
     });
     const onFormSubmit = (data: any) => {
         setNames(data)
         advance()
     }
     return (
-        <AuthPage key={pageKey} className='names'>
+        <AuthPage identifier={pageKey} className='names'>
             <div className='auth-page__modal'>
                 <AuthModalBackButton />
                 <AuthModalHeader title='Welcome to Whossy, Let’s get you Started' subtitle="Ensure to enter the correct data as some will appear on your profile." />
@@ -117,8 +102,6 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, page
             country_of_origin
         }
     });
-
-    // Phone Number Check should be implemented
 
     const [selected, setSelected] = useState('country_of_origin');
     const [loading, setLoading] = useState(false)
@@ -163,7 +146,7 @@ const FillInCountries: React.FC<AccountSetupFormPage> = ({ advance, goBack, page
 
 
     return (
-        <AuthPage key={pageKey} className='phone-and-countries'>
+        <AuthPage identifier={pageKey} className='phone-and-countries'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -208,7 +191,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
     const [loading, setLoading] = useState(false)
     const [requestError, setRequestError] = useState('')
     const getAccountSetupData = useAccountSetupFormStore(state => state.getAccountSetupData)
-    const id = useAccountSetupFormStore(state => state.userData.id)
+    const id = useAccountSetupFormStore(state => state.userData.uid)
     const email = useAccountSetupFormStore(state => state.userData.email)
     const auth_provider = useAccountSetupFormStore(state => state.userData.auth_provider)
     const navigate = useNavigate()
@@ -276,7 +259,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
     }
 
     return (
-        <AuthPage key={pageKey} className='gender'>
+        <AuthPage identifier={pageKey} className='gender'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -302,7 +285,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
     )
 }
 
-const AccountSetup: React.FC<AccountSetupProps> = () => {
+const AccountSetup = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const pageOrder = ['names', 'countries', 'gender', 'welcome']
     const navigate = useNavigate()
@@ -312,7 +295,7 @@ const AccountSetup: React.FC<AccountSetupProps> = () => {
         if (!id) {
             navigate('/auth')
         }
-    }, [])
+    }, [id, navigate])
 
     const advance = () => {
         setCurrentPage(currentPage + 1)
@@ -326,7 +309,6 @@ const AccountSetup: React.FC<AccountSetupProps> = () => {
                 {pageOrder[currentPage] == 'names' && <FillInAccountNames pageKey="create-account-names" advance={advance} goBack={goBack} />}
                 {pageOrder[currentPage] == 'countries' && <FillInCountries pageKey="create-account-countries" advance={advance} goBack={goBack} />}
                 {pageOrder[currentPage] == 'gender' && <FillInGender pageKey="create-account-gender" advance={advance} goBack={goBack} />}
-                {/* {pageOrder[currentPage] == 'welcome' && <AgreeToTerms key="create-account-agree-to-terms" advance={advance} goBack={goBack} />} */}
             </AnimatePresence>
         </motion.div>
     )

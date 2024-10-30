@@ -272,7 +272,7 @@
             }
 
             &__container {
-                @apply mt-[1.6rem] grid grid-cols-3 gap-[1.6rem];
+                @apply mt-[1.6rem] grid grid-cols-2 items-center gap-[1.6rem];
             }
 
             &__item {

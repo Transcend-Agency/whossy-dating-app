@@ -115,7 +115,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
 
     }
     return (
-        <AuthPage key={key} className='create-account-home'>
+        <AuthPage identifier={key} className='create-account-home'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -204,7 +204,7 @@ const FillInPhoneNumberOtp: React.FC<PhoneNumberPageProps> = ({ goBack, key }) =
 
     }
     return (
-        <AuthPage key={key} className='create-account-home'>
+        <AuthPage identifier={key} className='create-account-home'>
             <div className='auth-page__modal'>
                 <AnimatePresence mode='wait'>
                     {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
