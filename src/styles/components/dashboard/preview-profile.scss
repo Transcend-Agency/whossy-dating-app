@@ -278,7 +278,7 @@
 
         }
         .action-button {
-            @apply w-full flex items-center justify-center mt-[1.6rem] w-full py-[1.6rem] bg-white rounded-[1.2rem] cursor-pointer;
+            @apply flex items-center justify-center mt-[1.6rem] w-full py-[1.6rem] bg-white rounded-[1.2rem] cursor-pointer;
             @include media('<=1023px') {
                 @apply bg-[#F6F6F6];
             }

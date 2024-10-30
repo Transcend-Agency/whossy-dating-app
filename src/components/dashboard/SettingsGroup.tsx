@@ -8,7 +8,7 @@ const SettingsGroup: React.FC<SettingsGroupProps> = ({ data }) => {
 
     return <div className="settings-page__settings-group">
         {data.map((item, index) => (
-            <button onClick={item[2]} className="settings-page__settings-group__item">
+            <button key={index} onClick={item[2]} className="settings-page__settings-group__item">
                 <div className="settings-page__settings-group__item-container">
                     <div className="settings-page__settings-group__item__label ml-[1.3rem]">{item[0]}</div>
                     {item[1] !== undefined ? <div className="settings-page__settings-group__item__value mr-[1.3rem]">{item[1].length > 40 ? item[1].substring(0, 40) + '...' : item[1]}{(item[0] !== "Birthday" && item[0] !== "Email") && <img src="/assets/icons/arrow-right.svg" />}</div> : <div className='flex items-center gap-x-3 mr-[1.3rem]'>

@@ -1,11 +1,11 @@
 import React from 'react';
 
-type ResetPasswordRequirementParamaterProps = {
+type ResetPasswordRequirementParameterProps = {
     text: string;
     criteriaPassed?: boolean
 };
 
-const ResetPasswordRequirementParamater: React.FC<ResetPasswordRequirementParamaterProps> = ({ text, criteriaPassed }) => {
+const ResetPasswordRequirementParameter: React.FC<ResetPasswordRequirementParameterProps> = ({ text, criteriaPassed }) => {
 
     return <div className='auth-page__modal__password-requirements__parameter'>
         <svg width="11" height="8" viewBox="0 0 11 8" className={`auth-page__modal__password-requirements__parameter__icon ${!criteriaPassed && 'auth-page__modal__password-requirements__parameter__icon--inactive'}`} xmlns="http://www.w3.org/2000/svg">
@@ -14,4 +14,4 @@ const ResetPasswordRequirementParamater: React.FC<ResetPasswordRequirementParama
         <span className={`auth-page__modal__password-requirements__parameter__text  ${!criteriaPassed && 'auth-page__modal__password-requirements__parameter__text--inactive'}`}>{text}</span>
     </div>
 }
-export default ResetPasswordRequirementParamater;
+export default ResetPasswordRequirementParameter;
