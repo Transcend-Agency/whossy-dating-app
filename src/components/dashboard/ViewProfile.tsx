@@ -225,7 +225,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 </button>
                             </div>
                             <div onClick={goToNextPost}
-                                 className={`next-button ${currentImage < userData?.photos?.length - 1 && 'clickable'}`}>
+                                 className={`next-button ${currentImage < (userData?.photos?.length as number - 1) && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg"/>
                                 </button>
@@ -234,7 +234,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
                                 {userData.status?.online && <div className="active-badge">{'Online'}</div>}
-                                {userData.currentLocation && user?.currentLocation &&
+                                {userData.location && user?.location &&
                                     <p className="location">~ {userData.distance}</p>}
                             </div>
                             <motion.div initial={{marginBottom: '2.8rem'}} className="name-row">
@@ -280,7 +280,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
                                 {userData.photos?.length !== 1 && <>
-                                    {userData?.photos?.map((image, index) => (
+                                    {userData?.photos?.map((_image, index) => (
                                         <div key={index} onClick={() => {
                                             setCurrentImage(index);
                                         }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
@@ -342,7 +342,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             {![null, undefined].includes(userData.education as unknown as any) &&
                                 <div className="content-item__info">
                                     <p className="content-item__info__title">Education</p>
-                                    <p className="content-item__info__text">{education[userData?.education]}</p>
+                                    <p className="content-item__info__text">{education[userData?.education as number]}</p>
                                 </div>}
                         </div>
                         {([userData.family_goal, userData.weight, userData.height].some(item => item !== null && item !== undefined)) &&

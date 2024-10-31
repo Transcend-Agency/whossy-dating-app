@@ -1,9 +1,7 @@
-import Skeleton from "react-loading-skeleton";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
 import { motion } from 'framer-motion'
-import { Timestamp } from "firebase/firestore";
-import { boolean } from "zod";
+import React from "react";
 
 interface ExploreGridProfileProps {
     profile_image?: string
@@ -25,8 +23,6 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
     isNewUser
 }) => {
 
-    console.log(isNewUser)
-
     return (
         <div onClick={onProfileClick} className='explore-grid__profile'>
             <figure className='explore-grid__profile-picture'>
@@ -42,10 +38,10 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
                 <div className='explore-grid__profile-info-top'>
                     <div className="explore-grid__profile-info-top-left">
                         {isNewUser && <figure className='new-profile'>
-                            <img src="/assets/icons/leaf.svg" />
+                            <img src="/assets/icons/leaf.svg"  alt={``}/>
                             New
                         </figure>}
-                        {/* <span>~ {distance}</span> */}
+                         <span>~ {distance}</span>
                     </div>
                     {hasBeenLiked && <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="explore-grid__profile-like-icon" src="/assets/icons/heart.svg" />}
                 </div>
