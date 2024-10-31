@@ -292,13 +292,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </>
     )
 }
+
 const SwipingAndMatching = () => {
     const navigate = useNavigate();
     const [profiles, setProfiles] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     const x = useMotionValue(0)
     const controls = useAnimationControls()
     const { user } = useAuthStore()
-    const [currentLocation, setCurrentLocation] = useState({
+    const [ currentLocation, setCurrentLocation] = useState({
         latitude: 0,
         longitude: 0
     })
@@ -326,6 +327,7 @@ const SwipingAndMatching = () => {
             } : { y: 24, width: 'calc(100% - 96px)' }))
         })
     }
+
     const likeProfile = async () => {
         // controls.start((item) => ({ y: item == profiles[profiles.length - 1] ? 0 : (item == profiles[profiles.length - 2] ? 12 : 24), width: item == profiles[profiles.length - 1] ? '100%' : (profiles[profiles.length - 2] == item ? 'calc(100% - 48px)' : 'calc(100% - 96px)') }))
         await controls.start((item) => ({
@@ -350,7 +352,6 @@ const SwipingAndMatching = () => {
     const [chosenActionButtonOpacity, setChosenActionButtonOpacity] = useState(0)
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
-    const [profilesShowing, setProfilesShowing] = useState(false)
 
     const handleShortcuts = (e: any) => {
         if (e.keyCode == 37)

@@ -5,8 +5,8 @@ export type User = {
   bio?: string | null;
   date_of_birth?: {nanoseconds: number, seconds: number} | null
   created_at?: string;
-  location?: string | null;
   distance?: number | null;
+  geohash?: string;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
@@ -45,6 +45,9 @@ export type User = {
   hide_verification_badge?: boolean;
   online_status?: boolean
   blockedIds?: string[]
+  location: Geolocation,
+  latitude: number,
+  longitude: number
 }
 
 export type UserFilters = {
@@ -78,7 +81,7 @@ export type UserFilters = {
 };
 
 export type AdvancedSearchPreferences = {
-  age_range?: { max: number; min: number };
+  age_range?: { max: number | null; min: number | null };
   gender?: string;
   relationship_preference?: number | null;
   height?: number;

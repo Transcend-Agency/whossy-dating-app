@@ -53,7 +53,7 @@ export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number
         })
     }, [])
     return (
-        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Age Range" save={<button className="modal__body__header__save-button" onClick={() => { setIsLoading(true); handleSave(range); setIsLoading(false) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
+        <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Age Range" save={<button className="modal__body__header__save-button" onClick={async () => { setIsLoading(true); await handleSave(range); setIsLoading(false) }}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>}>
             <div className="mb-[24px] text-center">
                 {range.min} - {range.max} years old
             </div>
