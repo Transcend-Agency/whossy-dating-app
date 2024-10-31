@@ -28,7 +28,7 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: UserPrefences) => {updateUserProfile("preferences",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: UserPrefences) => {updateUserProfile("users",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
 
     useEffect(() => setMutatedData(userData?.interests || []), [userData?.interests])
 

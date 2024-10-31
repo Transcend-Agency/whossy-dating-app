@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 
 type SafetyGuideProps = {
     activePage: string;
@@ -193,11 +193,7 @@ const SafetyGuide: React.FC<SafetyGuideProps> = ({ activePage, activeSubPage, cl
     };
     const [selectedSafetyGuidePage, setSelectedSafetyGuidePage] = useState<keyof typeof safetyGuideInformation>()
     return <>
-        <motion.div
-            // animate={activePage == 'safety-item' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'safety-guide' ? { x: "-100%", opacity: 1 } : { x: 0 })}
-            // animate={activePage == 'safety-guide' ? { x: "-100%", opacity: 1 } : { x: 0 }}
-            animate={activePage === 'safety-guide' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 1, opacity: 1, x: "-100%" }) : { x: 0 }}
-            transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page safety-guide settings-page">
+        <motion.div animate={activePage === 'safety-guide' ? (activeSubPage == 0 ? { x: "-100%", opacity: 1 } : { scale: 1, opacity: 1, x: "-100%" }) : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page safety-guide settings-page">
             <div className="settings-page__container">
                 <div className="settings-page__title">
                     <button onClick={closePage} className="settings-page__title__left">

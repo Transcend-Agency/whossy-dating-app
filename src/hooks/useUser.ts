@@ -1,12 +1,12 @@
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { AdvancedSearchPreferences, User, UserFilters, UserPrefences, UserProfile } from "@/types/user";
+import { AdvancedSearchPreferences, User, UserFilters, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
 
 type CollectionName = "users" | "preferences" | "filters";
 
 const collection_one = "users";
-const collection_two = "preferences";
+// const collection_two = "preferences";
 const collection_three = "filters";
 
 const getUserProfile = async (
@@ -20,7 +20,7 @@ const getUserProfile = async (
 
     // check the path i.e the collection name that was pased
     if (path === collection_one) return docSnap.data() as User;
-    if (path === collection_two) return docSnap.data() as UserPrefences;
+    // if (path === collection_two) return docSnap.data() as UserPrefences;
     if (path === collection_three) return docSnap.data() as UserFilters;
   } else {
     // docSnap.data() will be undefined in this case
