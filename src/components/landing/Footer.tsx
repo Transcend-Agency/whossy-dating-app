@@ -5,7 +5,7 @@ const navigate = useNavigate();
 
   return (
 
-    <div className="lg:flex lg:justify-center px-[8rem] bg-red w-full lg:h-[25rem]">
+    <div className="lg:flex lg:justify-center px-[4rem] bg-red w-full lg:h-[25rem]">
       <footer className=" text-white py-[4rem] w-full space-y-[1.6rem] lg:grid lg:grid-cols-3 lg:items-center">
         <div className="space-y-[2.4rem]">
           <div className="flex items-center">

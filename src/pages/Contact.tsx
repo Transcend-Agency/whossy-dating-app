@@ -21,6 +21,7 @@ const Contact = () => {
 
   return (
     <>
+    
       <Navbar />
       <div className="relative z-10 flex flex-col pt-[12.8rem] lg:pt-[3rem]">
         <p className="text-[3.2rem] lg:text-[4.8rem] p-[2rem] lg:px-[4rem] italic lg:hidden">SEND US A MESSAGE</p>
@@ -43,7 +44,6 @@ const Contact = () => {
                 id="name"
                 type="text"
                 placeholder="Name"
-                value={formData.name}
                 onChange={handleChange}
                 className="text-[1.6rem] lg:text-[1.8rem] w-full border-b border-gray focus:outline-none py-6 placeholder:italic placeholder-opacity-100 placeholder:text-[1.6rem] placeholder:lg:text-[1.8rem] placeholder:text-gray "
               />
@@ -52,7 +52,6 @@ const Contact = () => {
                 id="email"
                 type="email"
                 placeholder="Email"
-                value={formData.email}
                 onChange={handleChange}
                 className="text-[1.6rem] lg:text-[1.8rem] w-full border-b border-gray focus:outline-none py-6 placeholder:italic placeholder-opacity-100 placeholder:text-[1.6rem] placeholder:lg:text-[1.8rem] placeholder:text-gray"
               />
@@ -60,7 +59,6 @@ const Contact = () => {
                 name="message"
                 id="message"
                 placeholder="Message"
-                value={formData.message}
                 onChange={handleChange}
                 className="text-[1.6rem] lg:text-[1.8rem] w-full border-b border-gray focus:outline-none py-6 placeholder:italic placeholder-opacity-100 placeholder:text-[1.6rem] placeholder:lg:text-[1.8rem] placeholder:text-gray"
                 rows={4}
