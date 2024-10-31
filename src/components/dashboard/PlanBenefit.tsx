@@ -17,7 +17,7 @@ export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe})
               <h1 className="text-[1.8rem] font-bold ">{benefit.title}</h1>
               <div className="flex justify-between items-center leading-[1.92rem]"><p className="text-[1.6rem] text-[#8A8A8E] font-medium"><span>{benefit.isAvailable ? '✅' : '❌' }</span> <span>{benefit.desc}</span></p> <span className="bg-gradient-to-b from-[#FF5C00] to-[#F0174B] text-white rounded-full px-[1rem] py-[0.5rem]">Likes</span> </div>
           </div>)}
-          <div className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#FF5C00] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={onSubscribe}>Subscribe</button></div>
+          <div className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#AAAAAA] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={onSubscribe}>Subscribe</button></div>
       </motion.div>}
     </AnimatePresence>
   )
@@ -32,9 +32,9 @@ export const PremiumPlanBenefit: React.FC<PlanBenefitProps> = ({plan}) => {
             {premium_benefits.map((benefit, i) => 
             <div key={i} className="px-[1.6rem] space-y-[1.2rem] w-full py-[1.2rem] rounded-[0.8rem] bg-white" style={{border: '1.5px solid #D9D9D9'}}>
                 <h1 className="text-[1.8rem] font-bold ">{benefit.title}</h1>
-                <div className="flex justify-between items-center"><p className="text-[1.6rem] text-[#8A8A8E] font-medium">✅ {benefit.desc}</p> <span className="bg-gradient-to-b from-[#FF5C00] to-[#F0174B] text-white rounded-full px-[1rem] py-[0.5rem]">Likes</span> </div>
+                <div className="flex justify-between items-center"><p className="text-[1.6rem] text-[#8A8A8E] font-medium">✅ {benefit.desc}</p> <span className="bg-gradient-to-b  from-[#FF5C00] to-[#F0174B] text-white rounded-full px-[1rem] py-[0.5rem]">Likes</span> </div>
             </div>)}
-          <div className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#AAAAAA] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer">Subscribe</button></div>
+          <div className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#FF5C00] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer">Subscribe</button></div>
         </motion.div>}
     </AnimatePresence>
   )

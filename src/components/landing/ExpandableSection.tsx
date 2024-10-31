@@ -1,42 +1,41 @@
 import React, { useState } from 'react';
-import { Add } from "iconsax-react"
+import { Add, Minus } from "iconsax-react";
 
 interface SectionProps {
   placeholder: string;
+  answer: string;
+  index: number
+  isOpen: boolean
+  toggleSection: (index: number) => void
 }
 
-const ExpandableSection: React.FC<SectionProps> = ({ placeholder }) => {
+const ExpandableSection: React.FC<SectionProps> = ({ placeholder, answer, index, isOpen, toggleSection }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [message, setMessage] = useState('');
 
   const toggleExpand = () => {
-    setIsExpanded(true); 
+    setIsExpanded(!isExpanded);
   };
 
   return (
     <div className="flex justify-center items-center">
-  <div className="my-[1.6rem] w-full max-w-[80rem]">
-    <div className="flex justify-between items-center bg-lightgray px-12 h-[5.1rem]">
-      <p className="text-gray">{!isExpanded ? placeholder : ''}</p>
-      <button onClick={toggleExpand} className="text-gray">
-        <Add size="18" color="#8A8A8E" />
-      </button>
-    </div>
+      <div className="my-[1.6rem] w-full max-w-[80rem]">
+        <div className="flex justify-between items-center bg-lightgray px-12 h-[5.1rem]" onClick={() => toggleSection(index)}>
+          <p>{placeholder}</p>
 
-    {isExpanded && (
-      <div className="mt-2">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-full border px-4 py-2 rounded-lg"
-          placeholder="Type your message"
-        />
+          <button onClick={toggleExpand} className="text-gray">
+            {isOpen ? <Minus size="18" color="#8A8A8E" /> : <Add size="18" color="#8A8A8E" />}
+          </button>
+        </div>
+
+        
+        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
+          <div className="text-gray py-5 px-12 bg-lightgray text-[1.4rem] lg:leading-[2.5rem]">
+            {answer}
+          </div>
+        </div>
       </div>
-    )}
-  </div>
-</div>
+    </div>
   );
 };
 
-export default ExpandableSection
+export default ExpandableSection;
