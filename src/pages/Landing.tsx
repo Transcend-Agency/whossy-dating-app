@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router';
+import { motion } from "framer-motion";
 
 type LandingProps = {
 
@@ -65,7 +66,7 @@ const DesktopWebsiteFeatures = () => {
             <div className='w-screen h-[400dvh] relative features-section hidden lg:block'>
                 <div className=' w-full sticky bottom-0 top-0 h-[100dvh] hidden lg:flex items-end justify-center'>
                     <div className='relative '>
-                        <div className='lg:h-[94dvh] xl:h-[94dvh] relative top-[8dvh] lg:aspect-[0.3] xl:aspect-[0.49] '>
+                        <div className='lg:h-[94dvh] xl:h-[94dvh] relative top-[8dvh] lg:aspect-[0.49] '>
                             <img className='h-[94dvh] absolute z-[0] image-1' src="/assets/images/website/match.png" />
                             <img className='h-[94dvh] absolute z-[1] image-2 opacity-0' src="/assets/images/website/chat.png" />
                             <img className='h-[94dvh] absolute z-[2] image-3 opacity-0' src="/assets/images/website/explore.png" />
@@ -277,10 +278,10 @@ return (
         </div>
 
         <div className="relative h-[calc(100vh-(0.45*100vh))]">
-            <img src={'/assets/icons/Rectangle1.svg'} alt="frame 1" className="w-[7.2rem] lg:w-[20rem] absolute top-[-50%] left-[50%] lg:top-[-45%] lg:left-[90%] transform -translate-x-1/2"/>
-            <img src={'/assets/icons/Rectangle2.svg'} alt="frame 2" className="w-[12rem] lg:w-[20rem] absolute top-[10%] left-[40%] lg:top-[10%] transform -translate-x-1/2"/>
-            <img src={'/assets/icons/Rectangle3.svg'} alt="frame 3" className="w-[12rem] lg:w-[20rem] absolute top-[40%] left-[75%] lg:top-[25%] lg:left-[70%] transform -translate-x-1/2"/>
-            <img src={'/assets/icons/Rectangle4.svg'} alt="frame 4" className="w-[12rem] lg:w-[20rem] absolute top-[65%] left-[0%] lg:top-[55%] lg:left-[1%] transform "/>
+            <motion.img src={'/assets/icons/Rectangle1.svg'} alt="frame 1" className="w-[7.2rem] lg:w-[12rem] xl:w-[20rem] absolute bottom-[500px] left-[50%] lg:bottom-[500px] lg:left-[80%] transform -translate-x-1/2 "animate={{ y: [0, -100, 0] }} transition={{ duration: 5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }}/>
+            <motion.img src={'/assets/icons/Rectangle2.svg'} alt="frame 2" className="w-[12rem] lg:w-[20rem] absolute top-[50px] left-[40%] lg:top-[50px] transform -translate-x-1/2" animate={{ y: [0, -45, 100, 0] }} transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
+            <motion.img src={'/assets/icons/Rectangle3.svg'} alt="frame 3" className="w-[12rem] lg:w-[20rem] absolute top-[150px] left-[75%] lg:top-[150px] lg:left-[70%] transform -translate-x-1/2" animate={{ y: [0, -50, 100, 0] }} transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
+            <motion.img src={'/assets/icons/Rectangle4.svg'} alt="frame 4" className="w-[12rem] lg:w-[20rem] absolute bottom-[50px] left-[0%] lg:bottom-[20px] lg:left-[1%] transform" animate={{ y: [0, -200, 0] }} transition={{ duration: 5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
         </div>
       </section>
 
