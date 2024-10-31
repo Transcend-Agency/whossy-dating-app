@@ -111,14 +111,14 @@ const BlockedContacts: React.FC<BlockedContactsProps> = ({ activePage, closePage
 									</p>
 
 									{unblockingUserId === blockedUser.id ? (
-										<div className="bg-red text-[1.35rem] flex justify-center items-center cursor-pointer text-white border-none px-6 py-4 w-[75px] h-[28px] rounded-md">
+										<div className="bg-red text-[1.35rem] flex justify-center items-center cursor-pointer text-white border-none px-6 py-4 w-[75px] h-[30px] rounded-md">
 											<motion.img key="loading-image" className='button__loader'
 														src='/assets/icons/loader.gif'/>
 										</div>
 									) : (
 										<button
 											onClick={() => handleUnblock(blockedUser)}
-											className="bg-red text-[1.35rem] cursor-pointer text-white border-none px-6 py-4 rounded-md">
+											className="bg-red text-[1.35rem] text-center cursor-pointer text-white border-none w-[75px] h-[30px] rounded-md">
 											Unblock
 										</button>
 									)}
