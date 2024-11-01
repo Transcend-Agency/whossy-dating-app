@@ -1,5 +1,5 @@
 import ViewProfile from '@/components/dashboard/ViewProfile';
-import { query, Timestamp, where } from "firebase/firestore";
+import { doc, query, setDoc, Timestamp, where } from "firebase/firestore";
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -24,6 +24,8 @@ import {
 import { AnimatePresence } from 'framer-motion';
 import { Oval } from 'react-loader-spinner';
 import { db } from "../../firebase";
+import useSyncPeopleWhoLikedUser from '@/hooks/useSyncPeopleWhoLikedUser';
+import { useMatchStore } from '@/store/Matches';
 
 
 const Explore = () => {
@@ -43,8 +45,8 @@ const Explore = () => {
     const [exploreDataLoading, setExploreDataLoading] = useState(true)
     const [advancedSearchShowing, setAdvancedSearchShowing] = useState(false)
     const { auth, user } = useAuthStore()
-    const { setLikes, likes } = useLikesAndMatchesStore()
-    const userLikes = useSyncUserLikes(user!.uid!)
+    const { setLikes } = useLikesAndMatchesStore()
+    const { userLikes } = useSyncUserLikes(user!.uid!)
     const [advancedSearchModalShowing, setAdvancedSearchModalShowing] = useState('hidden')
     const hideModal = () => setAdvancedSearchModalShowing('hidden')
     const [advancedSearchPreferences, setAdvancedSearchPreferences] = useState<AdvancedSearchPreferences>({
@@ -55,6 +57,7 @@ const Explore = () => {
         religion: null
     })
     const [resetLoading, setResetLoading] = useState(false)
+    const { matches } = useMatchStore()
 
     const calculateDOBRange = (minAge, maxAge) => {
         const today = new Date();
@@ -303,6 +306,47 @@ const Explore = () => {
     const updateSearchPreferences = async (s: AdvancedSearchPreferences) => {
         await updateAdvancedSearchPreferences(user?.uid as string, () => { hideModal(); refetchSearchPreferences() }, s)
     }
+
+    const addLike = async () => {
+        // const db = getFirestore();
+        try {
+            const likesRef = collection(db, 'likes');
+            const q = query(likesRef, where('liker_id', '==', userData?.uid), where('liked_id', '==', user?.uid));
+            const mutualLikeSnapshot = await getDocs(q);
+
+            console.log(mutualLikeSnapshot)
+
+            if (!mutualLikeSnapshot.empty) {
+                await addMatch(user?.uid, userData.uid)
+            } else {
+                const likeId = `${user?.uid}_${userData.uid}`;  // Combine the two IDs to create a unique ID
+                await setDoc(doc(db, "likes", likeId), {
+                    uid: likeId,
+                    liker_id: user?.uid,
+                    liked_id: userData.uid,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const addMatch = async (likerId: string, likedId: string) => {
+        const matchesRef = collection(db, 'matches');
+
+        // Ensure that each match is only stored once (user1_id < user2_id)
+        const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
+
+        // Create or update the match document
+        await setDoc(doc(matchesRef, matchId), {
+            user1_id: likerId < likedId ? likerId : likedId,
+            user2_id: likerId > likedId ? likerId : likedId,
+            timestamp: new Date().toISOString(),
+        });
+
+        console.log('Match created:', matchId);
+    };
 
     useEffect(() => {
         fetchLikes()
