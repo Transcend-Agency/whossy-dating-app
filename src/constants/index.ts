@@ -1080,6 +1080,51 @@ const formatTime12Hour = (isoString: string) => {
   return `${hours}:${minutes} ${ampm}`;
 };
 
+function formatFirebaseTimestampToTime({ seconds, nanoseconds }: { seconds: number, nanoseconds: number }): string {
+  // Convert seconds to a Date object
+  const date = new Date(seconds * 1000 + nanoseconds / 1000000);
+
+  // Extract hours and minutes
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // Determine AM or PM
+  const amOrPm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert 24-hour format to 12-hour format
+  hours = hours % 12 || 12; // Convert 0 (midnight) or 12 (noon) to 12
+
+  // Pad minutes with a leading zero if necessary
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+  // Return the formatted time string (e.g., 3:40 PM)
+  return `${hours}:${formattedMinutes} ${amOrPm}`;
+}
+
+function formatFirebaseTimestampToDate({ seconds, nanoseconds }: { seconds: number, nanoseconds: number }): string {
+  // Convert seconds to a Date object
+  const date = new Date(seconds * 1000 + nanoseconds / 1000000);
+
+  // Extract the day, month, and year
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  // Array of month names
+  const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+  ];
+  const month = monthNames[date.getMonth()];
+
+  // Determine the day suffix (st, nd, rd, th)
+  const suffix = (day % 10 === 1 && day !== 11) ? 'st' :
+                 (day % 10 === 2 && day !== 12) ? 'nd' :
+                 (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+
+  // Return the formatted date string
+  return `${day}${suffix} ${month}, ${year}`;
+}
+
 const getUserDetails = async (user: string) => {
   const userRef = doc(db, "users", user);
   const userDoc = await getDoc(userRef);
@@ -1178,5 +1223,6 @@ export {
   workout,
   marital_status,
   family_goal, preference, formatServerTimeStamps,
-  religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion
+  religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion, formatFirebaseTimestampToTime,
+  formatFirebaseTimestampToDate
 };
