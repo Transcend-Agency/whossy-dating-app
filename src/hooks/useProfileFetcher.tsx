@@ -2,21 +2,21 @@ import {useCallback } from "react";
 import {collection, doc, getDoc, getDocs, query, Timestamp, where} from "firebase/firestore";
 import {db} from "@/firebase";
 import {User, UserFilters, UserProfile} from "@/types/user.ts";
-import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 import {useAuthStore} from "@/store/UserId.tsx";
 
 
 function useProfileFetcher() {
 
 	const { user } = useAuthStore()
-	const { blockedUsers, setBlockedUsers, setProfiles , selectedOption, setExploreDataLoading } = useDashboardContext()
+	const { blockedUsers, setBlockedUsers, setProfiles , selectedOption, setExploreDataLoading } = useDashboardStore()
 
 	const fetchBlockedUsers = useCallback(async () => {
 		if (!user?.uid) return [];
 		try {
 			const userRef = doc(db, "users", user.uid);
 			const userDoc = await getDoc(userRef);
-			const userData: User = userDoc.exists() ? userDoc.data() : {};
+			const userData = userDoc.exists() ? userDoc.data() : {};
 			const blockedIds = userData.blockedIds || []
 			setBlockedUsers(blockedIds);
 			return blockedIds;
@@ -27,6 +27,7 @@ function useProfileFetcher() {
 	}, [user?.uid]);
 
 	const filterBlockedAndCurrentUser = (userData: User[], blockedUsers: string[]) => {
+		// return userData.filter(u => !blockedUsers.includes(u.uid as string))
 		return userData.filter(u => !blockedUsers.includes(u.uid as string) && u.uid !== user?.uid);
 	};
 
@@ -37,30 +38,32 @@ function useProfileFetcher() {
 			if (!user?.uid) return [];
 			const userRef = doc(db, "users", user.uid);
 			const userDoc = await getDoc(userRef);
-			const userInfo: User = userDoc.exists() ? userDoc.data() : {};
+			const userInfo = userDoc.exists() ? userDoc.data() : {};
 			const userInterest = userInfo.interests || []
 
-			const interestsFilter = userInterest && userInterest.length > 0;
-			const fetchQuery = interestsFilter
-				? query(queryParam,
-					where("interests", "array-contains-any", userInterest || []))
-				: queryParam
+			const usersCollection = collection(db, "users");
+			const interestsFilter: boolean = userInterest && userInterest.length > 0;
 
-			const querySnapshot = await getDocs(fetchQuery);
-			const userData = querySnapshot.docs.map(doc => doc.data() as UserProfile);
+			let querySnapshot = await getDocs(queryParam);
+			let userData = querySnapshot.docs.map(doc => doc.data() as UserProfile);
 
 			if (selectedOption === "Similar interest" && interestsFilter) {
 				const currentUserInterests2 = userInterest || [];
 				console.log("Interests", currentUserInterests2)
+
+				querySnapshot = await getDocs(query(usersCollection, where("has_completed_onboarding", "==", true), where("interests", "array-contains-any", userInterest || [])))
+				userData = querySnapshot.docs.map(doc => doc.data() as UserProfile)
+
 				data = userData.sort((a , b) => {
 					const interestsA = (a as UserFilters).interests || [];
 					const interestsB = (b as UserFilters).interests || [];
 
-					const sharedInterestsA = currentUserInterests2.filter(interest => interestsA.includes(interest)).length;
-					const sharedInterestsB = currentUserInterests2.filter(interest => interestsB.includes(interest)).length;
+					const sharedInterestsA = currentUserInterests2.filter((interest: string) => interestsA.includes(interest)).length;
+					const sharedInterestsB = currentUserInterests2.filter((interest: string) => interestsB.includes(interest)).length;
 
 					return sharedInterestsB - sharedInterestsA;
 				});
+
 			} else {
 				data = userData
 			}
@@ -90,7 +93,7 @@ function useProfileFetcher() {
 		const q = query(usersCollection, where("has_completed_onboarding", "==", true));
 		switch (selectedOption) {
 			case "Discover":
-				fetchQuery = query(q);
+				fetchQuery = query(usersCollection, where("has_completed_onboarding", "==", true));
 				break;
 			case "Similar interest":
 				fetchQuery = query(q);

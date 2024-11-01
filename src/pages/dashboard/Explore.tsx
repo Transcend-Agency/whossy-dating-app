@@ -19,7 +19,7 @@ import {Oval} from 'react-loader-spinner';
 import {db} from "@/firebase";
 import useLikesAndMatchesStore from "@/store/LikesAndMatches.tsx";
 import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
-import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 
 interface SettingsDataItem {
@@ -31,12 +31,16 @@ interface SettingsDataItem {
 const Explore = () => {
 
     const {
-        selectedProfile, setSelectedProfile,
-        profiles, setProfiles,
+        profiles,
+        setProfiles,
+        selectedProfile,
+        setSelectedProfile,
         blockedUsers,
-        selectedOption, setSelectedOption,
-        exploreDataLoading, setExploreDataLoading
-    } = useDashboardContext()
+        selectedOption,
+        setSelectedOption,
+        exploreDataLoading,
+        setExploreDataLoading
+    } = useDashboardStore()
     const { fetchBlockedUsers, fetchProfilesBasedOnOption } = useProfileFetcher()
 
     const {auth, user} = useAuthStore();
@@ -264,7 +268,7 @@ const Explore = () => {
 
                                                 {[0,1,2,3,4].map((value, index) => (
                                                     <div key={index} className={`explore-grid__column`}>
-                                                        {profiles?.map((profile, index) => (
+                                                        {profiles?.map((profile, index: number) => (
                                                             (index % 5 === value) &&
                                                             <ExploreGridProfile
                                                                 isNewUser={isNewUserFromDate(profile.created_at as string)}

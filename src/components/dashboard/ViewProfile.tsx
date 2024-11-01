@@ -8,7 +8,10 @@ import React, {useEffect, useRef, useState} from "react";
 import { db } from "@/firebase";
 import DashboardPageContainer from "./DashboardPageContainer";
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import {useMatchStore} from "@/store/Matches.tsx";
+import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -18,7 +21,7 @@ interface ViewProfileProps {
 }
 
 const ViewProfile: React.FC<ViewProfileProps> = (
-    {onBackClick, userData, profile_has_been_liked, onBlockChange}
+    {onBackClick, userData, onBlockChange}
 ) => {
     const [expanded, setExpanded] = useState(true)
     const [isBlocked, setIsBlocked] = useState(false)
@@ -28,6 +31,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const likeControls = useAnimationControls()
     const navigate = useNavigate();
     const {user} = useAuthStore()
+    const userLikes = useSyncUserLikes(user!.uid!)
+    const {selectedProfile} = useDashboardStore()
 
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
@@ -39,41 +44,46 @@ const ViewProfile: React.FC<ViewProfileProps> = (
             setCurrentImage(value => value - 1)
         }
     }
-    const addLike = async () => {
-        try {
 
+    const { fetchMatches } = useMatchStore()
+
+    const addLike = async () => {
+        if (!user || !userData) {
+            toast.error("User data is not available");
+            return;
+        }
+        try {
             const likesRef = collection(db, 'likes');
-            const q = query(likesRef, where('liker_id', '==', userData?.uid), where('liked_id', '==', user?.uid));
+            const likeId = `${user.uid}_${userData.uid}`;
+
+            await setDoc(doc(db, "likes", likeId), {
+                uid: likeId,
+                liker_id: user.uid,
+                liked_id: userData.uid,
+                timestamp: new Date().toISOString()
+            });
+            toast.success(`Your Like has been sent to ${userData.first_name}`);
+
+            const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
             const mutualLikeSnapshot = await getDocs(q);
 
-            console.log(mutualLikeSnapshot)
-
             if (!mutualLikeSnapshot.empty) {
-                // @ts-expect-error The user is probably undefined
-                await addMatch(user.uid, userData.uid)
-                toast.success(`Your Matched With ${userData.first_name}`)
-            } else {
-                const likeId = `${user?.uid}_${userData.uid}`;  // Combine the two IDs to create a unique ID
-                await setDoc(doc(db, "likes", likeId), {
-                    uid: likeId,
-                    liker_id: user?.uid,
-                    liked_id: userData.uid,
-                    timestamp: new Date().toISOString()
-                });
-                toast.success(`Your Like has been sent to ${userData.first_name}`)
+                // Mutual like detected, create a match
+                await addMatch(user?.uid as string, userData?.uid as string);
+                toast.success(`You're Matched With ${userData.first_name}`);
+                fetchMatches(user?.uid as string);
             }
+
         } catch (err) {
-            toast.error("Something Went Wrong, Couldn't send the like")
+            console.error("Error adding like:", err);
+            toast.error("Something went wrong, couldn't send the like");
         }
-    }
+    };
+
 
     const addMatch = async (likerId: string, likedId: string) => {
         const matchesRef = collection(db, 'matches');
-
-        // Ensure that each match is only stored once (user1_id < user2_id)
         const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
-
-        // Create or update the match document
         await setDoc(doc(matchesRef, matchId), {
             user1_id: likerId < likedId ? likerId : likedId,
             user2_id: likerId > likedId ? likerId : likedId,
@@ -93,6 +103,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 ease: "easeOut",    // Easing for smooth animation
             },
         });
+
         onBackClick()
         await addLike()
     };
@@ -116,13 +127,12 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         }
     };
 
-    // Set `isBlocked` state when component mounts or userData changes
     useEffect(() => {
         if (user?.uid && userData?.uid) {
             setIsBlockLoading(true)
             checkIfBlocked(user.uid, userData.uid).then((blockedStatus) => {
                 setIsBlocked(blockedStatus);
-                setIsBlockLoading(false); // Stop loading after checking
+                setIsBlockLoading(false);
             });
         }
     }, [user?.uid, userData?.uid]);
@@ -139,12 +149,10 @@ const ViewProfile: React.FC<ViewProfileProps> = (
             const userRef = doc(db, "users", user?.uid as string);
 
             if (isBlocked) {
-                // Remove userData.uid from the blockedIds array
                 await updateDoc(userRef, {
                     blockedIds: arrayRemove(userData.uid)
                 });
             } else {
-                // Add userData.uid to the blockedIds array
                 await updateDoc(userRef, {
                     blockedIds: arrayUnion(userData.uid)
                 });
@@ -167,18 +175,26 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         toast("Unable to fetch user data")
 
         onBackClick()
-        return; // Render nothing if userData is undefined
+        return;
+    }
+
+    const hasUserBeenLiked = () => {
+        return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
 
     return (
         <DashboardPageContainer className="preview-profile preview-profile--view-profile">
             <div className="preview-profile__action-buttons">
-                {!profile_has_been_liked && <div className="preview-profile__action-button">
-                    <motion.img animate={likeControls} onClick={triggerHeartAnimation} src="/assets/icons/heart.svg"/>
-                </div>}
-                {profile_has_been_liked && <div className="preview-profile__action-button liked">
-                    <motion.img src="/assets/icons/white-heart.png"/>
-                </div>}
+                {!hasUserBeenLiked() &&
+                    <div className="preview-profile__action-button">
+                        <motion.img animate={likeControls} onClick={triggerHeartAnimation}
+                                    src="/assets/icons/heart.svg"/>
+                    </div>
+                }
+                {hasUserBeenLiked() && <div className="preview-profile__action-button liked">
+                        <motion.img src="/assets/icons/white-heart.png"/>
+                    </div>
+                }
                 <div className="preview-profile__action-button"
                      onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                     <img src="/assets/icons/message-heart.svg" alt={``}/>

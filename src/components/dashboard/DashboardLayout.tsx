@@ -7,7 +7,7 @@ import ShortcutControls from './ShortcutControls';
 import { AnimatePresence } from 'framer-motion';
 import { IoIosNotifications } from "react-icons/io";
 import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
-import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
 import {useAuthStore} from "@/store/UserId.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [newNotification, setNewNotification] = useState(false);
-    const { selectedProfile, setSelectedProfile, profiles } = useDashboardContext()
+    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
 
     const { user } = useAuthStore();
     const userLikes = useSyncUserLikes(user!.uid!);

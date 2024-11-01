@@ -31,7 +31,7 @@ import Notification from "./pages/Notification";
 import Faq from "./pages/Faq";
 import Contact from "./pages/Contact";
 import React, {useEffect} from "react";
-import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 import useAutoLogout from "@/store/UserId.tsx";
 
@@ -44,7 +44,7 @@ function App() {
   useAutoLogout()
 
   const { fetchProfilesBasedOnOption } = useProfileFetcher()
-  const { selectedOption, blockedUsers } = useDashboardContext()
+  const { selectedOption, blockedUsers } = useDashboardStore()
 
   useEffect(() => {
     fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
