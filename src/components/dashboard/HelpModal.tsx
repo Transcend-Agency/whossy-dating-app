@@ -23,8 +23,8 @@ const HelpModal: React.FC<HelpModalProps> = ({ show, onCloseModal }) => {
             </div>
 
             <div className="flex flex-row gap-x-4"> 
-                <button className="bg-[#F6F6F6] py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer whitespace-nowrap inline-block" >Send Help {""}</button>
                 <button className="bg-[#F6F6F6] py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer" onClick={onCloseModal}>Cancel</button>
+                <button className="bg-[#F6F6F6] py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer whitespace-nowrap inline-block" >Send Help {""}</button>
             </div>
           </motion.div>                                                                                                                                                                                         
         </motion.div>}

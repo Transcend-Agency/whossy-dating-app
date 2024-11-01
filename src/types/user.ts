@@ -4,6 +4,7 @@ export type User = {
   created_at?: string;
   distance?: number | null;
   geohash?: string;
+  isPremium?: boolean | null;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
@@ -13,6 +14,7 @@ export type User = {
   preference?: number | null;
   smoke?: number | null;
   workout?: number | null;
+  notifications?: boolean | null;
   auth_provider?: string | null;
   country_of_origin?: string | null;
   email?: string | null;
@@ -40,9 +42,9 @@ export type User = {
   incoming_messages?: boolean;
   public_search?: boolean;
   hide_verification_badge?: boolean;
-  location: Geolocation, 
-  latitude: number, 
-  longitude: number
+  location?: Geolocation, 
+  latitude?: number, 
+  longitude?: number
 }
 
 export type UserFilters = {

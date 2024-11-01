@@ -6,20 +6,36 @@ import ChatInterface from './ChatInterface';
 import ShortcutControls from './ShortcutControls';
 import { AnimatePresence } from 'framer-motion';
 import { IoIosNotifications } from "react-icons/io";
+import { collection, doc, getDoc, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore';
+import { db } from '@/firebase';
+import { useAuthStore } from '@/store/UserId';
+import { User } from '@/types/user';
 
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [newNotification, setNewNotification] = useState(false);
+    const {auth} = useAuthStore();
 
     useEffect(() => {
-        if (pathname === '/dashboard/notification') {
-            setNewNotification(true);
-        }
+
+        const userDocRef = doc(db, "users", auth?.uid as string);
+        
+        const unSub = onSnapshot(userDocRef, async () => {
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const data = userDocSnap.data() as User;
+                if (data.notifications !== undefined && data.notifications !== null) {
+                    setNewNotification(data.notifications)
+                }
+            }
+        });
+
         return () => {
-            setNewNotification(false);
-        }
-    }, [pathname])
+            unSub();
+        };
+    }, [auth?.uid])
     // console.log(pathname)
     return <>
         <div className='dashboard-layout hidden lg:block'>
@@ -30,7 +46,7 @@ const Dashboard: React.FC = () => {
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
                     <div className='dashboard-layout__top-nav__logo hidden lg:block'>
-                    <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='dashboard-layout__top-nav__control-icon' />
+                    <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem]' />
     
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container items-center'>

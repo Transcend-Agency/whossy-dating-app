@@ -38,7 +38,7 @@ const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing
                                 <header className='modal__body__header'>
                                     <div className='modal__body__header__left'>
                                         <button onClick={hideModal} className='modal__body__back-button'>
-                                            <img src="/assets/icons/back-arrow-black.svg" className='' />
+                                            <img src="/assets/icons/back-arrow-black.svg" className='return-button' />
                                         </button>
                                         <h3 className='modal__body__header__title'>{title}</h3>
                                     </div>
