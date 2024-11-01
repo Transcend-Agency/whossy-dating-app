@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // import UserProfileImage from "../../components/dashboard/UserProfileImage";
 import { alphabet } from "@/constants";
 import { updateUserProfile } from "@/hooks/useUser";
-import { UserPrefences } from "@/types/user";
+import { User } from "@/types/user";
 
 import HabitSearch from "@/components/dashboard/HabitSearch";
 import { useAuthStore } from "@/store/UserId";
@@ -14,7 +14,7 @@ interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
     onInterests: () => void;
-    userData: UserPrefences | undefined;
+    userData: User | undefined;
     refetchUserData: () => void;
 }
 
@@ -28,7 +28,7 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: UserPrefences) => {updateUserProfile("preferences",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: User) => {updateUserProfile("users",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
 
     useEffect(() => setMutatedData(userData?.interests || []), [userData?.interests])
 

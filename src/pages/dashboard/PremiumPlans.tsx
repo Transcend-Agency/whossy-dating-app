@@ -14,8 +14,8 @@ return (
                             className=" w-full px-[1.2rem] mr-[2.4rem] py-[1.6rem] text-[#AAAAAA] bg-gradient-to-r from-[#E3E3E3] to-white  " style={{border: '1.5px solid #AAAAAA', borderRadius: '1.2rem'}}
 
                                 >
-                                    <h1 className="text-[2.4rem] font-bold ">Whossy Premium Plan</h1>
-                                    <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">$</span><span className="text-[3.2rem] font-medium self-end">12.99</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
+                                    <h1 className="text-[2.4rem] font-bold ">Whossy Free Plan</h1>
+                                    <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">$</span><span className="text-[3.2rem] font-medium self-end">0</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
                                 </div>
                             </motion.div>}
     </AnimatePresence>

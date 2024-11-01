@@ -13,11 +13,12 @@ import { useNavigate } from 'react-router-dom';
 interface ViewProfileProps {
     onBackClick: () => void;
     userData: User;
+    loggedUserData: User;
     profile_has_been_liked?: boolean;
 }
 
 const ViewProfile: React.FC<ViewProfileProps> = (
-    { onBackClick, userData, isLiked, profile_has_been_liked }
+    { onBackClick, userData, isLiked, profile_has_been_liked, loggedUserData }
 ) => {
     const [expanded, setExpanded] = useState(true)
     const [currentImage, setCurrentImage] = useState(0)
@@ -105,7 +106,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 {profile_has_been_liked && <div className="preview-profile__action-button liked">
                     <motion.img src="/assets/icons/white-heart.png" />
                 </div>}
-                <div className="preview-profile__action-button" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                <div className="preview-profile__action-button" onClick={() =>{ navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}}>
                     <img src="/assets/icons/message-heart.svg" />
                 </div>
             </div>
