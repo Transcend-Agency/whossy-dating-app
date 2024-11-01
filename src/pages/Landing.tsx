@@ -6,6 +6,11 @@ import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from "framer-motion";
+import { text } from 'stream/consumers';
+
+interface Props {
+    text: string;
+}
 
 type LandingProps = {
 
@@ -287,14 +292,15 @@ return (
 
       {/* SECOND PAGE */}
        <section ref={secondPageRef} className="relative h-screen pt-40 lg:pt-0 w-full bg-white overflow-hidden space-y-[2rem] lg:grid lg:grid-cols-2 justify-center max-w-[122rem] items-center mx-auto">
-        <div className="text-center lg:text-start px-[2rem] space-y-[2rem] w-11/12 mx-auto">
-            <p className="text-[4.8rem] leading-[5.2rem] lg:text-[8.8rem] lg:leading-[9.2rem] ">LOVE, NO PASSPORT REQUIRED</p>
-            <p className="text-[1.8rem] leading-[2.4rem] lg:text-[2.4rem] lg:leading-[2.88rem] text-gray">Explore connections that span continents without leaving home. Our app brings you closer to people abroad, creating meaningful relationships no matter where you are.</p>
-            <button onClick={() => navigate('/auth/create-account')} className="mt-5 bg-red text-white w-[8rem] h-[3.3rem] lg:w-[9.6rem] lg:h-[4.6rem] text-[1.6rem] text-center rounded-[0.8rem]">
-            Join Now
-          </button>         
-        </div>
-        <img src={'/assets/icons/wedding.svg'} alt="wedding-image" className="w-3/4 mx-auto"/>
+            <div className="text-center lg:text-start px-[2rem] space-y-[2rem] w-11/12 mx-auto" >
+                <p className="text-[4.8rem] leading-[5.2rem] lg:text-[8.8rem] lg:leading-[9.2rem] ">LOVE, NO PASSPORT REQUIRED</p>
+                <p className="text-[1.8rem] leading-[2.4rem] lg:text-[2.4rem] lg:leading-[2.88rem] text-gray">Explore connections that span continents without leaving home. Our app brings you closer to people abroad, creating meaningful relationships no matter where you are.</p>
+                <button onClick={() => navigate('/auth/create-account')} className="mt-5 bg-red text-white w-[8rem] h-[3.3rem] lg:w-[9.6rem] lg:h-[4.6rem] text-[1.6rem] text-center rounded-[0.8rem]">
+                Join Now
+                </button>
+            </div>
+
+            <img src={'/assets/icons/wedding.svg'} alt="wedding-image" className="w-3/4 mx-auto"/>
       </section>
 
       {/* RONALD */}
