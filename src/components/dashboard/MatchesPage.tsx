@@ -20,7 +20,7 @@ const MatchesPage = () => {
 
     const { matches, loading: matchesLoading } = useSyncUserMatches(user!.uid!)
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
-    const userLikes = useSyncUserLikes(user!.uid!)
+    const { userLikes } = useSyncUserLikes(user!.uid!)
 
     const LikesEmptyState = () => {
         return (

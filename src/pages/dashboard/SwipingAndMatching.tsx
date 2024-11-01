@@ -1,7 +1,7 @@
 import { family_goal, preference } from "@/constants";
 import { db } from "@/firebase";
 import { useAuthStore } from "@/store/UserId";
-import { collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt } from "firebase/firestore";
+import { collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt, where } from "firebase/firestore";
 import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
 import { distanceBetween, geohashForLocation, geohashQueryBounds } from 'geofire-common';
 import Lottie from "lottie-react";
@@ -9,11 +9,16 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } fr
 import { useNavigate } from "react-router-dom";
 import { uid } from 'react-uid';
 import Cat from "../../Cat.json";
+import { User } from "@/types/user";
+import { getYearFromFirebaseDate } from "@/utils/date";
+import useSyncUserLikes from "@/hooks/useSyncUserLikes";
+import useSyncUserDislikes from "@/hooks/useSyncUserDislikees";
+import { set } from "firebase/database";
 
 interface ProfileCardProps {
-    profiles: number[],
+    profiles: User[],
     setProfiles: Dispatch<SetStateAction<number[]>>,
-    item: number
+    item: User,
     setActionButtonsOpacity: Dispatch<SetStateAction<MotionValue<number>>>
     setChosenActionButtonOpacity: Dispatch<SetStateAction<MotionValue<number>>>
     setChosenActionScale: Dispatch<SetStateAction<MotionValue<number>>>;
@@ -33,28 +38,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     const chosenActionScale = useTransform(x, [-160, -100, -10, 0, 10, 100, 160], [1.6, 1, 1, 1, 1, 1, 1.6])
     const nextCardOpacityValue = useTransform(x, [-160, 0, 160], [1, 0, 1])
     const { user } = useAuthStore()
-
-    const [userPreferencesData] = useState({
-        photos: ["/assets/images/dashboard/sample-person.png", "/assets/images/auth-bg/1.webp", "/assets/images/auth-bg/2.webp", "/assets/images/auth-bg/3.webp", "/assets/images/auth-bg/4.webp", "/assets/images/auth-bg/5.webp"],
-        distance: '24',
-        bio: 'My name is ronald dosunmu',
-        interests: ['Ronald', 'Ronald', 'Ronald', 'Ronald', 'Ronald'],
-        height: 0,
-        weight: 0,
-        family_goal: 1,
-        preference: 1,
-        date_of_birth: ''
-    })
-    const [userData] = useState({
-        first_name: 'Ronald'
-    })
     const profileContainer = useRef(null);
     const moreDetailsContainer = useRef(null)
     const [currentImage, setCurrentImage] = useState(0)
     const [expanded, setExpanded] = useState(false)
 
     const goToNextPost = () => {
-        if (currentImage < userPreferencesData.photos.length - 1) {
+        if (currentImage < (item.photos?.length as number) - 1) {
             setCurrentImage(value => value + 1)
         }
     }
@@ -63,6 +53,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             setCurrentImage(value => value - 1)
         }
     }
+
     const handleDragEnd = () => {
         if (Math.abs(x.get()) > 160) {
             setProfiles(profiles.filter((profileItem) => item !== profileItem))
@@ -77,8 +68,44 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             })
             nextCardOpacityValue.set(0)
             setNextCardOpacity(nextCardOpacityValue)
+            if (x.get() > 160) {
+                addLike()
+            }
+            else if (x.get() <= -160) {
+                addDislike()
+            }
         }
     }
+
+    function degreesToRadians(degrees: number): number {
+        return degrees * (Math.PI / 180);
+    }
+
+    function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        // Radius of the Earth in kilometers (use 3958.8 for miles)
+        const R = 6371.0;
+
+        // Convert latitude and longitude from degrees to radians
+        const lat1Rad = degreesToRadians(lat1);
+        const lon1Rad = degreesToRadians(lon1);
+        const lat2Rad = degreesToRadians(lat2);
+        const lon2Rad = degreesToRadians(lon2);
+
+        // Haversine formula
+        const dLat = lat2Rad - lat1Rad;
+        const dLon = lon2Rad - lon1Rad;
+
+        const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Distance in kilometers
+        const distance = R * c;
+        return distance;
+    }
+
+    const distanceBetween = haversineDistance(user?.latitude as number, user?.longitude as number, item.latitude as number, item.longitude as number);
+
 
     x.on("change", latest => {
         setActionButtonsOpacity(actionButtonsOpacity)
@@ -94,11 +121,70 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         setNextCardOpacity(nextCardOpacityValue)
     }, [profiles.length])
 
+    const addLike = async () => {
+        // const db = getFirestore();
+        try {
+            const likesRef = collection(db, 'likes');
+            const q = query(likesRef, where('liker_id', '==', user?.uid), where('liked_id', '==', item?.uid));
+            const mutualLikeSnapshot = await getDocs(q);
+
+            if (!mutualLikeSnapshot.empty) {
+                await addMatch(user?.uid as string, item?.uid as string)
+            } else {
+
+                const likeId = `${user?.uid}_${item.uid}`;  // Combine the two IDs to create a unique ID
+                await setDoc(doc(db, "likes", likeId), {
+                    uid: likeId,
+                    liker_id: user?.uid,
+                    liked_id: item.uid,
+                    timestamp: new Date().toISOString()
+                });
+
+            }
+        } catch (err) {
+            console.log('Something Went Wrong, unable to send the like.')
+        }
+    }
+
+
+    const addDislike = async () => {
+        try {
+            const dislikeId = `${user?.uid}_${item.uid}`;  // Unique ID for the dislike document
+
+            await setDoc(doc(db, "dislikes", dislikeId), {
+                uid: dislikeId,
+                disliker_id: user?.uid,
+                disliked_id: item.uid,
+                timestamp: new Date().toISOString()
+            });
+
+            console.log('User added to the dislike list');
+        } catch (err) {
+            console.log('Something went wrong, unable to add to dislike list.', err);
+        }
+    };
+
+    const addMatch = async (likerId: string, likedId: string) => {
+        const matchesRef = collection(db, 'matches');
+
+        // Ensure that each match is only stored once (user1_id < user2_id)
+        const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
+
+        // Create or update the match document
+        await setDoc(doc(matchesRef, matchId), {
+            user1_id: likerId < likedId ? likerId : likedId,
+            user2_id: likerId > likedId ? likerId : likedId,
+            timestamp: new Date().toISOString(),
+        });
+
+        console.log('Match created:', matchId);
+    };
+
     const handleShortcuts = useCallback(
         (e: Event) => {
             // @ts-expect-error type errpr
             if (e.keyCode == 32) {
-                if (currentImage < userPreferencesData.photos.length - 1) {
+                if (currentImage < item.photos?.length - 1) {
                     setCurrentImage(currentImage + 1)
                 } else {
                     setCurrentImage(0)
@@ -135,7 +221,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             {/* <div className="preview-profile__image-bg-wrapper">
 
                             </div> */}
-                            {userPreferencesData?.photos?.map((src, index) =>
+                            {item?.photos?.map((src, index) =>
                             (
                                 <motion.img key={index} animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
@@ -147,7 +233,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
                             </div>
-                            <div onClick={goToNextPost} className={`next-button ${currentImage < userPreferencesData.photos.length - 1 && 'clickable'}`}>
+                            <div onClick={goToNextPost} className={`next-button ${currentImage < (item?.photos?.length as number) - 1 && 'clickable'}`}>
                                 <button>
                                     <img src="/assets/icons/arrow-right.svg" />
                                 </button>
@@ -155,13 +241,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         </div>
                         <div className="preview-profile__profile-details">
                             <div className="status-row">
-                                <div className="active-badge">Active</div>
-                                <p className="location">~ {userPreferencesData?.distance} miles away</p>
+                                {item.status?.online && <div className="active-badge">Online</div>}
+                                <p className="location">~ {distanceBetween.toFixed(1)} miles away</p>
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
-                                    <p className="details">{userData?.first_name}, <span className="age">20</span></p>
-                                    {/* <p className="details">{userData?.first_name}, <span className="age">{userPreferencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPreferencesData.date_of_birth) : 'NIL'}</span></p> */}
+                                    <p className="details">{item?.first_name}, <span className="age">{(new Date()).getFullYear() - (getYearFromFirebaseDate(item?.date_of_birth) as number)}</span></p>
+                                    {/* <p className="details">{userData?.first_name}, <span className="age">{item?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(item.date_of_birth) : 'NIL'}</span></p> */}
                                     <img src="/assets/icons/verified.svg" />
                                 </div>
                                 <AnimatePresence>
@@ -174,13 +260,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                 </AnimatePresence>
                             </motion.div>
                             <motion.div initial={{ height: 'auto' }} animate={expanded ? { height: 0, opacity: 0 } : { height: 'auto' }} ref={moreDetailsContainer} className="more-details">
-                                {userPreferencesData?.bio && <p className="bio">
-                                    {userPreferencesData.bio.slice(0, 200)}...
+                                {item?.bio && <p className="bio">
+                                    {item.bio.slice(0, 200)}...
                                 </p>}
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" />
                                     <div className="interests">
-                                        {userPreferencesData?.interests?.slice(0, 4)?.map((item, i) => <div key={i} className="interest">{item}</div>)}
+                                        {item?.interests?.slice(0, 4)?.map((item, i) => <div key={i} className="interest">{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
@@ -189,7 +275,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {userPreferencesData.photos.map((image, index) => (
+                                {item.photos?.map((image, index) => (
                                     <div key={index} onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
@@ -204,7 +290,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         </div>
                         <div className="content-item__value">
                             {/* <img src="/assets/images/onboarding/onboarding-fun.svg" /> */}
-                            {preference[userPreferencesData?.preference as number]}
+                            {preference[item?.preference as number]}
                         </div>
                     </div>
                     <div className="content-item">
@@ -212,8 +298,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             <img src="/assets/icons/relationship-preference.svg" />
                             Bio
                         </div>
-                        {userPreferencesData?.bio && <div className="content-item__value">
-                            {userPreferencesData.bio}
+                        {item?.bio && <div className="content-item__value">
+                            {item.bio}
                         </div>}
                     </div>
                     {/* <div className="content-item">
@@ -258,7 +344,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             Interests
                         </div>
                         <div className="content-item__multi-options-container">
-                            {userPreferencesData?.interests?.map((item, i) => <div key={i} className="content-item__multi-options-container__item">
+                            {item?.interests?.map((item, i) => <div key={i} className="content-item__multi-options-container__item">
                                 {item}
                             </div>)}
                         </div>
@@ -270,24 +356,24 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Future family goals</p>
-                            {userPreferencesData?.family_goal && <p className="content-item__info__text">{family_goal[userPreferencesData?.family_goal as number]}</p>}
+                            {item?.family_goal && <p className="content-item__info__text">{family_goal[item?.family_goal as number]}</p>}
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Weight</p>
-                            {userPreferencesData?.weight ? <p className="content-item__info__text">{userPreferencesData.weight}kg</p> : <p className="content-item__info__text">Not specified</p>}
+                            {item?.weight ? <p className="content-item__info__text">{item.weight}kg</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                         <div className="content-item__info">
                             <p className="content-item__info__title">Height</p>
-                            {userPreferencesData?.height ? <p className="content-item__info__text">{userPreferencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
+                            {item?.height ? <p className="content-item__info__text">{item.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                     </div>
                     <div className="action-button">
                         <img src="/assets/icons/block.svg" />
-                        Block Stephanie
+                        Block {item.first_name}
                     </div>
                     <div className="action-button action-button--danger">
                         <img src="/assets/icons/report.svg" />
-                        Report Stephanie
+                        Report {item.first_name}
                     </div>
                 </div>
             </motion.div>}
@@ -296,7 +382,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }
 const SwipingAndMatching = () => {
     const navigate = useNavigate();
-    const [profiles, setProfiles] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    const [profiles, setProfiles] = useState<User[]>([])
     const x = useMotionValue(0)
     const controls = useAnimationControls()
     const { user } = useAuthStore()
@@ -305,6 +391,8 @@ const SwipingAndMatching = () => {
         longitude: 0
     })
     const { updateUser } = useAuthStore()
+    const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
+    const { userDislikes, loading: dislikesLoading } = useSyncUserDislikes(user!.uid!)
 
     const cancelProfile = async () => {
         await controls.start((item) => ({
@@ -369,79 +457,8 @@ const SwipingAndMatching = () => {
     const [profilesLoading, setProfilesLoading] = useState(true)
 
 
-
-    // function toRadians(degrees) {
-    //     return degrees * (Math.PI / 180);
-    // }
-
-    // // Function to convert radians to degrees
-    // function toDegrees(radians) {
-    //     return radians * (180 / Math.PI);
-    // }
-
-
-
-    // Function to generate a random location within a 50-mile radius
-    // function generateRandomLocation(latitude, longitude, radiusInMiles) {
-    //     const earthRadiusMiles = 3958.8;  // Radius of the Earth in miles
-
-    //     // Convert distance to radians
-    //     const radiusInRadians = radiusInMiles / earthRadiusMiles;
-
-    //     // Generate a random bearing (direction)
-    //     const bearing = Math.random() * 2 * Math.PI;
-
-    //     // Generate a random distance from the center point
-    //     const distance = Math.random() * radiusInRadians;
-
-    //     const newLatitude = Math.asin(Math.sin(toRadians(latitude)) * Math.cos(distance) +
-    //         Math.cos(toRadians(latitude)) * Math.sin(distance) * Math.cos(bearing));
-
-    //     const newLongitude = toRadians(longitude) + Math.atan2(
-    //         Math.sin(bearing) * Math.sin(distance) * Math.cos(toRadians(latitude)),
-    //         Math.cos(distance) - Math.sin(toRadians(latitude)) * Math.sin(newLatitude)
-    //     );
-
-    //     return {
-    //         latitude: toDegrees(newLatitude),
-    //         longitude: toDegrees(newLongitude)
-    //     };
-    // }
-
-    // async function updateAllUsersLocation(radiusInMiles = 50) {
-    //     try {
-    //         const usersCollection = collection(db, 'users');
-
-    //         // Fetch all users from Firestore
-    //         const querySnapshot = await getDocs(usersCollection);
-
-    //         // Loop through all users
-    //         querySnapshot.forEach(async (userDoc) => {
-    //             const userData = userDoc.data();
-
-    //             const { latitude, longitude } = currentLocation;
-
-    //             // Generate a random location within the radius
-    //             const randomLocation = generateRandomLocation(latitude, longitude, radiusInMiles);
-
-    //             // Update the user's location in Firestore
-    //             const userDocRef = doc(db, 'users', userData.uid);
-    //             await updateDoc(userDocRef, {
-    //                 location: new GeoPoint(randomLocation.latitude, randomLocation.longitude)
-    //             });
-
-    //             console.log(`Updated location for user: ${userDoc.id}`);
-
-    //         });
-
-    //         console.log("All user locations updated successfully!");
-
-    //     } catch (error) {
-    //         console.error("Error updating user locations: ", error);
-    //     }
-    // }
-
     const fetchUsersWithinSpecifiedRadius = async () => {
+        setProfilesLoading(true)
         const center = [user?.latitude as number, user?.longitude as number] as [number, number];
         const radiusInM = (user?.distance as number) * 1000;
         // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
@@ -461,6 +478,7 @@ const SwipingAndMatching = () => {
         const snapshots = await Promise.all(promises);
         const matchingDocs = [];
 
+        console.log(userLikes, userDislikes)
         for (const snap of snapshots) {
             for (const doc of snap.docs) {
                 const lat = doc.get('latitude');
@@ -470,11 +488,16 @@ const SwipingAndMatching = () => {
                 // accuracy, but most will match
                 const distanceInKm = distanceBetween([lat, lng], center);
                 const distanceInM = distanceInKm * 1000;
-                if (distanceInM <= radiusInM) {
-                    matchingDocs.push(doc.data());
+                if ((distanceInM <= radiusInM)
+                    && (userLikes.every(like => like.liked_id !== (doc.data() as User).uid)) && userDislikes.every(dislike => dislike.disliked_id !== (doc.data() as User).uid)
+                ) {
+                    matchingDocs.push(doc.data() as User);
                 }
+                console.log(userLikes, userDislikes)
             }
         }
+        setProfilesLoading(false)
+        setProfiles(matchingDocs)
         console.log(matchingDocs);
     }
 
@@ -494,15 +517,20 @@ const SwipingAndMatching = () => {
 
             updateUser({ location: new GeoPoint(latitude, longitude), geohash: geohashForLocation([latitude, longitude]), latitude, longitude })
 
-            fetchUsersWithinSpecifiedRadius()
+            setProfilesLoading(true)
 
-            // setProfilesShowing(true)
-            // await updateAllUsersLocation()
             console.log("Location saved successfully!");
         } catch (error) {
             console.error("Error saving location: ", error);
         }
     }
+
+    useEffect(() => {
+        if (profilesLoading && !likesLoading && !dislikesLoading) {
+            fetchUsersWithinSpecifiedRadius()
+        }
+        console.log(profilesLoading, likesLoading, dislikesLoading)
+    }, [profilesLoading, dislikesLoading, likesLoading])
 
     useEffect(() => {
         console.log("Getting location")
@@ -515,7 +543,6 @@ const SwipingAndMatching = () => {
                 })
                 // Save the location data to Firebase
                 saveUserLocationToFirebase(latitude, longitude);
-                console.log(latitude, longitude)
             }, function (error) {
                 console.error("Error getting location: ", error);
             });
@@ -533,7 +560,7 @@ const SwipingAndMatching = () => {
                 </div>
             </nav>
             <AnimatePresence mode="sync">
-                {!profilesLoading &&
+                {!profilesLoading && profiles.length !== 0 &&
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="swipe-and-match-page">
                         <motion.div
                             style={{ opacity: actionButtonsOpacity }}
@@ -559,6 +586,16 @@ const SwipingAndMatching = () => {
                         {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
                     </motion.div>
                 }
+
+                {!profilesLoading && profiles.length === 0 &&
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
+                            <img className="" src="/assets/icons/like-empty-state.png" />
+                            <p className="matches-page__empty-state-text">No New Profiles Within Your Area</p>
+                        </motion.div>
+                    </motion.div>
+                }
+
                 {profilesLoading && <motion.div className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
                     <Lottie animationData={Cat} className="h-[150px]" />
                     <p className="text-[2rem] font-medium">Finding Nearby Profiles</p>
