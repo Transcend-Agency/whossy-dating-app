@@ -15,6 +15,7 @@ import BigSnapshots from "./BigSnapshots";
 import OnboardingBackButton from "./OnboardingBackButton";
 import OnboardingPage from "./OnboardingPage";
 import SmallSnapshots from "./SmallSnapshots";
+import {User} from "@/types/user.ts";
 
 const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         setAuth({
           uid: auth.uid,
           has_completed_onboarding: updatedUserData.has_completed_onboarding,
-        }, updatedUserData);
+        }, updatedUserData as User);
 
         console.log("Updated local auth state:", updatedUserData);
         navigate('/dashboard/user-profile');

@@ -7,7 +7,7 @@ import 'react-lazy-load-image-component/src/effects/opacity.css';
 import { motion } from 'framer-motion'
 import { useMatchStore } from '@/store/Matches';
 import Skeleton from 'react-loading-skeleton';
-import {useDashboardContext} from "@/hooks/useDashBoardContext.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 
 type MatchesProps = {
     userData?: User,
@@ -26,8 +26,8 @@ const MatchesEmptyState = () => {
     )
 }
 
-export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded = true }) => {
-    const { selectedProfile, setSelectedProfile } = useDashboardContext()
+export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded}) => {
+    const { setSelectedProfile } = useDashboardStore()
 
     return (
         <>
@@ -44,10 +44,7 @@ export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded = tru
                     </figure>
                     <div className='matches__match-content'>
                         <button onClick={() => {
-                                console.log("View clicked: id", userData?.uid)
                                 setSelectedProfile(userData?.uid as string)
-                            console.log(selectedProfile)
-
                             }
                         } className='matches__view-button'>View</button>
                         <div className='matches__match-details'><span className='first-name'>{userData?.first_name}{userData?.date_of_birth ? ',' : ''}</span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_verified && <img src="/assets/icons/verified.svg" alt={``} />} </div>
@@ -71,25 +68,33 @@ const Matches: React.FC<MatchesProps> = () => {
         <div className='dashboard-layout__matches-container'>
             {!loading && matches.length == 0 && <MatchesEmptyState />}
             <>
-                {!loading && matches.length > 0 && <motion.div animate={{ opacity: loading ? 0 : 1 }} key={'matches-side'} className='dashboard-layout__matches-container__with-matches matches'>
-                    <h2 className='matches__header'>You’ve Got New Matches 🎉</h2>
-                    <h3 className='matches__sub-header'>{'See who you’ve matched with here 💖'}</h3>
-                    <div className='matches__total-matches-preview'>
-                        <div className='matches__total-matches-preview-inner'>
-                            { /* @ts-expect-error object is possibly null - it isn't */ }
-                            <img src={matches[0]?.matchedUserData?.photos[0]} alt={``} />
-                            <div className='matches__matches-count'>
-                                <span>{matches.length}</span>
-                                <img src="/assets/icons/fire-white.svg" alt={``}/>
+                {!loading && matches.length > 0 &&
+                    <motion.div key={'matches-side'} animate={{ opacity: loading ? 0 : 1 }} className='dashboard-layout__matches-container__with-matches matches'>
+                        <h2 className='matches__header'>You’ve Got New Matches 🎉</h2>
+                        <h3 className='matches__sub-header'>{'See who you’ve matched with here 💖'}</h3>
+                        <div className='matches__total-matches-preview'>
+                            <div className='matches__total-matches-preview-inner'>
+                                { /* @ts-expect-error object is possibly null - it isn't */ }
+                                <img src={matches[0]?.matchedUserData?.photos[0]} alt={``} />
+                                <div className='matches__matches-count'>
+                                    <span>{matches.length}</span>
+                                    <img src="/assets/icons/fire-white.svg" alt={``}/>
+                                </div>
+
+                                <div className='matches__matches-count z-[1000]'>
+                                    <span>{matches.length}</span>
+                                    <img src="/assets/icons/fire-white.svg" alt={``}/>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
                     {matches.map((match, index) =>
+                        <div key={index}>
                             <MatchItem
-                                key={index}
                                 isLazyLoaded={false}
                                 userData={match.matchedUserData as User}
                             />
+                        </div>
                     )}
                 </motion.div> }
                 {loading &&
