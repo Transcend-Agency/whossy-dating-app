@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getUserProfile, updateUserProfile } from "@/hooks/useUser";
-import { UserPrefences } from "@/types/user";
 import { useAuthStore } from "@/store/UserId";
 import { PhotoModal, UploadPhotoModal } from "./PhotoModal";
 import toast from "react-hot-toast";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { Oval } from "react-loader-spinner";
+import { User } from "@/types/user";
 
 interface CardProps {
   photo?: string;
@@ -22,14 +22,14 @@ const Card: React.FC<CardProps & { onDelete?: () => void; index?: number; onPres
   onPress,
 }) => {
 
-  console.log(photo)
+  // console.log(photo)
 
   return (
     <>
       <div className={`relative w-full ${colspan} ${rowspan} xs:h-[128px] ${height} cursor-pointer hover:scale-[0.95] transition ease-in-out duration-200`}
         onClick={onPress}
       >
-        <img className="size-[18px] absolute  -top-3 cursor-pointer" src={photo ? "/assets/icons/more.png" : "/assets/icons/camera-gray.png"} alt="" />
+        <img className="size-[18px] object-cover absolute  -top-3 cursor-pointer" src={photo ? "/assets/icons/more.png" : "/assets/icons/camera-gray.png"} alt="" />
         {photo ? (<img className={`object-cover xs:h-[128px] ${height} w-full rounded-2xl`} src={photo} alt="" />
         ) : (
           <div className={`bg-white  w-full xs:h-[128px] ${height} rounded-2xl  `} />
@@ -50,8 +50,8 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
 
   const [isUpdating, setIsUpdating] = useState(false)
 
-  const fetchUserPhotos = async () => { const data = await getUserProfile("preferences", auth?.uid as string) as UserPrefences; setPhoto(data?.photos as string[] || []) }
-  const updateUserPhotos = (s: string[]) => { updateUserProfile("preferences", auth?.uid as string, () => { fetchUserPhotos(); refetchUserData(); setIsUpdating(false) }, { photos: s }) }
+  const fetchUserPhotos = async () => { const data = await getUserProfile("users", auth?.uid as string) as User; setPhoto(data?.photos as string[] || []) }
+  const updateUserPhotos = (s: string[]) => { updateUserProfile("users", auth?.uid as string, () => { fetchUserPhotos(); refetchUserData(); setIsUpdating(false) }, { photos: s }) }
 
   useEffect(() => { fetchUserPhotos() }, [])
   useEffect(() => { setPhoto(photo); setMutatedPhoto(photo) }, [photo])
@@ -104,6 +104,7 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
       })
     );
     updateUserPhotos(newMutatedPhotos);
+    console.log(newMutatedPhotos);
   };
 
   // const uploadImage = (file: File, i: number) => {
@@ -138,25 +139,12 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
     <UploadPhotoModal showing={photoModalShowing === 'photo-four-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => {handleButtonClick(); setPhotoModalShowing('hidden')}}/>
     <UploadPhotoModal showing={photoModalShowing === 'photo-five-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => {handleButtonClick(); setPhotoModalShowing('hidden')}}/>
     <UploadPhotoModal showing={photoModalShowing === 'photo-six-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => {handleButtonClick(); setPhotoModalShowing('hidden')}}/>
-      <PhotoModal showing={photoModalShowing === 'photo-one'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[0]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <PhotoModal showing={photoModalShowing === 'photo-two'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[1]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <PhotoModal showing={photoModalShowing === 'photo-three'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[2]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <PhotoModal showing={photoModalShowing === 'photo-four'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[3]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <PhotoModal showing={photoModalShowing === 'photo-five'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[4]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <PhotoModal showing={photoModalShowing === 'photo-six'} onModalClose={() => setPhotoModalShowing('hidden')} deleteImage={() => { const updatedPhotos = mutatedPhoto.filter(item => item !== mutatedPhoto[5]); setMutatedPhoto(updatedPhotos); setPhotoModalShowing('hidden') }} changeImage={() => { setPhotoModalShowing('hidden'); handleButtonClick() }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-one-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-two-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-three-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-four-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-five-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-      <UploadPhotoModal showing={photoModalShowing === 'photo-six-first-upload'} onModalClose={() => setPhotoModalShowing('hidden')} changeImage={() => { handleButtonClick(); setPhotoModalShowing('hidden') }} />
-
 
 
       <section className="bg-[#F6F6F6] py-[1.2rem] px-[1.6rem] flex flex-col">
         <div className="grid grid-cols-6 grid-rows-2 gap-4">
           <input ref={fileInputRef} accept="image/*" type="file" className="hidden" onChange={handleImageUpload} />
-          <Card photo={mutatedPhoto[0] || ''} index={1} colspan="col-span-3 xs:col-span-2 " rowspan="row-span-2 xs:row-span-1" height="h-[184px]" onPress={() => { if (mutatedPhoto[0] | '') { setPhotoModalShowing('photo-one') } else { setPhotoModalShowing('photo-one-first-upload') } }} onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[0]); updateUserPhotos(updatedPhotos); }} />
+          <Card photo={mutatedPhoto[0] || ''} index={1} colspan="col-span-3 xs:col-span-2 " rowspan="row-span-2 xs:row-span-1" height="h-[184px]" onPress={() => { if (mutatedPhoto[0]) { setPhotoModalShowing('photo-one') } else { setPhotoModalShowing('photo-one-first-upload') } }} onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[0]); updateUserPhotos(updatedPhotos); }} />
           <Card photo={mutatedPhoto[1]} index={2} colspan="col-span-3 xs:col-span-2 " onPress={() => { if (mutatedPhoto[1]) { setPhotoModalShowing('photo-two') } else { setPhotoModalShowing('photo-two-first-upload') } }} height="h-[88px]" onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[1]); updateUserPhotos(updatedPhotos); }} />
           <Card photo={mutatedPhoto[2]} index={3} colspan="col-span-3 xs:col-span-2 " onPress={() => { if (mutatedPhoto[2]) { setPhotoModalShowing('photo-three') } else { setPhotoModalShowing('photo-three-first-upload') } }} height="h-[88px]" onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[2]); updateUserPhotos(updatedPhotos); }} />
           <Card photo={mutatedPhoto[3]} index={4} colspan="col-span-2" height="h-[88px]" onPress={() => { if (mutatedPhoto[3]) { setPhotoModalShowing('photo-four') } else { setPhotoModalShowing('photo-four-first-upload') } }} onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[3]); updateUserPhotos(updatedPhotos); }} />

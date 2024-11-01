@@ -11,7 +11,7 @@ import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipP
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
 import { preference, religion } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
-import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
+import { getAdvancedSearchPreferences, getUserProfile, updateAdvancedSearchPreferences } from '@/hooks/useUser';
 import useLikesAndMatchesStore from '@/store/LikesAndMatches';
 import { useAuthStore } from '@/store/UserId';
 import { Like } from '@/types/likingAndMatching';
@@ -307,50 +307,17 @@ const Explore = () => {
         await updateAdvancedSearchPreferences(user?.uid as string, () => { hideModal(); refetchSearchPreferences() }, s)
     }
 
-    const addLike = async () => {
-        // const db = getFirestore();
-        try {
-            const likesRef = collection(db, 'likes');
-            const q = query(likesRef, where('liker_id', '==', userData?.uid), where('liked_id', '==', user?.uid));
-            const mutualLikeSnapshot = await getDocs(q);
+    const [userData, setUserData] = useState<User>();
 
-            console.log(mutualLikeSnapshot)
-
-            if (!mutualLikeSnapshot.empty) {
-                await addMatch(user?.uid, userData.uid)
-            } else {
-                const likeId = `${user?.uid}_${userData.uid}`;  // Combine the two IDs to create a unique ID
-                await setDoc(doc(db, "likes", likeId), {
-                    uid: likeId,
-                    liker_id: user?.uid,
-                    liked_id: userData.uid,
-                    timestamp: new Date().toISOString()
-                });
-            }
-        } catch (err) {
-            console.log(err)
-        }
+    const fetchUserData = async () => {
+        const data = await getUserProfile("users", auth?.uid as string) as User;
+        setUserData(data);
     }
-
-    const addMatch = async (likerId: string, likedId: string) => {
-        const matchesRef = collection(db, 'matches');
-
-        // Ensure that each match is only stored once (user1_id < user2_id)
-        const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
-
-        // Create or update the match document
-        await setDoc(doc(matchesRef, matchId), {
-            user1_id: likerId < likedId ? likerId : likedId,
-            user2_id: likerId > likedId ? likerId : likedId,
-            timestamp: new Date().toISOString(),
-        });
-
-        console.log('Match created:', matchId);
-    };
 
     useEffect(() => {
         fetchLikes()
         fetchSearchPreferences()
+        fetchUserData()
         console.log(selectedOption)
         switch (selectedOption) {
             case 'Discover':

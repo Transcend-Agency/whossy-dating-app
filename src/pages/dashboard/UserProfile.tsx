@@ -18,11 +18,23 @@ import SubscriptionPlans from './SubscriptionPlans';
 import Skeleton from 'react-loading-skeleton';
 import Circle from '@/components/dashboard/Circle';
 import { checkUserProfileCompletion } from '@/constants';
+import ProfileBoostModal from '@/components/dashboard/ProfileBoostModal';
+import AddCredits from './AddCredits';
+
 
 
 const UserProfile = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
+    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
     const [userData, setUserData] = useState<User>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
@@ -45,15 +57,24 @@ const UserProfile = () => {
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
 
+    console.log(activePage)
+
     return <>
+        
         <DashboardPageContainer>
+        
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
                 <div className='user-profile__container flex flex-col'>
-                    <div className='flex justify-end gap-x-4'>
-                        <button onClick={() => setActivePage('profile-settings')} className='user-profile__settings-button'><img src="/assets/images/dashboard/settings.svg" /></button>
-                        <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" /></button>
+                    <div className='flex justify-between gap-x-4'>
+                        <div>
+                            <img src={"/assets/icons/whossy-logo.svg"} alt="whossy logo" className='lg:hidden w-[12.4rem] h-[3.4rem]' />
+                        </div>
+                        <div className='flex justify-end gap-x-4'>
+                            <button onClick={() => setActivePage('profile-settings')} className='user-profile__settings-button'><img src="/assets/images/dashboard/settings.svg" /></button>
+                            <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" /></button>
+                        </div>
                     </div>
-                    <div className='self-center relative'>
+                    <div className='self-center relative '>
                         <Circle percentage={completed ? Math.ceil(completed / 19 * 100) : 0} imageUrl={userData?.photos && Array.isArray(userData.photos) && userData.photos.length > 0 ? userData.photos[0] : null} />
                         <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button '>
                             <img src="/assets/icons/update-profile.svg" />
@@ -83,18 +104,20 @@ const UserProfile = () => {
                         <img src="/assets/icons/safety-guide.svg" />
                         <p>Whossy Safety Guide</p>
                     </div>
-                    <section className='user-profile__credit-buttons'>
-                        <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
-                        <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
-                    </section>
+                    {/* <section className='user-profile__credit-buttons'>
+                        <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
+                        <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
+                        <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                    </section> */}
 
                 </div>
                 <section className='user-profile__plans'>
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0' benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']} type='free' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('free') }} />
-                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium') }} />
+                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='free' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('free') }} />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0 ' benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']}  type='premium' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium') }} />
                 </section>
 
             </motion.div>
+            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} />
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{ incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.status?.online, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge }} refetchUserData={refetchUserData} />
