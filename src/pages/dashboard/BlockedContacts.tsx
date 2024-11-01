@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { arrayRemove, getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuthStore } from "@/store/UserId.tsx";
-import { User } from '@/types/user';
 import toast from "react-hot-toast";
 
 interface BlockedContactsProps {
@@ -63,7 +62,7 @@ const BlockedContacts: React.FC<BlockedContactsProps> = ({ activePage, closePage
 							const blockedUserSnapshot = await getDoc(blockedUserRef);
 
 							if (blockedUserSnapshot.exists()) {
-								const userData: User = blockedUserSnapshot.data();
+								const userData = blockedUserSnapshot.data();
 								return {
 									id: blockedId,
 									firstName: userData.first_name,

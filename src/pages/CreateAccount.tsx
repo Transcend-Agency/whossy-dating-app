@@ -65,7 +65,7 @@ const CreateAccount = () => {
             setUserId(user.uid);
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
-                auth_provider: authProvider == 'email' && "local",
+                auth_provider: authProvider == 'email' ? "local" : authProvider,
                 email: user.email,
                 first_name: firstName || "",
                 last_name: lastName || "",

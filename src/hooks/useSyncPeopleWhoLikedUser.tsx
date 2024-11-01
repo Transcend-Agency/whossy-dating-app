@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import { db } from '../firebase'; // import your Firebase config
+import { db } from '@/firebase'; // import your Firebase config
 import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore';
 import { Like, PopulatedLikeData } from '../types/likingAndMatching'; // import your Like interface
 import { useAuthStore } from '@/store/UserId';
-import { User } from '@/types/user';
-
-
 
 function useSyncPeopleWhoLikedUser() {
     const { user } = useAuthStore()
@@ -43,8 +40,6 @@ function useSyncPeopleWhoLikedUser() {
             setPeopleWhoLiked(likes); // Sync the state with the latest data
             setLoading(false);         // Set loading to false after fetching
         });
-
-        console.log(peopleWhoLiked)
 
         // Cleanup the listener on component unmount
         return () => unsubscribe();
