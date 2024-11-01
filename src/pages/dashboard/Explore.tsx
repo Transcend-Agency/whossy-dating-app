@@ -11,7 +11,7 @@ import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipP
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
 import { preference, religion } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
-import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
+import { getAdvancedSearchPreferences, getUserProfile, updateAdvancedSearchPreferences } from '@/hooks/useUser';
 import useLikesAndMatchesStore from '@/store/LikesAndMatches';
 import { useAuthStore } from '@/store/UserId';
 import { Like } from '@/types/likingAndMatching';
@@ -304,9 +304,17 @@ const Explore = () => {
         await updateAdvancedSearchPreferences(user?.uid as string, () => { hideModal(); refetchSearchPreferences() }, s)
     }
 
+    const [userData, setUserData] = useState<User>();
+
+    const fetchUserData = async () => {
+        const data = await getUserProfile("users", auth?.uid as string) as User;
+        setUserData(data);
+    }
+
     useEffect(() => {
         fetchLikes()
         fetchSearchPreferences()
+        fetchUserData()
         console.log(selectedOption)
         switch (selectedOption) {
             case 'Discover':

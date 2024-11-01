@@ -56,13 +56,13 @@ export const useChatStore = create<
 );
 
 interface ChatId {
-    chatId: string | null,
+    chatId: string,
     setChatId: (chatId: string) => void;
     reset: () => void;
 }
 
 const initialStateChatId = {
-    chatId: null,
+    chatId: 'nil',
 };
 
 export const useChatIdStore = create<
@@ -73,7 +73,7 @@ export const useChatIdStore = create<
     (set) => ({
         ...initialStateChatId,
         setChatId: (id) =>  set({chatId: id}),
-        reset: () => set(initialState),
+        reset: () => set(initialStateChatId),
     }),
     {
       name: "chat__id",
