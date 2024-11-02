@@ -134,8 +134,6 @@ const ChatPage = () => {
     fetchLoggedUserData().catch(err => console.error(err));
   })
 
-  const [chatParticipants, setChatParticipants] = useState<string>('');
-
   const updateChatId = (newChatId: string) => {
     setChatId(newChatId);
   };

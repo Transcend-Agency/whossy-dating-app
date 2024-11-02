@@ -6,7 +6,7 @@ type ProfilePlanProps = {
     benefits: string[];
     type: string;
     gradientSrc: string;
-    goToPlansPage: () => void;
+    goToPlansPage?: () => void;
 };
 
 const ProfilePlan: React.FC<ProfilePlanProps> = ({ planTitle, type, pricePerMonth, benefits, gradientSrc, goToPlansPage }) => {

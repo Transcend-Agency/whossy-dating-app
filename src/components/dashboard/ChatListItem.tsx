@@ -11,7 +11,7 @@ interface ChatListItemProps {
     onlineStatus?: boolean;
     openChat?: () => void;
     chatInterface?: boolean;
-    userData: User;
+    userData?: User;
 }
 
 export const ChatListItem: React.FC<ChatListItemProps> = ({profileImage, contactName, message, messageStatus, openChat, onlineStatus, chatInterface, userData}) => {

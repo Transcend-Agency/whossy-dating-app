@@ -23,7 +23,7 @@ interface SelectedChatProps {
     userData: User;
 }
 
-const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId, userData }) => {
+const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId }) => {
     const [showActionsModal, setShowActionsModal] = useState<'action' | 'hidden'>("hidden");
     const [text, setText] = useState<string>('');
     const [openEmoji, setOpenEmoji] = useState(false);

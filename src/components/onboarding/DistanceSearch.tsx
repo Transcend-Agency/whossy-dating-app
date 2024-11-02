@@ -1,7 +1,6 @@
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
 import { OnboardingProps } from "@/types/onboarding.ts";
-import "../ui/styles.css";
 import Slider from "../ui/Slider";
 import OnboardingPage from "./OnboardingPage";
 import React from "react";
