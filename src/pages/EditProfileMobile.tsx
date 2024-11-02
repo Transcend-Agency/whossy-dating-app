@@ -32,7 +32,10 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
     return (
         <>
 
-            <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) => {updateUser({first_name, last_name})}}/>
+            <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) =>
+
+            { // @ts-expect-error quick fix
+                updateUser({first_name, last_name})}}/>
             <GenderSettingsModal showing={settingsModalShowing === 'gender'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({gender})}/>
             <EmailSettingsModal showing={settingsModalShowing === 'email'} hideModal={hideModal} />
             <PhoneNumberSettingsModal showing={settingsModalShowing === 'phone'} hideModal={hideModal} phone_number={userData?.phone_number as string} handleSave={(phone_number) => updateUser({phone_number})}/>

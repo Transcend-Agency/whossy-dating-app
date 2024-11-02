@@ -10,6 +10,7 @@ import { User } from '@/types/user';
 import { Chat } from '@/types/chat';
 import { useChatIdStore } from '@/store/ChatStore';
 import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
+import { getUserProfile } from '@/hooks/useUser';
 
 interface ChatDataWithUserData extends Chat {
   user: User;
@@ -24,12 +25,22 @@ const ChatPage = () => {
   const {auth} = useAuthStore();
   const currentUserId= auth?.uid as string;
 
+  const [userData, setUserData] = useState<User | null>(null);
+
+  const fetchLoggedUserData = async () => {
+    const data = await getUserProfile("users", auth?.uid as string) as User;
+    setUserData(data);
+}
+
+  // const [allChats, setAllChats] = useState<string[]>([]);
   const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
 
   const fetchUserData = async (userId: string) => {
     const userDocRef = doc(db, "users", userId);
     const userDocSnap = await getDoc(userDocRef);
-    if (userDocSnap.exists()) {  return userDocSnap.data();} 
+    if (userDocSnap.exists()) {
+      return userDocSnap.data();
+    }
     else {  console.log(`No such user document for user_id: ${userId}`); return null;}
   };
 
@@ -119,10 +130,17 @@ const ChatPage = () => {
     }
   }, [recipientUserId])
 
+  useEffect(() => {
+    fetchLoggedUserData().catch(err => console.error(err));
+  })
+
+  const [chatParticipants, setChatParticipants] = useState<string>('');
 
   const updateChatId = (newChatId: string) => {
     setChatId(newChatId);
   };
+
+  // const [isLoadingSelectedChat, setIsLoadingSelectedChat] = useState<boolean>(false);
 
     return (
     <>
@@ -152,7 +170,7 @@ const ChatPage = () => {
                   allChats.map((chat, i) => (
                     chat ? <>
                             <ChatListItem key={i}
-                               messageStatus={chat.status === "sent" ? chat.lastSenderId !== auth?.uid : false}
+                              userData={userData as User} messageStatus={chat.status === "sent" ? chat.lastSenderId !== auth?.uid : false}
                                onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage}
                                profileImage={ chat.user.photos! && chat.user.photos[0] }
                                openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
@@ -166,7 +184,7 @@ const ChatPage = () => {
             </motion.div>
             <SelectedChat activePage={activePage}
                           closePage={() => {setActivePage('chats');navigate('/dashboard/chat')}}
-                          updateChatId={updateChatId}/>
+                          updateChatId={updateChatId} userData={userData as User}/>
 
         </DashboardPageContainer>
     </>)

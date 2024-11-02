@@ -62,10 +62,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const { fetchMatches } = useMatchStore()
 
     const addLike = async () => {
-        if (!user || !userData) {
-            toast.error("User data is not available");
-            return;
-        }
+        // const db = getFirestore();
         try {
             const likesRef = collection(db, 'likes');
             const likeId = `${user.uid}_${userData.uid}`;
@@ -357,13 +354,16 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 <p className="content-item__info__title">Gender</p>
                                 <p className="content-item__info__text">{userData.gender}</p>
                             </div>
-
-                            { /* @ts-expect-error education is undefined*/ }
-                            {![null, undefined].includes(userData.education as number) &&
-                                <div className="content-item__info">
-                                    <p className="content-item__info__title">Education</p>
-                                    <p className="content-item__info__text">{education[userData?.education as number]}</p>
-                                </div>}
+                            {![null, undefined].includes(userData.education as unknown as any) && <div className="content-item__info">
+                                <p className="content-item__info__title">Education</p>
+                                {/* {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>} */}
+                                <p className="content-item__info__text">{education[userData.education]}</p>
+                            </div>}
+                            {![null, undefined].includes(userData.religion as unknown as any) && <div className="content-item__info">
+                                <p className="content-item__info__title">Religion</p>
+                                {/* {userPrefencesData?.height ? <p className="content-item__info__text">{userPrefencesData.height}cm</p> : <p className="content-item__info__text">Not specified</p>} */}
+                                <p className="content-item__info__text">{religion[userData.religion]}</p>
+                            </div>}
                         </div>
                         {([userData.family_goal, userData.weight, userData.height].some(item => item !== null && item !== undefined)) &&
                             <div className="content-item">
