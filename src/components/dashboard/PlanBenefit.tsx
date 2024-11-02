@@ -36,7 +36,13 @@ export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe})
               <h1 className="text-[1.8rem] font-bold ">{benefit.title}</h1>
               <div className="flex justify-between items-center"><p className="text-[1.6rem] text-[#8A8A8E] font-medium">✅ {benefit.desc}</p> <span className="bg-gradient-to-b from-[#FF5C00] to-[#F0174B] text-white rounded-full px-[1rem] py-[0.5rem]">Likes</span> </div>
           </div>)}
-          <div  className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#FF5C00] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={() => { !isPremiumUser ? onSubscribe : toast.error('You are already subscribed')}}>{isPremiumUser ? 'Unsubscribe' : 'Subscribe'}</button></div>
+          <div  className="sticky bottom-0 bg-white w-full py-[2.4rem] px-[3.2rem]"><button className="bg-[#FF5C00] w-full py-[2rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={() => {
+             if (!isPremiumUser) {
+              onSubscribe && onSubscribe()
+            } else  {
+              toast.error('You are already subscribed')
+            }
+            }}>{isPremiumUser ? 'Unsubscribe' : 'Subscribe'}</button></div>
       </motion.div>}
     </AnimatePresence>
   )
