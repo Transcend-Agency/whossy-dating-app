@@ -10,6 +10,7 @@ import { User } from '@/types/user';
 import { Chat } from '@/types/chat';
 import { useChatIdStore } from '@/store/ChatStore';
 import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
+import { getUserProfile } from '@/hooks/useUser';
 
 // type UserProfileProps = {};
 
@@ -28,6 +29,11 @@ const ChatPage = () => {
 
   const [userData, setUserData] = useState<User | null>(null);
 
+  const fetchLoggedUserData = async () => {
+    const data = await getUserProfile("users", auth?.uid as string) as User;
+    setUserData(data);
+}
+
   // const [allChats, setAllChats] = useState<string[]>([]);
   const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
 
@@ -36,7 +42,6 @@ const ChatPage = () => {
     const userDocRef = doc(db, "users", userId);
     const userDocSnap = await getDoc(userDocRef);
     if (userDocSnap.exists()) { 
-      setUserData(userDocSnap.data() as User);
       return userDocSnap.data();
     } 
     else {  console.log(`No such user document for user_id: ${userId}`); return null;}
@@ -128,6 +133,10 @@ const ChatPage = () => {
     }
   }, [reciepientUserId])
 
+  useEffect(() => {
+    fetchLoggedUserData();
+  })
+
 
   const [chatParticipants, setChatParticipants] = useState<string>('');
 
@@ -135,7 +144,7 @@ const ChatPage = () => {
     setChatId(newChatId);
   };
 
-  const [isLoadingSelectedChat, setIsLoadingSelectedChat] = useState<boolean>(false);
+  // const [isLoadingSelectedChat, setIsLoadingSelectedChat] = useState<boolean>(false);
 
     return (
     <>
