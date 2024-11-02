@@ -58,14 +58,15 @@ const plans = [
     name: "Free Plan",
     price: 0,
     benefits: ["Benefits 1", "Benefits 2", "Benefits 3"],
-    color: "#FF5C00",
-    shade: "#FFE2D2",
+    color: "#AAAAAA",
+    shade: "#F0F0F0",
   },
   {
     name: "Premium Plan",
     price: 12.99,
     benefits: ["Benefits 1", "Benefits 2", "Benefits 3"],
-    color: "#AAAAAA",
-    shade: "#F0F0F0",
+
+    color: "#FF5C00",
+    shade: "#FFE2D2",
   },
 ];

@@ -126,7 +126,7 @@ const MatchesPage = () => {
                                                 </div>
                                             </div>
                                             <div className="matches-subscribe-cta__image">
-                                                <img src="/assets/icons/fire.svg" alt={``} />
+                                                <img src="/assets/icons/fire.svg" />
                                             </div>
                                         </div>
                                     </div>

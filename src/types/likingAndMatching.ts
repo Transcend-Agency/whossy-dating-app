@@ -6,6 +6,12 @@ export interface Like {
     timestamp: string;
 }
 
+export interface Dislike {
+    disliker_id: string;
+    disliked_id: string;
+    timestamp: string;
+}
+
 export interface Match {
     user1_id: string,
     user2_id: string,

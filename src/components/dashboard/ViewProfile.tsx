@@ -8,20 +8,21 @@ import React, {useEffect, useRef, useState} from "react";
 import { db } from "@/firebase";
 import DashboardPageContainer from "./DashboardPageContainer";
 import toast from 'react-hot-toast';
-import {useNavigate} from 'react-router-dom';
 import {useMatchStore} from "@/store/Matches.tsx";
 import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
+import { useNavigate } from 'react-router-dom';
+import ReportModal from "@/components/dashboard/ReportModal.tsx";
 
 interface ViewProfileProps {
     onBackClick: () => void;
     userData: User;
-    profile_has_been_liked?: boolean;
+    loggedUserData?: User;
     onBlockChange: () => void;
 }
 
 const ViewProfile: React.FC<ViewProfileProps> = (
-    {onBackClick, userData, onBlockChange}
+    {onBackClick, userData, onBlockChange, loggedUserData }
 ) => {
     const [expanded, setExpanded] = useState(true)
     const [isBlocked, setIsBlocked] = useState(false)
@@ -30,9 +31,12 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const moreDetailsContainer = useRef(null)
     const likeControls = useAnimationControls()
     const navigate = useNavigate();
-    const {user} = useAuthStore()
+    const { user } = useAuthStore()
     const userLikes = useSyncUserLikes(user!.uid!)
     const {selectedProfile} = useDashboardStore()
+    const [openModal, setOpenModal] = useState(false);
+
+    console.log(userData)
 
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
@@ -181,8 +185,9 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const hasUserBeenLiked = () => {
         return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
-
     return (
+        <>
+        <ReportModal show={openModal} onCloseModal={() => setOpenModal(false)} />
         <DashboardPageContainer className="preview-profile preview-profile--view-profile">
             <div className="preview-profile__action-buttons">
                 {!hasUserBeenLiked() &&
@@ -195,10 +200,10 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <motion.img src="/assets/icons/white-heart.png"/>
                     </div>
                 }
-                <div className="preview-profile__action-button"
-                     onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                {loggedUserData?.isPremium && <div className="preview-profile__action-button"
+                      onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                     <img src="/assets/icons/message-heart.svg" alt={``}/>
-                </div>
+                </div>}
             </div>
             <div className="preview-profile__parent-container">
                 <motion.div
@@ -255,10 +260,9 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </div>
                             <motion.div initial={{marginBottom: '2.8rem'}} className="name-row">
                                 <div className="left">
-                                    <p className="details">{userData.first_name}, <span
-                                        className="age">{(new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth)}</span>
-                                    </p>
-                                    {userData.is_verified && <img src="/assets/icons/verified.svg" alt={``}/>}
+                                    {/* <p className="details">{userData?.first_name}, <span className="age">{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span></p> */}
+                                    <p className="details">{userData.first_name}, <span className="age">{(new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth)}</span></p>
+                                    {userData.is_verified && <img src="/assets/icons/verified.svg" />}
                                 </div>
                                 {/* <AnimatePresence>
                                 {expanded && <motion.img exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -413,15 +417,16 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </div>
                         }
 
-                        <div className="action-button action-button--danger">
+                        <button className="action-button action-button--danger" onClick={() => setOpenModal(true)}>
                         <img src="/assets/icons/report.svg" alt={``}/>
                             Report {userData.first_name}
-                        </div>
+                        </button>
                     </div>
                 </motion.div>
 
             </div>
         </DashboardPageContainer>
+        </>
     )
 }
 export default ViewProfile;
