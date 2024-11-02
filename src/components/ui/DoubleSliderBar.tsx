@@ -1,5 +1,5 @@
 import * as Slide from "@radix-ui/react-slider";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface DoubleSliderBarProps {
   thumbColor?: string;

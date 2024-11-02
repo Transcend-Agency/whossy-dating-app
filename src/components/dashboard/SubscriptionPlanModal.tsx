@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DashboardSettingsModal from './DashboardSettingsModal'
 import { PaystackButton } from 'react-paystack'
 import StripeCheckoutForm from './StripeCheckoutForm';
@@ -10,14 +10,14 @@ import { Oval } from 'react-loader-spinner';
 
 
 interface SubscriptionPlanModalProps {
-  show: boolean, hide: () => void; advance: (val: 'stripe-payment' | 'payment-detail') => void;
+  show: boolean;
+  hide: () => void;
+  advance: (val: 'stripe-payment' | 'payment-detail') => void;
 }
 
 type UserDetails = {name: string, email: string, phone: string, amount: number}
 
-
-
-export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, advance}) => {
+export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide }) => {
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'naira' | 'usd'>('naira');
 
@@ -54,7 +54,6 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
             <p className='text-center w-full'>Pay using USD (Stripe)</p>
         </div>
         <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={
-          // () => advance(selectedPaymentMethod === 'naira' ? 'payment-detail' : 'stripe-payment')
           handlePayment
         }>{!isLoading ? 'Pay - $12' : <Oval color="#FFFFFF" secondaryColor="#FFFFFF" width={20} height={20} />}</button>
       </div>

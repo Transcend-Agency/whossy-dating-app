@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 
 type OnboardingPageProps = {
   children: React.ReactNode | React.ReactNode[];
-  // className: string;
-  // key?: string;
 };
 
 const OnboardingPage: React.FC<OnboardingPageProps> = ({ children }) => {

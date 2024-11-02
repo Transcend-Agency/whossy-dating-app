@@ -1,5 +1,5 @@
 import Navbar from "@/components/landing/Navbar";
-import { useState } from "react";
+import React, { useState } from "react";
 import couplePic from "../../public/assets/icons/contact.svg";
 import Footer from "@/components/landing/Footer";
 

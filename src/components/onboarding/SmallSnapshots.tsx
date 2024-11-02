@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { PictureData } from "../../store/onboarding/usePictureStore";
+import React, { useRef, useState } from "react";
+import { PictureData } from "@/store/onboarding/usePictureStore.ts";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -46,9 +46,9 @@ const Image: React.FC<ImageProps> = ({ name }) => {
 
   return (
     <figure className="relative mb-10">
-      {photos[name] ? (<img className="absolute -top-[1rem] size-[2.5rem] cursor-pointer active:scale-[0.95] duration-200 ease-in-out" src="/assets/images/onboarding/menu.png" onClick={() => setOpenModal(true)}/>) 
+      {photos[name] ? (<img className="absolute -top-[1rem] size-[2.5rem] cursor-pointer active:scale-[0.95] duration-200 ease-in-out" src="/assets/images/onboarding/menu.png" onClick={() => setOpenModal(true)} alt={``}/>)
       : 
-      (<img className="absolute -top-[1rem] size-[2.5rem] cursor-pointer active:scale-[0.95] duration-200 ease-in-out" src="/assets/icons/camera-gray.png" onClick={handleClick} />)}
+      (<img className="absolute -top-[1rem] size-[2.5rem] cursor-pointer active:scale-[0.95] duration-200 ease-in-out" src="/assets/icons/camera-gray.png" alt={``} onClick={handleClick} />)}
         <AnimatePresence>
       {openModal && (
           <Modal onClose={() => setOpenModal(false)}>

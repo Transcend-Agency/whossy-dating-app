@@ -11,8 +11,6 @@ import { Chat } from '@/types/chat';
 import { useChatIdStore } from '@/store/ChatStore';
 import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
 
-// type UserProfileProps = {};
-
 interface ChatDataWithUserData extends Chat {
   user: User;
 }
@@ -26,9 +24,7 @@ const ChatPage = () => {
   const {auth} = useAuthStore();
   const currentUserId= auth?.uid as string;
 
-  // const [allChats, setAllChats] = useState<string[]>([]);
   const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
-
 
   const fetchUserData = async (userId: string) => {
     const userDocRef = doc(db, "users", userId);
@@ -113,24 +109,20 @@ const ChatPage = () => {
 }, [])
   
   const queryParams = new URLSearchParams(location.search);
-  const reciepientUserId = queryParams.get('recipient-user-id');
+  const recipientUserId = queryParams.get('recipient-user-id');
 
   useEffect(() => {
-    if (reciepientUserId) {
+    if (recipientUserId) {
       setActivePage('selected-chat');
     } else {
       setActivePage('chats');
     }
-  }, [reciepientUserId])
+  }, [recipientUserId])
 
-
-  const [chatParticipants, setChatParticipants] = useState<string>('');
 
   const updateChatId = (newChatId: string) => {
     setChatId(newChatId);
   };
-
-  const [isLoadingSelectedChat, setIsLoadingSelectedChat] = useState<boolean>(false);
 
     return (
     <>
@@ -158,8 +150,12 @@ const ChatPage = () => {
 
                   {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
                   allChats.map((chat, i) => (
-                    chat ? <><ChatListItem key={i} messageStatus={chat.status === "sent" ? chat.lastSenderId === auth?.uid ? false : true : false} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
-                    openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
+                    chat ? <>
+                            <ChatListItem key={i}
+                               messageStatus={chat.status === "sent" ? chat.lastSenderId !== auth?.uid : false}
+                               onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage}
+                               profileImage={ chat.user.photos! && chat.user.photos[0] }
+                               openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
                     }}
                      />
                       </>
@@ -168,7 +164,9 @@ const ChatPage = () => {
                    : Array.from({ length: 7 }).map(() => <ChatListItemLoading />)}
                 </section>
             </motion.div>
-            <SelectedChat activePage={activePage} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}} chatId={chatParticipants} updateChatId={updateChatId}/>
+            <SelectedChat activePage={activePage}
+                          closePage={() => {setActivePage('chats');navigate('/dashboard/chat')}}
+                          updateChatId={updateChatId}/>
 
         </DashboardPageContainer>
     </>)

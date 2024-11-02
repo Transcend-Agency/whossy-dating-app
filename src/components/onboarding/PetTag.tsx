@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { useOnboardingStore } from "../../store/useOnboardingStore";
 import { useOnboardingStore } from "../../store/OnboardingStore";
 import { pets } from "@/constants";
 
@@ -10,7 +9,6 @@ interface PetTagProps {
 
 const PetTag: React.FC<PetTagProps> = ({ text, index }) => {
   const [selected, setSelected] = useState<string | null>();
-  // const {interests,addInterests, removeInterests} = useOnboardingStore();
 
   const { "onboarding-data": data, updateOnboardingData } = useOnboardingStore();
 

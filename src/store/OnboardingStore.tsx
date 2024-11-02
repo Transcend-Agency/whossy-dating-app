@@ -10,7 +10,6 @@ interface OnboardingData {
   education?: number | null;
   "drinking-preference"?: number | null;
   "smoking-preference"?: number | null;
-  // pets?: string[];
   pets?: null | number;
   "workout-preference"?: number | null;
   "short-introduction"?: string;

@@ -1,9 +1,6 @@
-import {collection, getDocs, query, Timestamp, where} from "firebase/firestore";
+import {collection, getDocs } from "firebase/firestore";
 import {AnimatePresence, motion} from 'framer-motion';
-import { useEffect, useState} from 'react';
-import ViewProfile from '@/components/dashboard/ViewProfile';
-import { doc, query, setDoc, Timestamp, where } from "firebase/firestore";
-import { motion } from 'framer-motion';
+import { query, Timestamp, where } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -11,9 +8,9 @@ import DashboardPageContainer from '../../components/dashboard/DashboardPageCont
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
 import  {AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal } from '@/components/dashboard/EditProfileModals';
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
-import { preference, religion } from '@/constants';
+import {filterOptions, preference, religion} from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
-import {getAdvancedSearchPreferences, getUserProfile, updateAdvancedSearchPreferences} from '@/hooks/useUser';
+import {getAdvancedSearchPreferences, updateAdvancedSearchPreferences} from '@/hooks/useUser';
 import {useAuthStore} from '@/store/UserId';
 import {Like} from '@/types/likingAndMatching';
 import {AdvancedSearchPreferences, User } from '@/types/user';
@@ -24,8 +21,6 @@ import useLikesAndMatchesStore from "@/store/LikesAndMatches.tsx";
 import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
-import useSyncPeopleWhoLikedUser from '@/hooks/useSyncPeopleWhoLikedUser';
-import { useMatchStore } from '@/store/Matches';
 
 interface SettingsDataItem {
     label: string;
@@ -50,7 +45,7 @@ const Explore = () => {
 
     const {auth, user} = useAuthStore();
     const {setLikes} = useLikesAndMatchesStore()
-    const userLikes = useSyncUserLikes(user!.uid!);
+    const { userLikes } = useSyncUserLikes(user!.uid!);
 
     const loadingData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     const [resetLoading, setResetLoading] = useState(false)
@@ -65,8 +60,6 @@ const Explore = () => {
         relationship_preference: null,
         religion: null
     })
-    const [resetLoading, setResetLoading] = useState(false)
-    const { matches } = useMatchStore()
 
     const calculateDOBRange = (minAge: number, maxAge: number) => {
         const today = new Date();

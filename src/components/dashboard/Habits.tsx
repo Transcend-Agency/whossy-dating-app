@@ -1,9 +1,7 @@
-// import ProfileHeader from "./ProfileHeader";
-// import HabitSearch from "./HabitSearch";
 import { alphabet } from "@/constants";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getUserProfile, updateUserProfile  } from "@/hooks/useUser";
-import { UserFilters, UserPrefences } from "@/types/user";
+import {UserFilters } from "@/types/user";
 import HabitSearch from "./HabitSearch";
 import { useAuthStore } from "@/store/UserId";
 
@@ -19,9 +17,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   const {auth} = useAuthStore();
 
   const fetchInterests = async () => {
-    const userProfile = (await getUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string)) as
-      | UserPrefences
-      | UserFilters;
+    const userProfile = (await getUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string)) as UserFilters;
 
     if (userProfile) {
       const interests = userProfile.interests as string[];
@@ -33,7 +29,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   };
 
   useEffect(() => {
-    fetchInterests();
+    fetchInterests().catch((err) => console.error("An error occurred while fetching interest", err));
   }, [path]);
 
   const arraysAreEqual = (arr1: string[], arr2: string[]) => {
@@ -53,7 +49,7 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
   const handleUpdate = () => {
     updateUserProfile(path as 'filters' | 'users' | 'preferences', auth?.uid as string, fetchInterests, {
       interests: mutatedData,
-    });
+    }).catch((err) => console.error("An Error occurred while updating: ", err));
   };
 
   const handleClick = (option: string) => {
@@ -68,11 +64,6 @@ const Habits: React.FC<HabitsProps> = ({ path, closePage }) => {
 
   return (
     <>
-      {/* <ProfileHeader
-        title="Interests"
-        changed={hasChanged}
-        save={handleUpdate}
-      /> */}
        <header className="profile__header">
           <div className="profile__header__name">
           <img src="/assets/icons/left-arrow-black.svg" alt="Back Arrow" />

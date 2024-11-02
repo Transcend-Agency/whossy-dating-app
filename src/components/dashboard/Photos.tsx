@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import {getUserProfile, updateUserProfile} from "@/hooks/useUser";
 import {useAuthStore} from "@/store/UserId";
 import {PhotoModal, UploadPhotoModal} from "./PhotoModal";
@@ -14,7 +14,7 @@ interface CardProps {
   height?: string;
 }
 
-const Card: React.FC<CardProps & { onDelete?: () => void; index?: number; onPress?: () => void }> = ({
+const Card: FC<CardProps & { onDelete?: () => void; index?: number; onPress?: () => void }> = ({
   photo,
   rowspan = "",
   colspan = "",
@@ -39,7 +39,7 @@ const Card: React.FC<CardProps & { onDelete?: () => void; index?: number; onPres
 
 type PhotoModal = "hidden" | "photo-one" | "photo-two" | "photo-three" | "photo-four" | "photo-five" | "photo-six" | "photo-one-first-upload" | 'photo-two-first-upload' | 'photo-three-first-upload' | 'photo-four-first-upload' | 'photo-five-first-upload' | "photo-six-first-upload";
 
-const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
+const Photos: FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
   const [photo, setPhoto] = useState<string[]>([]);
   const [mutatedPhoto, setMutatedPhoto] = useState<string[]>([]);
   const [fileMap, setFileMap] = useState<Map<number, File>>(new Map());
@@ -49,9 +49,13 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
   const [isUpdating, setIsUpdating] = useState(false)
 
   const fetchUserPhotos = async () => { const data = await getUserProfile("users", auth?.uid as string) as User; setPhoto(data?.photos as string[] || []) }
-  const updateUserPhotos = (s: string[]) => { updateUserProfile("users", auth?.uid as string, () => { fetchUserPhotos(); refetchUserData(); setIsUpdating(false) }, { photos: s }) }
+  const updateUserPhotos = (s: string[]) => {
+    updateUserProfile("users", auth?.uid as string, () => {
+      fetchUserPhotos();
+      refetchUserData();
+      setIsUpdating(false) }, { photos: s }) }
 
-  useEffect(() => { fetchUserPhotos() }, [])
+  useEffect(() => { fetchUserPhotos().catch(err => console.log("Error occurred while fetching photos: ", err)) }, [])
   useEffect(() => { setPhoto(photo); setMutatedPhoto(photo) }, [photo])
 
   const [photoModalShowing, setPhotoModalShowing] = useState<PhotoModal>('hidden')
@@ -63,8 +67,7 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
       const storage = getStorage();
       const storageRef = ref(storage, `tests/${auth}/profile_pictures/${file.name}`);
       await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      return url;
+      return await getDownloadURL(storageRef);
     } catch (error) {
       console.error("Error uploading file: ", error);
       throw error;
@@ -102,24 +105,6 @@ const Photos: React.FC<{ refetchUserData: () => void }> = ({ refetchUserData }) 
     );
     updateUserPhotos(newMutatedPhotos);
   };
-
-  // const uploadImage = (file: File, i: number) => {
-  //   if (!file) return;
-  //   const storage = getStorage();
-  //   const storageRef = ref(storage, `tests/${auth}/profile_pictures/${file}`);
-  //   uploadBytes(storageRef, file)
-  //     .then(() => {
-  //       // toast.success("Image has been uploaded successfully 🚀");
-  //       console.log("File was uploaded was successfully!");
-  //       getDownloadURL(storageRef)
-  //         .then((url) => {
-  //           addPhotos(url);
-  //         })
-  //         .catch((error) => console.log(error));
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
 
   return (
     <>

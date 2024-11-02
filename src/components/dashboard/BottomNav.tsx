@@ -1,12 +1,4 @@
-import {
-  chat,
-  globalSearch,
-  heartBottom,
-  heartTop,
-  match,
-  profileBottom,
-  profileTop,
-} from "../../assets/icons";
+import { chat,  globalSearch,  heartBottom,  heartTop,  match,  profileBottom,  profileTop} from "@/assets/icons";
 import Icon from "../ui/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 

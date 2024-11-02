@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import Skeleton from 'react-loading-skeleton';
+import React from "react";
 
 interface CircleProps {
     percentage: number;

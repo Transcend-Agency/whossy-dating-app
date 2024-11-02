@@ -1,9 +1,9 @@
 import OnboardingBackButton from "./OnboardingBackButton";
 import Button from "../ui/Button";
 import Skip from "./Skip";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useOnboardingStore } from "../../store/OnboardingStore";
 import toast from "react-hot-toast";
 

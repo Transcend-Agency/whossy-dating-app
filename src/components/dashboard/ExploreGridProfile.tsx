@@ -50,7 +50,7 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
                     <div className='explore-grid__profile-info-bottom'>
                         <span className='explore-grid__profile-name'>{first_name},</span>
                         <span className='explore-grid__profile-age'>{age}</span>
-                        {isVerified && <img src='/assets/icons/verified.svg' />}
+                        {isVerified && <img src='/assets/icons/verified.svg' alt={``} />}
                     </div>
                 </div>
             </div>

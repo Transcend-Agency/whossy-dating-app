@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-// import UserProfileImage from "../../components/dashboard/UserProfileImage";
-import { useUpdateUserProfile } from "@/hooks/useUser";
+import { updateUserProfile } from "@/hooks/useUser";
 import {  UserFilters } from "@/types/user";
 import { alphabet } from "@/constants";
 import { useAuthStore } from "@/store/UserId";
@@ -12,23 +11,23 @@ interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
     onInterests: () => void;
-    userPrefencesData: UserFilters | undefined;
+    userPreferencesData: UserFilters | undefined;
     refetchUserPreferencesData: () => void;
 }
 
 
 
-const PreferredInterestsMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userPrefencesData, refetchUserPreferencesData}) => {
+const PreferredInterestsMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userPreferencesData, refetchUserPreferencesData}) => {
 
-    const [mutatedData, setMutatedData] = useState<string[]>(userPrefencesData?.interests || []);
+    const [mutatedData, setMutatedData] = useState<string[]>(userPreferencesData?.interests || []);
 
     const {auth} = useAuthStore(); 
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: UserFilters) => {useUpdateUserProfile("filters",auth?.uid as string, () => {refetchUserPreferencesData(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: UserFilters) => {updateUserProfile("filters",auth?.uid as string, () => {refetchUserPreferencesData(); setIsLoading(false)}, s).catch(e => console.error(e))}
 
-    useEffect(() => setMutatedData(userPrefencesData?.interests || []), [userPrefencesData?.interests])
+    useEffect(() => setMutatedData(userPreferencesData?.interests || []), [userPreferencesData?.interests])
 
 
     const handleClick = (option: string) => {
@@ -50,10 +49,10 @@ const PreferredInterestsMobile: React.FC<ProfileSettingsProps> = ({ activePage, 
             <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
-                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``}/>
                             <p>Interests</p>
                         </button>
-                        {(JSON.stringify(userPrefencesData?.interests) !== JSON.stringify(mutatedData))&& <button className="settings-page__title__save-button cursor-pointer" onClick={() => {updateUserPreferences({interests: mutatedData}); setIsLoading(true)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}
+                        {(JSON.stringify(userPreferencesData?.interests) !== JSON.stringify(mutatedData))&& <button className="settings-page__title__save-button cursor-pointer" onClick={() => {updateUserPreferences({interests: mutatedData}); setIsLoading(true)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}
                     </div>
                     <main className="px-6">
         <HabitSearch initData={mutatedData} setInitData={(arr) => setMutatedData(arr)} />

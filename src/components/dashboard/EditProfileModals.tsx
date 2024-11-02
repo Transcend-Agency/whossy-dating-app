@@ -1,6 +1,6 @@
 import * as Slider from "@radix-ui/react-slider"
 import { motion } from "framer-motion"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import DashboardSettingsModal, { DashboardSettingsModalProps } from "./DashboardSettingsModal"
 import { communication_style, countries, dietary, drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants"
 import { Oval } from "react-loader-spinner"
@@ -61,17 +61,6 @@ export const AgeRangeModal: React.FC<DashboardSettingsModalProps & { min: number
         </DashboardSettingsModal>
     )
 }
-
-// export const BirthdaySettingsModal: React.FC<DashboardSettingsModalProps & {userGender: string, handleSave: (gender: string) => void}> = ({ showing, hideModal, userGender, handleSave }) => {
-//     const [gender, setGender] = useState(userGender);
-//     const [isLoading, setIsLoading] = useState(false)
-//     useEffect(() => {setGender(userGender)}, [userGender]);
-//     return (
-//         <DashboardSettingsModal showing={showing} hideModal={hideModal} title="Birthday" save={<button className="modal__body__header__save-button" onClick={() => {handleSave(gender); setIsLoading(true); setTimeout(() => setIsLoading(false), 2000)}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}>
-//            <Calendar />
-//         </DashboardSettingsModal>
-//     )
-// }
 
 export const EmailSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, hideModal }) => {
     const [email, setEmail] = useState('ronaldosunmu@gmail.com')

@@ -2,7 +2,6 @@ import React from "react";
 
 interface OnboardingBackButtonProps {
   onClick?: () => void;
-  // active?: string;
 }
 
 const OnboardingBackButton: React.FC<OnboardingBackButtonProps> = ({
@@ -13,7 +12,7 @@ const OnboardingBackButton: React.FC<OnboardingBackButtonProps> = ({
       onClick={onClick}
       className="onboarding-page__section-one__buttons__back-button"
     >
-      <img src="/assets/icons/back-arrow-black.svg" />
+      <img src="/assets/icons/back-arrow-black.svg" alt={``} />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ref, onDisconnect, set, serverTimestamp } from 'firebase/database';
-import { realtimeDb } from '../firebase';
+import { realtimeDb } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 
 const useTrackUserPresence = () => {
@@ -12,15 +12,15 @@ const useTrackUserPresence = () => {
 
 
         // Set the user's presence status to online
-        set(presenceRef, { online: true, lastSeen: serverTimestamp() });
+        set(presenceRef, { online: true, lastSeen: serverTimestamp() }).catch(err => console.log(err))
 
         // Handle disconnect
         const disconnectedRef = onDisconnect(presenceRef);
-        disconnectedRef.set({ online: false, lastSeen: serverTimestamp() });
+        disconnectedRef.set({ online: false, lastSeen: serverTimestamp() }).catch(err => console.log(err));
 
         // Cleanup
         return () => {
-            disconnectedRef.cancel();
+            disconnectedRef.cancel().catch(err => console.log(err));
         };
     }, [user?.uid]);
 };

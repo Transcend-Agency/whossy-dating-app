@@ -12,7 +12,7 @@ import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage'
 import AuthPage from '../components/auth/AuthPage';
 import ResetPasswordRequirementParameter from '../components/auth/ResetPasswordRequirementParameter.tsx';
 import Button from '../components/ui/Button';
-import { auth } from '../firebase';
+import { auth } from '@/firebase';
 import { FormData } from '../types/auth';
 
 type ResetPasswordProps = {

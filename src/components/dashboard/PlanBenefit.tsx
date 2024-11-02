@@ -19,7 +19,7 @@ export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe})
   }
 
   useEffect(() => {
-    fetchUserData();
+    fetchUserData().catch(err => console.log(err)) ;
   }, [])
 
 

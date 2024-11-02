@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { doubleArrowUp, shapes } from "../../assets/icons";
+import React, { useState } from "react";
+import { doubleArrowUp, shapes } from "@/assets/icons";
 import Icon from "../ui/Icon";
 
 interface InterestProps {

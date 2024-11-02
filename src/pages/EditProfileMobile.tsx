@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { useUpdateUserProfile } from "@/hooks/useUser";
-import { User, UserPrefences, UserProfile } from "@/types/user";
+import React, { useState } from "react";
+import { updateUserProfile } from "@/hooks/useUser";
+import {User, UserFilters} from "@/types/user";
 import { drinking, education, family_goal, love_language, marital_status, pets, preference, religion, smoking, workout, zodiac } from "@/constants";
 import { BioSettingsModal, DrinkingSettingsModal, EducationSettingsModal, EmailSettingsModal, FutureFamilyPlansSettingsModal, GenderSettingsModal, HeightSettingsModal, LoveLanguageSettingsModal, MaritalStatusSettingsModal, NameSettingsModal, PetsSettingsModal, PhoneNumberSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal, SmokerStatusSettingsModal, WeightSettingsModal, WorkoutSettingsModal, ZodiacSignSettingsModal } from "@/components/dashboard/EditProfileModals";
 import SettingsGroup from "@/components/dashboard/SettingsGroup";
@@ -13,62 +13,43 @@ interface EditProfileProps {
     closePage: () => void;
     onPreviewProfile: () => void;
     userData: User | undefined;
-    userPrefencesData: UserPrefences | undefined;
+    userPreferencesData: UserFilters | undefined;
     refetchUserData: () => void;
     refetchUserPreferencesData: () => void;
 }
 
 type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education' | 'bio'
 
-const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPrefencesData, refetchUserData, refetchUserPreferencesData }) => {
+const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, onPreviewProfile, userData, userPreferencesData, refetchUserData, refetchUserPreferencesData }) => {
     const [settingsModalShowing, setSettingsModalShowing] = useState<SettingsModal>('hidden')
     const hideModal = () => setSettingsModalShowing('hidden')
 
     const {auth} = useAuthStore();
 
-    const updateUser =  (s: UserProfile) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s)}
-    const updateUserPreferences = (s: UserPrefences) => {useUpdateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s)}
-    
+    const updateUser =  async (s: UserFilters) => {updateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserData()}, s).catch(e => console.error(e))}
+    const updateUserPreferences = async (s: UserFilters) => {updateUserProfile("users", auth?.uid as string, () => {hideModal(); refetchUserPreferencesData()}, s).catch(e => console.error(e))}
 
-    const cmToFeetAndInches = (cm: number) => { const totalInches = cm / 2.54; const feet = Math.floor(totalInches / 12); const inches = Math.round(totalInches % 12); return `${feet}'${inches}"`;}
-    const kilogramsToPounds = (kg: number) => { const lbs = kg * 2.20462; return lbs.toFixed(2);}
-
-    const getFormattedDateFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined): string => {
-        if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
-            throw new Error('Invalid Firebase date object');
-        }
-    
-        // Convert seconds to milliseconds
-        const milliseconds = firebaseDate.seconds * 1000;
-    
-        // Create a Date object
-        const date = new Date(milliseconds);
-    
-        // Format the date
-        const formatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-        return formatter.format(date);
-    };
     return (
         <>
-        
+
             <NameSettingsModal showing={settingsModalShowing === 'name'} hideModal={hideModal} first_name={userData?.first_name as string} last_name={userData?.last_name as string} handleSave={(first_name, last_name) => {updateUser({first_name, last_name})}}/>
             <GenderSettingsModal showing={settingsModalShowing === 'gender'} hideModal={hideModal} userGender={userData?.gender as string} handleSave={(gender) => updateUser({gender})}/>
             <EmailSettingsModal showing={settingsModalShowing === 'email'} hideModal={hideModal} />
             <PhoneNumberSettingsModal showing={settingsModalShowing === 'phone'} hideModal={hideModal} phone_number={userData?.phone_number as string} handleSave={(phone_number) => updateUser({phone_number})}/>
-            <RelationshipPreferenceSettingsModal showing={settingsModalShowing === 'relationship-preference'} hideModal={hideModal} userPreference={userPrefencesData?.preference as number} handleSave={(preference) => updateUserPreferences({preference}) }/>
-            <LoveLanguageSettingsModal showing={settingsModalShowing === 'love-language'} hideModal={hideModal} userLoveLanguage={userPrefencesData?.love_language as number}  handleSave={(love_language) => updateUserPreferences({love_language}) }/>
-            <ZodiacSignSettingsModal showing={settingsModalShowing === 'zodiac'} hideModal={hideModal} userZodiac={userPrefencesData?.zodiac as number} handleSave={(zodiac) => updateUserPreferences({zodiac}) } />
-            <FutureFamilyPlansSettingsModal showing={settingsModalShowing === 'future-family-plans'} hideModal={hideModal} userFamilyGoal={userPrefencesData?.family_goal as number} handleSave={(family_goal) => updateUserPreferences({family_goal}) } />
-            <SmokerStatusSettingsModal showing={settingsModalShowing === 'smoker'} hideModal={hideModal} userSmoke={userPrefencesData?.smoke as number} handleSave={(smoke) => updateUserPreferences({smoke}) }/>
-            <ReligionSettingsModal showing={settingsModalShowing === 'religion'} hideModal={hideModal} userReligion={userPrefencesData?.religion as number} handleSave={(religion) => updateUserPreferences({religion}) }/>
-            <DrinkingSettingsModal showing={settingsModalShowing === 'drinking'} hideModal={hideModal} userDrink={userPrefencesData?.drink as number} handleSave={(drink) => updateUserPreferences({drink}) }/>
-            <WorkoutSettingsModal showing={settingsModalShowing === 'workout'} hideModal={hideModal} userWorkout={userPrefencesData?.workout as number} handleSave={(workout) => updateUserPreferences({workout}) } />
-            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userPrefencesData?.pet_owner as number} handleSave={(pet_owner) => updateUserPreferences({pet_owner}) } />
-            <MaritalStatusSettingsModal showing={settingsModalShowing === 'marital-status'} hideModal={hideModal} userMaritalStatus={userPrefencesData?.marital_status as number}  handleSave={(marital_status) => updateUserPreferences({marital_status}) }/>
-            <HeightSettingsModal showing={settingsModalShowing === 'height'} hideModal={hideModal} userHeight={userPrefencesData?.height as number}  handleSave={(height) => updateUserPreferences({height}) }/>
-            <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userPrefencesData?.weight as number}  handleSave={(weight) => updateUserPreferences({weight}) }/>
-            <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPrefencesData?.education as number}  handleSave={(education) => updateUserPreferences({education}) }/>
-            <BioSettingsModal showing={settingsModalShowing === 'bio'} hideModal={hideModal} bio={userPrefencesData?.bio as string}  handleSave={(bio) => updateUserPreferences({bio}) }/>
+            <RelationshipPreferenceSettingsModal showing={settingsModalShowing === 'relationship-preference'} hideModal={hideModal} userPreference={userPreferencesData?.preference as number} handleSave={(preference) => updateUserPreferences({preference}) }/>
+            <LoveLanguageSettingsModal showing={settingsModalShowing === 'love-language'} hideModal={hideModal} userLoveLanguage={userPreferencesData?.love_language as number} handleSave={(love_language) => updateUserPreferences({love_language}) }/>
+            <ZodiacSignSettingsModal showing={settingsModalShowing === 'zodiac'} hideModal={hideModal} userZodiac={userPreferencesData?.zodiac as number} handleSave={(zodiac) => updateUserPreferences({zodiac}) } />
+            <FutureFamilyPlansSettingsModal showing={settingsModalShowing === 'future-family-plans'} hideModal={hideModal} userFamilyGoal={userPreferencesData?.family_goal as number} handleSave={(family_goal) => updateUserPreferences({family_goal}) } />
+            <SmokerStatusSettingsModal showing={settingsModalShowing === 'smoker'} hideModal={hideModal} userSmoke={userPreferencesData?.smoke as number} handleSave={(smoke) => updateUserPreferences({smoke}) }/>
+            <ReligionSettingsModal showing={settingsModalShowing === 'religion'} hideModal={hideModal} userReligion={userPreferencesData?.religion as number} handleSave={(religion) => updateUserPreferences({religion}) }/>
+            <DrinkingSettingsModal showing={settingsModalShowing === 'drinking'} hideModal={hideModal} userDrink={userPreferencesData?.drink as number} handleSave={(drink) => updateUserPreferences({drink}) }/>
+            <WorkoutSettingsModal showing={settingsModalShowing === 'workout'} hideModal={hideModal} userWorkout={userPreferencesData?.workout as number} handleSave={(workout) => updateUserPreferences({workout}) } />
+            <PetsSettingsModal showing={settingsModalShowing === 'pet'} hideModal={hideModal} userPet={userPreferencesData?.pet_owner as number} handleSave={(pets) => updateUserPreferences({pets}) } />
+            <MaritalStatusSettingsModal showing={settingsModalShowing === 'marital-status'} hideModal={hideModal} userMaritalStatus={userPreferencesData?.marital_status as number} handleSave={(marital_status) => updateUserPreferences({marital_status}) }/>
+            <HeightSettingsModal showing={settingsModalShowing === 'height'} hideModal={hideModal} userHeight={userPreferencesData?.height as number} handleSave={(height) => updateUserPreferences({height}) }/>
+            <WeightSettingsModal showing={settingsModalShowing === 'weight'} hideModal={hideModal} userWeight={userPreferencesData?.weight as number} handleSave={(weight) => updateUserPreferences({weight}) }/>
+            <EducationSettingsModal showing={settingsModalShowing === 'education'} hideModal={hideModal} userEducation={userPreferencesData?.education as number} handleSave={(education) => updateUserPreferences({education}) }/>
+            <BioSettingsModal showing={settingsModalShowing === 'bio'} hideModal={hideModal} bio={userPreferencesData?.bio as string} handleSave={(bio) => updateUserPreferences({bio}) }/>
 
 
             <motion.div animate={activePage == 'preview-profile' ? { scale: 0.9, opacity: 0.3, x: "-100%" } : (activePage !== 'user-profile' ? { x: "-100%", opacity: 1 } : { x: 0 })} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page-no-border edit-profile settings-page lg:hidden">
@@ -101,7 +82,7 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')
                         }],
-                        ['Birthday', userPrefencesData?.date_of_birth ? getFormattedDateFromFirebaseDate(userPrefencesData?.date_of_birth) : '', () => { }],
+                        ['Birthday', userPreferencesData?.date_of_birth ? getFormattedDateFromFirebaseDate(userPreferencesData?.date_of_birth) : '', () => { }],
                         ['Gender', userData?.gender as string, () => {
                             setSettingsModalShowing('gender')
                         }],
@@ -111,47 +92,47 @@ const EditProfileMobile: React.FC<EditProfileProps> = ({ activePage, closePage, 
                             setSettingsModalShowing('phone')
                         }],
                         ]} />
-                        <SettingsGroup data={[['Education', education[userPrefencesData?.education as number], () => {
+                        <SettingsGroup data={[['Education', education[userPreferencesData?.education as number], () => {
                             setSettingsModalShowing('education')
                         }],
-                        ['Relationship Goals', preference[userPrefencesData?.preference as number], () => {
+                        ['Relationship Goals', preference[userPreferencesData?.preference as number], () => {
                             setSettingsModalShowing('relationship-preference')
                         }],
-                        ['Love language', love_language[userPrefencesData?.love_language as number], () => {
+                        ['Love language', love_language[userPreferencesData?.love_language as number], () => {
                             setSettingsModalShowing('love-language')
                         }],
-                        ['Zodiac', zodiac[userPrefencesData?.zodiac as number], () => {
+                        ['Zodiac', zodiac[userPreferencesData?.zodiac as number], () => {
                             setSettingsModalShowing('zodiac')
                         }],
-                        ['Future family plans', family_goal[userPrefencesData?.family_goal as number], () => {
+                        ['Future family plans', family_goal[userPreferencesData?.family_goal as number], () => {
                             setSettingsModalShowing('future-family-plans')
                         }],
-                        ['Height', userPrefencesData?.height ? `${(userPrefencesData?.height as number)?.toString()}cm (${cmToFeetAndInches(userPrefencesData?.height as number)})` : 'Choose', () => {
+                        ['Height', userPreferencesData?.height ? `${(userPreferencesData?.height as number)?.toString()}cm (${cmToFeetAndInches(userPreferencesData?.height as number)})` : 'Choose', () => {
                             setSettingsModalShowing('height')
                         }],
-                        ['Weight', userPrefencesData?.weight ? `${(userPrefencesData?.weight as number)?.toString()}kg (${kilogramsToPounds(userPrefencesData?.weight as number)}lbs)` : 'Choose', () => {
+                        ['Weight', userPreferencesData?.weight ? `${(userPreferencesData?.weight as number)?.toString()}kg (${kilogramsToPounds(userPreferencesData?.weight as number)}lbs)` : 'Choose', () => {
                             setSettingsModalShowing('weight')
                         }],
-                        ['Religion', religion[userPrefencesData?.religion as number], () => {
+                        ['Religion', religion[userPreferencesData?.religion as number], () => {
                             setSettingsModalShowing('religion')
                         }],
-                        ['Smoker', smoking[userPrefencesData?.smoke as number], () => {
+                        ['Smoker', smoking[userPreferencesData?.smoke as number], () => {
                             setSettingsModalShowing('smoker')
                         }],
-                        ['Drinking', drinking[userPrefencesData?.drink as number], () => {
+                        ['Drinking', drinking[userPreferencesData?.drink as number], () => {
                             setSettingsModalShowing('drinking')
                         }],
-                        ['Workout', workout[userPrefencesData?.workout as number], () => {
+                        ['Workout', workout[userPreferencesData?.workout as number], () => {
                             setSettingsModalShowing('workout')
                         }],
-                        ['Pet owner', pets[userPrefencesData?.pet_owner as number], () => {
+                        ['Pet owner', pets[userPreferencesData?.pet_owner as number], () => {
                             setSettingsModalShowing('pet')
                         }],
-                        ['Marital status', marital_status[userPrefencesData?.marital_status as number], () => {
+                        ['Marital status', marital_status[userPreferencesData?.marital_status as number], () => {
                             setSettingsModalShowing('marital-status')
                         }]
                         ]} />
-                        <SettingsGroup data={[['About me', userPrefencesData?.bio as string, () => { setSettingsModalShowing('bio') }],
+                        <SettingsGroup data={[['About me', userPreferencesData?.bio as string, () => { setSettingsModalShowing('bio') }],
                         ]} />
                     </div>
                 </div>
