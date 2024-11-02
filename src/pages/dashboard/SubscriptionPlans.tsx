@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PremiumPlansHeader } from "./PremiumPlans";
 import { FreePlanBenefit, PremiumPlanBenefit } from "@/components/dashboard/PlanBenefit";
 import { PaymentDetailsModal, StripePaymentDetailsModal, SubscriptionPlanModal } from "@/components/dashboard/SubscriptionPlanModal";
@@ -10,8 +10,6 @@ interface SubscriptionPlansProps {
     currentPlan : 'free' | 'premium' | '';
     closePage: () => void;
 }
-
-// type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
 const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, closePage, currentPlan }) => {
 
@@ -86,8 +84,10 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
     return (
         <>
             <SubscriptionPlanModal show={showPaymentOptionsModal === "plan"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal }/>
-            <PaymentDetailsModal show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')}  />
-            <StripePaymentDetailsModal show={showPaymentOptionsModal === "stripe-payment"} hide={() => setShowPaymentOptionsModal('plan')}  />
+
+            <PaymentDetailsModal show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')} advance={function (): void {throw new Error("Function not implemented.");}}  />
+            <StripePaymentDetailsModal show={showPaymentOptionsModal === "stripe-payment"} hide={() => setShowPaymentOptionsModal('plan')} advance={function (): void {throw new Error("Function not implemented.");}} />
+
             <motion.div onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">

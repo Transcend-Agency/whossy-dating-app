@@ -10,6 +10,7 @@ interface Picture {
     auth: AuthType | null;
     setAuth: (auth: AuthType, user?: User) => void;
     setUser: (user: User) => void;
+    updateUser: (userUpdate: Partial<User>) => void;
     logout: () => void;
     user?: User;
     reset: () => void;

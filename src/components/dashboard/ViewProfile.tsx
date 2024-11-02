@@ -21,6 +21,18 @@ interface ViewProfileProps {
     onBlockChange: () => void;
 }
 
+export const addMatch = async (likerId: string, likedId: string) => {
+    const matchesRef = collection(db, 'matches');
+    const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
+    await setDoc(doc(matchesRef, matchId), {
+        user1_id: likerId < likedId ? likerId : likedId,
+        user2_id: likerId > likedId ? likerId : likedId,
+        timestamp: new Date().toISOString(),
+    });
+
+    console.log('Match created:', matchId);
+};
+
 const ViewProfile: React.FC<ViewProfileProps> = (
     {onBackClick, userData, onBlockChange, loggedUserData }
 ) => {
@@ -32,11 +44,9 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const likeControls = useAnimationControls()
     const navigate = useNavigate();
     const { user } = useAuthStore()
-    const userLikes = useSyncUserLikes(user!.uid!)
+    const { userLikes } = useSyncUserLikes(user!.uid!)
     const {selectedProfile} = useDashboardStore()
     const [openModal, setOpenModal] = useState(false);
-
-    console.log(userData)
 
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
@@ -82,19 +92,6 @@ const ViewProfile: React.FC<ViewProfileProps> = (
             console.error("Error adding like:", err);
             toast.error("Something went wrong, couldn't send the like");
         }
-    };
-
-
-    const addMatch = async (likerId: string, likedId: string) => {
-        const matchesRef = collection(db, 'matches');
-        const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
-        await setDoc(doc(matchesRef, matchId), {
-            user1_id: likerId < likedId ? likerId : likedId,
-            user2_id: likerId > likedId ? likerId : likedId,
-            timestamp: new Date().toISOString(),
-        });
-
-        console.log('Match created:', matchId);
     };
 
     const triggerHeartAnimation = async () => {
@@ -185,6 +182,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const hasUserBeenLiked = () => {
         return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
+
     return (
         <>
         <ReportModal show={openModal} onCloseModal={() => setOpenModal(false)} />
@@ -359,7 +357,9 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 <p className="content-item__info__title">Gender</p>
                                 <p className="content-item__info__text">{userData.gender}</p>
                             </div>
-                            {![null, undefined].includes(userData.education as unknown as any) &&
+
+                            { /* @ts-expect-error education is undefined*/ }
+                            {![null, undefined].includes(userData.education as number) &&
                                 <div className="content-item__info">
                                     <p className="content-item__info__title">Education</p>
                                     <p className="content-item__info__text">{education[userData?.education as number]}</p>

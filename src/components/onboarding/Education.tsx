@@ -1,12 +1,11 @@
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
 import Skip from "./Skip";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
 import { useOnboardingStore } from "../../store/OnboardingStore";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { education } from "@/constants";
-// import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const Education: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const { updateOnboardingData, "onboarding-data": data } =

@@ -2,8 +2,7 @@ import DashboardPageContainer from '@/components/dashboard/DashboardPageContaine
 import { db } from '@/firebase';
 import {motion} from 'framer-motion';
 import { useAuthStore } from '@/store/UserId';
-import { User } from '@/types/user';
-import { collection, doc, getDoc, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore';
+import { collection, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { Notifications } from '@/types/notification';
 

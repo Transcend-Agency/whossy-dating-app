@@ -1,19 +1,18 @@
 import React, { useEffect, useState} from 'react';
 import DashboardNavIcon from './DashboardNavIcon';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Matches } from './MatchesSide';
 import ChatInterface from './ChatInterface';
 import ShortcutControls from './ShortcutControls';
 import { AnimatePresence } from 'framer-motion';
 import { IoIosNotifications } from "react-icons/io";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
-// import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 import {doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
 import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
+import Matches from "@/components/dashboard/Matches.tsx";
 
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
@@ -22,12 +21,7 @@ const Dashboard: React.FC = () => {
     const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
 
     const { auth } = useAuthStore();
-    // const userLikes = useSyncUserLikes(user!.uid!);
     const { refreshProfiles } = useProfileFetcher()
-
-    // const hasUserBeenLiked = (id: string) => {
-    //     return Boolean(userLikes.filter(like => (like.liked_id === id)).length)
-    // }
 
     useEffect(() => {
 
@@ -81,7 +75,6 @@ const Dashboard: React.FC = () => {
                         <ViewProfile
                             onBackClick={() => { setSelectedProfile(null) }}
                             userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                            // profile_has_been_liked={hasUserBeenLiked(selectedProfile)}
                             onBlockChange={refreshProfiles}
                         />  : <Outlet />
                     }

@@ -1,3 +1,5 @@
+import React from "react";
+
 interface TagProps {
   arr: { image: string; text: string }[];
   active: string | undefined;
@@ -13,7 +15,6 @@ const Tag: React.FC<TagProps> = ({ arr, active, setGender }) => {
           onClick={() => setGender(item.text)}
           key={i}
         >
-          {/* <img className="size-[1.2rem]" src={item.image} alt={item.text} /> */}
           <p>{item.text}</p>
         </div>
       ))}

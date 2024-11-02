@@ -1,7 +1,7 @@
 // import toast from "react-hot-toast";
 import { User, UserPrefences } from "@/types/user";
 import {motion} from "framer-motion"
-import ProfileCreditButtton from "@/components/dashboard/ProfileCreditButtton";
+import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
 import ProfilePlan from "@/components/dashboard/ProfilePlan";
 import TopNav from "@/components/dashboard/TopNav";
 import BottomNav from "@/components/dashboard/BottomNav";
@@ -101,8 +101,8 @@ const MobileProfile: React.FC<MobileProfileProps> = ({activePage, onEditProfileP
             <p>Whossy Safety Guide</p>
         </div>
         <section className='user-profile__credit-buttons'>
-            <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
-            <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
+            <ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={() => { }} />
+            <ProfileCreditButton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => { }} />
         </section>
     </div>
     <section className='user-profile__plans'>

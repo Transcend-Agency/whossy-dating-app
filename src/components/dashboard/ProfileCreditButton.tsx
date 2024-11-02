@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ProfileCreditButttonProps = {
+type ProfileCreditButtonProps = {
     description: string;
     linkText: string;
     onLinkClick: () => void;
@@ -8,11 +8,11 @@ type ProfileCreditButttonProps = {
 };
 
 
-const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description, linkText,  imgSrc, onLinkClick }) => {
+const ProfileCreditButton: React.FC<ProfileCreditButtonProps> = ({ description, linkText,  imgSrc, onLinkClick }) => {
 
 
     return <div className='user-profile__credit-buttons__button'>
-        <img src={imgSrc} />
+        <img src={imgSrc} alt={``}/>
         <div className='user-profile__credit-buttons__button__text'>
             <p className='user-profile__credit-buttons__button__description'>
                 {description}
@@ -23,11 +23,4 @@ const ProfileCreditButtton: React.FC<ProfileCreditButttonProps> = ({ description
     </div>
 }
 
-// const AddCreditPage: React.FC<AddCreditPageProps> = () => {
-
-// }
-export default ProfileCreditButtton;
-
-function useState(arg0: boolean): [any, any] {
-    throw new Error('Function not implemented.');
-}
+export default ProfileCreditButton;

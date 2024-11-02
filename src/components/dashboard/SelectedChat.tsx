@@ -1,6 +1,6 @@
 import { AnimatePresence, motion as m } from "framer-motion"
 import { ActionsModal, ImagesModal } from "./ChatsModal"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import EmojiPicker from "emoji-picker-react"
 import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "@/firebase"
@@ -14,7 +14,6 @@ import toast from "react-hot-toast"
 import Skeleton from "react-loading-skeleton"
 import { IoCheckmarkDone } from "react-icons/io5"
 import { serverTimestamp } from "firebase/firestore";
-import { Puff } from "react-loader-spinner"
 
 interface SelectedChatProps {
     activePage: string
@@ -198,85 +197,65 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
     const [chats, setChats] = useState<any[]>([]);
 
-//     const [isChatOpen, setIsChatOpen] = useState(false);
-
-// useEffect(() => {
-//     const handleChatOpen = () => setIsChatOpen(true);
-//     const handleChatClose = () => setIsChatOpen(false);
-
-//     // Add listeners when the chat is opened and closed
-//     window.addEventListener('focus', handleChatOpen);
-//     window.addEventListener('blur', handleChatClose);
-
-//     return () => {
-//         window.removeEventListener('focus', handleChatOpen);
-//         window.removeEventListener('blur', handleChatClose);
-//     };
-// }, []);
-
-
-
-useEffect(() => {
-    // Ensure the chatId, currentUserId, and activePage are correct before proceeding
-    // console.log("useEffect triggered: chatId", chatId, "activePage", activePage);
-    if (!chatId || !currentUserId || activePage !== "selected-chat") {
-        console.log('error', chatId, currentUserId, activePage);
-        return;
-    }
-
-    const messagesRef = query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp", "asc"));
-    const chatDocRef = doc(db, "chats", chatId as string);
-
-    // Listen to changes in the chat messages
-    const unSub = onSnapshot(messagesRef, async (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        // Set the messages to state
-        setChats(messages);
-
-        // Fetch the chat document (used to get lastSenderId)
-        const chatDocSnap = await getDoc(chatDocRef);
-        if (chatDocSnap.exists()) {
-            const chatData = chatDocSnap.data();
-            const lastSenderId = chatData.lastSenderId;
-
-            // Check if the current user is not the last sender and the chat is open
-            if (lastSenderId !== currentUserId && chatData.status !== "seen" && activePage === "selected-chat") {
-                // Update the seen status in 'allchats' collection
-                await updateDoc(chatDocRef, { status: "seen" })
-                    .then(() => console.log(`Chat ${chatId} marked as seen`))
-                    .catch((err) => console.error(`Error updating chat ${chatId}:`, err));
-            }
+    useEffect(() => {
+        if (!chatId || !currentUserId || activePage !== "selected-chat") {
+            console.log('error', chatId, currentUserId, activePage);
+            return;
         }
 
-        // Check each message to see if it should be marked as 'seen'
-        snapshot.docs.forEach(async (doc) => {
-            const messageData = doc.data();
-            const messageSenderId = messageData.senderId;
+        const messagesRef = query(collection(db, `chats/${chatId}/messages`), orderBy("timestamp", "asc"));
+        const chatDocRef = doc(db, "chats", chatId as string);
 
-            // Only update the message if the sender is not the current user and status is not 'seen'
-            if (messageSenderId !== currentUserId && messageData.status !== "seen" && activePage === "selected-chat") {
-                try {
-                    // Update the status field of the message to "seen"
-                    await updateDoc(doc.ref, { status: "seen" });
-                    console.log(`Message ${doc.id} marked as seen`);
-                } catch (err) {
-                    console.error(`Error updating message ${doc.id}:`, err);
+        // Listen to changes in the chat messages
+        const unSub = onSnapshot(messagesRef, async (snapshot) => {
+            const messages = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Set the messages to state
+            setChats(messages);
+
+            // Fetch the chat document (used to get lastSenderId)
+            const chatDocSnap = await getDoc(chatDocRef);
+            if (chatDocSnap.exists()) {
+                const chatData = chatDocSnap.data();
+                const lastSenderId = chatData.lastSenderId;
+
+                // Check if the current user is not the last sender and the chat is open
+                if (lastSenderId !== currentUserId && chatData.status !== "seen" && activePage === "selected-chat") {
+                    // Update the seen status in 'allchats' collection
+                    await updateDoc(chatDocRef, { status: "seen" })
+                        .then(() => console.log(`Chat ${chatId} marked as seen`))
+                        .catch((err) => console.error(`Error updating chat ${chatId}:`, err));
                 }
             }
-        });
-    }, (err) => console.log(err));
 
-    // Cleanup function to unsubscribe from the snapshot listener
-    return () => {
-        unSub();
-        setChats([]);
-        reset();
-    };
-}, [activePage === 'selected-chat']);
+            // Check each message to see if it should be marked as 'seen'
+            for (const doc1 of snapshot.docs) {
+                const messageData = doc1.data();
+                const messageSenderId = messageData.senderId;
+
+                // Only update the message if the sender is not the current user and status is not 'seen'
+                if (messageSenderId !== currentUserId && messageData.status !== "seen" && activePage === "selected-chat") {
+                    try {
+                        // Update the status field of the message to "seen"
+                        await updateDoc(doc1.ref, { status: "seen" });
+                        console.log(`Message ${doc1.id} marked as seen`);
+                    } catch (err) {
+                        console.error(`Error updating message ${doc1.id}:`, err);
+                    }
+                }
+            }
+        }, (err) => console.log(err));
+
+        // Cleanup function to unsubscribe from the snapshot listener
+        return () => {
+            unSub();
+            setChats([]);
+            reset();
+        };
+    }, [activePage, chatId, currentUserId, reset]);
 
 
     const endRef = useRef<HTMLDivElement>(null);

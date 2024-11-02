@@ -7,18 +7,13 @@ import Button from '../components/ui/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { auth, db } from "../firebase";
+import { auth, db } from "@/firebase";
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { motion } from 'framer-motion'
-
-
-type ForgotPasswordProps = {
-
-};
 
 interface ForgotPasswordPage {
     advance: () => void

@@ -1,12 +1,11 @@
 import OnboardingBackButton from "./OnboardingBackButton";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useOnboardingStore } from "../../store/OnboardingStore";
 import OnboardingButton from "./OnboardingButton";
 import toast from "react-hot-toast";
 
-// import Date from "./Date";
 
 const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [birth_date, setBirthDate] = useState({ day: "", month: "", year: "" });

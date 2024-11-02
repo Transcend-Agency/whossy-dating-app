@@ -1,3 +1,5 @@
+import React from "react";
+
 interface SkeletonProps {
   height: string;
   width: string;

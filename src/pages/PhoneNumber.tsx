@@ -6,7 +6,7 @@ import {
     where
 } from 'firebase/firestore'
 import { AnimatePresence, motion } from "framer-motion"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import OtpInput from 'react-otp-input'
 import PhoneInput, { isPossiblePhoneNumber } from "react-phone-number-input"
@@ -17,7 +17,7 @@ import AuthModalHeader from "../components/auth/AuthModalHeader"
 import AuthModalRequestMessage from "../components/auth/AuthModalRequestMessage"
 import AuthPage from "../components/auth/AuthPage"
 import Button from "../components/ui/Button"
-import { auth, db } from "../firebase"
+import { auth, db } from "@/firebase"
 import useAccountSetupFormStore from "../store/AccountSetup"
 import usePhoneNumberStore from "../store/PhoneNumberSignIn"
 import { FormData } from "../types/auth"

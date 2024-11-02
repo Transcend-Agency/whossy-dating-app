@@ -1,16 +1,14 @@
 import OnboardingBackButton from "./OnboardingBackButton";
 import OnboardingSearch from "./OnboardingSearch";
 import Skip from "./Skip";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
 import Interests from "./Interests";
-// import { useOnboardingStore } from "../../store/useOnboardingStore";
 import toast from "react-hot-toast";
 import { useOnboardingStore } from "../../store/OnboardingStore";
-// import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
+import React from "react";
 
 const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
-  // const { interests } = useOnboardingStore();
   const { "onboarding-data": data } = useOnboardingStore();
 
   return (

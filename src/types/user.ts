@@ -1,5 +1,6 @@
 // import { religion } from '@/constants';
 // import { relationship_preferences } from '@/constants';
+import {GeoPoint} from "firebase/firestore";
 
 export type User = {
   bio?: string | null;
@@ -47,7 +48,7 @@ export type User = {
   hide_verification_badge?: boolean;
   online_status?: boolean
   blockedIds?: string[]
-  location?: Geolocation,
+  location?: GeoPoint,
   latitude?: number,
   longitude?: number
 }

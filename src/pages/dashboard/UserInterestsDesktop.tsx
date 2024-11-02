@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-// import UserProfileImage from "../../components/dashboard/UserProfileImage";
+import React, { useEffect, useState } from "react";
 import { alphabet } from "@/constants";
 import { updateUserProfile } from "@/hooks/useUser";
 import { User } from "@/types/user";
@@ -18,8 +17,6 @@ interface ProfileSettingsProps {
     refetchUserData: () => void;
 }
 
-
-
 const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userData, refetchUserData}) => {
 
     const [mutatedData, setMutatedData] = useState<string[]>(userData?.interests || []);
@@ -28,7 +25,10 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: User) => {updateUserProfile("users",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: User) => {
+      updateUserProfile("users",auth?.uid as string, () => {refetchUserData(); setIsLoading(false)}, s)
+            .catch(err => console.log(err))
+    }
 
     useEffect(() => setMutatedData(userData?.interests || []), [userData?.interests])
 
@@ -52,7 +52,7 @@ const UserInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage, clos
             <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
-                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                             <p>Interests</p>
                         </button>
                         {(JSON.stringify(userData?.interests) !== JSON.stringify(mutatedData)) && <button className="settings-page__title__save-button cursor-pointer" onClick={() => {if (mutatedData.length > 4 ) {updateUserPreferences({interests: mutatedData}); setIsLoading(true)} else {toast.error("Pleae select at least 5")}}}>{!isLoading ? 'Save' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20}/>}</button>}

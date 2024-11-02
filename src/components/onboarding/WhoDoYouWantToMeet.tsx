@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Options from "./Options";
 import OnboardingBackButton from "./OnboardingBackButton";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
 import { useOnboardingStore } from "../../store/OnboardingStore";
-import { meet } from "../../constants";
-// import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
+import { meet } from "@/constants";
 
 const WhoDoYouWantToMeet: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null | undefined>(null);
@@ -39,7 +38,6 @@ const WhoDoYouWantToMeet: React.FC<OnboardingProps> = ({ advance, goBack }) => {
       </div>
       <div className="onboarding-page__section-one__buttons">
         <OnboardingBackButton onClick={goBack} />
-        {/* <Button text="Continue" onClick={() => advance()} /> */}
         <OnboardingButton
           advance={() => {
             if (active !== null) {
