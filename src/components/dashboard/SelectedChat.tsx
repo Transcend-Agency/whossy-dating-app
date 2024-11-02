@@ -15,14 +15,16 @@ import Skeleton from "react-loading-skeleton"
 import { IoCheckmarkDone } from "react-icons/io5"
 import { serverTimestamp } from "firebase/firestore";
 import { Puff } from "react-loader-spinner"
+import { User } from "@/types/user"
 
 interface SelectedChatProps {
     activePage: string
     closePage: () => void
     updateChatId: (newChatId: string) => void;
+    userData: User;
 }
 
-const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId }) => {
+const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId, userData }) => {
     const [showActionsModal, setShowActionsModal] = useState<'action' | 'hidden'>("hidden");
     const [text, setText] = useState<string>('');
     const [openEmoji, setOpenEmoji] = useState(false);

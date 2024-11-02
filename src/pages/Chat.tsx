@@ -26,6 +26,8 @@ const ChatPage = () => {
   const {auth} = useAuthStore();
   const currentUserId= auth?.uid as string;
 
+  const [userData, setUserData] = useState<User | null>(null);
+
   // const [allChats, setAllChats] = useState<string[]>([]);
   const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
 
@@ -33,7 +35,10 @@ const ChatPage = () => {
   const fetchUserData = async (userId: string) => {
     const userDocRef = doc(db, "users", userId);
     const userDocSnap = await getDoc(userDocRef);
-    if (userDocSnap.exists()) {  return userDocSnap.data();} 
+    if (userDocSnap.exists()) { 
+      setUserData(userDocSnap.data() as User);
+      return userDocSnap.data();
+    } 
     else {  console.log(`No such user document for user_id: ${userId}`); return null;}
   };
 
@@ -158,7 +163,7 @@ const ChatPage = () => {
 
                   {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
                   allChats.map((chat, i) => (
-                    chat ? <><ChatListItem key={i} messageStatus={chat.status === "sent" ? chat.lastSenderId === auth?.uid ? false : true : false} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
+                    chat ? <><ChatListItem key={i} userData={userData as User} messageStatus={chat.status === "sent" ? chat.lastSenderId === auth?.uid ? false : true : false} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage} profileImage={ chat.user.photos && chat.user.photos[0] } 
                     openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
                     }}
                      />
@@ -168,7 +173,7 @@ const ChatPage = () => {
                    : Array.from({ length: 7 }).map(() => <ChatListItemLoading />)}
                 </section>
             </motion.div>
-            <SelectedChat activePage={activePage} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}} chatId={chatParticipants} updateChatId={updateChatId}/>
+            <SelectedChat activePage={activePage} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}} chatId={chatParticipants} updateChatId={updateChatId} userData={userData as User}/>
 
         </DashboardPageContainer>
     </>)
