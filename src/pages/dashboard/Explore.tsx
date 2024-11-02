@@ -61,7 +61,7 @@ const Explore = () => {
         religion: null
     })
 
-    const calculateDOBRange = (minAge: number, maxAge: number) => {
+    const calculateDOBRange = (minAge, maxAge) => {
         const today = new Date();
         const currentYear = today.getFullYear();
 
