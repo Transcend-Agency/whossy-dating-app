@@ -6,7 +6,7 @@ type ShortcutControlsProps = {
 };
 
 const ShortcutControls: React.FC<ShortcutControlsProps> = () => {
-    const [shortcutControlsShowing, setShortcutControlsShowing] = useState(false)
+    const [shortcutControlsShowing, setShortcutControlsShowing] = useState(true)
     const toggleShortcutControlsShowing = () => {
         setShortcutControlsShowing(!shortcutControlsShowing)
     }

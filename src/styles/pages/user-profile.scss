@@ -22,7 +22,7 @@
         }
     }
     &__update-profile-button {
-        @apply w-[4.8rem] h-[4.8rem] bg-white absolute top-[1rem] right-[1.5rem] cursor-pointer rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition duration-200;
+        @apply w-[4.8rem] h-[4.8rem] bg-white absolute top-[1.5rem] right-[2rem] cursor-pointer rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition duration-200;
         img {
             @apply h-[1.6rem];
         }
@@ -134,19 +134,6 @@
             }
             &--free {
                 .user-profile__plans__plan__benefit {
-                    border-image-source: linear-gradient(to left, #FFFFFF99, #FF5C0099);
-                }
-                .user-profile__plans__plan__cta {
-                    @apply bg-[#FF5C00];
-                }
-                border: 1px solid #FF5C00;
-                @apply text-[#FF5C00];
-                .user-profile__plans__plan__title {
-                    
-                }
-            }
-            &--premium {
-                .user-profile__plans__plan__benefit {
                     border-image-source: linear-gradient(to left, #FFFFFF99, #AAAAAA99);
                 }
                 .user-profile__plans__plan__cta {
@@ -158,6 +145,20 @@
                     
                 }
             }
+            &--premium {
+                .user-profile__plans__plan__benefit {
+                    border-image-source: linear-gradient(to left, #FFFFFF99, #FF5C0099);
+                }
+                .user-profile__plans__plan__cta {
+                    @apply bg-[#FF5C00];
+                }
+                border: 1px solid #FF5C00;
+                @apply text-[#FF5C00];
+                .user-profile__plans__plan__title {
+                    
+                }
+            }
+            
         }
     }
 

@@ -59,7 +59,8 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
         <>
 
             <SettingsModal show={showModal == 'logout'} onCloseModal={() => setShowModal('hidden')} onLogout={() => auth.signOut().then(() => {console.log('signed out'); reset(); navigate('/')}).catch((err) => console.log('error signing out,', err)) }/>
-            <HelpModal show={openModal} onCloseModal={() => setOpenModal(false)}  />
+            <HelpModal show={openModal} onCloseModal={() => setOpenModal(false)} />
+
 
             <motion.div animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page z-20">
                 <div className="settings-page__container">
@@ -68,12 +69,9 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={''} />
                             <p>Profile Settings</p>
                         </button>
-                        {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
                     <div className="settings-page__settings-group">
                         <SettingsToggleItem title="Incoming messages" subtext="This will allow only verified users to message you." isActive={profileSettings.incoming_messages ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, incoming_messages: !profileSettings.incoming_messages }); updateUser({incoming_messages: !profileSettings.incoming_messages})}} isPremium/>
-
-                        {/*<SettingsToggleItem title="Hide verification badge" subtext="This will hide the verification badge on your profile." isActive={profileSettings.hide_verification_badge ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, hide_verification_badge: !profileSettings.hide_verification_badge }); updateUser({hide_verification_badge: !profileSettings.hide_verification_badge})}} />*/}
 
                         <SettingsToggleItem title="Public search" subtext="Other users will be able to find your profile online when they search the internet." isActive={profileSettings.public_search ?? false} onButtonToggle={() => {setProfileSettings({ ...profileSettings, public_search: !profileSettings.public_search }); updateUser({public_search: !profileSettings.public_search})}} />
 
@@ -90,7 +88,6 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
                    <button onClick={() => setOpenModal(true)} >
                        <ProfileSettingsGroup title="Help and Support"/>
                    </button>
-                       
                     </section>
                     <div className="flex mt-8 justify-center px-[2.8rem] gap-x-2 py-[1.6rem] cursor-pointer bg-[#F6F6F6] hover:bg-[#ececec]" onClick={() => setShowModal('logout')}>
                         <img src="/assets/icons/logout.svg" alt="" />

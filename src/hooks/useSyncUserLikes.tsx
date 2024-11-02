@@ -5,6 +5,7 @@ import { Like } from '../types/likingAndMatching'; // import your Like interface
 
 function useSyncUserLikes(userId: string) {
   const [userLikes, setUserLikes] = useState<Like[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Firestore reference to the "likes" collection
@@ -20,13 +21,14 @@ function useSyncUserLikes(userId: string) {
       }) as Like); // Cast the data as the Like interface
 
       setUserLikes(likes); // Sync the state with the latest data
+      setLoading(false); // Set loading to false once data is
     });
 
     // Cleanup the listener on component unmount
     return () => unsubscribe();
   }, [userId]);
 
-  return userLikes;
+  return {userLikes, loading};
 }
 
 export default useSyncUserLikes;

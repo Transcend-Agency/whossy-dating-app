@@ -63,7 +63,6 @@ const Matches: React.FC<MatchesProps> = () => {
         fetchMatches(user!.uid!)
     }, [user?.uid])
 
-
     return <div className='dashboard-layout__matches-wrapper'>
         <div className='dashboard-layout__matches-container'>
             {!loading && matches.length == 0 && <MatchesEmptyState />}
@@ -75,7 +74,7 @@ const Matches: React.FC<MatchesProps> = () => {
                         <div className='matches__total-matches-preview'>
                             <div className='matches__total-matches-preview-inner'>
                                 { /* @ts-expect-error object is possibly null - it isn't */ }
-                                <img src={matches[0]?.matchedUserData?.photos[0]} alt={``} />
+                                <img src={matches.length > 0 ? matches[0]?.matchedUserData?.photos[0] : ''} alt={``} />
                                 <div className='matches__matches-count'>
                                     <span>{matches.length}</span>
                                     <img src="/assets/icons/fire-white.svg" alt={``}/>

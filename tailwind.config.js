@@ -33,6 +33,7 @@ export default {
         gray: "#8A8A8E",
         lightgray: "#F6F6F6",
         white: "#FFFFFF",
+        yellow: "#FDFAE7",
       },
       fontSize:{
         '7.5xl': ['88px','92px']

@@ -1,16 +1,19 @@
 import {collection, getDocs, query, Timestamp, where} from "firebase/firestore";
 import {AnimatePresence, motion} from 'framer-motion';
 import { useEffect, useState} from 'react';
+import ViewProfile from '@/components/dashboard/ViewProfile';
+import { doc, query, setDoc, Timestamp, where } from "firebase/firestore";
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
 import  {AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal } from '@/components/dashboard/EditProfileModals';
-
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
-import {filterOptions, preference, religion} from '@/constants';
+import { preference, religion } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
-import {getAdvancedSearchPreferences, updateAdvancedSearchPreferences} from '@/hooks/useUser';
+import {getAdvancedSearchPreferences, getUserProfile, updateAdvancedSearchPreferences} from '@/hooks/useUser';
 import {useAuthStore} from '@/store/UserId';
 import {Like} from '@/types/likingAndMatching';
 import {AdvancedSearchPreferences, User } from '@/types/user';
@@ -21,6 +24,8 @@ import useLikesAndMatchesStore from "@/store/LikesAndMatches.tsx";
 import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
+import useSyncPeopleWhoLikedUser from '@/hooks/useSyncPeopleWhoLikedUser';
+import { useMatchStore } from '@/store/Matches';
 
 interface SettingsDataItem {
     label: string;
@@ -58,8 +63,10 @@ const Explore = () => {
         age_range: {min: 18, max: 100},
         country: '',
         relationship_preference: null,
-        religion: undefined
+        religion: null
     })
+    const [resetLoading, setResetLoading] = useState(false)
+    const { matches } = useMatchStore()
 
     const calculateDOBRange = (minAge: number, maxAge: number) => {
         const today = new Date();
@@ -110,9 +117,7 @@ const Explore = () => {
         console.log('this is being called')
         try {
             setResetLoading(true)
-            await updateAdvancedSearchPreferences(auth?.uid as string, () => {
-                refetchSearchPreferences()
-            }, {
+            await updateAdvancedSearchPreferences(auth?.uid as string, () => { refetchSearchPreferences() }, {
                 gender: '',
                 age_range: {min: 18, max: 100},
                 country: '',
