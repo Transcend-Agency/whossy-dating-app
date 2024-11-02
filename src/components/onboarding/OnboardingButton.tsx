@@ -1,5 +1,6 @@
 import Button from "../ui/Button";
 import toast from "react-hot-toast";
+import React from "react";
 
 interface OnboardingButtonProps {
   selected: number | null | undefined | boolean;
@@ -20,8 +21,6 @@ const OnboardingButton: React.FC<OnboardingButtonProps> = ({
         else toast.error(error ?? "Please select an option");
       }}
       className="cursor-pointer"
-      //   disabled={selected === null ? true : false}
-      //   className="cursor-not-allowed"
       style={{
         backgroundColor: selected === null ? "#F6F6F6" : "",
         color: selected === null ? "#000000" : "",

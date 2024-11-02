@@ -14,7 +14,7 @@ export type AccountGenderData = {
     gender?: string
 }
 
-export type VerfiyOtpData = {
+export type VerifyOtpData = {
     code?: string
 }
 
@@ -22,7 +22,7 @@ export type FormData = {
     email?: string;
     password?: string;
     confirmPassword?: string;
-} & AccountNamesFormData & AccountCountryPhoneData & AccountGenderData & VerfiyOtpData;
+} & AccountNamesFormData & AccountCountryPhoneData & AccountGenderData & VerifyOtpData;
 
 export type FormFieldProps = {
     type?: string;

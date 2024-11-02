@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import {FC} from "react";
 
 interface HelpModalProps {
   show: boolean
@@ -11,7 +12,7 @@ const modalVariants = {
   exit: { opacity: 0, }
 };
 
-const HelpModal: React.FC<HelpModalProps> = ({ show, onCloseModal }) => {
+const HelpModal: FC<HelpModalProps> = ({ show, onCloseModal }) => {
   return (
     <AnimatePresence mode='wait'>
       {show &&

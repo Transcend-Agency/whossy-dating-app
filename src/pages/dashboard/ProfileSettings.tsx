@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import {FC, useEffect, useState} from "react";
 import SettingsToggleItem from "../../components/dashboard/SettingsToggleItem";
 import ProfileSettingsGroup from "@/components/dashboard/ProfileSettingsGroup";
 import SettingsModal from "@/components/dashboard/SettingsModal";
@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/UserId";
 import { updateUserProfile } from "@/hooks/useUser";
 import { User } from "@/types/user";
 import HelpModal from "@/components/dashboard/HelpModal";
+import BlockedContacts from "@/pages/dashboard/BlockedContacts.tsx";
 
 interface ProfileSettingsProps {
     activePage: boolean;
@@ -20,19 +21,26 @@ interface ProfileSettingsProps {
         read_receipts?: boolean;
         online_status?: boolean;
     }
-    refetchUserData: () => void;
+    prefetchUserData: () => void;
 }
 
-// type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
-
-const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, refetchUserData}) => {
+const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, prefetchUserData}) => {
     const [profileSettings, setProfileSettings] = useState(userSettings)
+
+    const [showBlockedContacts, setShowBlockedContacts] = useState(false); // To toggle Blocked Contacts page
     const [showModal, setShowModal] = useState<'hidden' | 'logout'>('hidden');
     const [openModal, setOpenModal] = useState(false);
     const {reset, auth: user} = useAuthStore();
     const navigate = useNavigate()
 
-    const updateUser =  (s: User) => {updateUserProfile("users", user?.uid as string, refetchUserData, s)}
+    const updateUser = (s: User) => {
+        updateUserProfile("users", user?.uid as string, prefetchUserData, s)
+            .then((response) => {
+                console.log("User profile updated:", response);
+            }).catch((error) => {
+                console.error("Error updating user profile:", error);
+            });
+    };
 
     useEffect(() => {   
         setProfileSettings(
@@ -52,13 +60,13 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
 
             <SettingsModal show={showModal == 'logout'} onCloseModal={() => setShowModal('hidden')} onLogout={() => auth.signOut().then(() => {console.log('signed out'); reset(); navigate('/')}).catch((err) => console.log('error signing out,', err)) }/>
             <HelpModal show={openModal} onCloseModal={() => setOpenModal(false)} />
-            
+
 
             <motion.div animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page z-20">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
-                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={''} />
                             <p>Profile Settings</p>
                         </button>
                     </div>
@@ -73,12 +81,13 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                     </div>
                     <section className="mt-2 space-y-2 flex flex-col">
 
-                        {/* WANDE'S MODAL  */}
+                    {/* WANDE'S MODAL  */}
+                   <button onClick={() => setShowBlockedContacts(true)}>
                        <ProfileSettingsGroup title="Blocked contacts" />
-                       <button onClick={() => setOpenModal(true)} >
-                           <ProfileSettingsGroup title="Help and Support"/>
-                       </button>
-
+                   </button>
+                   <button onClick={() => setOpenModal(true)} >
+                       <ProfileSettingsGroup title="Help and Support"/>
+                   </button>
                     </section>
                     <div className="flex mt-8 justify-center px-[2.8rem] gap-x-2 py-[1.6rem] cursor-pointer bg-[#F6F6F6] hover:bg-[#ececec]" onClick={() => setShowModal('logout')}>
                         <img src="/assets/icons/logout.svg" alt="" />
@@ -87,6 +96,12 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ activePage, closePage
                     <div className="flex mt-8 justify-center px-[2.8rem] py-[1.6rem] bg-[#F6F6F6] text-[#F2243E] hover:bg-[#ececec]">Delete Account</div>
                 </div>
             </motion.div>
+
+            {/* Blocked Contacts Page */}
+            <BlockedContacts
+                activePage={showBlockedContacts} // Handle the blocked contacts page visibility
+                closePage={() => setShowBlockedContacts(false)}  // Return to the settings page
+            />
         </>
     )
 }

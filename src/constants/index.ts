@@ -2,6 +2,8 @@ import { db } from "@/firebase";
 import { User } from "@/types/user";
 import { doc, getDoc } from "firebase/firestore";
 
+const filterOptions = ["Discover", "Similar interest", "Online", "New members", "Popular in my area", "Looking to date", "Outside my country"]
+
 const alphabet = [
   {
     letter: "a",
@@ -1208,8 +1210,32 @@ const checkUserProfileCompletion = (userData: User) => {
 
   // Count the number of filled properties
   const filledCount = propertiesToCheck.filter(isFilled).length;
+  return filledCount; };
 
-  return filledCount;
+const cmToFeetAndInches = (cm: number) => {
+  const totalInches = cm / 2.54;
+  const feet = Math.floor(totalInches / 12);
+  const inches = Math.round(totalInches % 12);
+  return `${feet}'${inches}"`; }
+
+const kilogramsToPounds = (kg: number) => {
+  const lbs = kg * 2.20462;
+  return lbs.toFixed(2); }
+
+const getFormattedDateFromFirebaseDate = (firebaseDate: { nanoseconds: number, seconds: number } | undefined): string => {
+  if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
+    throw new Error('Invalid Firebase date object');
+  }
+
+  // Convert seconds to milliseconds
+  const milliseconds = firebaseDate.seconds * 1000;
+
+  // Create a Date object
+  const date = new Date(milliseconds);
+
+  // Format the date
+  const formatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return formatter.format(date);
 };
 
 export {
@@ -1224,5 +1250,5 @@ export {
   marital_status,
   family_goal, preference, formatServerTimeStamps,
   religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion, formatFirebaseTimestampToTime,
-  formatFirebaseTimestampToDate
+  formatFirebaseTimestampToDate, filterOptions, cmToFeetAndInches, getFormattedDateFromFirebaseDate, kilogramsToPounds
 };

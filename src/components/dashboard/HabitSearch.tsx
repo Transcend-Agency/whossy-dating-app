@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { alphabet } from "../../constants";
+import React, { useEffect, useRef, useState } from "react";
+import { alphabet } from "@/constants";
 
 interface HabitProps {
   initData: string[];
@@ -29,20 +29,6 @@ const HabitSearch: React.FC<HabitProps> = ({ initData, setInitData }) => {
     if (value !== "") setOpen(true);
     else setOpen(false);
   };
-
-  //   useEffect(() => {
-  //     setActive(data.interests as string[]);
-  //   }, [data.interests]);
-
-  //   const handleClick = (option: string) => {
-  //     setMutatedData((prev) => {
-  //       if (prev.includes(option)) {
-  //         return prev.filter((item) => item !== option);
-  //       } else {
-  //         return [...prev, option];
-  //       }
-  //     });
-  //   };
 
   const inputRef = useRef<HTMLInputElement>(null);
 	const dropdownRef = useRef<HTMLUListElement>(null);

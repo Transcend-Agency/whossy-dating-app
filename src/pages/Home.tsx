@@ -1,13 +1,7 @@
-import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-// import Button from '../components/ui/Button';
 
-type HomeProps = {
-
-};
-
-const Home: React.FC<HomeProps> = () => {
+const Home = () => {
 
     return (
         <div className='home'>

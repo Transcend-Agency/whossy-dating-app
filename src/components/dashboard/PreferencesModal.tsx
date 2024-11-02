@@ -54,7 +54,7 @@ const PreferencesModal: React.FC<PreferencesModalProps> = ({
       case "workout":
         return workout[mutatedData.workout as number] ?? "choose";
       case "pet_owner":
-        return pets[mutatedData.pet_owner as number] ?? "choose";
+        return pets[mutatedData.pets as number] ?? "choose";
       default:
         return "choose";
     }
@@ -80,7 +80,7 @@ const PreferencesModal: React.FC<PreferencesModalProps> = ({
     education,
   };
 
-  const findValueInArrays = (item: any) => {
+  const findValueInArrays = (item: string) => {
     for (const [arrayName, array] of Object.entries(arrays)) {
       const index = array.indexOf(item);
       if (index !== -1) {
@@ -121,23 +121,17 @@ const PreferencesModal: React.FC<PreferencesModalProps> = ({
             <p
               className="cursor-pointer"
               onClick={() => {
-                setMutatedData(item.id, findValueInArrays(active)?.index);
+                setMutatedData(item.id, findValueInArrays(active as string)?.index);
                 close();
               }}
             >
               Save
             </p>
           )}
-          {/* {active === item.value ? (
-                ) : (
-                  <p className="cursor-pointer" onClick={handleUpdate}>
-                    Save
-                  </p>
-                )} */}
         </header>
         {item.options && (
           <div className=" w-full p-[1.6rem] space-y-[1rem]">
-            {item.options.map((option, i) => (
+            {item.options.map((option: string, i: number) => (
               <div
                 className={`p-[0.8rem] cursor-pointer inline-block mr-[1.6rem] text-[1.4rem] ${
                   option === active

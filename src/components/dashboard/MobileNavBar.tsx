@@ -1,5 +1,6 @@
 import BottomNav from "./BottomNav";
 import TopNav from "./TopNav";
+import React from "react";
 
 interface NavBarProps {
   children: React.ReactNode | React.ReactNode[];

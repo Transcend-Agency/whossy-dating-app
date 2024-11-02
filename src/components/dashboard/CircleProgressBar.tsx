@@ -1,5 +1,11 @@
+import {FC} from "react";
 
-const CircleProgressBar = ({ percentage, circleWidth }: any) => {
+interface CircleProgressBarProps {
+  percentage: number;
+  circleWidth: number;
+}
+
+const CircleProgressBar: FC<CircleProgressBarProps> = ({ percentage, circleWidth }) => {
   const radius = 45;
   const dashArray = 2 * Math.PI * radius;
   const dashOffset = dashArray - (dashArray * percentage) / 100;

@@ -1,6 +1,7 @@
-import { bio, preference } from "../../assets/icons";
+import { bio, preference } from "@/assets/icons";
 import Icon from "../ui/Icon";
 import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 
 interface InformationProps {
   hide: boolean;

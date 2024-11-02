@@ -10,9 +10,9 @@ import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
-import ResetPasswordRequirementParamater from '../components/auth/ResetPasswordRequirementParamater';
+import ResetPasswordRequirementParameter from '../components/auth/ResetPasswordRequirementParameter.tsx';
 import Button from '../components/ui/Button';
-import { auth } from '../firebase';
+import { auth } from '@/firebase';
 import { FormData } from '../types/auth';
 
 type ResetPasswordProps = {
@@ -108,10 +108,10 @@ const ResetPasswordDetails: React.FC<ResetPasswordPage> = ({ advance, goBack }) 
             <form onSubmit={handleSubmit(onFormSubmit)} className='auth-page__modal__form'>
                 <AuthInput register={register} name="password" type='password' placeholder='Password' />
                 <div className='auth-page__modal__password-requirements'>
-                    <ResetPasswordRequirementParamater criteriaPassed={validatePassword(password!).hasEnoughCharacters} text="Be at least 8 characters or more" />
-                    <ResetPasswordRequirementParamater criteriaPassed={validatePassword(password!).hasLowerAndUpperCaseLetters} text="At least 1 uppercase and lower case letter" />
-                    <ResetPasswordRequirementParamater criteriaPassed={validatePassword(password!).hasDigit} text="Must contain a digit or number" />
-                    <ResetPasswordRequirementParamater criteriaPassed={validatePassword(password!).hasSpecialCharacter} text="Must contain a special character e,g '@$!%*?&'." />
+                    <ResetPasswordRequirementParameter criteriaPassed={validatePassword(password!).hasEnoughCharacters} text="Be at least 8 characters or more" />
+                    <ResetPasswordRequirementParameter criteriaPassed={validatePassword(password!).hasLowerAndUpperCaseLetters} text="At least 1 uppercase and lower case letter" />
+                    <ResetPasswordRequirementParameter criteriaPassed={validatePassword(password!).hasDigit} text="Must contain a digit or number" />
+                    <ResetPasswordRequirementParameter criteriaPassed={validatePassword(password!).hasSpecialCharacter} text="Must contain a special character e,g '@$!%*?&'." />
                 </div>
                 <AuthInput error={errors.confirmPassword} register={register} name="confirmPassword" type='password' placeholder='Confirm Password' />
                 <Button loading={loading} disabled={!isValid} className='auth-page__modal__form__button' text='Submit' />
@@ -127,9 +127,9 @@ const ResetPasswordSuccessPage: React.FC<ResetPasswordPage> = ({ key, advance })
         navigate("/auth/login")
     }
 
-    return <AuthPage key={key} className='reset-password'>
+    return <AuthPage identifier={key} className='reset-password'>
         <div className='auth-page__modal'>
-            <figure className='auth-page__modal__success-icon'><img src="/assets/images/success.png" /></figure>
+            <figure className='auth-page__modal__success-icon'><img src="/assets/images/success.png" alt={``} /></figure>
             <AuthModalHeader title='Reset Password Successful' subtitle="Password reset successful continue on the app or sign in with web." />
             <Button onClick={onGoToLogin} className='auth-page__modal__form__button' text='Close' />
         </div>

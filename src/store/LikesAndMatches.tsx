@@ -1,5 +1,5 @@
 import { Like, Match } from '@/types/likingAndMatching';
-import create from 'zustand';
+import { create } from 'zustand';
 
 type LikesAndMatchesStore = {
     likes: Like[]

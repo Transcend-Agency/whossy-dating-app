@@ -1,4 +1,5 @@
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
+import React from "react";
 
 const Skip:React.FC<OnboardingProps> = ({advance}) => {
   return (

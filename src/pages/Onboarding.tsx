@@ -39,11 +39,8 @@ const Onboarding = () => {
 
   return (
     <>
-      {/* <AnimatePresence> */}
-      {/* <h1 className="onboarding-page__logo">Logo</h1> */}
-
       <div className="onboarding-page__progress-bar">
-        {pageOrder.map((page, index) => {
+        {pageOrder.map((_page, index) => {
           return (
             <ProgressBarItem key={index} active={index <= currentPage} />
           )

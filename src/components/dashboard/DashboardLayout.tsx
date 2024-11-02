@@ -1,26 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import DashboardNavIcon from './DashboardNavIcon';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Matches from './MatchesSide';
 import ChatInterface from './ChatInterface';
 import ShortcutControls from './ShortcutControls';
 import { AnimatePresence } from 'framer-motion';
 import { IoIosNotifications } from "react-icons/io";
-import { collection, doc, getDoc, onSnapshot, orderBy, query, updateDoc } from 'firebase/firestore';
+import useDashboardStore from "@/store/useDashboardStore.tsx";
+import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
+import {doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
+import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
+import Matches from "@/components/dashboard/Matches.tsx";
 
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [newNotification, setNewNotification] = useState(false);
-    const {auth} = useAuthStore();
+    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
+
+    const { auth } = useAuthStore();
+    const { refreshProfiles } = useProfileFetcher()
 
     useEffect(() => {
 
         const userDocRef = doc(db, "users", auth?.uid as string);
-        
+
         const unSub = onSnapshot(userDocRef, async () => {
             const userDocSnap = await getDoc(userDocRef);
 
@@ -57,16 +63,21 @@ const Dashboard: React.FC = () => {
                         <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container relative' onClick={() => navigate('/dashboard/notification')}>
-                        {/* <img className='dashboard-layout__top-nav__control-icon  hidden lg:block ' src='/assets/icons/notification.svg' /> */}
                         <IoIosNotifications className={`size-[2.8rem] hover:scale-[1.02] active:scale-[0.95] cursor-pointer ${pathname === '/dashboard/notification' ? 'text-[#F2243E]' : 'text-[#8A8A8E]'}`} />
                         {!newNotification && <div className='bg-red-700 absolute size-[0.8rem] rounded-full right-[1px] '/>}
-                        {/* <img className='dashboard-layout__top-nav__control-icon' src='/assets/icons/control.svg' /> */}
                     </div>
                 </div>
             </nav>
             <main className='dashboard-layout__main-app'>
-                <Matches />
-                <Outlet />
+                    <Matches/>
+                    {
+                        selectedProfile ?
+                        <ViewProfile
+                            onBackClick={() => { setSelectedProfile(null) }}
+                            userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                            onBlockChange={refreshProfiles}
+                        />  : <Outlet />
+                    }
             </main>
         </div>
         <div className="h-screen flex flex-col lg:hidden">

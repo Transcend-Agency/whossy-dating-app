@@ -1,15 +1,10 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
 import { usePhotoStore } from "@/store/PhotoStore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useAuthStore } from "@/store/UserId";
 import Skeleton from "../ui/Skeleton";
-
-// interface Picture {
-//   fileName: string;
-//   fileSrc: string;
-// }
 
 const BigSnapshots = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -18,11 +13,6 @@ const BigSnapshots = () => {
   //new
   const {setPhotos, photos} = usePhotoStore();
   const {auth} = useAuthStore();
-
-  // const [picture, setPicture] = useState<Picture>({
-  //   fileName: "",
-  //   fileSrc: "",
-  // });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -98,18 +88,16 @@ const BigSnapshots = () => {
       )}
       <input  type="file"  accept="image/*"  ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
       {photos.imageOne && (
-        <img src={photos.imageOne} style={{ position: "absolute", top: 0, left: 0, width: `30rem`, height: `33.5rem`, zIndex: 40, borderRadius: "22px", objectFit: "cover",}}alt="user image"/>
+        <img src={photos.imageOne} style={{ position: "absolute", top: 0, left: 0, width: `30rem`, height: `33.5rem`, zIndex: 40, borderRadius: "22px", objectFit: "cover",}} alt="user image"/>
       )}
       {images.map((item, i) => (
-        <div style={{ position: "absolute", top: `${i * 2}rem`, left: `${i * 6}rem`, width: `${30 - i * 3}rem`, height: `${33.5 - i * 3}rem`, zIndex: `${30 - i * 10}`, borderRadius: "22px", backgroundColor: item.color, transform: `rotate(${0 + i * 5}deg)`,}} key={i}/>
+        <div style={{ position: "absolute", top: `${i * 2}rem`, left: `${i * 6}rem`, width: `${30 - i * 3}rem`, height: `${33.5 - i * 3}rem`, zIndex: `${30 - i * 10}`, borderRadius: "22px", backgroundColor: item.color, transform: `rotate(${(i * 5)}deg)`,}} key={i}/>
       ))}
 
     {isLoading &&  <div style={{ position: "absolute", top: `0rem`, left: `0rem`, width: `30rem`, height: `${33.5}rem`, zIndex: `${40}`, borderRadius: "22px", backgroundColor: '', transform: `rotate(${0}deg)`, overflow:'hidden'}}>
         <Skeleton width="30rem" height="33.5rem" />
      </div>}
-     {/* <Skeleton width="31rem" height="33.5rem"/> */}
-         
-      
+
     </figure>
   );
 };

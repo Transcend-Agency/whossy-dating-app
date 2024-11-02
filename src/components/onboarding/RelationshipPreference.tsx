@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Options from "./Options";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
 import OnboardingButton from "./OnboardingButton";
 import { useOnboardingStore } from "../../store/OnboardingStore";
-import { relationship_preferences } from "../../constants";
+import { relationship_preferences } from "@/constants";
 
 const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
   const [active, setActive] = useState<number | null | undefined>(null);
@@ -37,7 +37,6 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
           />
         ))}
       </div>
-      {/* <Button text="Continue" onClick={() => advance()} /> */}
       <OnboardingButton
         selected={active}
         advance={() => {
@@ -47,8 +46,6 @@ const RelationshipPreference: React.FC<OnboardingProps> = ({ advance }) => {
           }
         }}
       />
-      {/* <button className="w-full bg-black text-white">continue</button> */}
-      {/* <button onClick={() => console.log(data)}>click</button> */}
     </OnboardingPage>
   );
 };

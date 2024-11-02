@@ -3,14 +3,12 @@ import SettingsModal from "@/components/dashboard/SettingsModal";
 import SettingsToggleItem from "@/components/dashboard/SettingsToggleItem";
 import { auth } from "@/firebase";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface ProfileSettingsProps {
     activePage: boolean;
     closePage: () => void;
 }
-
-// type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
 const SettingsMobile: React.FC<ProfileSettingsProps> = ({ activePage, closePage, }) => {
     const [profileSettings, setProfileSettings] = useState({

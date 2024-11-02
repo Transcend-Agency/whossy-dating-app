@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormFieldProps } from '../../types/auth';
+import { FormFieldProps } from '@/types/auth.ts';
 import { motion } from 'framer-motion'
 
 type AuthInputProps = React.InputHTMLAttributes<HTMLInputElement> & FormFieldProps

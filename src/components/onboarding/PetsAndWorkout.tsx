@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
 import Skip from "./Skip";
 import RegularOptions from "./RegularOptions";
-import { OnboardingProps } from "../../types/onboarding";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import OnboardingPage from "./OnboardingPage";
 import { useOnboardingStore } from "../../store/OnboardingStore";
-import { workout } from "../../constants";
+import { workout } from "@/constants";
 import Pets from "./Pets";
-// import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
 
 const PetsAndWorkout: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null>(null);

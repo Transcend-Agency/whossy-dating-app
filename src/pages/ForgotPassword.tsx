@@ -7,18 +7,13 @@ import Button from '../components/ui/Button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { auth, db } from "../firebase";
+import { auth, db } from "@/firebase";
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { motion } from 'framer-motion'
-
-
-type ForgotPasswordProps = {
-
-};
 
 interface ForgotPasswordPage {
     advance: () => void
@@ -72,7 +67,7 @@ const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key })
             setLoading(false)
         }
     }
-    return <AuthPage key={key} className='forgot-password'>
+    return <AuthPage identifier={key} className='forgot-password'>
         <div className='auth-page__modal'>
             <AnimatePresence mode='wait'>
                 {requestError && <AuthModalRequestMessage errorMessage={requestError} />}
@@ -90,7 +85,7 @@ const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key })
 const ForgotPasswordSuccessPage: React.FC<ForgotPasswordPage> = ({ key, goBack }) => {
     const navigate = useNavigate()
 
-    return <AuthPage key={key} className='forgot-password'>
+    return <AuthPage identifier={key} className='forgot-password'>
         <div className='auth-page__modal'>
             <AuthModalBackButton onClick={goBack} />
             <AuthModalHeader title='Successful' subtitle="A link has been sent to your email to reset your password." />
