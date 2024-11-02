@@ -1,22 +1,22 @@
-import {collection, getDocs } from "firebase/firestore";
-import {AnimatePresence, motion} from 'framer-motion';
+import { collection, getDocs } from "firebase/firestore";
+import { AnimatePresence, motion } from 'framer-motion';
 import { query, Timestamp, where } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ExploreGridProfile from '../../components/dashboard/ExploreGridProfile';
-import  {AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal } from '@/components/dashboard/EditProfileModals';
+import { AgeRangeModal, CountrySettingsModal, GenderSettingsModal, RelationshipPreferenceSettingsModal, ReligionSettingsModal } from '@/components/dashboard/EditProfileModals';
 import SettingsGroup from '@/components/dashboard/SettingsGroup';
-import {filterOptions, preference, religion} from '@/constants';
+import { filterOptions, preference, religion } from '@/constants';
 import useSyncUserLikes from '@/hooks/useSyncUserLikes';
-import {getAdvancedSearchPreferences, updateAdvancedSearchPreferences} from '@/hooks/useUser';
-import {useAuthStore} from '@/store/UserId';
-import {Like} from '@/types/likingAndMatching';
-import {AdvancedSearchPreferences, User } from '@/types/user';
-import {getYearFromFirebaseDate} from '@/utils/date';
-import {Oval} from 'react-loader-spinner';
-import {db} from "@/firebase";
+import { getAdvancedSearchPreferences, updateAdvancedSearchPreferences } from '@/hooks/useUser';
+import { useAuthStore } from '@/store/UserId';
+import { Like } from '@/types/likingAndMatching';
+import { AdvancedSearchPreferences, User } from '@/types/user';
+import { getYearFromFirebaseDate } from '@/utils/date';
+import { Oval } from 'react-loader-spinner';
+import { db } from "@/firebase";
 import useLikesAndMatchesStore from "@/store/LikesAndMatches.tsx";
 import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
@@ -43,8 +43,8 @@ const Explore = () => {
     } = useDashboardStore()
     const { fetchBlockedUsers, fetchProfilesBasedOnOption } = useProfileFetcher()
 
-    const {auth, user} = useAuthStore();
-    const {setLikes} = useLikesAndMatchesStore()
+    const { auth, user } = useAuthStore();
+    const { setLikes } = useLikesAndMatchesStore()
     const { userLikes } = useSyncUserLikes(user!.uid!);
 
     const loadingData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
@@ -55,13 +55,13 @@ const Explore = () => {
     const hideModal = () => setAdvancedSearchModalShowing('hidden')
     const [advancedSearchPreferences, setAdvancedSearchPreferences] = useState<AdvancedSearchPreferences>({
         gender: '',
-        age_range: {min: 18, max: 100},
+        age_range: { min: 18, max: 100 },
         country: '',
         relationship_preference: null,
         religion: null
     })
-
-    const calculateDOBRange = (minAge, maxAge) => {
+    
+    const calculateDOBRange = (minAge: any, maxAge: any) => {
         const today = new Date();
         const currentYear = today.getFullYear();
 
@@ -112,7 +112,7 @@ const Explore = () => {
             setResetLoading(true)
             await updateAdvancedSearchPreferences(auth?.uid as string, () => { refetchSearchPreferences() }, {
                 gender: '',
-                age_range: {min: 18, max: 100},
+                age_range: { min: 18, max: 100 },
                 country: '',
                 relationship_preference: null,
                 religion: null
@@ -209,7 +209,7 @@ const Explore = () => {
                                 </div>
                                 <div className='filter__right'>
                                     <button onClick={() => setAdvancedSearchShowing(true)} className='filter__saved-search'>
-                                        <img src="/assets/icons/saved-search.svg" alt={``}/>
+                                        <img src="/assets/icons/saved-search.svg" alt={``} />
                                     </button>
                                 </div>
                                 <div className='explore-grid-gradient-top'></div>
@@ -225,38 +225,38 @@ const Explore = () => {
 
                                     {exploreDataLoading &&
                                         <>
-                                        { exploreDataLoading &&
-                                            <motion.div key="explore-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='explore-grid hidden md:grid'>
-                                                {[0,1,2,3,4].map(( value, index ) =>
+                                            {exploreDataLoading &&
+                                                <motion.div key="explore-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='explore-grid hidden md:grid'>
+                                                    {[0, 1, 2, 3, 4].map((value, index) =>
                                                     (
                                                         <div key={index} className='explore-grid__column'>
                                                             {loadingData?.map((profile, index) => (
                                                                 (index % 5 === value) &&
                                                                 <Skeleton key={profile * index}
-                                                                          containerClassName='explore-grid__profile'
-                                                                          height={"100%"}/>
+                                                                    containerClassName='explore-grid__profile'
+                                                                    height={"100%"} />
                                                             ))}
                                                         </div>
                                                     )
-                                                )}
-                                            </motion.div>
-                                        }
+                                                    )}
+                                                </motion.div>
+                                            }
 
-                                        {exploreDataLoading &&
-                                            <motion.div key="mobile-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
-                                                {[0,1,2].map(( value, index ) =>
+                                            {exploreDataLoading &&
+                                                <motion.div key="mobile-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
+                                                    {[0, 1, 2].map((value, index) =>
                                                     (
                                                         <div key={index} className='mobile-grid__column'>
                                                             {loadingData?.map((profile, index) => (
                                                                 (index % 3 === value) &&
                                                                 <Skeleton key={profile * index}
-                                                                          containerClassName='explore-grid__profile'
-                                                                          height={"100%"}/>
+                                                                    containerClassName='explore-grid__profile'
+                                                                    height={"100%"} />
                                                             ))}
                                                         </div>
                                                     )
-                                                )}
-                                            </motion.div> }
+                                                    )}
+                                                </motion.div>}
                                         </>
                                     }
 
@@ -264,7 +264,7 @@ const Explore = () => {
                                         {!exploreDataLoading && profiles.length !== 0 &&
                                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} key="explore-grid" className='explore-grid hidden md:grid'>
 
-                                                {[0,1,2,3,4].map((value, index) => (
+                                                {[0, 1, 2, 3, 4].map((value, index) => (
                                                     <div key={index} className={`explore-grid__column`}>
                                                         {profiles?.map((profile, index: number) => (
                                                             (index % 5 === value) &&
@@ -275,7 +275,7 @@ const Explore = () => {
                                                                 age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
                                                                 onProfileClick={() => {
                                                                     setSelectedProfile(profile?.uid as string)
-                                                                } }
+                                                                }}
                                                                 isVerified={profile!.is_verified}
                                                                 hasBeenLiked={hasUserBeenLiked(profile.uid!)}
                                                                 key={profile.uid}
@@ -289,7 +289,7 @@ const Explore = () => {
 
                                         <motion.div key="mobile-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
 
-                                            {[0,1,2].map( (value, i) => (
+                                            {[0, 1, 2].map((value, i) => (
                                                 <div key={i} className={`mobile-grid__column`}>
                                                     {profiles?.map((profile, index) => (
                                                         (index % 3 == value) &&
@@ -308,63 +308,62 @@ const Explore = () => {
                                             ))}
 
                                         </motion.div>
-                                    </> }
+                                    </>}
                                 </AnimatePresence>
                             </div>
                         </div>
                     </DashboardPageContainer>
                 }
 
-                { advancedSearchShowing && <DashboardPageContainer className='explore-page' span={1}>
-                        <div className="settings-page__container">
-                            <div className="settings-page__title">
-                                <button onClick={() =>
-                                { setAdvancedSearchShowing(false);
-                                    if (selectedOption == 'Advanced Search')
-                                        {onAdvancedSearch().catch(err => console.error("An error occurred during Advanced Search", err)) }
-                                }} className="settings-page__title__left">
-                                    <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``}/>
-                                    <p>Advanced Search Preferences</p>
-                                </button>
-                                <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
+                {advancedSearchShowing && <DashboardPageContainer className='explore-page' span={1}>
+                    <div className="settings-page__container">
+                        <div className="settings-page__title">
+                            <button onClick={() => {
+                                setAdvancedSearchShowing(false);
+                                if (selectedOption == 'Advanced Search') { onAdvancedSearch().catch(err => console.error("An error occurred during Advanced Search", err)) }
+                            }} className="settings-page__title__left">
+                                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
+                                <p>Advanced Search Preferences</p>
+                            </button>
+                            <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
 
-                                <GenderSettingsModal
-                                    showing={advancedSearchModalShowing === 'gender'}
-                                    hideModal={hideModal}
-                                    userGender={advancedSearchPreferences?.gender as string}
-                                    handleSave={async (gender) => await updateSearchPreferences({ gender })} />
+                            <GenderSettingsModal
+                                showing={advancedSearchModalShowing === 'gender'}
+                                hideModal={hideModal}
+                                userGender={advancedSearchPreferences?.gender as string}
+                                handleSave={async (gender) => await updateSearchPreferences({ gender })} />
 
-                                <AgeRangeModal
-                                    showing={advancedSearchModalShowing === 'age-range'}
-                                    hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number}
-                                    max={advancedSearchPreferences.age_range?.max as number}
-                                    handleSave={async (age_range) => await updateSearchPreferences({ age_range })} />
+                            <AgeRangeModal
+                                showing={advancedSearchModalShowing === 'age-range'}
+                                hideModal={hideModal} min={advancedSearchPreferences.age_range?.min as number}
+                                max={advancedSearchPreferences.age_range?.max as number}
+                                handleSave={async (age_range) => await updateSearchPreferences({ age_range })} />
 
-                                <CountrySettingsModal
-                                    showing={advancedSearchModalShowing === 'country'}
-                                    hideModal={hideModal}
-                                    preferredCountry={advancedSearchPreferences?.country as string}
-                                    handleSave={async (country) => await updateSearchPreferences({ country })} />
+                            <CountrySettingsModal
+                                showing={advancedSearchModalShowing === 'country'}
+                                hideModal={hideModal}
+                                preferredCountry={advancedSearchPreferences?.country as string}
+                                handleSave={async (country) => await updateSearchPreferences({ country })} />
 
-                                <RelationshipPreferenceSettingsModal
-                                    userPreference={advancedSearchPreferences.relationship_preference as number}
-                                    hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'}
-                                    handleSave={async (relationship_preference) => await updateSearchPreferences({ relationship_preference })} />
+                            <RelationshipPreferenceSettingsModal
+                                userPreference={advancedSearchPreferences.relationship_preference as number}
+                                hideModal={hideModal} showing={advancedSearchModalShowing === 'relationship_preference'}
+                                handleSave={async (relationship_preference) => await updateSearchPreferences({ relationship_preference })} />
 
-                                <ReligionSettingsModal
-                                    userReligion={advancedSearchPreferences.religion as number}
-                                    showing={advancedSearchModalShowing == 'religion'}
-                                    hideModal={hideModal}
-                                    handleSave={async religion => await updateSearchPreferences({ religion })} />
+                            <ReligionSettingsModal
+                                userReligion={advancedSearchPreferences.religion as number}
+                                showing={advancedSearchModalShowing == 'religion'}
+                                hideModal={hideModal}
+                                handleSave={async religion => await updateSearchPreferences({ religion })} />
 
-                            </div>
-                            <div className="px-5 pt-4">
-                                <div className="flex justify-between">
-                                </div>
-                            </div>
-                            <SettingsGroup data={settingsData.map(item => [item.label, item.value, item.onClick])} />
                         </div>
-                    </DashboardPageContainer>
+                        <div className="px-5 pt-4">
+                            <div className="flex justify-between">
+                            </div>
+                        </div>
+                        <SettingsGroup data={settingsData.map(item => [item.label, item.value, item.onClick])} />
+                    </div>
+                </DashboardPageContainer>
                 }
             </>
         }

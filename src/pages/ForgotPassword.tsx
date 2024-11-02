@@ -94,7 +94,7 @@ const ForgotPasswordSuccessPage: React.FC<ForgotPasswordPage> = ({ key, goBack }
     </AuthPage>
 }
 
-const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
+const ForgotPassword = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const pageOrder = ['forgot-password', 'success']
 
