@@ -38,10 +38,10 @@ const ExploreGridProfile: React.FC<ExploreGridProfileProps> = ({
                 <div className='explore-grid__profile-info-top'>
                     <div className="explore-grid__profile-info-top-left">
                         {isNewUser && <figure className='new-profile'>
-                            <img src="/assets/icons/leaf.svg"  alt={``}/>
+                            <img src="/assets/icons/leaf.svg" alt={``} />
                             New
                         </figure>}
-                         <span>~ {distance}</span>
+                        {distance && <span>~ {distance}</span>}
                     </div>
                     {hasBeenLiked && <motion.img initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="explore-grid__profile-like-icon" src="/assets/icons/heart.svg" />}
                 </div>
