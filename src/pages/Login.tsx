@@ -1,17 +1,9 @@
 import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {
-    collection,
-    doc,
-    getDocs,
-    query,
-    serverTimestamp,
-    setDoc,
-    where,
-} from 'firebase/firestore';
+import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  where} from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { ZodType, z } from "zod";
@@ -20,14 +12,10 @@ import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
-import { auth, db } from "../firebase";
-import { signInWithFacebook, signInWithGoogle } from '../firebase/auth';
+import { auth, db } from "@/firebase";
+import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-
-type LoginProps = {
-
-};
 
 export const LoginFormSchema: ZodType<FormData> = z
     .object({
@@ -38,14 +26,9 @@ export const LoginFormSchema: ZodType<FormData> = z
             .max(20, { message: "Password is too long" })
             .regex(/\d/, { message: "Password must contain at least one digit" })
             .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character" }),
-        // confirmPassword: z.string(),
-        // .refine((data) => data.password === data.confirmPassword, {
-        //     message: "Passwords do not match",
     })
-//     path: ["confirmPassword"], // path of error
-// });
 
-const Login: React.FC<LoginProps> = () => {
+const Login = () => {
     const {
         register,
         handleSubmit,
@@ -64,33 +47,17 @@ const Login: React.FC<LoginProps> = () => {
     const setAuthProvider = useAccountSetupFormStore(state => state.setAuthProvider)
     const navigate = useNavigate()
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
-
     const { setAuth } = useAuthStore();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
             setLoading(true)
-            //Check if the user Is Logging In With The Correct Sign In Method
-            // const q = query(collection(db, "users"), where("email", "==", data.email as string));
-            // const result = await getDocs(q);
-            // if (result.docs.length == 0) {
-            //     const err = new Error("Incorrect Sign In Method Attempted") as any
-            //     err.code = 'auth/account-does-not-exist'
-            //     throw err;
-            // }
-            // else if (result.docs.length == 1) {
-            //     const user = result.docs[0].data()
-            //     if (user.authProvider !== 'local') {
-            //         const err = new Error("Incorrect Sign In Method Attempted") as any
-            //         err.code = 'auth/use-social-sign-in'
-            //         throw err;
-            //     }
-            // }
+            // todo: confirm the user is logging in with the right email
+
             // Authenticate the User If The Account Is An Email & Password Account
             const res = await signInWithEmailAndPassword(auth, data.email as string, data.password as string)
             // console.log(res)
             if (res.user) {
-                console.log(res.user)
                 const q = query(collection(db, "users"), where("uid", "==", res.user.uid as string));
                 const result = await getDocs(q);
                 if (result.docs.length == 1) {
@@ -196,9 +163,6 @@ const Login: React.FC<LoginProps> = () => {
             setLoading(false)
         }
     }
-    const onFacebookSignIn = (res: any) => {
-        console.log(res)
-    }
 
     return <AuthPage className='login'>
         <div className='auth-page__modal'>
@@ -225,7 +189,6 @@ const Login: React.FC<LoginProps> = () => {
                     <div></div>
                 </div>
                 <div className='auth-page__modal__alternate-options__container'>
-                    <div onClick={() => signInWithFacebook(onFacebookSignIn)} className='auth-page__modal__alternate-options__item'><img src="/assets/icons/facebook.svg" /></div>
                     <div onClick={() => signInWithGoogle(onGoogleSignIn)} className='auth-page__modal__alternate-options__item'><img src="/assets/icons/google.svg" /></div>
                     <div onClick={() => navigate('/auth/phone-number')} className='auth-page__modal__alternate-options__item'><img src="/assets/icons/phone.svg" /></div>
                 </div>

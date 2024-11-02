@@ -1,12 +1,11 @@
-// useMatchStore.ts
 import { Match } from '@/types/likingAndMatching';
 import { User } from '@/types/user';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
-import create from 'zustand';
-import { db } from '../firebase'; // Adjust the path to your Firebase config
+import { create } from 'zustand';
+import { db } from '@/firebase'; // Adjust the path to your Firebase config
 
 interface PopulatedMatchData extends Match {
-    matchedUserData: User | null; // Ensure this matches your User type
+    matchedUserData: User | null // Ensure this matches your User type
 }
 
 interface MatchStore {

@@ -1,3 +1,5 @@
+import React from "react";
+
 interface IconProps extends React.SVGAttributes<HTMLOrSVGElement> {
   src: string;
   src2?: string;
@@ -22,7 +24,6 @@ const Icon: React.FC<IconProps> = ({
   >
     <path
       d={src}
-      //   fill="#F2243E"
     />
     <path d={src2} fill={color2}/>
   </svg>

@@ -1,5 +1,6 @@
-import { filter, settings } from "../../assets/icons";
+import { filter, settings } from "@/assets/icons";
 import Icon from "../ui/Icon";
+import React from "react";
 
 interface TopNavProps {
   onSettings?: () => void;

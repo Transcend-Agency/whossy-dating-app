@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore';
-import { db } from '../firebase'; // Adjust the path to your Firebase config
+import { db } from '@/firebase'; // Adjust the path to your Firebase config
 import { Match } from '@/types/likingAndMatching';
 import { User } from '@/types/user';
 
@@ -94,9 +94,6 @@ const useSyncUserMatches = (userId: string) => {
             unsubscribeUser2();
         };
     }, [userId]);
-    useEffect(() => {
-        console.log(matches, loading)
-    }, [matches, loading])
 
     return { matches, loading }; // Return both matches and loading state
 };

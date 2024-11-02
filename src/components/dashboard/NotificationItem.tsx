@@ -1,3 +1,5 @@
+import React from "react";
+
 interface NotificationItemProps {
     newNotification: boolean;
     header: string;

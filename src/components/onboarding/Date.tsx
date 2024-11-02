@@ -1,10 +1,15 @@
-import { useState, useRef } from "react";
+import React, { FC, useState, useRef } from "react";
 
-interface DateProps {
-  getBirthDate: (s: any) => void
+interface DateOfBirth {
+  day: string;
+  month: string;
+  year: string;
 }
 
-const Date:React.FC<DateProps> = ({getBirthDate}) => {
+interface DateProps {
+  getBirthDate: (date: DateOfBirth) => void;
+}
+const Date: FC<DateProps> = ({getBirthDate}) => {
   const [dateOfBirth, setDateOfBirth] = useState({
     day: "",
     month: "",

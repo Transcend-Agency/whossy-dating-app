@@ -1,7 +1,8 @@
 import { family_goal, preference } from "@/constants";
 import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import {getYearFromFirebaseDate} from "@/utils/date.ts";
 
 interface PreviewProfileProps {
     activePage: string;
@@ -10,8 +11,6 @@ interface PreviewProfileProps {
     setActiveSubPage?: (val: number) => void;
     userData: User | undefined;
 }
-
-// type SettingsModal = 'hidden' | 'name' | 'gender' | 'email' | 'phone' | 'relationship-preference' | 'love-language' | 'zodiac' | 'future-family-plans' | 'smoker' | 'religion' | 'drinking' | 'workout' | 'pet' | 'marital-status' | 'height' | 'weight' | 'education'
 
 const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, activeSubPage, userData }) => {
     const [currentImage, setCurrentImage] = useState(0)
@@ -30,21 +29,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
             setCurrentImage(value => value - 1)
         }
     }
-
-    const getYearFromFirebaseDate = (firebaseDate: {nanoseconds: number, seconds: number} | undefined) => {
-        if (!firebaseDate || typeof firebaseDate.seconds !== 'number') {
-            throw new Error('Invalid Firebase date object');
-        }
-
-        // Convert seconds to milliseconds
-        const milliseconds = firebaseDate.seconds * 1000;
-
-        // Create a Date object
-        const date = new Date(milliseconds);
-
-        // Get the year
-        return date.getFullYear();
-    };
 
     useEffect(() => {
         // console.log(moreDetailsContainer)
@@ -65,13 +49,12 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                     console.log(expanded)
                 }}
                 ref={profileContainer}
-                // animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }}
                 animate={activePage === 'edit-profile' ? (activeSubPage == 1 ? { x: "-100%", opacity: 1 } : { x: 0 }) : { x: 0 }}
                 transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page preview-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={closePage} className="settings-page__title__left">
-                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                            <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                             <p>Preview Profile</p>
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
@@ -87,19 +70,19 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             </div> */}
                             {profileImages?.map((src, index) =>
                             (
-                                <motion.img animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
+                                <motion.img key={index} animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
                             )
                             )}
                         </figure>
                         <div className="preview-profile__overlay">
                             <div onClick={goToPreviousPost} className={`previous-button ${currentImage > 0 && 'clickable'}`}>
                                 <button>
-                                    <img src="/assets/icons/arrow-right.svg" />
+                                    <img src="/assets/icons/arrow-right.svg" alt={``} />
                                 </button>
                             </div>
                             <div onClick={goToNextPost} className={`next-button ${currentImage < profileImages?.length - 1 && 'clickable'}`}>
                                 <button>
-                                    <img src="/assets/icons/arrow-right.svg" />
+                                    <img src="/assets/icons/arrow-right.svg" alt={``} />
                                 </button>
                             </div>
                         </div>
@@ -112,7 +95,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
                                     <p className="details">{userData?.first_name}, <span className="age">{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span></p>
-                                    <img src="/assets/icons/verified.svg" />
+                                    <img src="/assets/icons/verified.svg" alt={``} />
                                 </div>
                                 <AnimatePresence>
                                     {expanded && <motion.img exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -127,19 +110,19 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                                     {userData.bio.slice(0, 200)}...
                                 </p>}
                                 <div className="interests-row">
-                                    <img src="/assets/icons/interests.svg" />
+                                    <img src="/assets/icons/interests.svg" alt={``} />
                                     <div className="interests">
                                         {userData?.interests?.slice(0, 4)?.map((item, i) => <div className="interest" key={i}>{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
                                         setExpanded(!expanded)
-                                    }} className="expand-profile" src="/assets/icons/down.svg" />
+                                    }} className="expand-profile" src="/assets/icons/down.svg" alt={``} />
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {profileImages?.map((image, index) => (
-                                    <div onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
+                                {profileImages?.map((_image, index) => (
+                                    <div onClick={() => { setCurrentImage(index); }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
                         </div>
@@ -148,7 +131,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                 <div className="preview-profile__more-details">
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/relationship-preference.svg" />
+                            <img src="/assets/icons/relationship-preference.svg" alt={``}/>
                             Relationship preference
                         </div>
                         <div className="content-item__value">
@@ -158,7 +141,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                     </div>
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/relationship-preference.svg" />
+                            <img src="/assets/icons/relationship-preference.svg" alt={``} />
                             Bio
                         </div>
                         {userData?.bio && <div className="content-item__value">
@@ -203,7 +186,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                     </div> */}
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/interests-black.svg" />
+                            <img src="/assets/icons/interests-black.svg" alt={``} />
                             Interests
                         </div>
                         <div className="content-item__multi-options-container">
@@ -214,7 +197,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                     </div>
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/need-to-know.svg" />
+                            <img src="/assets/icons/need-to-know.svg" alt={``} />
                             Personal habits
                         </div>
                         <div className="content-item__info">
@@ -231,11 +214,11 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                         </div>
                     </div>
                     <div className="action-button">
-                        <img src="/assets/icons/block.svg" />
+                        <img src="/assets/icons/block.svg" alt={``}/>
                         Block Stephanie
                     </div>
                     <div className="action-button action-button--danger">
-                        <img src="/assets/icons/report.svg" />
+                        <img src="/assets/icons/report.svg" alt={``} />
                         Report Stephanie
                     </div>
                 </div>

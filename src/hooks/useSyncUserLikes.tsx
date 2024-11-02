@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { db } from '../firebase'; // import your Firebase config
+import { db } from '@/firebase'; // import your Firebase config
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Like } from '../types/likingAndMatching'; // import your Like interface
 

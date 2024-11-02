@@ -2,11 +2,11 @@ import OnboardingBackButton from "../components/onboarding/OnboardingBackButton"
 import Button from "../components/ui/Button";
 import Skip from "../components/onboarding/Skip";
 import RegularOptions from "../components/onboarding/RegularOptions";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OnboardingProps } from "../types/onboarding";
 import OnboardingPage from "../components/onboarding/OnboardingPage";
 import { useOnboardingStore } from "../store/OnboardingStore";
-import { smoking } from "../constants";
+import { smoking } from "@/constants";
 
 const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
   const [active, setActive] = useState<number | null>(null);
@@ -49,9 +49,6 @@ const AreYouASmoker: React.FC<OnboardingProps> = ({ advance, goBack }) => {
               "smoking-preference": active,
             });
           }}
-          // disabled
-          // className="cursor-not-allowed"
-          // style={{ backgroundColor: "#F6F6F6", color: "black" }}
         />
       </div>
     </OnboardingPage>

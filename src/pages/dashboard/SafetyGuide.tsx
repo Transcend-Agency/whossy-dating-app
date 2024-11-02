@@ -6,7 +6,7 @@ type SafetyGuideProps = {
     activeSubPage: number;
     closePage: () => void;
     onSafetyItem: () => void;
-    setActiveSubPage?: (num: number) => void;
+    setActiveSubPage: (num: number) => void;
 };
 
 interface SafetyGuideItemProps {
@@ -18,10 +18,10 @@ const SafetyGuideItem: React.FC<SafetyGuideItemProps> = ({ icon, title, onClick 
     return (
         <div onClick={onClick} className='safety-guide-item'>
             <div className='safety-guide-item__left'>
-                <img className='safety-guide-item__image' src={icon} />
+                <img className='safety-guide-item__image' src={icon} alt={``} />
                 <p>{title}</p>
             </div>
-            <img className='safety-guide-item__arrow-right' src="/assets/icons/back-arrow-black.svg" />
+            <img className='safety-guide-item__arrow-right' src="/assets/icons/back-arrow-black.svg" alt={``}/>
         </div>
     )
 }
@@ -43,9 +43,9 @@ const SafetyItemPage: React.FC<SafetyItemPageProps> = ({ activePage, activeSubPa
             <div className="settings-page__container">
                 <figure className='top-header'>
                     <button onClick={closePage} className="back-button">
-                        <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                        <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                     </button>
-                    <img src={data?.image} />
+                    <img src={data?.image} alt={``} />
                 </figure>
                 <div className="content">
                     <p className='content__header'>
@@ -197,10 +197,10 @@ const SafetyGuide: React.FC<SafetyGuideProps> = ({ activePage, activeSubPage, cl
             <div className="settings-page__container">
                 <div className="settings-page__title">
                     <button onClick={closePage} className="settings-page__title__left">
-                        <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                        <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                         <p>Safety Guide</p>
                     </button>
-                    <img className='safety-guide-icon' src="/assets/icons/safety-guide.svg" />
+                    <img className='safety-guide-icon' src="/assets/icons/safety-guide.svg" alt={``} />
                 </div>
                 <div className='safety-guide__items'>
                     <SafetyGuideItem title="General Safety Tips" icon="/assets/icons/safety-guide-images/lightbulb.png" onClick={() => { setSelectedSafetyGuidePage('general-safety-tips'); onSafetyItem() }} />

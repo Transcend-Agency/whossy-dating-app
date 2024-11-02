@@ -38,6 +38,9 @@ export default {
       fontSize:{
         '7.5xl': ['88px','92px']
       },
+      fontFamily: {
+        'neue-montreal': ["Neue Montreal", 'sans-serif'],
+      },
     },
   },
   plugins: [],

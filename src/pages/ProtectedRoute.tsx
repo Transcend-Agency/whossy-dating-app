@@ -9,16 +9,13 @@ interface ProtectedRoutesProps {
 export const ProtectedDashboard: React.FC<ProtectedRoutesProps> = ({ children }) => {
   const { auth, user } = useAuthStore();
 
-  return (auth?.uid && user) ? (auth.has_completed_onboarding ? children : <Navigate to="/onboarding" />) : <Navigate to="/auth" />;
-}
+  if (!auth?.uid || !user) return <Navigate to="/auth" />;
+  return auth.has_completed_onboarding ? children : <Navigate to="/onboarding" />;
+};
 
 export const ProtectedOnboarding: React.FC<ProtectedRoutesProps> = ({ children }) => {
   const { auth, user } = useAuthStore();
 
-  return (auth?.uid && user) ? (auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children) : <Navigate to="/auth" />;
-}
-
-// export const ProtectedAuth: React.FC<ProtectedRoutesProps> = ({ children }) => {
-//   const {auth} = useAuthStore();
-//   return auth?.uid ? auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children : <Navigate to="/auth" />;
-// }
+  if (!auth?.uid || !user) return <Navigate to="/auth" />;
+  return auth.has_completed_onboarding ? <Navigate to="/dashboard/user-profile" /> : children;
+};

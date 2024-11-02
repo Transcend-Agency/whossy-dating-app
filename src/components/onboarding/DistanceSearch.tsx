@@ -1,21 +1,12 @@
 import Button from "../ui/Button";
 import OnboardingBackButton from "./OnboardingBackButton";
-// import Slider from "../ui/Slider";
-import { OnboardingProps } from "../../types/onboarding";
-// import OnboardingBackButton from "../components/onboarding/OnboardingBackButton";
+import { OnboardingProps } from "@/types/onboarding.ts";
 import "../ui/styles.css";
 import Slider from "../ui/Slider";
 import OnboardingPage from "./OnboardingPage";
+import React from "react";
 const DistanceSearch: React.FC<OnboardingProps> = ({ advance, goBack }) => {
-  // const [distance, setDistance] = useState<number>(50);
-  // useEffect(() => {
-  //   if (
-  //     data["distance-search"] !== undefined &&
-  //     data["distance-search"] !== null
-  //   ) {
-  //     setDistance(data["distance-search"]);
-  //   }
-  // }, []);
+
   return (
     <OnboardingPage>
       <h1 className="onboarding-page__header">Distance Search Results</h1>
@@ -24,7 +15,6 @@ const DistanceSearch: React.FC<OnboardingProps> = ({ advance, goBack }) => {
         search for matches within your current location. You can always change
         this later in the settings.
       </p>
-      {/* <Slider getDistance={(s) => setDistance(s)} /> */}
       <Slider />
       <div className="onboarding-page__section-one__buttons">
         <OnboardingBackButton onClick={goBack} />
@@ -33,13 +23,9 @@ const DistanceSearch: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           className="cursor-pointer"
           onClick={() => {
             advance();
-            // updateOnboardingData({ "distance-search": distance });
           }}
         />
       </div>
-      {/* <button onClick={() => console.log(data["distance-search"])}>
-        click
-      </button> */}
     </OnboardingPage>
   );
 };

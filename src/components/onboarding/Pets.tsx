@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { pets } from "../../constants";
+import { pets } from "@/constants";
 import { useOnboardingStore } from "@/store/OnboardingStore";
 
 const Pets = () => {

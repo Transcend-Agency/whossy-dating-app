@@ -1,23 +1,31 @@
-import { family_goal, preference } from "@/constants";
-import { db } from "@/firebase";
-import { useAuthStore } from "@/store/UserId";
-import { collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt, where } from "firebase/firestore";
-import { AnimatePresence, AnimationControls, motion, MotionValue, useAnimationControls, useMotionValue, useTransform } from 'framer-motion';
-import { distanceBetween, geohashForLocation, geohashQueryBounds } from 'geofire-common';
+import {family_goal, preference} from "@/constants";
+import {db} from "@/firebase";
+import {useAuthStore} from "@/store/UserId";
+import {collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt, where} from "firebase/firestore";
+import {
+    AnimatePresence,
+    AnimationControls,
+    motion,
+    MotionValue,
+    useAnimationControls,
+    useMotionValue,
+    useTransform
+} from 'framer-motion';
+import {distanceBetween, geohashForLocation, geohashQueryBounds} from 'geofire-common';
 import Lottie from "lottie-react";
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { uid } from 'react-uid';
+import React, {Dispatch, SetStateAction, useCallback, useEffect, useRef, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {uid} from 'react-uid';
 import Cat from "../../Cat.json";
-import { User } from "@/types/user";
-import { getYearFromFirebaseDate } from "@/utils/date";
+import {User} from "@/types/user";
+import {getYearFromFirebaseDate} from "@/utils/date";
 import useSyncUserLikes from "@/hooks/useSyncUserLikes";
 import useSyncUserDislikes from "@/hooks/useSyncUserDislikees";
-import { set } from "firebase/database";
+import {addMatch} from "@/components/dashboard/ViewProfile.tsx";
 
 interface ProfileCardProps {
     profiles: User[],
-    setProfiles: Dispatch<SetStateAction<number[]>>,
+    setProfiles: Dispatch<SetStateAction<User[]>>,
     item: User,
     setActionButtonsOpacity: Dispatch<SetStateAction<MotionValue<number>>>
     setChosenActionButtonOpacity: Dispatch<SetStateAction<MotionValue<number>>>
@@ -69,10 +77,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             nextCardOpacityValue.set(0)
             setNextCardOpacity(nextCardOpacityValue)
             if (x.get() > 160) {
-                addLike()
+                addLike().catch(e => console.error(e))
             }
             else if (x.get() <= -160) {
-                addDislike()
+                addDislike().catch(e => console.error(e))
             }
         }
     }
@@ -100,8 +108,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         // Distance in kilometers
-        const distance = R * c;
-        return distance;
+        return R * c;
     }
 
     const distanceBetween = haversineDistance(user?.latitude as number, user?.longitude as number, item.latitude as number, item.longitude as number);
@@ -164,27 +171,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         }
     };
 
-    const addMatch = async (likerId: string, likedId: string) => {
-        const matchesRef = collection(db, 'matches');
-
-        // Ensure that each match is only stored once (user1_id < user2_id)
-        const matchId = likerId < likedId ? `${likerId}_${likedId}` : `${likedId}_${likerId}`;
-
-        // Create or update the match document
-        await setDoc(doc(matchesRef, matchId), {
-            user1_id: likerId < likedId ? likerId : likedId,
-            user2_id: likerId > likedId ? likerId : likedId,
-            timestamp: new Date().toISOString(),
-        });
-
-        console.log('Match created:', matchId);
-    };
-
     const handleShortcuts = useCallback(
-        (e: Event) => {
-            // @ts-expect-error type errpr
+        (e: { keyCode: number}) => {
             if (e.keyCode == 32) {
-                if (currentImage < item.photos?.length - 1) {
+                if (currentImage < (item.photos?.length as number) - 1) {
                     setCurrentImage(currentImage + 1)
                 } else {
                     setCurrentImage(0)
@@ -230,12 +220,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         <div className="preview-profile__overlay">
                             <div onClick={goToPreviousPost} className={`previous-button ${currentImage > 0 && 'clickable'}`}>
                                 <button>
-                                    <img src="/assets/icons/arrow-right.svg" />
+                                    <img src="/assets/icons/arrow-right.svg" alt={``}/>
                                 </button>
                             </div>
                             <div onClick={goToNextPost} className={`next-button ${currentImage < (item?.photos?.length as number) - 1 && 'clickable'}`}>
                                 <button>
-                                    <img src="/assets/icons/arrow-right.svg" />
+                                    <img src="/assets/icons/arrow-right.svg" alt={``}/>
                                 </button>
                             </div>
                         </div>
@@ -248,7 +238,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                 <div className="left">
                                     <p className="details">{item?.first_name}, <span className="age">{(new Date()).getFullYear() - (getYearFromFirebaseDate(item?.date_of_birth) as number)}</span></p>
                                     {/* <p className="details">{userData?.first_name}, <span className="age">{item?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(item.date_of_birth) : 'NIL'}</span></p> */}
-                                    <img src="/assets/icons/verified.svg" />
+                                    <img src="/assets/icons/verified.svg" alt={``}/>
                                 </div>
                                 <AnimatePresence>
                                     {expanded && <motion.img exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -264,19 +254,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                     {item.bio.slice(0, 200)}...
                                 </p>}
                                 <div className="interests-row">
-                                    <img src="/assets/icons/interests.svg" />
+                                    <img src="/assets/icons/interests.svg" alt={``} />
                                     <div className="interests">
                                         {item?.interests?.slice(0, 4)?.map((item, i) => <div key={i} className="interest">{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
                                         setExpanded(!expanded)
-                                    }} className="expand-profile" src="/assets/icons/down.svg" />
+                                    }} className="expand-profile" src="/assets/icons/down.svg" alt={``} />
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
-                                {item.photos?.map((image, index) => (
-                                    <div key={index} onClick={() => { setCurrentImage(index); image }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
+                                {item.photos?.map((_image, index) => (
+                                    <div key={index} onClick={() => { setCurrentImage(index) }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
                         </div>
@@ -285,59 +275,22 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 <div className="preview-profile__more-details">
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/relationship-preference.svg" />
+                            <img src="/assets/icons/relationship-preference.svg" alt={``} />
                             Relationship preference
                         </div>
                         <div className="content-item__value">
-                            {/* <img src="/assets/images/onboarding/onboarding-fun.svg" /> */}
                             {preference[item?.preference as number]}
                         </div>
                     </div>
                     <div className="content-item">
                         <div className="content-item__title">
-                            <img src="/assets/icons/relationship-preference.svg" />
+                            <img src="/assets/icons/relationship-preference.svg" alt={``} />
                             Bio
                         </div>
                         {item?.bio && <div className="content-item__value">
                             {item.bio}
                         </div>}
                     </div>
-                    {/* <div className="content-item">
-                        <div className="content-item__title">
-                            <img src="/assets/icons/about.svg" />
-                            About
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                    </div>
-                    <div className="content-item">
-                        <div className="content-item__title">
-                            <img src="/assets/icons/need-to-know.svg" />
-                            Need to know
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                        <div className="content-item__info">
-                            <p className="content-item__info__title">Future family goals</p>
-                            <p className="content-item__info__text">I want children</p>
-                        </div>
-                    </div> */}
                     <div className="content-item">
                         <div className="content-item__title">
                             <img src="/assets/icons/interests-black.svg" />
@@ -386,10 +339,7 @@ const SwipingAndMatching = () => {
     const x = useMotionValue(0)
     const controls = useAnimationControls()
     const { user } = useAuthStore()
-    const [currentLocation, setCurrentLocation] = useState({
-        latitude: 0,
-        longitude: 0
-    })
+
     const { updateUser } = useAuthStore()
     const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
     const { userDislikes, loading: dislikesLoading } = useSyncUserDislikes(user!.uid!)
@@ -399,36 +349,35 @@ const SwipingAndMatching = () => {
             x: item == profiles[profiles.length - 1] ? -180 : 0,
             transition: { duration: 0.5 }
         }))
-        // @ts-expect-error unused var
-        await setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
-        controls.start((item) => {
+
+        setProfiles(profiles.filter((_profileItem, index) => index !== profiles.length - 1))
+        await controls.start((item) => {
             return (item == profiles[profiles.length - 2] ? {
                 y: 0,
                 width: '100%'
             } : (item == profiles[profiles.length - 3] ? {
                 y: 12,
                 width: 'calc(100% - 48px)'
-            } : { y: 24, width: 'calc(100% - 96px)' }))
+            } : {y: 24, width: 'calc(100% - 96px)'}))
         })
     }
 
     const likeProfile = async () => {
-        // controls.start((item) => ({ y: item == profiles[profiles.length - 1] ? 0 : (item == profiles[profiles.length - 2] ? 12 : 24), width: item == profiles[profiles.length - 1] ? '100%' : (profiles[profiles.length - 2] == item ? 'calc(100% - 48px)' : 'calc(100% - 96px)') }))
         await controls.start((item) => ({
             x: item == profiles[profiles.length - 1] ? 180 : 0,
             transition: { duration: 0.5 }
         }))
         // @ts-expect-error unused vars
-        await setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
+        setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
         // assert(profileI)
-        controls.start((item) => {
+        await controls.start((item) => {
             return (item == profiles[profiles.length - 2] ? {
                 y: 0,
                 width: '100%'
             } : (item == profiles[profiles.length - 3] ? {
                 y: 12,
                 width: 'calc(100% - 48px)'
-            } : { y: 24, width: 'calc(100% - 96px)' }))
+            } : {y: 24, width: 'calc(100% - 96px)'}))
         })
     }
     const [actionButtonsOpacity, setActionButtonsOpacity] = useState(1)
@@ -437,18 +386,21 @@ const SwipingAndMatching = () => {
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
 
-    const handleShortcuts = (e: any) => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleShortcuts = (e: { keyCode: number; }) => {
         if (e.keyCode == 37)
-            cancelProfile()
+            cancelProfile().catch(err => console.error(err))
         else if (e.keyCode == 39)
-            likeProfile()
+            likeProfile().catch(err => console.error(err))
     }
+
     useEffect(() => {
         window.addEventListener('keydown', handleShortcuts)
         return () => {
             window.removeEventListener('keydown', handleShortcuts)
         }
     }, [handleShortcuts])
+
     x.on("change", latest => {
         if (latest < 0) setActiveAction('cancel')
         else setActiveAction('like')
@@ -515,8 +467,9 @@ const SwipingAndMatching = () => {
                 geohash: geohashForLocation([latitude, longitude])
             }, { merge: true });
 
-            updateUser({ location: new GeoPoint(latitude, longitude), geohash: geohashForLocation([latitude, longitude]), latitude, longitude })
-
+            updateUser({ location: new GeoPoint(latitude, longitude),
+                    geohash: geohashForLocation([latitude, longitude]),
+                latitude, longitude })
             setProfilesLoading(true)
 
             console.log("Location saved successfully!");
@@ -527,7 +480,7 @@ const SwipingAndMatching = () => {
 
     useEffect(() => {
         if (profilesLoading && !likesLoading && !dislikesLoading) {
-            fetchUsersWithinSpecifiedRadius()
+            fetchUsersWithinSpecifiedRadius().catch(err => console.log(err))
         }
         console.log(profilesLoading, likesLoading, dislikesLoading)
     }, [profilesLoading, dislikesLoading, likesLoading])
@@ -538,11 +491,7 @@ const SwipingAndMatching = () => {
             navigator.geolocation.getCurrentPosition(function (position) {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
-                setCurrentLocation({
-                    latitude, longitude
-                })
-                // Save the location data to Firebase
-                saveUserLocationToFirebase(latitude, longitude);
+                saveUserLocationToFirebase(latitude, longitude).catch(err => console.log(err));
             }, function (error) {
                 console.error("Error getting location: ", error);
             });
@@ -555,8 +504,8 @@ const SwipingAndMatching = () => {
             <nav className="dashboard-layout__mobile-top-nav">
                 <div className="dashboard-layout__moblie-top-nav__logo"></div>
                 <div className="icons">
-                    <img src="/assets/icons/notification.svg" />
-                    <img src="/assets/icons/control.svg" />
+                    <img src="/assets/icons/notification.svg" alt={``}/>
+                    <img src="/assets/icons/control.svg" alt={``}/>
                 </div>
             </nav>
             <AnimatePresence mode="sync">
@@ -566,21 +515,21 @@ const SwipingAndMatching = () => {
                             style={{ opacity: actionButtonsOpacity }}
                             className="action-buttons">
                             <button className="action-buttons__button action-buttons__button--small">
-                                <img src="/assets/icons/redo.svg" />
+                                <img src="/assets/icons/redo.svg" alt={``}/>
                             </button>
                             <button onClick={cancelProfile} className="action-buttons__button">
-                                <img src="/assets/icons/cancel.svg" />
+                                <img src="/assets/icons/cancel.svg" alt={``}/>
                             </button>
                             <button onClick={likeProfile} className="action-buttons__button">
-                                <img src="/assets/icons/heart.svg" />
+                                <img src="/assets/icons/heart.svg" alt={``}/>
                             </button>
-                            <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=${'MWBawIlrsDarKK1Cjnm3FIGj8vz2'}`)}>
-                                <img src="/assets/icons/message-heart.svg" />
+                            <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`)}>
+                                <img src="/assets/icons/message-heart.svg" alt={``} />
                             </button>
                         </motion.div>
                         <motion.div style={{ opacity: chosenActionButtonOpacity, scale: chosenActionScale }} className="chosen-action-button">
-                            {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" />}
-                            {activeAction == 'like' && <img src="/assets/icons/heart.svg" />}
+                            {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" alt={``} />}
+                            {activeAction == 'like' && <img src="/assets/icons/heart.svg" alt={``} />}
                         </motion.div>
                         {/* @ts-expect-error type errors */}
                         {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
@@ -590,7 +539,7 @@ const SwipingAndMatching = () => {
                 {!profilesLoading && profiles.length === 0 &&
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
-                            <img className="" src="/assets/icons/like-empty-state.png" />
+                            <img className="" src="/assets/icons/like-empty-state.png" alt={``} />
                             <p className="matches-page__empty-state-text">No New Profiles Within Your Area</p>
                         </motion.div>
                     </motion.div>

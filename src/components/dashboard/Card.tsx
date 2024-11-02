@@ -1,7 +1,5 @@
-// import {} from ''
-
 import { useState } from "react";
-import { verifiedBg, verifiedTick } from "../../assets/icons";
+import { verifiedBg, verifiedTick } from "@/assets/icons";
 import Icon from "../ui/Icon";
 import Information from "./Information";
 import Interests from "./Interests";

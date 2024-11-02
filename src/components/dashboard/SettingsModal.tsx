@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import React from "react";
 
 interface SettingsModalProps {
   show: boolean

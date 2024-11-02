@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion'
 
-type ShortcutControlsProps = {
-
-};
-
-const ShortcutControls: React.FC<ShortcutControlsProps> = () => {
+const ShortcutControls = () => {
     const [shortcutControlsShowing, setShortcutControlsShowing] = useState(true)
     const toggleShortcutControlsShowing = () => {
         setShortcutControlsShowing(!shortcutControlsShowing)
@@ -14,7 +10,7 @@ const ShortcutControls: React.FC<ShortcutControlsProps> = () => {
         <button onClick={toggleShortcutControlsShowing} className="control-button">{shortcutControlsShowing ? 'Hide' : 'Show'}</button>
         <motion.div initial={{ opacity: shortcutControlsShowing ? 1 : 0 }} animate={{ opacity: shortcutControlsShowing ? 1 : 0 }} className='shortcut-container'>
             <div className='shortcut'>
-                <img src="/assets/icons/shortcuts/left-arrow.svg" className='shortcut__key' />
+                <img src="/assets/icons/shortcuts/left-arrow.svg" className='shortcut__key'  alt={``}/>
                 Nope
             </div>
             <div className='shortcut'>

@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-// import UserProfileImage from "../../components/dashboard/UserProfileImage";
+import React, { useEffect, useState } from "react";
 import { updateUserProfile } from "@/hooks/useUser";
 import { UserFilters } from "@/types/user";
 import { alphabet } from "@/constants";
@@ -26,7 +25,7 @@ const PreferredInterestsDesktop: React.FC<ProfileSettingsProps> = ({ activePage,
     
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateUserPreferences = (s: UserFilters) => {updateUserProfile("filters",auth?.uid as string, () => {refetchUserFilters(); setIsLoading(false)}, s)}
+    const updateUserPreferences = (s: UserFilters) => {updateUserProfile("filters",auth?.uid as string, () => {refetchUserFilters(); setIsLoading(false)}, s).catch(e => console.error(e))}
 
     useEffect(() => setMutatedData(userFilters?.interests || []), [userFilters?.interests])
 

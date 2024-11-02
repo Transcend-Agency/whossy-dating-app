@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '../firebase'; // import your Firebase config
+import { db } from '@/firebase'; // import your Firebase config
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { Dislike, Like } from '../types/likingAndMatching'; // import your Like interface
+import { Dislike } from '../types/likingAndMatching'; // import your Like interface
 
 function useSyncUserDislikes(userId: string) {
     const [userDislikes, setUserDislikes] = useState<Dislike[]>([]);

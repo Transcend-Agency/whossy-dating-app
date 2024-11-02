@@ -1,62 +1,49 @@
 import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser";
-import useSyncUserLikes from "@/hooks/useSyncUserLikes";
 import useSyncUserMatches from "@/hooks/useSyncUserMatches";
 import { useAuthStore } from "@/store/UserId";
-import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import DashboardPageContainer from "./DashboardPageContainer";
 import { MatchItem } from "./MatchesSide";
-import ViewProfile from "./ViewProfile";
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match'>('like')
     const [likes] = useState([1, 2, 3, 4, 5])
     const isPremiumMember = false;
     const { user } = useAuthStore()
-    const [activeProfile, setActiveProfile] = useState<null | string>(null)
-    const [currentProfile, setCurrentProfile] = useState<User | null | undefined>(null)
-
     const { matches, loading: matchesLoading } = useSyncUserMatches(user!.uid!)
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
-    const { userLikes } = useSyncUserLikes(user!.uid!)
 
     const LikesEmptyState = () => {
         return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
-                <img className="" src="/assets/icons/like-empty-state.png" />
+            <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
+                <img className="" src="/assets/icons/like-empty-state.png" alt={``} />
                 <p className="matches-page__empty-state-text">No Likes Yet</p>
             </motion.div>
         )
     }
     const MatchesEmptyState = () => {
         return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
-                <img className="" src="/assets/images/dashboard/no-matches.png" />
+            <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
+                <img className="" src="/assets/images/dashboard/no-matches.png" alt={``} />
                 <p className="matches-page__empty-state-text">No Matches Yet ^_^</p>
             </motion.div>
         )
     }
 
-    const hasUserBeenLiked = () => {
-        return Boolean(userLikes.filter(like => (like.liked_id === currentProfile?.uid)).length)
-    }
-
-    useEffect(() => {
-
-    })
     return (
         <>
             {activePage !== 'profile' && <DashboardPageContainer className="matches-page" span={1}>
-
                 <div className="matches-page__nav">
                     <div className="left-nav">
                         <button onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Like</button>
                         <button onClick={() => setActivePage('match')} className={`matches-page__nav-item ${activePage === 'match' && 'matches-page__nav-item--active'}`}>Match</button>
                     </div>
                     <div className="right-nav">
-                        <img src="/assets/icons/control.svg" />
+                        <img src="/assets/icons/control.svg" alt={``} />
                     </div>
                 </div>
                 <AnimatePresence mode="wait">
@@ -82,13 +69,13 @@ const MatchesPage = () => {
                                 {!isPremiumMember && <div className="likes-subscribe-cta-container">
                                     <div className="likes-subscribe-cta">
                                         <figure className="likes-subscribe-cta__image">
-                                            <img src="/assets/images/matches/stephen.png" />
+                                            <img src="/assets/images/matches/stephen.png" alt={``} />
                                             <div className="likes-subscribe-cta__overlay">
                                                 <div className="likes-subscribe-cta__total-likes">
                                                     <span>{peopleWhoLiked.length}</span>
-                                                    <img src="/assets/icons/white-likes.svg" />
+                                                    <img src="/assets/icons/white-likes.svg" alt={``}/>
                                                 </div>
-                                                <img src="/assets/icons/likes-banner.svg" className="likes-subscribe-cta__likes-banner" />
+                                                <img src="/assets/icons/likes-banner.svg" className="likes-subscribe-cta__likes-banner" alt={``} />
                                             </div>
                                         </figure>
                                         <div className="likes-subscribe-cta__text">
@@ -98,13 +85,15 @@ const MatchesPage = () => {
                                     </div>
                                 </div>}
                                 {likes.length !== 0 && <div className="matches-page__grid">
-                                    {peopleWhoLiked?.map(like => <MatchItem onViewProfileClick={() => {
-                                        setActivePage('profile');
-                                        setCurrentProfile(peopleWhoLiked?.find(item => item.liker_id == (like!.liker!.uid!))!.liker);
-                                    }} userData={like.liker} />)}
+                                    {peopleWhoLiked?.map((like, i, ) =>
+                                        <div key={i}>
+                                            <MatchItem
+                                                userData={like.liker}
+                                            />
+                                        </div>
+                                        )}
                                 </div>}
                             </motion.div>}
-
                         </AnimatePresence>
 
                     </motion.div>}
@@ -144,10 +133,11 @@ const MatchesPage = () => {
                                 </div>}
 
                                 {matches.length !== 0 && <div className="matches-page__grid">
-                                    {matches.map(match => <MatchItem onViewProfileClick={() => {
-                                        setActivePage('profile');
-                                        setCurrentProfile(matches.find(item => item.matchedUserData.uid === match.matchedUserData.uid)?.matchedUserData)
-                                    }} userData={match.matchedUserData} />)}
+                                    {matches.map((match, i) =>
+                                        <div key={i}>
+                                            <MatchItem userData={match.matchedUserData} />
+                                        </div>
+                                        )}
                                 </div>}
 
                             </motion.div>}
@@ -157,10 +147,6 @@ const MatchesPage = () => {
                     </motion.div>}
                 </AnimatePresence>
             </DashboardPageContainer>}
-            {/* @ts-expecg */}
-            {activePage == 'profile' && <ViewProfile profile_has_been_liked={hasUserBeenLiked()} onBackClick={() => { setActivePage('like'); setActiveProfile(null) }} userData={
-                currentProfile
-            } />}
         </>
     )
 }
