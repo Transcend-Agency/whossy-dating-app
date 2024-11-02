@@ -626,6 +626,7 @@ const Explore = () => {
         }}
             userData={profiles.find(profile => selectedProfile === profile?.uid)!}
             profile_has_been_liked={hasUserBeenLiked(selectedProfile)}
+            loggedUserData={userData as User}
         />}
     </>
 }
