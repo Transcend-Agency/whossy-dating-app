@@ -1,27 +1,22 @@
-import React, { useEffect, useState} from 'react';
-import DashboardNavIcon from './DashboardNavIcon';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import ChatInterface from './ChatInterface';
-import ShortcutControls from './ShortcutControls';
-import { AnimatePresence } from 'framer-motion';
-import { IoIosNotifications } from "react-icons/io";
-import useDashboardStore from "@/store/useDashboardStore.tsx";
-import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
-import {doc, getDoc, onSnapshot } from 'firebase/firestore';
+import Matches from "@/components/dashboard/Matches.tsx";
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
-import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
-import Matches from "@/components/dashboard/Matches.tsx";
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { IoIosNotifications } from "react-icons/io";
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import ChatInterface from './ChatInterface';
+import DashboardNavIcon from './DashboardNavIcon';
+import ShortcutControls from './ShortcutControls';
 
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [newNotification, setNewNotification] = useState(false);
-    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
 
     const { auth } = useAuthStore();
-    const { refreshProfiles } = useProfileFetcher()
 
     useEffect(() => {
 
@@ -52,8 +47,8 @@ const Dashboard: React.FC = () => {
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
                     <div className='dashboard-layout__top-nav__logo hidden lg:block'>
-                    <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem]' />
-    
+                        <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem]' />
+
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container items-center'>
                         <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
@@ -64,20 +59,13 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container relative' onClick={() => navigate('/dashboard/notification')}>
                         <IoIosNotifications className={`size-[2.8rem] hover:scale-[1.02] active:scale-[0.95] cursor-pointer ${pathname === '/dashboard/notification' ? 'text-[#F2243E]' : 'text-[#8A8A8E]'}`} />
-                        {!newNotification && <div className='bg-red-700 absolute size-[0.8rem] rounded-full right-[1px] '/>}
+                        {!newNotification && <div className='bg-red-700 absolute size-[0.8rem] rounded-full right-[1px] ' />}
                     </div>
                 </div>
             </nav>
             <main className='dashboard-layout__main-app'>
-                    <Matches/>
-                    {
-                        selectedProfile ?
-                        <ViewProfile
-                            onBackClick={() => { setSelectedProfile(null) }}
-                            userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                            onBlockChange={refreshProfiles}
-                        />  : <Outlet />
-                    }
+                <Matches />
+                <Outlet />
             </main>
         </div>
         <div className="h-screen flex flex-col lg:hidden">
