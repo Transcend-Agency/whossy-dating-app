@@ -73,18 +73,19 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 liker_id: user?.uid,
                 liked_id: userData.uid,
                 timestamp: new Date().toISOString()
-            });
-            toast.success(`Your Like has been sent to ${userData.first_name}`);
-            {/* @ts-expect-error quick-fix */ }
-            const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
-            const mutualLikeSnapshot = await getDocs(q);
+            }).then(() => {
+                {/* @ts-expect-error quick-fix */ }
+                const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
+                const mutualLikeSnapshot = await getDocs(q);
 
-            if (!mutualLikeSnapshot.empty) {
-                // Mutual like detected, create a match
-                await addMatch(user?.uid as string, userData?.uid as string);
-                toast.success(`You're Matched With ${userData.first_name}`);
-                fetchMatches(user?.uid as string);
-            }
+                if (!mutualLikeSnapshot.empty) {
+                    // Mutual like detected, create a match
+                    await addMatch(user?.uid as string, userData?.uid as string);
+                    toast.success(`You're Matched With ${userData.first_name}`);
+                    fetchMatches(user?.uid as string);
+                }
+            }).catch(err => console.error("An error occured while updating likes"));
+            toast.success(`Your Like has been sent to ${userData.first_name}`);
 
         } catch (err) {
             console.error("Error adding like:", err);
