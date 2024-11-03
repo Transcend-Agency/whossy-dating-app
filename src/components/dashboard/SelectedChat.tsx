@@ -21,6 +21,7 @@ interface SelectedChatProps {
     closePage: () => void
     updateChatId: (newChatId: string) => void;
     userData: User;
+    chatId?: string;
 }
 
 const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId }) => {
@@ -125,7 +126,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         // Create optimistic message object with a placeholder for image if it's being uploaded
         const optimisticMessage: Messages = {
             id: messageId,
-            senderId: currentUserId,
+            sender_id: currentUserId,
             message: text !== '' ? text : null,
             photo: image.file ? 'loading_image_placeholder' : null, // Placeholder for image
             timestamp: temporaryTimestamp,
@@ -159,12 +160,13 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                 chatToUpdateId = newChatId;
                 await setDoc(
                     doc(db, "chats", newChatId), {
-                    lastMessage: text || 'Sent a photo',
-                    lastMessageId: messageId,
-                    lastSenderId: currentUserId,
-                    userBlocked: [false, false],
+                    last_message: text || 'Sent a photo',
+                    last_message_id: messageId,
+                    last_sender_ud: currentUserId,
+                    user_blocked: [false, false],
                     participants: [currentUserId, reciepientUserId],
                     status: 'sent',
+                    last_message_timestamp: serverTimestamp(),
                 }
                 );
                 updateChatId(newChatId);
@@ -174,7 +176,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
             const messageRef = doc(db, `chats/${chatToUpdateId}/messages`, messageId);
             await setDoc(messageRef, {
                 id: messageId,
-                senderId: currentUserId,
+                sender_id: currentUserId,
                 message: text !== '' ? text : null,
                 photo: imgUrl ?? null,
                 timestamp: serverTimestamp(),
@@ -183,10 +185,11 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
             // Update chat with last message
             await updateDoc(doc(db, "chats", chatToUpdateId), {
-                lastMessage: text || 'Image',
-                lastMessageId: messageId,
-                lastSenderId: currentUserId,
+                last_message: text || 'Image',
+                last_message_id: messageId,
+                last_sender_id: currentUserId,
                 status: "sent",
+                last_message_timestamp: serverTimestamp(),
             });
 
         } catch (err) {
@@ -197,6 +200,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [chats, setChats] = useState<any[]>([]);
 
     useEffect(() => {
@@ -307,15 +311,15 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                                 </div> 
                             */}
                                 {chats && Array.isArray(chats) && chats?.map((message: Messages, i: number) =>
-                                    <div className={`max-w-[70%] flex ${message.senderId === auth?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}
+                                    <div className={`max-w-[70%] flex ${message.sender_id === auth?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}
                                     // key={message.createAt}
                                     >
                                         <div className="flex flex-col">
                                             {message.photo && message.photo !== 'loading_image_placeholder' ? <img className='mr-2 max-h-[30rem] w-full object-contain ' src={message.photo as string} alt="profile picture" /> : message.photo === 'loading_image_placeholder' && <Skeleton width="30rem" height="30rem" />}
-                                            {message.message && <p className={`${message.senderId === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#f6f6f6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.senderId === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.senderId === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
+                                            {message.message && <p className={`${message.sender_id === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#f6f6f6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.sender_id === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.sender_id === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
                                         </div>
                                         <p className="flex justify-end mt-2 text-[#cfcfcf]">
-                                            {message.senderId === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}
+                                            {message.sender_id === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}
                                             <span>
   {message.timestamp && 
     // typeof message.timestamp === 'object' && 
