@@ -23,6 +23,7 @@ const MatchesPage = () => {
         setSelectedProfile,
     } = useDashboardStore()
     const { refreshProfiles } = useProfileFetcher()
+    const [artificialSelectedProfile, setArtificialSelectedProfile] = useState(null)
 
     const LikesEmptyState = () => {
         return (
@@ -43,9 +44,11 @@ const MatchesPage = () => {
         )
     }
 
-    useEffect(() => {
-        return () => setSelectedProfile(null)
-    }, [])
+    // useEffect(() => {
+    //     if (selectedProfile)
+    //     setTimeout(() => setSelectedProfile(null), 500)
+    // }, [])
+
 
     return (
         <>

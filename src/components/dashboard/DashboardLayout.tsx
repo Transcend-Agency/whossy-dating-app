@@ -37,7 +37,6 @@ const Dashboard: React.FC = () => {
             unSub();
         };
     }, [auth?.uid])
-    // console.log(pathname)
     return <>
         <div className='dashboard-layout hidden lg:block'>
             <ChatInterface />
