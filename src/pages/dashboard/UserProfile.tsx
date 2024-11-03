@@ -108,8 +108,8 @@ const UserProfile = () => {
 
                 </div>
                 <section className='user-profile__plans'>
-                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='free' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('free') }} />
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0 ' benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']}  type='premium' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium') }} />
+                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth='12.99' benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('free') }} />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth='0 ' benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium') }} />
                 </section>
 
             </motion.div>
