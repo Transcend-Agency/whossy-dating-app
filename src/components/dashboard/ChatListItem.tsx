@@ -4,7 +4,7 @@ import Skeleton from "react-loading-skeleton";
 import React from "react";
 
 interface ChatListItemProps {
-    profileImage: string | undefined;
+    profileImage?: string | null;
     contactName: string;
     message: string;
     messageStatus?: boolean;

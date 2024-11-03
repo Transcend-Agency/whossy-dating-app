@@ -50,30 +50,6 @@ const ChatPage = () => {
     if (userChatsDocSnap.exists()) {  return userChatsDocSnap.data() as Chat;} 
     else {  console.log(`No such user chats document for user_id: ${id}`); return null;}
   }
-  
-//   const updateSeenStatus = async (participants: string[], selectedUserId: string) => {
-//     const first_participant = participants[0];
-//     const second_participant = participants[1];
-
-//     // Determine if the selected user is the initiator or recipient
-//     const isInitiator = selectedUserId === first_participant;
-//     const isReceiver = selectedUserId === second_participant;
-
-//     if (!isInitiator && !isReceiver) {
-//         // If the user is neither the initiator nor the recipient, do nothing
-//         return;
-//     }
-
-//     // Construct the chat document reference based on the participants
-//     const userChatsRef = doc(db, 'allchats', first_participant + '_' + second_participant);
-
-//     // Update the appropriate seen status in Firestore
-//     await updateDoc(userChatsRef, 
-//      !isInitiator 
-//       ? { isSeenByInitiator: true } 
-//       : { isSeenByReceiver: true }
-//     );
-// };
 
   const [isLoadingChats, setIsLoadingChats] = useState(false);
 
@@ -106,8 +82,22 @@ const ChatPage = () => {
             })
         );
 
+        // Sort by timestamp in descending order (latest message first)
+        const sortedChats = chatDataWithUserData.sort((a, b) => {
+          const aTimestamp = 
+              'seconds' in a.last_message_timestamp 
+                  ? a.last_message_timestamp.seconds * 1000 + a.last_message_timestamp.nanoseconds / 1e6 
+                  : 0;
+          const bTimestamp = 
+              'seconds' in b.last_message_timestamp 
+                  ? b.last_message_timestamp.seconds * 1000 + b.last_message_timestamp.nanoseconds / 1e6 
+                  : 0;
+          
+          return bTimestamp - aTimestamp;
+        });
+
         if (isMounted) {
-            setAllChats(chatDataWithUserData);  // Update the state with the chat data
+            setAllChats(sortedChats);  // Update the state with the chat data
         }
 
         setIsLoadingChats(false);  
@@ -166,12 +156,8 @@ const ChatPage = () => {
 
                   {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
                   allChats.map((chat, i) => (
-                    chat ? <>
-                            <ChatListItem key={i}
-                              userData={userData as User} messageStatus={chat.status === "sent" ? chat.lastSenderId !== auth?.uid : false}
-                               onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.lastMessage}
-                               profileImage={ chat.user.photos! && chat.user.photos[0] }
-                               openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
+                    chat ? <><ChatListItem key={i} userData={userData as User} messageStatus={chat.status === "sent" ? chat.last_sender_id === auth?.uid ? false : true : false} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.last_message} profileImage={ chat.user.photos && chat.user.photos[0] } 
+                    openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]); setChatParticipants(chat.participants[0] + '_' + chat.participants[1]);
                     }}
                      />
                       </>

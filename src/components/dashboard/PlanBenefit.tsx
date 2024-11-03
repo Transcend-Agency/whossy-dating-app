@@ -1,27 +1,8 @@
-import { getUserProfile } from "@/hooks/useUser";
-import { useAuthStore } from "@/store/UserId";
-import { User } from "@/types/user";
 import { AnimatePresence, motion} from "framer-motion"
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
-type PlanBenefitProps = {plan: boolean, onSubscribe?: () => void}
+type PlanBenefitProps = {plan: boolean, onSubscribe?: () => void, onCancel?: () => void, isPremiumUser?: boolean | null}
 
-export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe}) => {
-
-  const {auth} = useAuthStore();
-
-  const [isPremiumUser, setIsPremiumUser] = useState<boolean | null>();
-
-  const fetchUserData = async () => {
-    const data = await getUserProfile("users", auth?.uid as string) as User;
-    setIsPremiumUser(data.isPremium);
-  }
-
-  useEffect(() => {
-    fetchUserData().catch(err => console.log(err)) ;
-  }, [])
-
+export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe, onCancel, isPremiumUser}) => {
 
   return (
     <AnimatePresence>
@@ -40,9 +21,9 @@ export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe})
              if (!isPremiumUser) {
               onSubscribe && onSubscribe()
             } else  {
-              toast.error('You are already subscribed')
+              onCancel && onCancel()
             }
-            }}>{isPremiumUser ? 'Unsubscribe' : 'Subscribe'}</button></div>
+            }}>{isPremiumUser ? 'Cancel Plan' : 'Subscribe'}</button></div>
       </motion.div>}
     </AnimatePresence>
   )

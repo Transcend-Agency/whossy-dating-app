@@ -10,14 +10,14 @@ import { Oval } from 'react-loader-spinner';
 
 
 interface SubscriptionPlanModalProps {
-  show: boolean;
-  hide: () => void;
-  advance: (val: 'stripe-payment' | 'payment-detail') => void;
+  show: boolean, hide: () => void; advance: (val: 'stripe-payment' | 'payment-detail') => void, refetchUserData?: () => void
 }
 
 type UserDetails = {name: string, email: string, phone: string, amount: number}
 
-export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide }) => {
+
+
+export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, refetchUserData}) => {
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'naira' | 'usd'>('naira');
 
@@ -35,6 +35,7 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
     });
     setIsLoading(false);
     toast.success('Payment successful');
+    refetchUserData && refetchUserData();
     hide();
   }
 
@@ -43,12 +44,12 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <div className="flex flex-col gap-y-4">
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#8A8A8E'}}
          onClick={() => setSelectedPaymentMethod('naira')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'naira' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
             <p className='text-center w-full'>Pay using Naira (Paystack)</p>
         </div>
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#F6F6F6] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#8A8A8E'}}
          onClick={() => setSelectedPaymentMethod('usd')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
             <p className='text-center w-full'>Pay using USD (Stripe)</p>
@@ -98,5 +99,40 @@ export const StripePaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <StripeCheckoutForm />
     </DashboardSettingsModal>
+  )
+}
+
+export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, refetchUserData}) => {
+
+  const {auth} = useAuthStore();
+
+  const userDoc = doc(db, "users", auth?.uid as string );
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleUnsubscription = async () => {
+    setIsLoading(true);
+    await updateDoc(userDoc, {
+      isPremium: false
+    });
+    refetchUserData && refetchUserData();
+    toast.success('Subscription cancelled successfully');
+    hide();
+  } 
+
+  return (
+    <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
+    <div className="flex flex-col gap-y-4">
+      <h1 className='text-center text-[2.4rem] font-medium'>Are you sure you want to unsubscribe</h1>
+      <div className='flex gap-x-5'>
+        <button  className='cursor-pointer text-[1.8rem] w-full font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex justify-center gap-x-2 rounded-[0.8rem] hover:bg-[#f6f6f6] transition duration-300 hover:scale-[1.01] text-center ' style={{border: '2px solid #f6f6f6'}} onClick={
+          hide
+        }>Cancel</button>
+        <button className='cursor-pointer text-[1.8rem] w-full font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex justify-center gap-x-2 rounded-[0.8rem] hover:bg-[#f6f6f6] transition duration-300 hover:scale-[1.01] text-center ' style={{border: '2px solid #f6f6f6'}} onClick={
+          handleUnsubscription
+        }>{!isLoading ? 'Yes' : <Oval color="#000000" secondaryColor="#000000" width={20} height={20} />}</button>
+      </div>
+    </div>
+  </DashboardSettingsModal>
   )
 }
