@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 
 interface ChatListItemProps {
-    profileImage: string | undefined;
+    profileImage?: string | null;
     contactName: string;
     message: string;
     messageStatus?: boolean;
