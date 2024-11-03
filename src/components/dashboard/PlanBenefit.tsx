@@ -7,7 +7,7 @@ export const FreePlanBenefit: React.FC<PlanBenefitProps> = ({plan, onSubscribe, 
   return (
     <AnimatePresence>
     { plan &&  
-    <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} transition={{ duration: 0.5, ease: 'easeInOut' }}
+    <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.5, ease: 'easeInOut' }}
     className="absolute w-full px-[2.4rem] space-y-[1.2rem]">
          {free_benefits.map((benefit, i) =>
          <div
@@ -34,7 +34,7 @@ export const PremiumPlanBenefit: React.FC<PlanBenefitProps> = ({plan}) => {
     <AnimatePresence>
        {plan &&  <motion.div 
          initial={{ x: "100%" }}   animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.5 }}
-        className="absolute w-full px-[2.4rem] space-y-[1.2rem]" style={{marginTop: 0}}>
+        className="absolute w-full px-[2.4rem] space-y-[1.2rem] bg-white" style={{marginTop: 0}}>
             {premium_benefits.map((benefit, i) => 
             <div key={i} className="px-[1.6rem] space-y-[1.2rem] w-full py-[1.2rem] rounded-[0.8rem] bg-white" style={{border: '1.5px solid #D9D9D9'}}>
                 <h1 className="text-[1.8rem] font-bold ">{benefit.title}</h1>
