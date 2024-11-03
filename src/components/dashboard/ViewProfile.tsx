@@ -80,11 +80,11 @@ const ViewProfile: React.FC<ViewProfileProps> = (
 
                 if (!mutualLikeSnapshot.empty) {
                     // Mutual like detected, create a match
-                    await addMatch(user?.uid as string, userData?.uid as string);
+                    addMatch(user?.uid as string, userData?.uid as string);
                     toast.success(`You're Matched With ${userData.first_name}`);
                     fetchMatches(user?.uid as string);
                 }
-            }).catch(err => console.error("An error occured while updating likes"));
+            }).catch(err => console.error("An error occured while updating likes: ", err));
             toast.success(`Your Like has been sent to ${userData.first_name}`);
 
         } catch (err) {
