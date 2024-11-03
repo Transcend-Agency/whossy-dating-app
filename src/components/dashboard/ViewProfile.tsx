@@ -45,7 +45,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const navigate = useNavigate();
     const { user } = useAuthStore()
     const { userLikes } = useSyncUserLikes(user!.uid!)
-    const { selectedProfile } = useDashboardStore()
+    const { selectedProfile, setSelectedProfile } = useDashboardStore()
     const [openModal, setOpenModal] = useState(false);
     const location = useLocation()
 
