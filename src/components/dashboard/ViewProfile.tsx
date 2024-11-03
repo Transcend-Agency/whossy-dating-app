@@ -1,18 +1,18 @@
-import { drinking, education, family_goal, preference, relationship_preferences, smoking, workout } from '@/constants';
+import ReportModal from "@/components/dashboard/ReportModal.tsx";
+import { drinking, education, family_goal, preference, relationship_preferences, religion, smoking, workout } from '@/constants';
+import { db } from "@/firebase";
+import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
+import { useMatchStore } from "@/store/Matches.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
 import { getYearFromFirebaseDate } from '@/utils/date';
-import { collection, doc, getDocs, query, setDoc, where, getDoc, arrayRemove, updateDoc, arrayUnion } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { motion, useAnimationControls } from 'framer-motion';
 import React, { useEffect, useRef, useState } from "react";
-import { db } from "@/firebase";
-import DashboardPageContainer from "./DashboardPageContainer";
 import toast from 'react-hot-toast';
-import { useMatchStore } from "@/store/Matches.tsx";
-import useSyncUserLikes from "@/hooks/useSyncUserLikes.tsx";
-import useDashboardStore from "@/store/useDashboardStore.tsx";
-import { useNavigate } from 'react-router-dom';
-import ReportModal from "@/components/dashboard/ReportModal.tsx";
+import { useLocation, useNavigate } from 'react-router-dom';
+import DashboardPageContainer from "./DashboardPageContainer";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -47,6 +47,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const { userLikes } = useSyncUserLikes(user!.uid!)
     const { selectedProfile } = useDashboardStore()
     const [openModal, setOpenModal] = useState(false);
+    const location = useLocation()
 
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
@@ -179,6 +180,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const hasUserBeenLiked = () => {
         return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
+
 
     return (
         <>

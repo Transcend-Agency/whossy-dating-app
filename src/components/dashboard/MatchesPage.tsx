@@ -2,10 +2,13 @@ import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser";
 import useSyncUserMatches from "@/hooks/useSyncUserMatches";
 import { useAuthStore } from "@/store/UserId";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import DashboardPageContainer from "./DashboardPageContainer";
 import { MatchItem } from "./MatchesSide";
+import useDashboardStore from "@/store/useDashboardStore";
+import ViewProfile from "./ViewProfile";
+import useProfileFetcher from "@/hooks/useProfileFetcher";
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match'>('like')
@@ -14,6 +17,12 @@ const MatchesPage = () => {
     const { user } = useAuthStore()
     const { matches, loading: matchesLoading } = useSyncUserMatches(user!.uid!)
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
+    const {
+        profiles,
+        selectedProfile,
+        setSelectedProfile,
+    } = useDashboardStore()
+    const { refreshProfiles } = useProfileFetcher()
 
     const LikesEmptyState = () => {
         return (
@@ -34,9 +43,13 @@ const MatchesPage = () => {
         )
     }
 
+    useEffect(() => {
+        return () => setSelectedProfile(null)
+    }, [])
+
     return (
         <>
-            {activePage !== 'profile' && <DashboardPageContainer className="matches-page" span={1}>
+            {!selectedProfile && <DashboardPageContainer className="matches-page" span={1}>
                 <div className="matches-page__nav">
                     <div className="left-nav">
                         <button onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Like</button>
@@ -73,7 +86,7 @@ const MatchesPage = () => {
                                             <div className="likes-subscribe-cta__overlay">
                                                 <div className="likes-subscribe-cta__total-likes">
                                                     <span>{peopleWhoLiked.length}</span>
-                                                    <img src="/assets/icons/white-likes.svg" alt={``}/>
+                                                    <img src="/assets/icons/white-likes.svg" alt={``} />
                                                 </div>
                                                 <img src="/assets/icons/likes-banner.svg" className="likes-subscribe-cta__likes-banner" alt={``} />
                                             </div>
@@ -85,13 +98,13 @@ const MatchesPage = () => {
                                     </div>
                                 </div>}
                                 {likes.length !== 0 && <div className="matches-page__grid">
-                                    {peopleWhoLiked?.map((like, i, ) =>
+                                    {peopleWhoLiked?.map((like, i,) =>
                                         <div key={i}>
                                             <MatchItem
                                                 userData={like.liker}
                                             />
                                         </div>
-                                        )}
+                                    )}
                                 </div>}
                             </motion.div>}
                         </AnimatePresence>
@@ -137,7 +150,7 @@ const MatchesPage = () => {
                                         <div key={i}>
                                             <MatchItem userData={match.matchedUserData} />
                                         </div>
-                                        )}
+                                    )}
                                 </div>}
 
                             </motion.div>}
@@ -147,6 +160,11 @@ const MatchesPage = () => {
                     </motion.div>}
                 </AnimatePresence>
             </DashboardPageContainer>}
+            {selectedProfile && <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            />}
         </>
     )
 }

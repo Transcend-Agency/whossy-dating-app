@@ -21,6 +21,7 @@ import useLikesAndMatchesStore from "@/store/LikesAndMatches.tsx";
 import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
+import ViewProfile from "@/components/dashboard/ViewProfile";
 
 interface SettingsDataItem {
     label: string;
@@ -41,7 +42,7 @@ const Explore = () => {
         exploreDataLoading,
         setExploreDataLoading
     } = useDashboardStore()
-    const { fetchBlockedUsers, fetchProfilesBasedOnOption } = useProfileFetcher()
+    const { fetchBlockedUsers, fetchProfilesBasedOnOption, refreshProfiles } = useProfileFetcher()
 
     const { auth, user } = useAuthStore();
     const { setLikes } = useLikesAndMatchesStore()
@@ -60,7 +61,7 @@ const Explore = () => {
         relationship_preference: null,
         religion: null
     })
-    
+
     const calculateDOBRange = (minAge: any, maxAge: any) => {
         const today = new Date();
         const currentYear = today.getFullYear();
@@ -192,6 +193,10 @@ const Explore = () => {
         { label: 'Relationship Preference', value: advancedSearchPreferences.relationship_preference !== null ? preference[advancedSearchPreferences.relationship_preference as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('relationship_preference') },
         { label: 'Religion', value: advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('religion') }
     ];
+
+    useEffect(() => {
+        return () => setSelectedProfile(null)
+    }, [])
 
     return <>
         {!selectedProfile &&
@@ -367,6 +372,12 @@ const Explore = () => {
                 }
             </>
         }
+        {selectedProfile &&
+            <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            />}
     </>
 }
 export default Explore;
