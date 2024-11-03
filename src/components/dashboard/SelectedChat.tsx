@@ -286,8 +286,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
                                 {!isLoading ? userDetails.profilePicture ? <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={userDetails.profilePicture} alt="profile picture" /> : <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2" >{userDetails.name?.charAt(0)}</div> : <Skeleton width="4.8rem" height="4.8rem" circle />}
                                 <div className="space-y-1">
-                                    {userDetails.name ? <p className="font-bold">{userDetails.name}</p> : <Skeleton width="8rem" height="1.6rem" />}
-                                    {userDetails.status?.online ?  <p className="text-[#8A8A8E] font-normal font-sans italic text-[1.5rem]">online</p> : <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">{userDetails.status?.lastSeen ? `last seen ${formatServerTimeStamps(userDetails.status?.lastSeen)}` : !isLoading ? 'last seen recently' :  <Skeleton width={'10rem'} height={'1.2rem'}/>}</p>}
+                                    {userDetails.name ? <p className="font-bold text-left">{userDetails.name}</p> : <Skeleton width="8rem" height="1.6rem" />}
+                                    {userDetails.status?.online ?  <p className="text-[#8A8A8E] text-left font-normal font-sans italic text-[1.5rem]">online</p> : <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">{userDetails.status?.lastSeen ? `last seen ${formatServerTimeStamps(userDetails.status?.lastSeen)}` : !isLoading ? 'last seen recently' :  <Skeleton width={'10rem'} height={'1.2rem'}/>}</p>}
                                 </div>
                             </button>
                             <button className="cursor-pointer" onClick={() => setShowActionsModal('action')}>
