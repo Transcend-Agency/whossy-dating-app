@@ -87,9 +87,6 @@ const ChatInterface: React.FC = () => {
     return ( 
     <div className='dashboard-layout__chat-interface hidden lg:block'>
         <motion.div className='dashboard-layout__chat-interface__drawer z-50'
-                // initial={{ opacity: 0, height: 0 }}
-                // animate={{ opacity: 1, height: 'auto' }}
-                // exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
         >
             <div className='flex justify-between px-[1.6rem] pb-[2.2rem] cursor-pointer' onClick={() => setShowChats(!showChats)}>
