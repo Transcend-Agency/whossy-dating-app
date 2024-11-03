@@ -41,7 +41,7 @@ const Notification = () => {
     <>
         <DashboardPageContainer className="block">
             <motion.div animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.25 }} className='user-profile dashboard-layout__main-app__body__main-page '>
-                <button className=' flex items-center pb-[1.6rem] px-[2.4rem] gap-[1.2rem] cursor-pointer hover:scale-[1.02] active:scale-[0.95] transition duration-300' style={{borderBottom: '1px solid #ECECEC'}} onClick={() => window.history.back()} >
+                <button className='w-full flex items-center pb-[1.6rem] px-[2.4rem] gap-[1.2rem] cursor-pointer hover:scale-[1.02] active:scale-[0.95] transition duration-300' style={{borderBottom: '1px solid #ECECEC'}} onClick={() => window.history.back()} >
                     <img src="/assets/icons/back-arrow-black.svg" alt="" />
                     <span className='text-[1.8rem]'>Notifications</span>
                 </button>
