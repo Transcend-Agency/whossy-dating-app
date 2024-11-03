@@ -73,14 +73,14 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 liker_id: user?.uid,
                 liked_id: userData.uid,
                 timestamp: new Date().toISOString()
-            }).then(() => {
-                {/* @ts-expect-error quick-fix */ }
+            }).then(async () => {
+                {/* @ts-expect-error quick-fix */}
                 const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
                 const mutualLikeSnapshot = await getDocs(q);
 
                 if (!mutualLikeSnapshot.empty) {
                     // Mutual like detected, create a match
-                    addMatch(user?.uid as string, userData?.uid as string);
+                    await addMatch(user?.uid as string, userData?.uid as string);
                     toast.success(`You're Matched With ${userData.first_name}`);
                     fetchMatches(user?.uid as string);
                 }
