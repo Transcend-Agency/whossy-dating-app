@@ -2,7 +2,7 @@ import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser";
 import useSyncUserMatches from "@/hooks/useSyncUserMatches";
 import { useAuthStore } from "@/store/UserId";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import DashboardPageContainer from "./DashboardPageContainer";
 import { MatchItem } from "./MatchesSide";
@@ -23,7 +23,7 @@ const MatchesPage = () => {
         setSelectedProfile,
     } = useDashboardStore()
     const { refreshProfiles } = useProfileFetcher()
-    const [artificialSelectedProfile, setArtificialSelectedProfile] = useState(null)
+    // const [artificialSelectedProfile, setArtificialSelectedProfile] = useState(null)
 
     const LikesEmptyState = () => {
         return (
@@ -44,12 +44,6 @@ const MatchesPage = () => {
         )
     }
 
-    // useEffect(() => {
-    //     if (selectedProfile)
-    //     setTimeout(() => setSelectedProfile(null), 500)
-    // }, [])
-
-
     return (
         <>
             {!selectedProfile && <DashboardPageContainer className="matches-page" span={1}>
@@ -66,7 +60,7 @@ const MatchesPage = () => {
                     {activePage == 'like' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container">
                         <AnimatePresence mode="wait">
                             {likes.length == 0 && <LikesEmptyState />}
-                            {matches.length == 0 && !likesLoading &&
+                            {peopleWhoLiked.length == 0 && !likesLoading &&
                                 <LikesEmptyState />}
                             {likesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 {!isPremiumMember && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
@@ -81,7 +75,7 @@ const MatchesPage = () => {
                                 </div>
                             </motion.div>}
 
-                            {!likesLoading && matches.length !== 0 && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            {!likesLoading && peopleWhoLiked.length !== 0 && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 {!isPremiumMember && <div className="likes-subscribe-cta-container">
                                     <div className="likes-subscribe-cta">
                                         <figure className="likes-subscribe-cta__image">

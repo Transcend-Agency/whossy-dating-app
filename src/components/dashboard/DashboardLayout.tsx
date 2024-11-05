@@ -1,4 +1,3 @@
-import Matches from "@/components/dashboard/Matches.tsx";
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
@@ -10,6 +9,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import ChatInterface from './ChatInterface';
 import DashboardNavIcon from './DashboardNavIcon';
 import ShortcutControls from './ShortcutControls';
+import MatchesSide from "@/components/dashboard/MatchesSide.tsx";
 
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
                 </div>
             </nav>
             <main className='dashboard-layout__main-app'>
-                <Matches />
+                <MatchesSide />
                 <Outlet />
             </main>
         </div>

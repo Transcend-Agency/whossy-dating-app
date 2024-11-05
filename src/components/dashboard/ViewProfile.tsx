@@ -11,7 +11,7 @@ import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, query, setDo
 import { motion, useAnimationControls } from 'framer-motion';
 import React, { useEffect, useRef, useState } from "react";
 import toast from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DashboardPageContainer from "./DashboardPageContainer";
 
 interface ViewProfileProps {
@@ -45,9 +45,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const navigate = useNavigate();
     const { user } = useAuthStore()
     const { userLikes } = useSyncUserLikes(user!.uid!)
-    const { selectedProfile, setSelectedProfile } = useDashboardStore()
+    const { selectedProfile } = useDashboardStore()
     const [openModal, setOpenModal] = useState(false);
-    const location = useLocation()
 
     const goToNextPost = () => {
         if (currentImage < userData.photos!.length - 1) {
@@ -77,6 +76,17 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 {/* @ts-expect-error quick-fix */}
                 const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
                 const mutualLikeSnapshot = await getDocs(q);
+
+                // Manually update the state
+                // setPeopleWhoLiked([
+                //     ...peopleWhoLiked,
+                //     {
+                //         liker_id: user?.uid as string,
+                //         liked_id: userData.uid as string,
+                //         timestamp: new Date().toISOString(),
+                //         liker: {...user}
+                //     }
+                // ]);
 
                 if (!mutualLikeSnapshot.empty) {
                     // Mutual like detected, create a match
@@ -130,6 +140,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     useEffect(() => {
         if (user?.uid && userData?.uid) {
             setIsBlockLoading(true)
+            hasUserBeenLiked()
             checkIfBlocked(user.uid, userData.uid).then((blockedStatus) => {
                 setIsBlocked(blockedStatus);
                 setIsBlockLoading(false);
