@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from '@/types/user.ts';
 import { filterOptions } from '@/constants';
+import {PopulatedLikeData} from "@/types/likingAndMatching.ts";
 
 interface DashboardState {
 	profiles: User[];
@@ -13,6 +14,8 @@ interface DashboardState {
 	setSelectedOption: (option: string) => void;
 	exploreDataLoading: boolean;
 	setExploreDataLoading: (exploreDataLoading: boolean) => void;
+	peopleWhoLiked: PopulatedLikeData[]
+	setPeopleWhoLiked: (likes: PopulatedLikeData[]) => void;
 }
 
 const useDashboardStore = create<DashboardState>((set) => ({
@@ -30,6 +33,9 @@ const useDashboardStore = create<DashboardState>((set) => ({
 
 	exploreDataLoading: true,
 	setExploreDataLoading: (exploreDataLoading) => set({ exploreDataLoading }),
+
+	peopleWhoLiked: [],
+	setPeopleWhoLiked: (likes) => set({ peopleWhoLiked: likes }),
 }));
 
 export default useDashboardStore;

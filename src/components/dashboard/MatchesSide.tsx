@@ -1,13 +1,13 @@
-import { useAuthStore } from '@/store/UserId';
 import { User } from '@/types/user';
 import { getYearFromFirebaseDate } from '@/utils/date';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
 import { motion } from 'framer-motion'
 import { useMatchStore } from '@/store/Matches';
 import Skeleton from 'react-loading-skeleton';
 import useDashboardStore from "@/store/useDashboardStore.tsx";
+import {useAuthStore} from "@/store/UserId.tsx";
 
 type MatchesProps = {
     userData?: User,

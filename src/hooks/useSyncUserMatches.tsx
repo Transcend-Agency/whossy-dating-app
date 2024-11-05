@@ -3,6 +3,7 @@ import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/fire
 import { db } from '@/firebase'; // Adjust the path to your Firebase config
 import { Match } from '@/types/likingAndMatching';
 import { User } from '@/types/user';
+import useDashboardStore from "@/store/useDashboardStore.tsx";
 
 interface PopulatedMatchData extends Match {
     matchedUserData: User; // Adjust this type to match your user data
@@ -11,6 +12,7 @@ interface PopulatedMatchData extends Match {
 const useSyncUserMatches = (userId: string) => {
     const [matches, setMatches] = useState<PopulatedMatchData[]>([]);
     const [loading, setLoading] = useState<boolean>(true); // Loading state
+    const { blockedUsers } = useDashboardStore()
 
     useEffect(() => {
         if (!userId) return;
@@ -40,6 +42,11 @@ const useSyncUserMatches = (userId: string) => {
 
         const updateMatches = (newMatches: PopulatedMatchData[]) => {
             const filteredMatches = newMatches.filter((match) => {
+
+                if (blockedUsers.includes(match.user1_id) || blockedUsers.includes(match.user2_id)) {
+                    return false;
+                }
+
                 // Create a unique key by combining user1_id and user2_id
                 const matchKey = [match.user1_id, match.user2_id].sort().join('_');
                 
