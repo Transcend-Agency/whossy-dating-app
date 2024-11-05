@@ -12,7 +12,7 @@
     }
 
     .action-buttons {
-        @apply w-[7.2rem] flex flex-col items-center absolute top-0 -right-[3.6rem] z-40;
+        @apply w-[7.2rem] flex flex-col items-center absolute top-0 z-50 -right-[3.6rem];
         @include media("<=1023px") {
             @apply flex flex-row w-fit items-center -top-[24px] left-[50%] right-[unset] -translate-x-[128px];
 

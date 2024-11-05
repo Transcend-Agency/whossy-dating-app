@@ -78,9 +78,10 @@ function useProfileFetcher() {
 
 	const refreshProfiles = useCallback(async () => {
 		try {
-			const blockedIds = await fetchBlockedUsers()
-			console.log("Blocked users refreshed successfully", blockedIds)
-			await fetchProfilesBasedOnOption().catch((err) => console.error("Refreshed UnSuccessful", err))
+			const blockedIds = await fetchBlockedUsers().then(async () => {
+				console.log("Blocked users refreshed successfully", blockedIds)
+				await fetchProfilesBasedOnOption().catch((err) => console.error("Refreshed UnSuccessful", err))
+			})
 		} catch (error) {
 			console.error("Error refreshing profiles:", error);
 		}

@@ -1,7 +1,20 @@
 import {family_goal, preference} from "@/constants";
 import {db} from "@/firebase";
 import {useAuthStore} from "@/store/UserId";
-import {collection, doc, endAt, GeoPoint, getDocs, orderBy, query, setDoc, startAt, where} from "firebase/firestore";
+import {
+    arrayRemove, arrayUnion,
+    collection,
+    doc,
+    endAt,
+    GeoPoint,
+    getDoc,
+    getDocs,
+    orderBy,
+    query,
+    setDoc,
+    startAt, updateDoc,
+    where
+} from "firebase/firestore";
 import {
     AnimatePresence,
     AnimationControls,
@@ -22,6 +35,8 @@ import {getYearFromFirebaseDate} from "@/utils/date";
 import useSyncUserLikes from "@/hooks/useSyncUserLikes";
 import useSyncUserDislikes from "@/hooks/useSyncUserDislikees";
 import {addMatch} from "@/components/dashboard/ViewProfile.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
+import toast from "react-hot-toast";
 
 interface ProfileCardProps {
     profiles: User[],
@@ -50,6 +65,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     const moreDetailsContainer = useRef(null)
     const [currentImage, setCurrentImage] = useState(0)
     const [expanded, setExpanded] = useState(false)
+    const [isBlocked, setIsBlocked] = useState(false)
+    const [isBlockLoading, setIsBlockLoading] = useState(false)
 
     const goToNextPost = () => {
         if (currentImage < (item.photos?.length as number) - 1) {
@@ -168,6 +185,67 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             console.log('User added to the dislike list');
         } catch (err) {
             console.log('Something went wrong, unable to add to dislike list.', err);
+        }
+    };
+
+    const checkIfBlocked = async (blockerId?: string | null, blockedId?: string | null): Promise<boolean> => {
+        if (!blockerId || !blockedId) return Promise.resolve(false);
+
+        const userRef = doc(db, "users", blockerId);
+
+        try {
+            const docSnap = await getDoc(userRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                return data?.blockedIds?.includes(blockedId) || false;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error checking blocked status:", error);
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        if (user?.uid && item?.uid) {
+            setIsBlockLoading(true)
+            checkIfBlocked(user.uid, item.uid).then((blockedStatus) => {
+                setIsBlocked(blockedStatus);
+                setIsBlockLoading(false);
+            });
+        }
+    }, [user?.uid, item?.uid]);
+
+    const blockUser = async (isBlocked: boolean) => {
+        setIsBlockLoading(true);
+        if (!user || !item)
+            return (
+                <div>
+                    No User Data
+                </div>);
+
+        try {
+            const userRef = doc(db, "users", user?.uid as string);
+
+            if (isBlocked) {
+                await updateDoc(userRef, {
+                    blockedIds: arrayRemove(item.uid)
+                });
+            } else {
+                await updateDoc(userRef, {
+                    blockedIds: arrayUnion(item.uid)
+                });
+            }
+
+            setIsBlockLoading(false);
+            toast.success(`${item.first_name} has been ${isBlocked ? "unblocked" : "blocked"} successfully.`);
+            setIsBlocked(!isBlocked);
+
+            addDislike().catch(e => console.error(e));
+        } catch (error) {
+            console.error("Error blocking/unblocking user:", error);
+            toast.error("Could not block/unblock the user. Please try again.");
+            setIsBlockLoading(false)
         }
     };
 
@@ -320,12 +398,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             {item?.height ? <p className="content-item__info__text">{item.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                     </div>
-                    <div className="action-button">
-                        <img src="/assets/icons/block.svg" />
-                        Block {item.first_name}
-                    </div>
+                    {isBlockLoading ?
+                        <div className={`action-button`}>
+                            <motion.img key="loading-image" className='button__loader'
+                                        src='/assets/icons/loader-black.gif' />
+                        </div> :
+
+                        <div className="action-button" onClick={() => blockUser(isBlocked)}>
+                            <img src="/assets/icons/block.svg" alt={``} />
+                            {isBlocked ? "Unblock" : "Block"} {item.first_name}
+                        </div>
+                    }
                     <div className="action-button action-button--danger">
-                        <img src="/assets/icons/report.svg" />
+                        <img src="/assets/icons/report.svg" alt={``}/>
                         Report {item.first_name}
                     </div>
                 </div>
@@ -343,12 +428,23 @@ const SwipingAndMatching = () => {
     const { updateUser } = useAuthStore()
     const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
     const { userDislikes, loading: dislikesLoading } = useSyncUserDislikes(user!.uid!)
+    const [swipedUser, setSwipedUser] = useState("")
 
     const cancelProfile = async () => {
         await controls.start((item) => ({
             x: item == profiles[profiles.length - 1] ? -180 : 0,
             transition: { duration: 0.5 }
         }))
+
+        const dislikeId = `${user?.uid}_${swipedUser}`;  // Unique ID for the dislike document
+        await setDoc(doc(db, "dislikes", dislikeId), {
+            uid: dislikeId,
+            disliker_id: user?.uid,
+            disliked_id: swipedUser,
+            timestamp: new Date().toISOString()
+        });
+
+        console.log('User added to the dislike list');
 
         setProfiles(profiles.filter((_profileItem, index) => index !== profiles.length - 1))
         await controls.start((item) => {
@@ -367,6 +463,25 @@ const SwipingAndMatching = () => {
             x: item == profiles[profiles.length - 1] ? 180 : 0,
             transition: { duration: 0.5 }
         }))
+
+        const likesRef = collection(db, 'likes');
+        const q = query(likesRef, where('liker_id', '==', user?.uid), where('liked_id', '==', swipedUser));
+        const mutualLikeSnapshot = await getDocs(q);
+
+        if (!mutualLikeSnapshot.empty) {
+            await addMatch(user?.uid as string, swipedUser)
+        } else {
+            const likeId = `${user?.uid}_${swipedUser}`;
+            console.log("user was liked")// Combine the two IDs to create a unique ID
+            await setDoc(doc(db, "likes", likeId), {
+                uid: likeId,
+                liker_id: user?.uid,
+                liked_id: swipedUser,
+                timestamp: new Date().toISOString()
+            });
+
+        }
+
         // @ts-expect-error unused vars
         setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
         // assert(profileI)
@@ -380,11 +495,13 @@ const SwipingAndMatching = () => {
             } : {y: 24, width: 'calc(100% - 96px)'}))
         })
     }
+
     const [actionButtonsOpacity, setActionButtonsOpacity] = useState(1)
-    const [nextCardOpacity, setNextCardOpacity] = useState(1)
     const [chosenActionButtonOpacity, setChosenActionButtonOpacity] = useState(0)
+    const [nextCardOpacity, setNextCardOpacity] = useState(1)
     const [chosenActionScale, setChosenActionScale] = useState(1)
     const [activeAction, setActiveAction] = useState<'like' | 'cancel'>('like')
+    const { blockedUsers } = useDashboardStore()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleShortcuts = (e: { keyCode: number; }) => {
@@ -445,12 +562,13 @@ const SwipingAndMatching = () => {
                 ) {
                     matchingDocs.push(doc.data() as User);
                 }
-                console.log(userLikes, userDislikes)
             }
         }
+
+        const filteredMatchingDocs = matchingDocs.filter(u => !blockedUsers.includes(u.uid as string) && u.uid !== user?.uid);
         setProfilesLoading(false)
-        setProfiles(matchingDocs)
-        console.log(matchingDocs);
+        setProfiles(filteredMatchingDocs)
+        // console.log(matchingDocs);
     }
 
     const saveUserLocationToFirebase = async (latitude: number, longitude: number) => {
@@ -511,36 +629,43 @@ const SwipingAndMatching = () => {
             <AnimatePresence mode="sync">
                 {!profilesLoading && profiles.length !== 0 &&
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="swipe-and-match-page">
-                        <motion.div
-                            style={{ opacity: actionButtonsOpacity }}
-                            className="action-buttons">
-                            <button className="action-buttons__button action-buttons__button--small">
-                                <img src="/assets/icons/redo.svg" alt={``}/>
-                            </button>
-                            <button onClick={cancelProfile} className="action-buttons__button">
-                                <img src="/assets/icons/cancel.svg" alt={``}/>
-                            </button>
-                            <button onClick={likeProfile} className="action-buttons__button">
-                                <img src="/assets/icons/heart.svg" alt={``}/>
-                            </button>
-                            <button className="action-buttons__button action-buttons__button--small" onClick={() => navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`)}>
-                                <img src="/assets/icons/message-heart.svg" alt={``} />
-                            </button>
-                        </motion.div>
                         <motion.div style={{ opacity: chosenActionButtonOpacity, scale: chosenActionScale }} className="chosen-action-button">
                             {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" alt={``} />}
                             {activeAction == 'like' && <img src="/assets/icons/heart.svg" alt={``} />}
                         </motion.div>
-                        {/* @ts-expect-error type errors */}
-                        {profiles.map((item, index) => <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity} />)}
-                    </motion.div>
-                }
+                        {profiles.map((item, index) =>
+                            <>
+                                <motion.div
+                                    style={{opacity: actionButtonsOpacity}}
+                                    className="action-buttons">
+                                    {/*{profiles.length}*/}
+                                    <button onClick={cancelProfile} className="action-buttons__button">
+                                        <img src="/assets/icons/cancel.svg" alt={``}/>
+                                    </button>
+                                    <button onClick={() => {
+                                        setSwipedUser(item?.uid as string)
+                                        likeProfile().catch(err => console.log(err))
+                                    }} className="action-buttons__button">
+                                        <img src="/assets/icons/heart.svg" alt={``}/>
+                                    </button>
+                                    {user?.isPremium &&
+                                        <button className="action-buttons__button action-buttons__button--small"
+                                                onClick={() => navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`)}>
+                                            <img src="/assets/icons/message-heart.svg" alt={``}/>
+                                        </button>}
+                                </motion.div>
+                                {/* @ts-expect-error type errors */}
+                                <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity}/></>)}
+            </motion.div>
+            }
 
-                {!profilesLoading && profiles.length === 0 &&
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
-                            <img className="" src="/assets/icons/like-empty-state.png" alt={``} />
-                            <p className="matches-page__empty-state-text">No New Profiles Within Your Area</p>
+            {!profilesLoading && profiles.length === 0 &&
+                <motion.div initial={{opacity: 0}} animate={{opacity: 1}}
+                            className="w-full h-full flex items-center justify-center flex-col dashboard-layout__main-app__body">
+                    <motion.div initial={{opacity: 0}} animate={{opacity: 1, scale: 1}} transition={{duration: 0.15}}
+                                key={'empty-state'} exit={{opacity: 0}} className="matches-page__empty-state">
+                        <img className="" src="/assets/icons/like-empty-state.png" alt={``}/>
+                        <p className="matches-page__empty-state-text">No New Profiles Within Your Area</p>
                         </motion.div>
                     </motion.div>
                 }
