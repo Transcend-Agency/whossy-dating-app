@@ -1,9 +1,9 @@
+import { create } from 'zustand';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { db } from '@/firebase'; // Adjust the path to your Firebase config
 import { Match } from '@/types/likingAndMatching';
 import { User } from '@/types/user';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { create } from 'zustand';
-import { db } from '@/firebase';
-import useDashboardStore from "@/store/useDashboardStore.tsx"
+import useDashboardStore from '@/store/useDashboardStore';
 
 interface PopulatedMatchData extends Match {
     matchedUserData: User | null; // Ensure this matches your User type
@@ -19,52 +19,71 @@ export const useMatchStore = create<MatchStore>((set) => ({
     matches: [],
     loading: true,
     fetchMatches: async (userId: string) => {
-
-        const { blockedUsers } = useDashboardStore.getState();
-
         if (!userId) return;
 
-        const matchesRef = collection(db, 'matches');
-        const user1Query = query(matchesRef, where('user1_id', '==', userId));
-        const user2Query = query(matchesRef, where('user2_id', '==', userId));
+        try {
+            set({ loading: true });
 
-        const uniqueMatchIds = new Set<string>();
-
-        const populateUserData = async (match: Match) => {
-            const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
-            const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
-            return {
-                ...match,
-                matchedUserData: matchedUserDoc.exists() ? matchedUserDoc.data() : null,
+            const { setBlockedUsers } = useDashboardStore.getState();
+            const fetchBlockedUsers = async () => {
+                try {
+                    const userRef = doc(db, "users", userId);
+                    const userDoc = await getDoc(userRef);
+                    const userData = userDoc.exists() ? userDoc.data() : {};
+                    const blockedIds = userData.blockedIds || [];
+                    setBlockedUsers(blockedIds);
+                    return blockedIds;
+                } catch (error) {
+                    console.error("Error fetching blocked users:", error);
+                    return [];
+                }
             };
-        };
 
-        // Fetch both queries
-        const [user1Snapshot, user2Snapshot] = await Promise.all([
-            getDocs(user1Query), // This is the correct method for one-time fetch
-            getDocs(user2Query), // This is the correct method for one-time fetch
-        ]);
+            const blockedUsers = await fetchBlockedUsers();
 
-        const allMatches = await Promise.all([
-            ...user1Snapshot.docs.map((doc) => populateUserData(doc.data() as Match)),
-            ...user2Snapshot.docs.map((doc) => populateUserData(doc.data() as Match)),
-        ]);
+            // Fetch matches
+            const matchesRef = collection(db, 'matches');
+            const user1Query = query(matchesRef, where('user1_id', '==', userId));
+            const user2Query = query(matchesRef, where('user2_id', '==', userId));
 
-        const filteredMatches = allMatches.filter((match) => {
-            // Check if either user in the match is in the blockedUsers list
-            if (blockedUsers.includes(match.user1_id) || blockedUsers.includes(match.user2_id)) {
-                return false; // Exclude this match if either user is blocked
-            }
+            const [user1Snapshot, user2Snapshot] = await Promise.all([
+                getDocs(user1Query),
+                getDocs(user2Query),
+            ]);
 
-            // Create a unique key to prevent duplicate matches
-            const matchKey = [match.user1_id, match.user2_id].sort().join('_');
-            if (!uniqueMatchIds.has(matchKey)) {
-                uniqueMatchIds.add(matchKey);
-                return true; // Include this match
-            }
-            return false; // Exclude this match as it's a duplicate
-        });
+            // Helper to populate user data
+            const populateUserData = async (match: Match) => {
+                const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
+                const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
+                return {
+                    ...match,
+                    matchedUserData: matchedUserDoc.exists() ? matchedUserDoc.data() : null,
+                };
+            };
 
-        set({ matches: filteredMatches as PopulatedMatchData[], loading: false });
+            const allMatches = await Promise.all([
+                ...user1Snapshot.docs.map((doc) => populateUserData(doc.data() as Match)),
+                ...user2Snapshot.docs.map((doc) => populateUserData(doc.data() as Match)),
+            ]);
+
+            const uniqueMatchIds = new Set<string>();
+            const filteredMatches = allMatches.filter((match) => {
+                const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
+                if (blockedUsers.includes(matchedUserId)) {
+                    return false;
+                }
+                const matchKey = [match.user1_id, match.user2_id].sort().join('_');
+                if (!uniqueMatchIds.has(matchKey)) {
+                    uniqueMatchIds.add(matchKey);
+                    return true;
+                }
+                return false;
+            });
+
+            set({ matches: filteredMatches as PopulatedMatchData[], loading: false });
+        } catch (error) {
+            console.error("Error fetching matches:", error);
+            set({ loading: false });
+        }
     },
 }));

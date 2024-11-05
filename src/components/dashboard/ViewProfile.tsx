@@ -77,17 +77,6 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                 const q = query(likesRef, where('liker_id', '==', userData.uid), where('liked_id', '==', user.uid));
                 const mutualLikeSnapshot = await getDocs(q);
 
-                // Manually update the state
-                // setPeopleWhoLiked([
-                //     ...peopleWhoLiked,
-                //     {
-                //         liker_id: user?.uid as string,
-                //         liked_id: userData.uid as string,
-                //         timestamp: new Date().toISOString(),
-                //         liker: {...user}
-                //     }
-                // ]);
-
                 if (!mutualLikeSnapshot.empty) {
                     // Mutual like detected, create a match
                     await addMatch(user?.uid as string, userData?.uid as string);

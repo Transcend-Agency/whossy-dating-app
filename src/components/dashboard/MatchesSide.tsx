@@ -60,8 +60,11 @@ const Matches: React.FC<MatchesProps> = () => {
     const { matches, loading, fetchMatches } = useMatchStore()
 
     useEffect(() => {
-        fetchMatches(user!.uid!)
-    }, [user?.uid])
+        if (user && user.uid) {
+            fetchMatches(user.uid);
+        }
+    }, [fetchMatches, user, user?.uid]);
+
 
     return <div className='dashboard-layout__matches-wrapper'>
         <div className='dashboard-layout__matches-container'>
