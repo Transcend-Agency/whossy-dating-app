@@ -49,12 +49,12 @@ const MatchesPage = () => {
             {!selectedProfile && <DashboardPageContainer className="matches-page" span={1}>
                 <div className="matches-page__nav">
                     <div className="left-nav">
-                        <button onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Like</button>
-                        <button onClick={() => setActivePage('match')} className={`matches-page__nav-item ${activePage === 'match' && 'matches-page__nav-item--active'}`}>Match</button>
+                        <button onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Likes</button>
+                        <button onClick={() => setActivePage('match')} className={`matches-page__nav-item ${activePage === 'match' && 'matches-page__nav-item--active'}`}>Matches</button>
                     </div>
-                    <div className="right-nav">
+                    {/* <div className="right-nav">
                         <img src="/assets/icons/control.svg" alt={``} />
-                    </div>
+                    </div> */}
                 </div>
                 <AnimatePresence mode="wait">
                     {activePage == 'like' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container">

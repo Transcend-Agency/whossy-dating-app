@@ -68,7 +68,7 @@ const UserProfile = () => {
                         </div>
                         <div className='flex justify-end gap-x-4'>
                             <button onClick={() => setActivePage('profile-settings')} className='user-profile__settings-button'><img src="/assets/images/dashboard/settings.svg" /></button>
-                            <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" alt={``} /></button>
+                            {/* <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" alt={``} /></button> */}
                         </div>
                     </div>
                     <div className='self-center relative '>
