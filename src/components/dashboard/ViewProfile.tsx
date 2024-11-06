@@ -162,6 +162,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
             toast.success(`${userData.first_name} has been ${isBlocked ? "unblocked" : "blocked"} successfully.`);
             setIsBlocked(!isBlocked);
             onBackClick()
+            fetchMatches(user?.uid as string)
             onBlockChange()
         } catch (error) {
             console.error("Error blocking/unblocking user:", error);

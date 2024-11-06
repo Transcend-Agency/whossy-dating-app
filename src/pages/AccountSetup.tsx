@@ -211,7 +211,6 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
 
     const onFinishCreateAccount = async (data: any) => {
         setGender(data.gender)
-        await setDoc(doc(db, 'userchats', id), { chats: [] })
         try {
             setLoading(true)
             if (auth_provider == 'phone') {
