@@ -428,7 +428,21 @@ const SwipingAndMatching = () => {
     const { updateUser } = useAuthStore()
     const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
     const { userDislikes, loading: dislikesLoading } = useSyncUserDislikes(user!.uid!)
-    const [swipedUser, setSwipedUser] = useState("")
+
+    const [swipedUser, setSwipedUser] = useState<string | null>(null);
+    const [actionType, setActionType] = useState<'like' | 'cancel' | null>(null);
+
+    useEffect(() => {
+        if (swipedUser && actionType) {
+            if (actionType === 'like') {
+                likeProfile().catch((err) => console.log(err));
+            } else if (actionType === 'cancel') {
+                cancelProfile().catch((err) => console.log(err));
+            }
+            setActionType(null);
+        }
+    }, [swipedUser, actionType]);
+
 
     const cancelProfile = async () => {
         await controls.start((item) => ({
@@ -464,12 +478,14 @@ const SwipingAndMatching = () => {
             transition: { duration: 0.5 }
         }))
 
+        console.log(swipedUser)
+
         const likesRef = collection(db, 'likes');
         const q = query(likesRef, where('liker_id', '==', user?.uid), where('liked_id', '==', swipedUser));
         const mutualLikeSnapshot = await getDocs(q);
 
         if (!mutualLikeSnapshot.empty) {
-            await addMatch(user?.uid as string, swipedUser)
+            await addMatch(user?.uid as string, swipedUser as string)
         } else {
             const likeId = `${user?.uid}_${swipedUser}`;
             console.log("user was liked")// Combine the two IDs to create a unique ID
@@ -481,7 +497,6 @@ const SwipingAndMatching = () => {
             });
 
         }
-
         // @ts-expect-error unused vars
         setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
         // assert(profileI)
@@ -639,12 +654,15 @@ const SwipingAndMatching = () => {
                                     style={{opacity: actionButtonsOpacity}}
                                     className="action-buttons">
                                     {/*{profiles.length}*/}
-                                    <button onClick={cancelProfile} className="action-buttons__button">
+                                    <button onClick={() => {
+                                        setSwipedUser(item?.uid as string)
+                                        setActionType('cancel');
+                                    }} className="action-buttons__button">
                                         <img src="/assets/icons/cancel.svg" alt={``}/>
                                     </button>
                                     <button onClick={() => {
                                         setSwipedUser(item?.uid as string)
-                                        likeProfile().catch(err => console.log(err))
+                                        setActionType('like');
                                     }} className="action-buttons__button">
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>

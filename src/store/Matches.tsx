@@ -4,6 +4,7 @@ import { db } from '@/firebase'; // Adjust the path to your Firebase config
 import { Match } from '@/types/likingAndMatching';
 import { User } from '@/types/user';
 import useDashboardStore from '@/store/useDashboardStore';
+import {useAuthStore} from "@/store/UserId.tsx";
 
 interface PopulatedMatchData extends Match {
     matchedUserData: User | null; // Ensure this matches your User type
@@ -19,15 +20,19 @@ export const useMatchStore = create<MatchStore>((set) => ({
     matches: [],
     loading: true,
     fetchMatches: async (userId: string) => {
-        if (!userId) return;
+        if (!userId) {
+            console.error("Invalid userId provided");
+            return;
+        }
 
         try {
             set({ loading: true });
 
             const { setBlockedUsers } = useDashboardStore.getState();
+            const { user } = useAuthStore.getState();
             const fetchBlockedUsers = async () => {
                 try {
-                    const userRef = doc(db, "users", userId);
+                    const userRef = doc(db, "users", user?.uid as string);
                     const userDoc = await getDoc(userRef);
                     const userData = userDoc.exists() ? userDoc.data() : {};
                     const blockedIds = userData.blockedIds || [];
