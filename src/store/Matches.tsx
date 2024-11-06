@@ -25,6 +25,7 @@ export const useMatchStore = create<MatchStore>((set) => ({
             return;
         }
 
+
         try {
             set({ loading: true });
 
@@ -32,6 +33,11 @@ export const useMatchStore = create<MatchStore>((set) => ({
             const { user } = useAuthStore.getState();
             const fetchBlockedUsers = async () => {
                 try {
+                    if (!user?.uid) {
+                        console.error("Invalid userId provided");
+                        return;
+                    }
+
                     const userRef = doc(db, "users", user?.uid as string);
                     const userDoc = await getDoc(userRef);
                     const userData = userDoc.exists() ? userDoc.data() : {};

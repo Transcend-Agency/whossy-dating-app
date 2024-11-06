@@ -12,7 +12,7 @@ import {
     orderBy,
     query,
     setDoc,
-    startAt, updateDoc,
+    startAt, updateDoc, deleteDoc,
     where
 } from "firebase/firestore";
 import {
@@ -37,6 +37,7 @@ import useSyncUserDislikes from "@/hooks/useSyncUserDislikees";
 import {addMatch} from "@/components/dashboard/ViewProfile.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import toast from "react-hot-toast";
+import {useMatchStore} from "@/store/Matches.tsx";
 
 interface ProfileCardProps {
     profiles: User[],
@@ -67,6 +68,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     const [expanded, setExpanded] = useState(false)
     const [isBlocked, setIsBlocked] = useState(false)
     const [isBlockLoading, setIsBlockLoading] = useState(false)
+    const  {fetchMatches} = useMatchStore()
 
     const goToNextPost = () => {
         if (currentImage < (item.photos?.length as number) - 1) {
@@ -149,26 +151,32 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         // const db = getFirestore();
         try {
             const likesRef = collection(db, 'likes');
-            const q = query(likesRef, where('liker_id', '==', user?.uid), where('liked_id', '==', item?.uid));
-            const mutualLikeSnapshot = await getDocs(q);
+            const likeId = `${user?.uid}_${item.uid}`;
 
-            if (!mutualLikeSnapshot.empty) {
-                await addMatch(user?.uid as string, item?.uid as string)
-            } else {
+            await setDoc(doc(db, "likes", likeId), {
+                uid: likeId,
+                liker_id: user?.uid,
+                liked_id: item.uid,
+                timestamp: new Date().toISOString()
+            }).then(async () => {
+                {/* @ts-expect-error quick-fix */}
+                const q = query(likesRef, where('liker_id', '==', item.uid), where('liked_id', '==', user.uid));
+                const mutualLikeSnapshot = await getDocs(q);
 
-                const likeId = `${user?.uid}_${item.uid}`;  // Combine the two IDs to create a unique ID
-                await setDoc(doc(db, "likes", likeId), {
-                    uid: likeId,
-                    liker_id: user?.uid,
-                    liked_id: item.uid,
-                    timestamp: new Date().toISOString()
-                });
+                if (!mutualLikeSnapshot.empty) {
+                    // Mutual like detected, create a match
+                    await addMatch(user?.uid as string, item?.uid as string);
+                    toast.success(`You're Matched With ${item.first_name}`);
+                    fetchMatches(user?.uid as string);
+                }
+            }).catch(err => console.error("An error occurred while updating likes: ", err));
+            toast.success(`Your Like has been sent to ${item.first_name}`);
 
-            }
         } catch (err) {
-            console.log('Something Went Wrong, unable to send the like.')
+            console.error("Error adding like:", err);
+            toast.error("Something went wrong, couldn't send the like");
         }
-    }
+    };
 
 
     const addDislike = async () => {
@@ -187,6 +195,34 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             console.log('Something went wrong, unable to add to dislike list.', err);
         }
     };
+
+    const cancelProfile = async (item: User) => {
+        await controls.start((item) => ({
+            x: item == profiles[profiles.length - 1] ? -180 : 0,
+            transition: { duration: 0.5 }
+        }))
+
+        const dislikeId = `${user?.uid}_${item.uid}`;  // Unique ID for the dislike document
+        await setDoc(doc(db, "dislikes", dislikeId), {
+            uid: dislikeId,
+            disliker_id: user?.uid,
+            disliked_id: item.uid,
+            timestamp: new Date().toISOString()
+        });
+
+        console.log('User added to the dislike list');
+
+        setProfiles(profiles.filter((_profileItem, index) => index !== profiles.length - 1))
+        await controls.start((item) => {
+            return (item == profiles[profiles.length - 2] ? {
+                y: 0,
+                width: '100%'
+            } : (item == profiles[profiles.length - 3] ? {
+                y: 12,
+                width: 'calc(100% - 48px)'
+            } : {y: 24, width: 'calc(100% - 96px)'}))
+        })
+    }
 
     const checkIfBlocked = async (blockerId?: string | null, blockedId?: string | null): Promise<boolean> => {
         if (!blockerId || !blockedId) return Promise.resolve(false);
@@ -216,6 +252,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         }
     }, [user?.uid, item?.uid]);
 
+    const removeDislike = async (swipedUserId: string) => {
+        try {
+            const dislikeId = `${user?.uid}_${swipedUserId}`;
+            const dislikeDocRef = doc(db, "dislikes", dislikeId);
+            await deleteDoc(dislikeDocRef);
+            console.log("Dislike removed successfully");
+        } catch (error) {
+            console.error("Error removing dislike:", error);
+        }
+    };
+
+
     const blockUser = async (isBlocked: boolean) => {
         setIsBlockLoading(true);
         if (!user || !item)
@@ -230,18 +278,23 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             if (isBlocked) {
                 await updateDoc(userRef, {
                     blockedIds: arrayRemove(item.uid)
-                });
+                }).then(async () => {
+                    await removeDislike(item.uid as string);
+                }).catch(e => console.error(e));
+
             } else {
                 await updateDoc(userRef, {
                     blockedIds: arrayUnion(item.uid)
-                });
+                }).then(async () => {
+                    await cancelProfile(item)
+                }).catch(e => console.error(e));
             }
 
             setIsBlockLoading(false);
             toast.success(`${item.first_name} has been ${isBlocked ? "unblocked" : "blocked"} successfully.`);
             setIsBlocked(!isBlocked);
 
-            addDislike().catch(e => console.error(e));
+
         } catch (error) {
             console.error("Error blocking/unblocking user:", error);
             toast.error("Could not block/unblock the user. Please try again.");
@@ -424,6 +477,7 @@ const SwipingAndMatching = () => {
     const x = useMotionValue(0)
     const controls = useAnimationControls()
     const { user } = useAuthStore()
+    const { fetchMatches } = useMatchStore()
 
     const { updateUser } = useAuthStore()
     const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
@@ -478,25 +532,26 @@ const SwipingAndMatching = () => {
             transition: { duration: 0.5 }
         }))
 
-        console.log(swipedUser)
-
         const likesRef = collection(db, 'likes');
-        const q = query(likesRef, where('liker_id', '==', user?.uid), where('liked_id', '==', swipedUser));
-        const mutualLikeSnapshot = await getDocs(q);
+        const likeId = `${user?.uid}_${swipedUser}`;
 
-        if (!mutualLikeSnapshot.empty) {
-            await addMatch(user?.uid as string, swipedUser as string)
-        } else {
-            const likeId = `${user?.uid}_${swipedUser}`;
-            console.log("user was liked")// Combine the two IDs to create a unique ID
-            await setDoc(doc(db, "likes", likeId), {
-                uid: likeId,
-                liker_id: user?.uid,
-                liked_id: swipedUser,
-                timestamp: new Date().toISOString()
-            });
+        await setDoc(doc(db, "likes", likeId), {
+            uid: likeId,
+            liker_id: user?.uid,
+            liked_id: swipedUser,
+            timestamp: new Date().toISOString()
+        }).then(async () => {
+            {/* @ts-expect-error quick-fix */}
+            const q = query(likesRef, where('liker_id', '==', swipedUser), where('liked_id', '==', user.uid));
+            const mutualLikeSnapshot = await getDocs(q);
 
-        }
+            if (!mutualLikeSnapshot.empty) {
+                // Mutual like detected, create a match
+                await addMatch(user?.uid as string, swipedUser as string);
+                fetchMatches(user?.uid as string);
+            }
+        }).catch(err => console.error("An error occured while updating likes: ", err));
+
         // @ts-expect-error unused vars
         setProfiles(profiles.filter((profileItem, index) => index !== profiles.length - 1))
         // assert(profileI)
@@ -562,7 +617,6 @@ const SwipingAndMatching = () => {
         const snapshots = await Promise.all(promises);
         const matchingDocs = [];
 
-        console.log(userLikes, userDislikes)
         for (const snap of snapshots) {
             for (const doc of snap.docs) {
                 const lat = doc.get('latitude');
@@ -605,7 +659,6 @@ const SwipingAndMatching = () => {
                 latitude, longitude })
             setProfilesLoading(true)
 
-            console.log("Location saved successfully!");
         } catch (error) {
             console.error("Error saving location: ", error);
         }
@@ -615,11 +668,9 @@ const SwipingAndMatching = () => {
         if (profilesLoading && !likesLoading && !dislikesLoading) {
             fetchUsersWithinSpecifiedRadius().catch(err => console.log(err))
         }
-        console.log(profilesLoading, likesLoading, dislikesLoading)
     }, [profilesLoading, dislikesLoading, likesLoading])
 
     useEffect(() => {
-        console.log("Getting location")
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 const latitude = position.coords.latitude;
@@ -651,6 +702,7 @@ const SwipingAndMatching = () => {
                         {profiles.map((item, index) =>
                             <>
                                 <motion.div
+                                    key={index}
                                     style={{opacity: actionButtonsOpacity}}
                                     className="action-buttons">
                                     {/*{profiles.length}*/}
