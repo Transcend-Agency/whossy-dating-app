@@ -21,7 +21,6 @@ interface SelectedChatProps {
     closePage: () => void
     updateChatId: (newChatId: string) => void;
     userData: User;
-    chatId?: string;
 }
 
 const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId }) => {
@@ -162,7 +161,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                     doc(db, "chats", newChatId), {
                     last_message: text || 'Sent a photo',
                     last_message_id: messageId,
-                    last_sender_ud: currentUserId,
+                    last_sender_id: currentUserId,
                     user_blocked: [false, false],
                     participants: [currentUserId, reciepientUserId],
                     status: 'sent',
@@ -205,7 +204,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
     useEffect(() => {
         if (!chatId || !currentUserId || activePage !== "selected-chat") {
-            console.log('error', chatId, currentUserId, activePage);
+            // console.log('error', chatId, currentUserId, activePage);
             return;
         }
 
@@ -226,13 +225,13 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
             const chatDocSnap = await getDoc(chatDocRef);
             if (chatDocSnap.exists()) {
                 const chatData = chatDocSnap.data();
-                const lastSenderId = chatData.lastSenderId;
+                const last_sender_id = chatData.last_sender_id;
 
                 // Check if the current user is not the last sender and the chat is open
-                if (lastSenderId !== currentUserId && chatData.status !== "seen" && activePage === "selected-chat") {
+                if (last_sender_id !== currentUserId && chatData.status !== "seen" && activePage === "selected-chat") {
                     // Update the seen status in 'allchats' collection
                     await updateDoc(chatDocRef, { status: "seen" })
-                        .then(() => console.log(`Chat ${chatId} marked as seen`))
+                        .then(() => console.log(`${last_sender_id} ${currentUserId}`))
                         .catch((err) => console.error(`Error updating chat ${chatId}:`, err));
                 }
             }
@@ -240,7 +239,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
             // Check each message to see if it should be marked as 'seen'
             for (const doc1 of snapshot.docs) {
                 const messageData = doc1.data();
-                const messageSenderId = messageData.senderId;
+                const messageSenderId = messageData.sender_id;
 
                 // Only update the message if the sender is not the current user and status is not 'seen'
                 if (messageSenderId !== currentUserId && messageData.status !== "seen" && activePage === "selected-chat") {
@@ -259,9 +258,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         return () => {
             unSub();
             setChats([]);
-            reset();
         };
-    }, [activePage, chatId, currentUserId, reset]);
+    }, [activePage, chatId, currentUserId]);
 
 
     const endRef = useRef<HTMLDivElement>(null);
