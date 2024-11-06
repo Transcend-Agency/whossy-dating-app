@@ -96,7 +96,7 @@ const ChatInterface: React.FC = () => {
                     <div className='dashboard-layout__chat-interface__drawer__left__unread-count'>
                         { allChats?.filter((item) => {
                                 if (item.status === 'sent') {
-                                    if (item.lastSenderId !== auth?.uid) {
+                                    if (item.last_sender_id !== auth?.uid) {
                                         return item.status === 'sent'
                                     }
                                 }
@@ -123,8 +123,8 @@ const ChatInterface: React.FC = () => {
                 transition={{ duration: 0.3 }}
                >
                  {allChats?.slice(0,4)?.map((chat, i: number) => (
-                    <ChatListItem key={i} chatInterface contactName={chat.user.first_name as string} message={chat.lastMessage ? chat.lastMessage : 'No messages'} messageStatus={chat.status === "sent" ? chat.lastSenderId !== auth?.uid : false} profileImage={chat.user.photos! && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
-                    setAllChats((prevChats) =>(prevChats.map((c) => c.lastMessageId === chat.lastMessageId ? { ...c, status: "seen" } : c)));
+                    <ChatListItem key={i} chatInterface contactName={chat.user.first_name as string} message={chat.last_message ? chat.last_message : 'No messages'} messageStatus={chat.status === "sent" ? chat.last_sender_id !== auth?.uid : false} profileImage={chat.user.photos! && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
+                    setAllChats((prevChats) =>(prevChats.map((c) => c.last_message_id === chat.last_message_id ? { ...c, status: "seen" } : c)));
                 }}/>
                   ))}
                 </motion.div>}
