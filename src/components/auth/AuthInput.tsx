@@ -19,7 +19,7 @@ const AuthInput: React.FC<AuthInputProps> = ({ className,  placeholder,  type = 
                 {type === 'password' && (
                     <button type="button" onClick={togglePasswordVisibility}
                             className="text-white absolute inset-y-0 right-3 flex items-center text-gray-600">
-                            { isPasswordVisible ? <img className={`size-[20px] mr-[0.5rem]`} src={'/assets/ico]ns/eye-closed-icon.svg'} alt={``}/> :
+                            { isPasswordVisible ? <img className={`size-[20px] mr-[0.5rem]`} src={'/assets/icons/eye-closed-icon.svg'} alt={``}/> :
                             <img className={`size-[20px] mr-[0.5rem]`} src={'/assets/icons/eye-open-icon.svg'} alt={``}/>}
                     </button>
                 )}
