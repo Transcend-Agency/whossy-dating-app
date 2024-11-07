@@ -45,8 +45,6 @@ const HelpModal: FC<HelpModalProps> = ({ show, onCloseModal }) => {
     }
   };
 
-
-
   return (
     <AnimatePresence mode='wait'>
       {show &&
