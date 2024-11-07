@@ -15,7 +15,7 @@ const WhatMakesYouTick: React.FC<OnboardingProps> = ({ advance, goBack }) => {
     <OnboardingPage>
       <section className="max-h-[560px] overflow-y-scroll">
         <Skip advance={advance} />
-        <h1 className="onboarding-page__header">What makes you tick?</h1>
+        <h1 className="onboarding-page__header">What do you fancy?</h1>
         <p className="onboarding-page__text">
           Share the interests and habits that defines you
         </p>
