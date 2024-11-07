@@ -78,7 +78,7 @@ const Login = () => {
                         navigate('/onboarding')
                     } else {
                         setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
-                        navigate('/dashboard/user-profile')
+                        navigate('/dashboard/explore')
                     }
                 }
             }
@@ -151,7 +151,7 @@ const Login = () => {
                     navigate('/onboarding')
                 } else {
                     setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
-                    navigate('/dashboard/user-profile')
+                    navigate('/dashboard/explore')
                 }
             }
         } catch (err) {
