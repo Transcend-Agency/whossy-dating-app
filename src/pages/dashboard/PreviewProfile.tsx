@@ -213,14 +213,14 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             {userData?.height ? <p className="content-item__info__text">{userData.height}cm</p> : <p className="content-item__info__text">Not specified</p>}
                         </div>
                     </div>
-                    <div className="action-button">
+                    {/* <div className="action-button">
                         <img src="/assets/icons/block.svg" alt={``}/>
                         Block Stephanie
                     </div>
                     <div className="action-button action-button--danger">
                         <img src="/assets/icons/report.svg" alt={``} />
                         Report Stephanie
-                    </div>
+                    </div> */}
                 </div>
             </motion.div>
         </>
