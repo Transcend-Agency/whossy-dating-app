@@ -57,6 +57,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
         uid: auth.uid,
+        isPremium: false,
         created_at: serverTimestamp(),
         blockedIds: arrayUnion()
       });
