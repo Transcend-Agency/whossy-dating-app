@@ -310,15 +310,21 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 } else {
                     setCurrentImage(0)
                 }
+            }else if (e.keyCode == 38){
+                setExpanded(true)
+            } else if (e.keyCode == 40){
+                setExpanded(false)
             }
 
         }, [currentImage])
+
     useEffect(() => {
         window.addEventListener('keydown', handleShortcuts)
         return () => {
             window.removeEventListener('keydown', handleShortcuts)
         }
     }, [handleShortcuts])
+
     useEffect(() => {
         setCurrentImage(0)
     }, [profiles.length])
@@ -337,11 +343,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                     } : {
                         borderTopRightRadius: '1.42rem', borderTopLeftRadius: '1.42rem', borderBottomRightRadius: '2.84rem', borderBottomLeftRadius: '2.84rem'
                     }} className={`preview-profile__card ${index == profiles.length - 1 ? 'hover:cursor-grab active:cursor-grabbing' : ''}`}>
-                        <figure
-                            className="preview-profile__image-bg-container">
-                            {/* <div className="preview-profile__image-bg-wrapper">
-
-                            </div> */}
+                        <figure className="preview-profile__image-bg-container">
                             {item?.photos?.map((src, index) =>
                             (
                                 <motion.img key={index} animate={{ opacity: currentImage == index ? 1 : 0 }} className="preview-profile__profile-image" src={src} />
@@ -582,6 +584,7 @@ const SwipingAndMatching = () => {
     }
 
     useEffect(() => {
+        // console.log(event.)
         window.addEventListener('keydown', handleShortcuts)
         return () => {
             window.removeEventListener('keydown', handleShortcuts)

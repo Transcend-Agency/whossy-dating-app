@@ -18,6 +18,7 @@ import Skeleton from 'react-loading-skeleton';
 import Circle from '@/components/dashboard/Circle';
 import { checkUserProfileCompletion } from '@/constants';
 import AddCredits from './AddCredits';
+import toast from "react-hot-toast";
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -84,7 +85,7 @@ const UserProfile = () => {
                             </p> : <Skeleton width='21rem' height='2.9rem' />}
                         </div>
                         {completed ?
-                            <div className='user-profile__profile-details__completion-status'>
+                            <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") :  setActivePage('edit-profile')}} className='user-profile__profile-details__completion-status cursor-pointer'>
                                 {Math.ceil(completed / 19 * 100)}% Complete
                             </div> :
                             <div className='mt-[1.2rem] flex justify-center'>

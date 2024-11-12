@@ -25,10 +25,10 @@ const ShortcutControls = () => {
                 <img src="/assets/icons/shortcuts/down-arrow.svg" className='shortcut__key' />
                 Close Profile
             </div>
-            <div className='shortcut'>
-                <img src="/assets/icons/shortcuts/redo.svg" className='shortcut__key' />
-                Redo
-            </div>
+            {/*<div className='shortcut'>*/}
+            {/*    <img src="/assets/icons/shortcuts/redo.svg" className='shortcut__key' />*/}
+            {/*    Redo*/}
+            {/*</div>*/}
             <div className='shortcut'>
                 <img src="/assets/icons/shortcuts/spacebar.svg" className='shortcut__key' />
                 Next Photo
