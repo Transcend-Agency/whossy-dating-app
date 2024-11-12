@@ -118,7 +118,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
                     <section className="py-[0.8rem] flex relative h-[12rem]" >
                         <div className="w-full px-[2.4rem]">
                             <div className=" min-w-full px-[1.2rem] py-[1.6rem] text-[#FF5C00] bg-gradient-to-r from-[#ff5e0030] to-white  " style={{border: '1.5px solid #FF5C00', borderRadius: '1.2rem'}}>
-                                <h1 className="text-[2.4rem] font-bold ">Whossy Premium Plan {plan}</h1>
+                                <h1 className="text-[2.4rem] font-bold ">Whossy Premium Plan</h1>
                                 <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">$</span><span className="text-[3.2rem] font-medium self-end">12.99</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
                             </div>
                         </div>

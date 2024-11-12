@@ -72,12 +72,12 @@
     }
     .profile-card {
         @apply absolute rounded-t-[1.6rem] rounded-b-[3.2rem] w-full h-full z-20;
-        &:not(:nth-last-of-type(1)) {
-            @apply bg-[#F6F6F6];
-        }
-        &:nth-last-of-type(2) {
-            @apply bg-[#E9E9E9];
-        }
+        //&:not(:nth-last-of-type(1)) {
+        //    @apply bg-[#F6F6F6];
+        //}
+        //&:nth-last-of-type(2) {
+        //    @apply bg-[#E9E9E9];
+        //}
     }
     .chosen-action-button {
         @apply w-[7.2rem] h-[7.2rem] bg-transparent rounded-full flex items-center justify-center z-30 absolute top-[1rem];

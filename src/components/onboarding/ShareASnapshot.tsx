@@ -25,7 +25,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
 
   useEffect(() => {
     if (auth?.has_completed_onboarding) {
-      navigate('/dashboard/user-profile');
+      navigate('/dashboard/explore');
     }
   }, [auth?.has_completed_onboarding]);
 
@@ -57,6 +57,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
         uid: auth.uid,
+        isPremium: false,
         created_at: serverTimestamp(),
         blockedIds: arrayUnion()
       });
@@ -81,7 +82,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         }, updatedUserData as User);
 
         console.log("Updated local auth state:", updatedUserData);
-        navigate('/dashboard/user-profile');
+        navigate('/dashboard/explore');
       }
 
     } catch (error) {

@@ -34,7 +34,7 @@ export const addMatch = async (likerId: string, likedId: string) => {
 };
 
 const ViewProfile: React.FC<ViewProfileProps> = (
-    { onBackClick, userData, onBlockChange, loggedUserData }
+    { onBackClick, userData, onBlockChange }
 ) => {
     const [expanded, setExpanded] = useState(true)
     const [isBlocked, setIsBlocked] = useState(false)
@@ -127,6 +127,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     };
 
     useEffect(() => {
+        console.log(user)
         if (user?.uid && userData?.uid) {
             setIsBlockLoading(true)
             hasUserBeenLiked()
@@ -199,7 +200,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <motion.img src="/assets/icons/white-heart.png" />
                     </div>
                     }
-                    {loggedUserData?.isPremium && <div className="preview-profile__action-button"
+                    {user?.isPremium && <div className="preview-profile__action-button"
                         onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}

@@ -29,7 +29,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
     const [openEmoji, setOpenEmoji] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const {chatId, reset} = useChatIdStore();
+    const { chatId } = useChatIdStore();
 
 
     //images
