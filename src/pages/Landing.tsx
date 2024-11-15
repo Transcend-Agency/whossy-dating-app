@@ -2,11 +2,9 @@ import { useGSAP } from '@gsap/react';
 import { motion } from "framer-motion";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import Footer from '../components/landing/Footer';
 import Navbar from '../components/landing/Navbar';
-import MarqueeImageSliderBackground from '@/components/auth/MarqueeImageSliderBackground';
 import Marquee from 'react-fast-marquee';
 
 const DesktopWebsiteFeatures = () => {

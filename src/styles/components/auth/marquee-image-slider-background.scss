@@ -1,5 +1,5 @@
 .marquee-background {
-    @apply w-full max-h-[100dvh] flex flex-col items-center justify-center bg-black ;
+    @apply w-full max-h-[100dvh] flex flex-col items-center justify-center bg-black fixed;
 
     .rfm-marquee-container {
         overflow-x: visible;
