@@ -6,6 +6,8 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import Footer from '../components/landing/Footer';
 import Navbar from '../components/landing/Navbar';
+import MarqueeImageSliderBackground from '@/components/auth/MarqueeImageSliderBackground';
+import Marquee from 'react-fast-marquee';
 
 const DesktopWebsiteFeatures = () => {
     gsap.registerPlugin(useGSAP);
@@ -59,7 +61,7 @@ const DesktopWebsiteFeatures = () => {
     );
     return (
         <div className=''>
-            <div className='w-screen h-[400dvh] relative features-section hidden lg:block'>
+            <div className='w-screen h-[400dvh] relative features-section hidden lg:block mt-[50px]'>
                 <div className=' w-full sticky bottom-0 top-0 h-[100dvh] hidden lg:flex items-end justify-center'>
                     <div className='relative '>
                         <div className='lg:h-[94dvh] xl:h-[94dvh] relative top-[8dvh] lg:aspect-[0.49] '>
@@ -138,7 +140,7 @@ const DesktopWebsiteFeatures = () => {
                 </div>
             </div>
 
-            <div className='block lg:hidden space-y-[8rem]'>
+            <div className='block lg:hidden space-y-[8rem] pt-28'>
                 <div className="h-[90dvh] relative top-[10dvh] aspect-[0.49] px-[5rem] ">
                     <div className="flex flex-col items-center justify-center bg-white">
                         <h1 className="text-[2rem] font-bold text-center">Get Matched Faster</h1>
@@ -207,7 +209,7 @@ const DesktopWebsiteFeatures = () => {
                     </div>
                 </div>
 
-                <div className='h-[90dvh] relative top-[10dvh] aspect-[0.49] px-[5rem]'>
+                <div className='h-[90dvh] relative top-[10dvh] aspect-[0.49] px-[5rem] '>
                     <div className="flex flex-col items-center justify-center bg-white">
                         <h1 className="text-[2rem] font-bold text-center">Speak Your Love Language</h1>
                         <p className="text-gray text-[1.6rem] leading-[1.68rem] text-center px-6 mt-4">
@@ -220,7 +222,7 @@ const DesktopWebsiteFeatures = () => {
                             <circle cx="12" cy="39" r="6" fill="#FF5C00" />
                         </svg>
 
-                        <div className="mt-3">
+                        <div className="mt-3 ">
                             <img
                                 src="/assets/images/website/swipe.png"
                                 alt="Matched Profile"
@@ -236,122 +238,81 @@ const DesktopWebsiteFeatures = () => {
     )
 }
 
+const MarqueeImageSlider = () => {
+    const imageNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
+
+    return <motion.div
+        initial={{ scale: 1.1 }} animate={{ scale: 1, transition: { duration: 5, ease: 'easeOut' } }}
+        className='marquee-landing'>
+
+        <div className='marquee-background__landing'>
+            <Marquee speed={20}>
+                {imageNumbers.slice(0, 10).map(image => (
+                    <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
+                ))}
+            </Marquee>
+            <Marquee direction='right' speed={20}>
+                {imageNumbers.slice(30, 40).map(image => (
+                    <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
+                ))}
+            </Marquee>
+            <Marquee speed={20}>
+                {imageNumbers.slice(0, 10).map(image => (
+                    <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
+                ))}
+            </Marquee>
+            <Marquee direction='right' speed={20}>
+                {imageNumbers.slice(30, 40).map(image => (
+                    <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
+                ))}
+            </Marquee>
+        </div>
+    </motion.div>
+}
+
 const Landing = () => {
-    const secondPageRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate()
 
-    const handleStartSwiping = () => {
-        if (secondPageRef.current) {
-            secondPageRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
-    return (
-        <>
-            <div className="flex flex-col items-center">
-                {/* FIRST PAGE */}
-
-                <section className="relative w-full bg-white overflow-hidden">
-                    <div className=" absolute grid grid-cols-6 h-screen w-full">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                            <div key={index} className="flex justify-center">
-                                <div className="w-[1px] h-screen bg-gradient-to-b from-[#D9D9D9] to-[#FEFEFE]"></div>
+        return (
+            <>  
+                <div className="flex flex-col items-center">
+                    {/* FIRST PAGE */}
+                    
+                    <section className='relative h-screen flex flex-col justify-center items-center'>
+                        {/* <MarqueeImageSliderBackground /> */}
+                        <div className='relative w-full '>
+                            <div className='absolute w-full inset-0 h-full bg-[#080808] opacity-80 z-20'></div>
+                            <MarqueeImageSlider />
+                        </div>
+                       
+                        <div className="fixed top-0 w-full z-50">
+                            <Navbar />
+                        </div>
+    
+                        <div className="absolute z-30 flex flex-col items-center mx-[28px] max-w-[600px] max-h-[100vh]">
+                            <div className="text-[4.8rem] text-white font-bold leading-[5.6rem] lg:text-[4rem] lg:leading-[4.8rem] text-center px-[2rem]">
+                                Swipe, Match, Love - Your Perfect Partner Awaits!
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="fixed top-0 w-full z-20">
-                        <Navbar />
-                    </div>
-
-                    <div className="relative z-10 flex flex-col items-center pt-[10rem] lg:pt-[12.8rem]">
-                        <p className="text-[4.8rem] leading-[5.6rem] w-5/6 lg:w-11/12 lg:text-[8.8rem] lg:leading-[9.2rem] text-center px-[2rem] ">
-                            SWIPE, MATCH, LOVE - YOUR PERFECT PARTNER AWAITS!
-                        </p>
-                        <button onClick={handleStartSwiping} className="mt-[2rem] bg-red text-white w-[13.3rem] h-[4.6rem] text-center rounded-[1.2rem] text-[1.6rem]">
-                            Start Swiping
-                        </button>
-                    </div>
-
-                    <div className="relative h-[calc(100vh-(0.45*100vh))]">
-                        <motion.img src={'/assets/icons/Rectangle1.svg'} alt="frame 1" className="w-[7.2rem] lg:w-[12rem] xl:w-[20rem] absolute bottom-[500px] left-[50%] lg:bottom-[500px] lg:left-[80%] transform -translate-x-1/2 " animate={{ y: [0, -100, 0] }} transition={{ duration: 5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
-                        <motion.img src={'/assets/icons/Rectangle2.svg'} alt="frame 2" className="w-[12rem] lg:w-[20rem] absolute top-[50px] left-[40%] lg:top-[50px] transform -translate-x-1/2" animate={{ y: [0, -45, 100, 0] }} transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
-                        <motion.img src={'/assets/icons/Rectangle3.svg'} alt="frame 3" className="w-[12rem] lg:w-[20rem] absolute top-[150px] left-[75%] lg:top-[150px] lg:left-[70%] transform -translate-x-1/2" animate={{ y: [0, -50, 100, 0] }} transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
-                        <motion.img src={'/assets/icons/Rectangle4.svg'} alt="frame 4" className="w-[12rem] lg:w-[20rem] absolute bottom-[50px] left-[0%] lg:bottom-[20px] lg:left-[1%] transform" animate={{ y: [0, -200, 0] }} transition={{ duration: 5, ease: "easeInOut", repeat: Infinity, repeatType: "mirror", }} />
-                    </div>
-                </section>
-
-                {/* SECOND PAGE */}
-                <section ref={secondPageRef} className="relative h-screen pt-40 lg:pt-0 w-full bg-white overflow-hidden space-y-[2rem] lg:grid lg:grid-cols-2 justify-center max-w-[122rem] items-center mx-auto">
-                    <div className="text-center lg:text-start px-[2rem] space-y-[2rem] w-11/12 mx-auto" >
-                        <p className="text-[4.8rem] leading-[5.2rem] lg:text-[8.8rem] lg:leading-[9.2rem] ">LOVE, NO PASSPORT REQUIRED</p>
-                        <p className="text-[1.8rem] leading-[2.4rem] lg:text-[2.4rem] lg:leading-[2.88rem] text-gray">Explore connections that span continents without leaving home. Our app brings you closer to people abroad, creating meaningful relationships no matter where you are.</p>
-                        <button onClick={() => navigate('/auth/create-account')} className="mt-5 bg-red text-white w-[8rem] h-[3.3rem] lg:w-[9.6rem] lg:h-[4.6rem] text-[1.6rem] text-center rounded-[0.8rem]">
-                            Join Now
-                        </button>
-                    </div>
-
-                    <img src={'/assets/icons/wedding.svg'} alt="wedding-image" className="w-3/4 mx-auto" />
-                </section>
-
-                {/* RONALD */}
-                <DesktopWebsiteFeatures />
-
-
-                {/* LAST PAGE */}
-
-                {/* MOBILE */}
-                <section className="block lg:hidden relative w-full py-[12.8rem] space-y-[8rem]">
-
-                    <div className="mx-12 w-3/5 max-w-[50rem]">
-                        <p className="text-[3.2rem] italic leading-[3.6rem]">HEAR FROM THOSE WHO FOUND LOVE</p>
-                    </div>
-
-                    <img src={"assets/icons/couple.svg"} alt="Image of a couple" className="mx-auto w-4/5 " />
-
-                    <div className="text-center space-y-[2.4rem]">
-                        <div className=" right-[2rem] bottom-[16rem] space-y-[2.4rem] ">
-                            <p className="text-[3rem]">STEPHANIE & DAVID</p>
-                            <p className="text-[2rem] text-gray">
-                                He was my first thought when I woke up in the morning.
-                            </p>
-                        </div>
-                        <div className="flex items-center lg:absolute justify-center space-x-[4rem]">
-                            <button><img src={'/assets/icons/ArrowLeft.svg'} alt="left arrow" /></button>
-                            <button><img src={'/assets/icons/ArrowRight.svg'} alt="right arrow" /></button>
-                        </div>
-                    </div>
-                </section>
-
-                {/* DESKTOP */}
-                <section className="hidden lg:block relative py-[12.8rem] w-full bg-white space-y-[4rem] ">
-                    <div className="mx-16 w-4/5 max-w-[50rem]">
-                        <p className="text-[4.8rem] italic leading-[5.6rem]">HEAR FROM THOSE WHO FOUND LOVE</p>
-                    </div>
-
-                    <div className="lg:grid lg:grid-cols-3">
-                        <div className="flex items-end justify-start pl-16 space-x-[5rem]">
-                            <button><img src={'/assets/icons/ArrowLeft.svg'} alt="left arrow" /></button>
-                            <button><img src={'/assets/icons/ArrowRight.svg'} alt="right arrow" /></button>
-                        </div>
-
-                        <div>
-                            <img src={"assets/icons/couple.svg"} alt="Image of a couple" className="mx-auto w-auto pr-[2rem]" />
-                        </div>
-
-                        <div className="w-4/5 flex items-end">
-                            <div>
-                                <p className="text-[3.2rem] leading-[3.2rem]">STEPHANIE & DAVID</p>
-                                <p className="text-gray text-[1.8rem] leading-[2.4rem]">He was my first thought when I woke up in the morning.</p>
+    
+                            <div className='w-full mt-6'>
+                                <button onClick={() => navigate("/auth/login")} className="w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center">
+                                    Login
+                                </button>
+                            </div>
+    
+                            <div className="mt-4">
+                                <p className="text-[1.6rem] text-white">Don't have an account? <a className="text-[1.6rem] font-bold underline" onClick={() => navigate("/auth/create-account")}>Create Account</a></p>
                             </div>
                         </div>
+                    </section>
+
+                    <DesktopWebsiteFeatures />
+                    
+                    <div className='bottom-0 w-full z-20 pt-64'>
+                    <Footer />
                     </div>
-
-                </section>
-
-                <Footer />
-            </div>
-        </>
-    )
-}
-export default Landing;
+                </div>
+            </>
+        )
+    }
+    export default Landing;

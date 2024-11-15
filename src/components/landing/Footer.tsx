@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Footer = () => {
 const navigate = useNavigate();
 
+
   return (
 
     <div className="lg:flex lg:justify-center px-[4rem] bg-red w-full lg:h-[25rem]">
@@ -31,7 +32,7 @@ const navigate = useNavigate();
           </div>
         </div>
 
-        <div className="flex flex-col space-y-[2.4rem] text-[1.6rem]">
+        <div className="flex flex-col items-start space-y-[2.4rem] text-[1.6rem]">
           <button onClick={() => navigate('/faq')}>FAQ</button>
           <button onClick={() => navigate('/contact')}>Contact Us</button>
         </div>
