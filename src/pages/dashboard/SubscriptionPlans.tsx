@@ -109,9 +109,9 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
             <motion.div onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
-                        <button onClick={() => { closePage(); setPlan('') }} className="settings-page__title__left">
+                        <button onClick={() => { closePage() }} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                            <p>Subscription Plans</p>
+                            <p>Subscription Plans {isPremiumUser}</p>
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
