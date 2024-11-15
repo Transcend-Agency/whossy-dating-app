@@ -38,6 +38,7 @@ import {addMatch} from "@/components/dashboard/ViewProfile.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import toast from "react-hot-toast";
 import {useMatchStore} from "@/store/Matches.tsx";
+import { getUserProfile } from "@/hooks/useUser";
 
 interface ProfileCardProps {
     profiles: User[],
@@ -478,7 +479,19 @@ const SwipingAndMatching = () => {
     const [profiles, setProfiles] = useState<User[]>([])
     const x = useMotionValue(0)
     const controls = useAnimationControls()
-    const { user } = useAuthStore()
+    const { user, auth } = useAuthStore()
+
+    const [loggedUserData, setLoggedUserData] = useState<User | null>(null);
+
+    const fetchLoggedUserData = async () => {
+        const data = await getUserProfile("users", auth?.uid as string) as User;
+        setLoggedUserData(data);
+    }
+
+    useEffect(() => {
+        fetchLoggedUserData().catch(err => console.error(err));
+    }, [])
+
     const { fetchMatches } = useMatchStore()
 
     const { updateUser } = useAuthStore()
@@ -721,11 +734,10 @@ const SwipingAndMatching = () => {
                                     }} className="action-buttons__button">
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>
-                                    {user?.isPremium &&
-                                        <button className="action-buttons__button action-buttons__button--small"
-                                                onClick={() => navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`)}>
-                                            <img src="/assets/icons/message-heart.svg" alt={``}/>
-                                        </button>}
+                                    <button className="action-buttons__button action-buttons__button--small"
+                                            onClick={() => loggedUserData?.isPremium ? navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`) : toast.error('Upgrade to premium to chat')}>
+                                        <img src="/assets/icons/message-heart.svg" alt={``}/>
+                                    </button>
                                 </motion.div>
                                 {/* @ts-expect-error type errors */}
                                 <ProfileCard key={uid(item)} controls={controls} profiles={profiles} setProfiles={setProfiles} item={item} setActiveAction={setActiveAction} setActionButtonsOpacity={setActionButtonsOpacity} setChosenActionButtonOpacity={setChosenActionButtonOpacity} setChosenActionScale={setChosenActionScale} index={index} nextCardOpacity={nextCardOpacity} setNextCardOpacity={setNextCardOpacity}/></>)}
