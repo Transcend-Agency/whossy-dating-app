@@ -92,6 +92,7 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="notification" element={<Notification />} />
           </Route>
+          {/* {location.pathname.startsWith("") && (<MarqueeImageSliderBackground/>)} */}
           <Route path="" element={<Landing />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/contact" element={<Contact />} />
