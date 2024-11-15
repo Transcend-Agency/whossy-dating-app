@@ -279,7 +279,7 @@ const Landing = () => {
                     <section className='relative h-screen flex flex-col justify-center items-center'>
                         {/* <MarqueeImageSliderBackground /> */}
                         <div className='relative w-full '>
-                            <div className='absolute w-full inset-0 h-full bg-[#080808] opacity-80 z-20'></div>
+                            <div className='absolute w-full inset h-full bg-[#080808] opacity-80 z-20'></div>
                             <MarqueeImageSlider />
                         </div>
                        
@@ -291,9 +291,8 @@ const Landing = () => {
                             <div className="text-[4.8rem] text-white font-bold leading-[5.6rem] lg:text-[4rem] lg:leading-[4.8rem] text-center px-[2rem]">
                                 Swipe, Match, Love - Your Perfect Partner Awaits!
                             </div>
-    
-                            <div className='w-full mt-6'>
-                                <button onClick={() => navigate("/auth/login")} className="w-full rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center">
+                            <div className='w-full mt-6 flex justify-center'>
+                                <button onClick={() => navigate("/auth/login")} className="w-full lg:w-[439px] rounded-[0.8rem] cursor-pointer bg-[#F2243E] py-6 text-white text-[1.8rem] font-medium leading-[2.16rem] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-70 transition-all duration-200 flex items-center justify-center">
                                     Login
                                 </button>
                             </div>
