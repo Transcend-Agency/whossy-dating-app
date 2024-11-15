@@ -21,9 +21,13 @@ const ChatInterface: React.FC = () => {
 
     const [showChats, setShowChats] = useState<boolean>(false);
 
+    const [unreadChats, setUnreadChats] = useState<number | null>(null);
+
     const navigate = useNavigate();
 
     const currentUserId = auth?.uid as string;
+
+    const [userData, setUserData] = useState<User | null>(null);
 
     const {setChatId} = useChatIdStore();
 
@@ -37,7 +41,7 @@ const ChatInterface: React.FC = () => {
     const fetchUserData = async (userId: string) => {
         const userDocRef = doc(db, "users", userId);
         const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {  return userDocSnap.data();} 
+        if (userDocSnap.exists()) { setUserData(userDocSnap.data());  return userDocSnap.data();} 
         else {  console.log(`No such user document for user_id: ${userId}`); return null;}
       };
 
@@ -71,6 +75,16 @@ const ChatInterface: React.FC = () => {
 
             if (isMounted) {
                 setChats(chatDataWithUserData);  // Update the state with the chat data
+                setUnreadChats(
+                    chats?.filter((chat) => {
+                        if (chat.status === 'sent') {
+                            if (chat.last_sender_id !== auth?.uid) {
+                                return chat.status === 'sent'
+                            }
+                        }
+                    }
+                    )?.length
+                )
             }
 
             // setIsLoadingChats(false);  
@@ -93,16 +107,7 @@ const ChatInterface: React.FC = () => {
                 <div className="dashboard-layout__chat-interface__drawer__left">
                     <img src="/assets/images/dashboard/chat-heart.svg" />
                     <span className=''>Chat</span>
-                    <div className='dashboard-layout__chat-interface__drawer__left__unread-count'>
-                        { chats?.filter((chat) => {
-                                if (chat.status === 'sent') {
-                                    if (chat.last_sender_id !== auth?.uid) {
-                                        return chat.status === 'sent'
-                                    }
-                                }
-                            }
-                            )?.length 
-                        } </div>
+                    { unreadChats !== 0 && <div className='dashboard-layout__chat-interface__drawer__left__unread-count'> {unreadChats} </div> }
                 </div>
                 <button
                         className={`dashboard-layout__chat-interface__drawer__open-button cursor-pointer transform transition-transform duration-300 ${showChats ? 'rotate-180' : ''}`}
@@ -123,7 +128,7 @@ const ChatInterface: React.FC = () => {
                 transition={{ duration: 0.3 }}
                >
                  {chats?.slice(0,4)?.map((chat, i: number) => (
-                    <ChatListItem key={i} chatInterface contactName={chat.user.first_name as string} message={chat.last_message ? chat.last_message : 'No messages'} messageStatus={chat.status === "sent" ? chat.last_sender_id !== auth?.uid : false} profileImage={chat.user.photos! && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
+                    <ChatListItem key={i} chatInterface contactName={chat.user.first_name as string} userData={userData as User} message={chat.last_message ? chat.last_message : 'No messages'} messageStatus={chat.status === "sent" ? chat.last_sender_id !== auth?.uid : false} profileImage={chat.user.photos! && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
                     setChats((prevChats) =>(prevChats.map((c) => c.last_message_id === chat.last_message_id ? { ...c, status: "seen" } : c)));
                 }}/>
                   ))}
