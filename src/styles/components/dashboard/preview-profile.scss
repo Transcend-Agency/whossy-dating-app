@@ -123,7 +123,7 @@
         @apply min-w-full h-full object-cover absolute;
     }
     &__overlay {
-        @apply w-full h-full bg-gradient-to-b from-[#08080800] from-[50%] to-[75%] to-[#080808] absolute grid grid-cols-2 gap-[1rem];
+        @apply w-full h-full bg-gradient-to-b from-[#08080800] from-[60%] to-[80%] to-[#080808] absolute grid grid-cols-2 gap-[1rem];
         @include media('<=1023px') {
             @apply rounded-b-[2.4rem] overflow-hidden;
         }
