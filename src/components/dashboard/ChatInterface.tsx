@@ -139,11 +139,16 @@ const ChatInterface: React.FC = () => {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
                >
-                 {chats?.slice(0,4)?.map((chat, i: number) => (
+                 { chats ? chats?.slice(0,4)?.map((chat, i: number) => (
                     <ChatListItem key={i} contactName={chat.user.first_name as string} userData={userData as User} message={chat.last_message ? chat.last_message : 'No messages'} messageStatus={chat.status === "sent" ? chat.last_sender_id !== auth?.uid : false} profileImage={chat.user.photos! && chat.user.photos[0]} openChat={() => {navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
                     setChats((prevChats) =>(prevChats.map((c) => c.last_message_id === chat.last_message_id ? { ...c, status: "seen" } : c)));
-                }}/>
-                  ))}
+                }}/> 
+                  )) : 
+                  <div className='w-full h-[10rem] flex flex-col  justify-center items-center'>
+                    <p className='text-[1.4rem]'>Oops! Looks like you have not chats💔</p>
+                    {/* <p className='text-[1.4rem]'>Go to the explore page and start chatting</p> */}
+                  </div>
+                  }
                 </motion.div>}
            </AnimatePresence>
         </motion.div>
