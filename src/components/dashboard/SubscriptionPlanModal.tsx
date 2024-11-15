@@ -36,6 +36,7 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
     setIsLoading(false);
     toast.success('Payment successful');
     refetchUserData && refetchUserData();
+    window.location.reload();
     hide();
   }
 
@@ -44,15 +45,15 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <div className="flex flex-col gap-y-4">
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#ececec'}}
          onClick={() => setSelectedPaymentMethod('naira')}>
-            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'naira' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
-            <p className='text-center w-full'>Pay using Naira (Paystack)</p>
+            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'naira' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using Naira (Paystack)</p>
         </div>
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#8A8A8E'}}
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#ececec'}}
          onClick={() => setSelectedPaymentMethod('usd')}>
-            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #8A8A8E'}}/>
-            <p className='text-center w-full'>Pay using USD (Stripe)</p>
+            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using USD (Stripe)</p>
         </div>
         <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={
           handlePayment
@@ -117,6 +118,7 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
     });
     refetchUserData && refetchUserData();
     toast.success('Subscription cancelled successfully');
+    window.location.reload();
     hide();
   } 
 
