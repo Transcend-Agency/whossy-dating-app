@@ -60,7 +60,7 @@ const MatchesPage = () => {
                             {peopleWhoLiked.length == 0 && !likesLoading &&
                                 <LikesEmptyState />}
                             {likesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
+                                {!user?.is_premium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
                                     <Skeleton containerClassName="rounded-[1.2rem] overflow-hidden h-full block" width={'100%'} height={"100%"} />
                                 </div>}
                                 <div className="matches-page__grid">
@@ -73,7 +73,7 @@ const MatchesPage = () => {
                             </motion.div>}
 
                             {!likesLoading && peopleWhoLiked.length !== 0 && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="likes-subscribe-cta-container">
+                                {!user?.is_premium && <div className="likes-subscribe-cta-container">
                                     <div className="likes-subscribe-cta">
                                         <figure className="likes-subscribe-cta__image">
                                             <img src="/assets/images/matches/stephen.png" alt={``} />
@@ -112,7 +112,7 @@ const MatchesPage = () => {
                             {matches.length == 0 && !matchesLoading &&
                                 <MatchesEmptyState />}
                             {matchesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
+                                {!user?.is_premium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
                                     <Skeleton containerClassName="rounded-[1.2rem] overflow-hidden h-full block" width={'100%'} height={"100%"} />
                                 </div>}
                                 <div className="matches-page__grid">
@@ -125,7 +125,7 @@ const MatchesPage = () => {
                             </motion.div>}
                             {!matchesLoading && matches.length !== 0 && <motion.div key="matches" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
 
-                                {!user?.isPremium && <div className="matches-subscribe-cta-container">
+                                {!user?.is_premium && <div className="matches-subscribe-cta-container">
                                     <div className="matches-subscribe-cta">
                                         <div className="matches-subscribe-cta__grid">
                                             <div className="matches-subscribe-cta__text-container">

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useCycle } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {

@@ -735,7 +735,7 @@ const SwipingAndMatching = () => {
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>
                                     <button className="action-buttons__button action-buttons__button--small"
-                                            onClick={() => loggedUserData?.isPremium ? navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`) : toast.error('Upgrade to premium to chat')}>
+                                            onClick={() => loggedUserData?.is_premium ? navigate(`/dashboard/chat?recipient-user-id=MWBawIlrsDarKK1Cjnm3FIGj8vz2`) : toast.error('Upgrade to premium to chat')}>
                                         <img src="/assets/icons/message-heart.svg" alt={``}/>
                                     </button>
                                 </motion.div>

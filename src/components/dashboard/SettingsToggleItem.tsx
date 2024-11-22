@@ -19,7 +19,14 @@ const SettingsToggleItem: React.FC<SettingsToggleItemProps> = ({ onButtonToggle,
                 <div className="settings-page__settings-group__toggle-item__subtext">{subtext}</div>
                 </> : <div className="settings-page__settings-group__toggle-item__single-text">{title} {isPremium && <div className="premium-badge">Premium</div>}</div>}
             </div>
-            <div className={`settings-page__settings-group__toggle-item__toggle-button ${isActive && 'settings-page__settings-group__toggle-item__toggle-button--active'}`} onClick={!isPremium ? onButtonToggle : () => toast.error('This setting is only available to premium users.')}>
+            <div className={`settings-page__settings-group__toggle-item__toggle-button ${isActive && 'settings-page__settings-group__toggle-item__toggle-button--active'}`}
+                 onClick={() => {
+                     if (isPremium || title === "Public search" || title === "Read receipts") {
+                         onButtonToggle();
+                     } else {
+                         toast.error('This setting is only available to premium users.');
+                     }
+                 }}>
                 <div className="settings-page__settings-group__toggle-item__toggle-button__toggle"></div>
             </div>
         </div>

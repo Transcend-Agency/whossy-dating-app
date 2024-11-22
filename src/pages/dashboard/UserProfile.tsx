@@ -23,15 +23,6 @@ import toast from "react-hot-toast";
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
     const [activeSubPage, setActiveSubPage] = useState(0);
-    // const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // const handleOpenModal = () => {
-    // setIsModalOpen(true);
-    // };
-    //
-    // const handleCloseModal = () => {
-    // setIsModalOpen(false);
-    // };
 
     const [userData, setUserData] = useState<User>();
     const [userFilters, setUserFilters] = useState<UserFilters>();
@@ -42,8 +33,10 @@ const UserProfile = () => {
     const { auth } = useAuthStore();
 
     const fetchUserData = async () => {
-        const data = await getUserProfile("users", auth?.uid as string) as User;
-        setUserData(data);
+        const data = await getUserProfile("users", auth?.uid as string).then(
+            () => setUserData(data)
+        ) as User;
+        // setUserData(data);
         setCompleted(checkUserProfileCompletion(data))
     }
 
@@ -51,7 +44,9 @@ const UserProfile = () => {
 
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
-        fetchUserFilters().catch(err => console.log(err)) }, [])
+        fetchUserFilters().catch(err => console.log(err))
+        console.log(userData)
+    }, [])
 
 
     const refetchUserData = async () => { await fetchUserData() }
@@ -118,7 +113,9 @@ const UserProfile = () => {
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings
-                activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')} userSettings={{ incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.status?.online, read_receipts: userData?.read_receipts, hide_verification_badge: userData?.hide_verification_badge }} prefetchUserData={refetchUserData} />
+                activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}
+                userSettings={{ incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.online_status, read_receipts: userData?.read_receipts }}
+                prefetchUserData={refetchUserData} />
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userFilters={userFilters} refetchUserData={refetchUserData} refetchUserFilters={refetchUserFilters} />
             <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userFilters={userFilters} refetchUserFilters={refetchUserFilters} />
