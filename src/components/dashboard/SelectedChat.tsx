@@ -261,6 +261,10 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         };
     }, [activePage, chatId, currentUserId]);
 
+    useEffect(() => {
+        updateChatId('nil')
+    }, [])
+
 
     const endRef = useRef<HTMLDivElement>(null);
 
