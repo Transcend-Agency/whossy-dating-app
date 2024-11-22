@@ -8,7 +8,7 @@ export type User = {
   created_at?: string;
   distance?: number | null;
   geohash?: string;
-  isPremium?: boolean | null;
+  is_premium?: boolean | null;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
@@ -38,6 +38,12 @@ export type User = {
     online: boolean;
     lastSeen: number;
   }
+  // userProfileSettings?: {
+  //   incoming_messages?: boolean;
+  //   public_search?: boolean;
+  //   read_receipts?: boolean;
+  //   online_status?: boolean;
+  // },
   state?: string;
   family_goal?: number;
   marital_status?: number;

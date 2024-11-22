@@ -23,6 +23,13 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   const { photos, reset: resetPhoto } = usePhotoStore();
   const { "onboarding-data": data, reset } = useOnboardingStore();
 
+  const userSettings = {
+    incoming_messages: true,
+    public_search: true,
+    read_receipts: true,
+    online_status: true
+  }
+
   useEffect(() => {
     if (auth?.has_completed_onboarding) {
       navigate('/dashboard/explore');
@@ -57,10 +64,14 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
         uid: auth.uid,
-        isPremium: false,
+        is_premium: false,
         created_at: serverTimestamp(),
-        blockedIds: arrayUnion()
+        blockedIds: arrayUnion(),
+        userProfileSettings: {
+          ...userSettings
+        },
       });
+
 
       // Updating the `has_completed_onboarding` flag
       await updateDoc(userDocRef, {

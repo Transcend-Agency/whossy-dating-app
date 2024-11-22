@@ -187,7 +187,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
 
     return (
         <>
-            <ReportModal show={openModal} onCloseModal={() => setOpenModal(false)} />
+            <ReportModal userData={userData} show={openModal} onCloseModal={() => setOpenModal(false)} />
             <DashboardPageContainer className="preview-profile preview-profile--view-profile">
                 <div className="preview-profile__action-buttons">
                     {!hasUserBeenLiked() &&
@@ -200,8 +200,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <motion.img src="/assets/icons/white-heart.png" />
                     </div>
                     }
-                    {user?.isPremium && <div className="preview-profile__action-button"
-                        onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                    {user?.is_premium && <div className="preview-profile__action-button"
+                                              onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}
                 </div>
@@ -254,7 +254,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </div>}
                             <div className="preview-profile__profile-details">
                                 <div className="status-row">
-                                    {userData.status?.online && <div className="active-badge">{'Online'}</div>}
+                                    {userData.status?.online ? <div className="active-badge">{'Online'}</div> :
+                                        <div className="non-active-badge">{'Offline'}</div>}
                                     {userData.location && user?.location &&
                                         <p className="location">~ {userData.distance}</p>}
                                 </div>
