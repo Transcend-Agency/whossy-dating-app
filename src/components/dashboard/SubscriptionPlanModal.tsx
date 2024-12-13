@@ -7,37 +7,40 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { Oval } from 'react-loader-spinner';
+import { useSubscribe } from '@/hooks/usePaystack';
+import { usePaystackStore } from '@/store/Paystack';
 
 
 interface SubscriptionPlanModalProps {
-  show: boolean, hide: () => void; advance: (val: 'stripe-payment' | 'payment-detail') => void, refetchUserData?: () => void
+  show: boolean, hide: () => void; advance?: (val: 'stripe-payment' | 'payment-detail') => void, refetchUserData?: () => void
 }
 
 type UserDetails = {name: string, email: string, phone: string, amount: number}
 
 
 
-export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, refetchUserData}) => {
+export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, advance}) => {
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'naira' | 'usd'>('naira');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'paystack' | 'usd'>('paystack');
 
-  const {auth} = useAuthStore();
+  // const {auth} = useAuthStore();
 
-  const userDoc = doc(db, "users", auth?.uid as string );
+  // const userDoc = doc(db, "users", auth?.uid as string );
 
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
 
   const handlePayment = async () => {
-    setIsLoading(true);
-    await updateDoc(userDoc, {
-      isPremium: true
-    });
-    setIsLoading(false);
-    toast.success('Payment successful');
-    refetchUserData && refetchUserData();
-    window.location.reload();
-    hide();
+    advance && advance(selectedPaymentMethod === 'paystack' ? 'payment-detail' : 'stripe-payment');
+    // setIsLoading(true);
+    // await updateDoc(userDoc, {
+    //   isPremium: true
+    // });
+    // setIsLoading(false);
+    // toast.success('Payment successful');
+    // refetchUserData && refetchUserData();
+    // window.location.reload();
+    // hide();
   }
 
   
@@ -45,9 +48,9 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <div className="flex flex-col gap-y-4">
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'naira' ? '#f46a1afa' : '#ececec'}}
-         onClick={() => setSelectedPaymentMethod('naira')}>
-            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'naira' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'paystack' ? '#f46a1afa' : '#ececec'}}
+         onClick={() => setSelectedPaymentMethod('paystack')}>
+            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'paystack' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
             <p className='text-center w-full text-[#8A8A8E]'>Pay using Naira (Paystack)</p>
         </div>
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#ececec'}}
@@ -57,39 +60,58 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
         </div>
         <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={
           handlePayment
-        }>{!isLoading ? 'Pay - $12' : <Oval color="#FFFFFF" secondaryColor="#FFFFFF" width={20} height={20} />}</button>
+        }>Next</button>
+        {/* <Oval color="#FFFFFF" secondaryColor="#FFFFFF" width={20} height={20} /> */}
       </div>
     </DashboardSettingsModal>
   )
 }
 
-export const PaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide}) => {
+export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide}) => {
 
-const amount = 2000000;
+const [userDetails, setUserDetails] = useState<UserDetails>({name: "", email: "", phone: "", amount: 200000});
 
-const [userDetails, setUserDetails] = useState<UserDetails>({name: "", email: "", phone: "", amount});
+const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_TEST_KEY;
 
+const { auth } = useAuthStore();
+
+const handleSuccessfulPayment = async() => {
+  try {
+    const userRef = doc(db, 'users', auth?.uid as string);
+    await updateDoc(userRef, { isPremium: true })
+    .then(() => toast.success('Payment successful! Your account is now premium.'))
+    .then(() => setTimeout(() => window.location.reload(), 1500));
+  } catch (error) {
+    console.error('Error updating premium status:', error);
+    toast.error('Payment succeeded, but we encountered an issue upgrading your account. Please contact support.');
+  }
+}
+
+const {mutate} = useSubscribe();
+
+const { setReference } = usePaystackStore();
 
 return (
   <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
-    <form className="flex flex-col gap-y-6">
+    <form className="flex flex-col gap-y-6" onSubmit={(e) => { e.preventDefault(); mutate({email: userDetails.email, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, {onSuccess: (res) => { setReference(res.data.reference); setTimeout(() => window.location.href = res.data.authorization_url, 500)}})} }>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
-          <label htmlFor="name">Name</label>
-          <input id='name' type="text" value={userDetails.name} placeholder='Enter your full name' className='border py-4 px-4 rounded-lg placeholder:text-[#dad9d9]'
+          <label htmlFor="name" className='text-[#666]'>Name</label>
+          <input id='name' type="text" value={userDetails.name} placeholder='Enter your full name' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
           onChange={(e) => setUserDetails((prev) => ({...prev, name: e.target.value}) )} />
       </div>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
-          <label htmlFor="name">Phone Number</label>
-          <input id='name' type="text" value={userDetails.phone} placeholder='Enter your phone number' className='border py-4 px-4 rounded-lg placeholder:text-[#dad9d9]'
+          <label htmlFor="name" className='text-[#666]'>Phone Number</label>
+          <input id='name' type="text" value={userDetails.phone} placeholder='Enter your phone number' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
           onChange={(e) => setUserDetails((prev) => ({...prev, phone: e.target.value}) )} />
       </div>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
-          <label htmlFor="name">Email</label>
-          <input id='name' type="text" placeholder='Enter your email address' className='border py-4 px-4 rounded-lg placeholder:text-[#dad9d9]'
+          <label htmlFor="name" className='text-[#666]'>Email</label>
+          <input id='name' type="text" placeholder='Enter your email address' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
           onChange={(e) => setUserDetails((prev) => ({...prev, email: e.target.value}) )} />
       </div>
-      <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={() => {}}>Pay - $12</button>
-      <PaystackButton className="paystack-button" email={userDetails.email} amount={userDetails.amount} publicKey='xxxx' />
+      <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" >Pay - $12</button>
+      {/* <PaystackButton text='Pay Now' className="paystack-button" email={userDetails.email}  amount={userDetails.amount} publicKey={publicKey} onSuccess={handleSuccessfulPayment}/> */}
+      {/* <button onClick={(e) => {alert('pay now'); e.preventDefault()}}>click</button> */}
     </form>
   </DashboardSettingsModal>
 )
