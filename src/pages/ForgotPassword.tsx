@@ -52,7 +52,7 @@ const ForgotPasswordInputPage: React.FC<ForgotPasswordPage> = ({ advance, key })
             if (result.docs.length == 0) {
                 throw new Error("Account Does Not Exist")
             }
-            sendPasswordResetEmail(auth, data.email, {
+            await sendPasswordResetEmail(auth, data.email, {
                 url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/login`
             });
             advance()

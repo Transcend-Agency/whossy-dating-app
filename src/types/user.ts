@@ -1,19 +1,17 @@
-// import { religion } from '@/constants';
-// import { relationship_preferences } from '@/constants';
-import {GeoPoint} from "firebase/firestore";
+import {GeoPoint } from "firebase/firestore";
 
 export type User = {
   bio?: string | null;
-  date_of_birth?: {nanoseconds: number, seconds: number} | null
-  created_at?: string;
+  date_of_birth?: number | null;
+  created_at?: number | null;
   distance?: number | null;
-  geohash?: string;
+  geohash?: string | null;
   is_premium?: boolean | null;
   drink?: number | null;
   education?: number | null;
   love_language?: number | null;
   meet?: number | null;
-  pets?: number | null[];
+  pets?: number | null;
   photos?: string[] | null;
   preference?: number | null;
   smoke?: number | null;
@@ -28,36 +26,31 @@ export type User = {
   has_completed_account_creation?: boolean;
   has_completed_onboarding?: boolean;
   phone_number?: string | null;
-  uid?: string
+  uid?: string | null;
   weight?: number | null;
   height?: number | null;
   religion?: number | null;
-  interests?: string[] | null
-  is_verified?: boolean;
+  interests?: string[] | null;
+  is_verified?: boolean | null;
   status?: {
     online: boolean;
     lastSeen: number;
-  }
-  // userProfileSettings?: {
-  //   incoming_messages?: boolean;
-  //   public_search?: boolean;
-  //   read_receipts?: boolean;
-  //   online_status?: boolean;
-  // },
-  state?: string;
-  family_goal?: number;
-  marital_status?: number;
-  zodiac?: number;
-  read_receipts?: boolean;
-  incoming_messages?: boolean;
-  public_search?: boolean;
-  hide_verification_badge?: boolean;
-  online_status?: boolean
-  blockedIds?: string[]
-  location?: GeoPoint,
-  latitude?: number,
-  longitude?: number
-}
+  } | null;
+  state?: string | null;
+  family_goal?: number | null;
+  marital_status?: number | null;
+  zodiac?: number | null;
+  user_settings?: {
+    incoming_messages?: boolean;
+    online_status?: boolean;
+    public_search?: boolean;
+    read_receipts?: boolean;
+  } | null;
+  blockedIds?: string[] | null;
+  location?: GeoPoint | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
 
 export type UserFilters = {
   age_range?: { max: number; min: number };

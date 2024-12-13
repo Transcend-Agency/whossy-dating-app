@@ -33,21 +33,25 @@ const UserProfile = () => {
     const { auth } = useAuthStore();
 
     const fetchUserData = async () => {
-        const data = await getUserProfile("users", auth?.uid as string).then(
-            () => setUserData(data)
-        ) as User;
-        // setUserData(data);
-        setCompleted(checkUserProfileCompletion(data))
-    }
+        try {
+            const data = await getUserProfile("users", auth?.uid as string) as User;
+            setUserData(data);
+            setCompleted(checkUserProfileCompletion(data));
 
-    const fetchUserFilters = async () => { const data = await getUserProfile("filters", auth?.uid as string) as UserFilters; setUserFilters(data) }
+            console.log("User Settings on the DB 1:", userData?.user_settings)
+        } catch (err) {
+            console.log("Error fetching user data:", err);
+        }
+    };
+
+    const fetchUserFilters = async () => {
+        const data = await getUserProfile("filters", auth?.uid as string) as UserFilters;
+        setUserFilters(data) }
 
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
-        fetchUserFilters().catch(err => console.log(err))
-        console.log(userData)
-    }, [])
-
+        fetchUserFilters().catch(err => console.log(err));
+    }, []);
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
@@ -75,9 +79,15 @@ const UserProfile = () => {
                     </div>
                     <section className='user-profile__profile-details'>
                         <div className='user-profile__profile-details flex justify-center mt-2'>
-                            {userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span>
-                                <img src="/assets/icons/verified-badge.svg" alt={``} />
-                            </p> : <Skeleton width='21rem' height='2.9rem' />}
+                            {/*{userData ? <p>{userData?.first_name}, <span className='user-profile__profile-details__age'>{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span>*/}
+                            {/*    <img src="/assets/icons/verified-badge.svg" alt={``} />*/}
+                            {/*</p> : <Skeleton width='21rem' height='2.9rem' />}*/}
+                            {userData ? (
+                                // @ts-ignore
+                                <p> {userData?.first_name}, <span className='user-profile__profile-details__age'> {userData?.date_of_birth  ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth!) : 'NIL'} </span>
+                                    <img src="/assets/icons/verified-badge.svg" alt="verified" />
+                                </p>
+                            ) : ( <Skeleton width='21rem' height='2.9rem' /> )}
                         </div>
                         {completed ?
                             <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") :  setActivePage('edit-profile')}} className='user-profile__profile-details__completion-status cursor-pointer'>
@@ -114,7 +124,7 @@ const UserProfile = () => {
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings
                 activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}
-                userSettings={{ incoming_messages: userData?.incoming_messages, public_search: userData?.public_search, online_status: userData?.online_status, read_receipts: userData?.read_receipts }}
+                userSettings={{ incoming_messages: userData?.user_settings?.incoming_messages, public_search: userData?.user_settings?.public_search, online_status: userData?.user_settings?.online_status, read_receipts: userData?.user_settings?.read_receipts }}
                 prefetchUserData={refetchUserData} />
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userFilters={userFilters} refetchUserData={refetchUserData} refetchUserFilters={refetchUserFilters} />
             <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
