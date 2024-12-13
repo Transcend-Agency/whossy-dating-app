@@ -127,7 +127,6 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     };
 
     useEffect(() => {
-        console.log(user)
         if (user?.uid && userData?.uid) {
             setIsBlockLoading(true)
             hasUserBeenLiked()
@@ -200,8 +199,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                         <motion.img src="/assets/icons/white-heart.png" />
                     </div>
                     }
-                    {user?.is_premium && <div className="preview-profile__action-button"
-                                              onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                    {<div className="preview-profile__action-button"
+                          onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}
                 </div>
@@ -254,14 +253,19 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </div>}
                             <div className="preview-profile__profile-details">
                                 <div className="status-row">
-                                    {userData.status?.online ? <div className="active-badge">{'Online'}</div> :
-                                        <div className="non-active-badge">{'Offline'}</div>}
+                                    {userData?.user_settings?.online_status === false &&
+                                        (userData.status?.online ? (
+                                            <div className="active-badge">{'Online'}</div>
+                                        ) : (
+                                            <div className="non-active-badge">{'Offline'}</div>
+                                        ))
+                                    }
                                     {userData.location && user?.location &&
                                         <p className="location">~ {userData.distance}</p>}
                                 </div>
                                 <motion.div initial={{ marginBottom: '2.8rem' }} className="name-row">
                                     <div className="left">
-                                        {/* <p className="details">{userData?.first_name}, <span className="age">{userPrefencesData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userPrefencesData.date_of_birth) : 'NIL'}</span></p> */}
+                                        {/*@ts-ignore*/}
                                         <p className="details">{userData.first_name}, <span className="age">{(new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth)}</span></p>
                                         {userData.is_verified && <img src="/assets/icons/verified.svg" />}
                                     </div>

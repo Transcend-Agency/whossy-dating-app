@@ -30,9 +30,6 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const { chatId } = useChatIdStore();
-
-
-    //images
     const [image, setImage] = useState<{ file: File | null, url: string | null }>({
         file: null,
         url: null
@@ -323,11 +320,11 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                                         <p className="flex justify-end mt-2 text-[#cfcfcf]">
                                             {message.sender_id === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}
                                             <span>
-  {message.timestamp && 
-    // typeof message.timestamp === 'object' && 
-    // 'seconds' in message.timestamp &&
-    formatFirebaseTimestampToTime(message.timestamp as { seconds: number, nanoseconds: number })}
-</span>
+                                              {message.timestamp &&
+                                                // typeof message.timestamp === 'object' &&
+                                                // 'seconds' in message.timestamp &&
+                                                formatFirebaseTimestampToTime(message.timestamp as { seconds: number, nanoseconds: number })}
+                                            </span>
                                         </p>
                                     </div>)
                                 }
@@ -354,11 +351,6 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                             </div>
                         </footer>
                     </>
-                     {/* : 
-                    <div className="h-full flex justify-center items-center">
-                    <Puff color="#E8E8E8"/>
-                </div>
-                    } */}
                     </m.div>
                 </>}
         </AnimatePresence>

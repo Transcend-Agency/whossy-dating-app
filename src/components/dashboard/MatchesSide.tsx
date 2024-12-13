@@ -47,7 +47,10 @@ export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded}) => 
                                 setSelectedProfile(userData?.uid as string)
                             }
                         } className='matches__view-button'>View</button>
-                        <div className='matches__match-details'><span className='first-name'>{userData?.first_name}{userData?.date_of_birth ? ',' : ''}</span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_verified && <img src="/assets/icons/verified.svg" alt={``} />} </div>
+
+                        <div className='matches__match-details'><span className='first-name'>{userData?.first_name}{userData?.date_of_birth ? ',' : ''}
+                            {/*@ts-ignore*/}
+                        </span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_verified && <img src="/assets/icons/verified.svg" alt={``} />} </div>
                     </div>
                 </div>
             </div>

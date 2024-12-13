@@ -31,12 +31,14 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   }
 
   useEffect(() => {
+    console.log(auth, userSettings)
     if (auth?.has_completed_onboarding) {
       navigate('/dashboard/explore');
     }
   }, [auth?.has_completed_onboarding]);
 
   const uploadToFirestore = async () => {
+    console.log(auth?.uid)
     console.log("Loading...");
 
     if (!auth?.uid) {
@@ -47,6 +49,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
 
     try {
       console.log(auth.uid)
+      console.log(data['date-of-birth'])
       const userDocRef = doc(db, "users", auth.uid);
 
       // Completing the user's profile update in Firestore
@@ -67,15 +70,10 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         is_premium: false,
         created_at: serverTimestamp(),
         blockedIds: arrayUnion(),
-        userProfileSettings: {
+        has_completed_onboarding: true,
+        user_settings: {
           ...userSettings
         },
-      });
-
-
-      // Updating the `has_completed_onboarding` flag
-      await updateDoc(userDocRef, {
-        has_completed_onboarding: true
       });
 
       toast.success("Account has been created successfully 🚀");

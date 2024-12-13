@@ -52,7 +52,6 @@ const Login = () => {
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
             setLoading(true)
-            // todo: confirm the user is logging in with the right email
 
             // Authenticate the User If The Account Is An Email & Password Account
             const res = await signInWithEmailAndPassword(auth, data.email as string, data.password as string)
@@ -84,12 +83,6 @@ const Login = () => {
             }
         } catch (error: any) {
             console.log(error)
-            // if (error.code == 'auth/account-does-not-exist') {
-            //     setRequestError("Account Does Not Exist")
-            // }
-            // else if (error.code == 'auth/use-social-sign-in') {
-            //     setRequestError("Use Social/Phone Sign In")
-            // }
             if ((error.code == 'auth/network-request-failed')) {
                 setRequestError("Poor Internet Connection")
             }
@@ -103,8 +96,8 @@ const Login = () => {
             setLoading(false)
         }
     }
+
     const onGoogleSignIn = async (res: any) => {
-        console.log(res)
         try {
             setLoading(true)
             setAttemptedAuthUser(res.user)

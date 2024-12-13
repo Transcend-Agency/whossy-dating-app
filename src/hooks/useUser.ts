@@ -8,17 +8,20 @@ type CollectionName = "users" | "preferences" | "filters";
 const collection_one = "users";
 const collection_three = "filters";
 
-const getUserProfile = async (
-  path: CollectionName, uid: string
-): Promise<UserProfile | undefined> => {
-  const docRef = doc(db, path, uid as string);
-  const docSnap = await getDoc(docRef);
+const getUserProfile = async (path: CollectionName, uid: string): Promise<UserProfile | undefined> => {
+  try {
+    const docRef = doc(db, path, uid);
+    const docSnap = await getDoc(docRef);
 
-  if (docSnap.exists()) {
-    if (path === collection_one) return docSnap.data() as User;
-    if (path === collection_three) return docSnap.data() as UserFilters;
-  } else {
-    console.log("No such document!");
+    if (docSnap.exists()) {
+      if (path === collection_one) return docSnap.data() as User;
+      if (path === collection_three) return docSnap.data() as UserFilters;
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.error("Error getting document:", error);
+    return undefined;
   }
 };
 
