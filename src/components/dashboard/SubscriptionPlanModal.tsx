@@ -31,7 +31,7 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   const handlePayment = async () => {
     setIsLoading(true);
     await updateDoc(userDoc, {
-      isPremium: true
+      is_premium: true
     });
     setIsLoading(false);
     toast.success('Payment successful');
@@ -114,7 +114,7 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
   const handleUnsubscription = async () => {
     setIsLoading(true);
     await updateDoc(userDoc, {
-      isPremium: false
+      is_premium: false
     });
     refetchUserData && refetchUserData();
     toast.success('Subscription cancelled successfully');
