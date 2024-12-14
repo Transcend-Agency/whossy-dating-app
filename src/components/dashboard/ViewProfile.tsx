@@ -200,7 +200,10 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                     </div>
                     }
                     {<div className="preview-profile__action-button"
-                          onClick={() => navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)}>
+                          onClick={() => {
+                              // setSelectedProfile(null)
+                              navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)
+                          }}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}
                 </div>
@@ -253,12 +256,12 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                             </div>}
                             <div className="preview-profile__profile-details">
                                 <div className="status-row">
-                                    {userData?.user_settings?.online_status === false &&
+                                    {userData?.user_settings?.online_status ?
                                         (userData.status?.online ? (
                                             <div className="active-badge">{'Online'}</div>
                                         ) : (
                                             <div className="non-active-badge">{'Offline'}</div>
-                                        ))
+                                        )) : null
                                     }
                                     {userData.location && user?.location &&
                                         <p className="location">~ {userData.distance}</p>}

@@ -19,6 +19,8 @@ import Circle from '@/components/dashboard/Circle';
 import { checkUserProfileCompletion } from '@/constants';
 import AddCredits from './AddCredits';
 import toast from "react-hot-toast";
+import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
+import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -28,6 +30,15 @@ const UserProfile = () => {
     const [userFilters, setUserFilters] = useState<UserFilters>();
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
     const [completed, setCompleted] = useState<number>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
     const { auth } = useAuthStore();
@@ -106,11 +117,11 @@ const UserProfile = () => {
                         <p>Whossy Safety Guide</p>
                     </div>
 
-                    {/* <section className='user-profile__credit-buttons'>
-                        <ProfileCreditButtton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
+                    <section className='user-profile__credit-buttons'>
+                        <ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButtton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
-                    </section> */}
+                        <ProfileCreditButton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                    </section>
 
                 </div>
                 <section className='user-profile__plans'>

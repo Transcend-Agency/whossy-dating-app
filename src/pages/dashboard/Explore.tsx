@@ -188,8 +188,6 @@ const Explore = () => {
     ];
 
     useEffect(() => {
-        // if (selectedProfile)
-        //     setTimeout(() => setSelectedProfile(null), 500)
         setSelectedProfile(null)
         return () => setSelectedProfile(null)
     }, [])

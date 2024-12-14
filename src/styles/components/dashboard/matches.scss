@@ -52,7 +52,7 @@
     &__match-details {
         @apply inline-flex items-center;
         .first-name, .age {
-            @apply text-[1.8rem] leading-[1.3rem] font-bold text-white;
+            @apply text-[1.8rem] leading-[1.5rem] font-bold text-white;
         }
         .age {
             @apply font-normal inline-block ml-[0.4rem];
