@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import DashboardPageContainer from "./DashboardPageContainer";
+import {useChatIdStore} from "@/store/ChatStore.tsx";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -43,9 +44,10 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const moreDetailsContainer = useRef(null)
     const likeControls = useAnimationControls()
     const navigate = useNavigate();
-    const { user } = useAuthStore()
+    const { user, auth } = useAuthStore()
     const { userLikes } = useSyncUserLikes(user!.uid!)
     const { selectedProfile } = useDashboardStore()
+    const { setChatId } = useChatIdStore()
     const [openModal, setOpenModal] = useState(false);
 
     const goToNextPost = () => {
@@ -202,6 +204,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                     {<div className="preview-profile__action-button"
                           onClick={() => {
                               // setSelectedProfile(null)
+                              const chatId = [auth?.uid, userData.uid].sort().join('_');
+                              setChatId(chatId);
                               navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)
                           }}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
