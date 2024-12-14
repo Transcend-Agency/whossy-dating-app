@@ -158,19 +158,19 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
                         </button>
                     </div>
                     <div className="settings-page__settings-group">
-                        <SettingsToggleItem
-                            title="Incoming messages"
-                            subtext="This will allow only verified users to message you."
-                            isActive={profileSettings.incoming_messages as boolean}
-                            onButtonToggle={() => {
-                                const updatedValue = !profileSettings.incoming_messages;
-                                setProfileSettings({
-                                    ...profileSettings,
-                                    incoming_messages: updatedValue,
-                                });
-                                updateUserSetting('incoming_messages', updatedValue);
-                            }}
-                            isPremium={!currentUser?.is_premium as boolean} />
+                        {/*<SettingsToggleItem*/}
+                        {/*    title="Incoming messages"*/}
+                        {/*    subtext="This will allow only verified users to message you."*/}
+                        {/*    isActive={profileSettings.incoming_messages as boolean}*/}
+                        {/*    onButtonToggle={() => {*/}
+                        {/*        const updatedValue = !profileSettings.incoming_messages;*/}
+                        {/*        setProfileSettings({*/}
+                        {/*            ...profileSettings,*/}
+                        {/*            incoming_messages: updatedValue,*/}
+                        {/*        });*/}
+                        {/*        updateUserSetting('incoming_messages', updatedValue);*/}
+                        {/*    }}*/}
+                        {/*    isPremium={!currentUser?.is_premium as boolean} />*/}
 
                         <SettingsToggleItem title="Public search" subtext="Other users will be able to find your profile online when they search the internet." isActive={profileSettings.public_search as boolean}
                         onButtonToggle={() => {
