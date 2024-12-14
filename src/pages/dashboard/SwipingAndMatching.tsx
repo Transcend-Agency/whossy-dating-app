@@ -491,6 +491,7 @@ const SwipingAndMatching = () => {
 
     useEffect(() => {
         fetchLoggedUserData().catch(err => console.error(err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const { fetchMatches } = useMatchStore()
@@ -736,7 +737,9 @@ const SwipingAndMatching = () => {
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>
                                     <button className="action-buttons__button action-buttons__button--small"
-                                            onClick={() => loggedUserData?.is_premium ? navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) : toast.error('Upgrade to premium to chat')}>
+                                        onClick={() => {loggedUserData?.is_premium ? navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) : toast.error('Upgrade to premium to chat'); console.log(loggedUserData)}}
+                                        // onClick={() => console.log(loggedUserData)}
+                                    >
                                         <img src="/assets/icons/message-heart.svg" alt={``}/>
                                     </button>
                                 </motion.div>

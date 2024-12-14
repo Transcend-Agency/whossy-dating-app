@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
-import {  formatFirebaseTimestampToDate, formatFirebaseTimestampToTime, formatServerTimeStamps } from "@/constants"
+import { formatFirebaseTimestampToTime, formatServerTimeStamps } from "@/constants"
 import { useChatIdStore } from "@/store/ChatStore"
 import toast from "react-hot-toast"
 import Skeleton from "react-loading-skeleton"
@@ -71,6 +71,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [chats, setChats] = useState<any[]>([]);
 
     useEffect(() => {
         let isMounted = true;
@@ -196,8 +198,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [chats, setChats] = useState<any[]>([]);
+    
 
     useEffect(() => {
         if (!chatId || !currentUserId || activePage !== "selected-chat") {
@@ -217,6 +218,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
             // Set the messages to state
             setChats(messages);
+
+            console.log(chatId);
 
             // Fetch the chat document (used to get lastSenderId)
             const chatDocSnap = await getDoc(chatDocRef);
@@ -255,12 +258,10 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         return () => {
             unSub();
             setChats([]);
+            updateChatId('nil');
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePage, chatId, currentUserId]);
-
-    useEffect(() => {
-        updateChatId('nil')
-    }, [])
 
 
     const endRef = useRef<HTMLDivElement>(null);
@@ -295,7 +296,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                         </header>
                         <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
                             <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
-                                {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatFirebaseTimestampToDate(chats[0]?.timestamp)}</p></header>}
+                                {/* {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatFirebaseTimestampToDate(chats[0]?.timestamp)}</p></header>} */}
                                 {/* <div className="max-w-[70%] flex gap-x-2 items-center">
                                     <div>
                                         <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
