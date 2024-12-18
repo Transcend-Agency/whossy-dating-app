@@ -120,7 +120,7 @@ const UserProfile = () => {
                     <section className='user-profile__credit-buttons'>
                         <ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description='Add Credits' linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                        <ProfileCreditButton description={`Credits: ${userData?.credits} `} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
@@ -130,7 +130,7 @@ const UserProfile = () => {
                 </section>
 
             </motion.div>
-            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} />
+            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} refetchUserData={refetchUserData}/>
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings
