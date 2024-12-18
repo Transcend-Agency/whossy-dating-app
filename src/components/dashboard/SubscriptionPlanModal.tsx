@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import DashboardSettingsModal from './DashboardSettingsModal'
-import { PaystackButton } from 'react-paystack'
 import StripeCheckoutForm from './StripeCheckoutForm';
 import toast from 'react-hot-toast';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -71,29 +70,39 @@ export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps> =
 
 const [userDetails, setUserDetails] = useState<UserDetails>({name: "", email: "", phone: "", amount: 200000});
 
-const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_TEST_KEY;
-
 const { auth } = useAuthStore();
 
+const { mutate } = useSubscribe();
+
 const handleSuccessfulPayment = async() => {
-  try {
-    const userRef = doc(db, 'users', auth?.uid as string);
-    await updateDoc(userRef, { isPremium: true })
-    .then(() => toast.success('Payment successful! Your account is now premium.'))
-    .then(() => setTimeout(() => window.location.reload(), 1500));
-  } catch (error) {
-    console.error('Error updating premium status:', error);
-    toast.error('Payment succeeded, but we encountered an issue upgrading your account. Please contact support.');
+  if ( userDetails.name === "" || userDetails.email === "" || userDetails.phone === "" ) {
+    return toast.error('Please fill in all fields');
+  } else {
+    mutate({email: userDetails.email, amount: 50000, plan: 'PLN_pmtergy'}, {onError: () => {toast.error('An error occured, please try again later.')}})
+    // try {
+    //   const userRef = doc(db, 'users', auth?.uid as string);
+    //   await updateDoc(userRef, { isPremium: true })
+    //   .then(() => toast.success('Payment successful! Your account is now premium.'))
+    //   .then(() => setTimeout(() => window.location.reload(), 1500));
+    // } catch (error) {
+    //   console.error('Error updating premium status:', error);
+    //   toast.error('Payment succeeded, but we encountered an issue upgrading your account. Please contact support.');
+    // }
   }
 }
 
-const {mutate} = useSubscribe();
 
 const { setReference } = usePaystackStore();
 
 return (
   <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
-    <form className="flex flex-col gap-y-6" onSubmit={(e) => { e.preventDefault(); mutate({email: userDetails.email, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, {onSuccess: (res) => { setReference(res.data.reference); setTimeout(() => window.location.href = res.data.authorization_url, 500)}})} }>
+    <form className="flex flex-col gap-y-6" 
+      onSubmit= { (e) => { 
+        e.preventDefault(); 
+        mutate({email: userDetails.email, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, { onSuccess: (res) => {  setReference(res.data.reference);  setTimeout(() => window.open(res.data.authorization_url, '_blank'), 500); }})
+        }
+      }
+      >
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
           <label htmlFor="name" className='text-[#666]'>Name</label>
           <input id='name' type="text" value={userDetails.name} placeholder='Enter your full name' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
@@ -109,7 +118,9 @@ return (
           <input id='name' type="text" placeholder='Enter your email address' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
           onChange={(e) => setUserDetails((prev) => ({...prev, email: e.target.value}) )} />
       </div>
-      <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" >Pay - $12</button>
+      <button 
+      className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" 
+      >Pay - $12</button>
       {/* <PaystackButton text='Pay Now' className="paystack-button" email={userDetails.email}  amount={userDetails.amount} publicKey={publicKey} onSuccess={handleSuccessfulPayment}/> */}
       {/* <button onClick={(e) => {alert('pay now'); e.preventDefault()}}>click</button> */}
     </form>
