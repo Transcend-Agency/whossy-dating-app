@@ -1,11 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { PremiumPlansHeader } from "./PremiumPlans";
 import { FreePlanBenefit, PremiumPlanBenefit } from "@/components/dashboard/PlanBenefit";
-import { CancelPlanModal, SubscriptionPlanModal } from "@/components/dashboard/SubscriptionPlanModal";
+import { CancelPlanModal, PaystackPaymentDetailsModal, SubscriptionPlanModal } from "@/components/dashboard/SubscriptionPlanModal";
 import { useAuthStore } from "@/store/UserId";
 import { getUserProfile } from "@/hooks/useUser";
 import { User } from "@/types/user";
+import { useVerify } from "@/hooks/usePaystack";
+import { usePaystackStore } from "@/store/Paystack";
 
 
 interface SubscriptionPlansProps {
@@ -32,9 +35,9 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
     // swiping with two fingers
     const handleWheel = (e: React.WheelEvent) => {
         if (e.deltaX > 10) {
-          setPlan('premium');
+            setPlan('premium');
         } else if (e.deltaX < -10) {
-          setPlan('free');
+            setPlan('free');
         }
     };
 
@@ -49,10 +52,10 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
     
         if (touchStartX - touchEndX > 50) {
           // Swiped left
-          setPlan('premium');
+            setPlan('premium');
         } else if (touchStartX - touchEndX < -50) {
           // Swiped right
-          setPlan('free');
+            setPlan('free');
         }
     };
     
@@ -87,6 +90,14 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
 
       const {auth} = useAuthStore();
 
+      const { mutate } = useVerify();
+
+      const { reference } = usePaystackStore();
+
+      useEffect(() => {
+        mutate( reference as string );
+      }, [])
+
       const [isPremiumUser, setIsPremiumUser] = useState<boolean | null>();
     
       const fetchUserData = async () => {
@@ -104,14 +115,14 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
         <>
             <SubscriptionPlanModal show={showPaymentOptionsModal === "plan"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={fetchUserData}/>
             <CancelPlanModal show={showPaymentOptionsModal === "cancel-subscription"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={fetchUserData}/>
-            {/* <PaymentDetailsModal show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')}  /> */}
+            <PaystackPaymentDetailsModal show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')}  />
             {/* <StripePaymentDetailsModal show={showPaymentOptionsModal === "stripe-payment"} hide={() => setShowPaymentOptionsModal('plan')}  /> */}
             <motion.div onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
                     <div className="settings-page__title">
                         <button onClick={() => { closePage() }} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                            <p>Subscription Plans {isPremiumUser}</p>
+                            <p> Subscription Plans { reference } </p>
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
