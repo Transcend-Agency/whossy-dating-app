@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from "@/store/UserId"
 import upload from "@/hooks/upload"
 import { Messages } from "@/types/chat"
-import {  formatFirebaseTimestampToDate, formatFirebaseTimestampToTime, formatServerTimeStamps } from "@/constants"
+import { formatFirebaseTimestampToTime, formatServerTimeStamps } from "@/constants"
 import { useChatIdStore } from "@/store/ChatStore"
 import toast from "react-hot-toast"
 import Skeleton from "react-loading-skeleton"
@@ -23,16 +23,14 @@ interface SelectedChatProps {
     userData: User;
 }
 
-const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId }) => {
+const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, updateChatId, userData }) => {
     const [showActionsModal, setShowActionsModal] = useState<'action' | 'hidden'>("hidden");
     const [text, setText] = useState<string>('');
+    const [readReceipt, setReadReceipt] = useState(true)
     const [openEmoji, setOpenEmoji] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const { chatId } = useChatIdStore();
-
-
-    //images
     const [image, setImage] = useState<{ file: File | null, url: string | null }>({
         file: null,
         url: null
@@ -70,10 +68,12 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
     const queryParams = new URLSearchParams(location.search);
     const reciepientUserId = queryParams.get('recipient-user-id');
 
-    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null, status: {online: boolean, lastSeen: number} | null }>({ name: null, profilePicture: null, status: null });
+    const [userDetails, setUserDetails] = useState<{ name: string | null, profilePicture: string | null, status: {online: boolean, lastSeen: number} | null, user_settings: {online_status: boolean} | null }>({ name: null, profilePicture: null, status: null, user_settings: null });
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [chats, setChats] = useState<any[]>([]);
 
     useEffect(() => {
         let isMounted = true;
@@ -87,7 +87,8 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                     setUserDetails({
                         name: data?.first_name || null,
                         profilePicture: (data?.photos && Array.isArray(data.photos) && data.photos.length > 0) ? data.photos[0] : null,
-                        status: {online: data?.status?.online, lastSeen: data?.status?.lastSeen}
+                        status: {online: data?.status?.online, lastSeen: data?.status?.lastSeen},
+                        user_settings: {online_status: data?.user_settings?.online_status}
                     });
                 } else { console.log('Selectedchat: No such document'); }
                 setIsLoading(false);
@@ -100,7 +101,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
         return () => {
             isMounted = false;
-            setUserDetails({ name: null, profilePicture: null, status: null });
+            setUserDetails({ name: null, profilePicture: null, status: null, user_settings: null });
         };
     }, [reciepientUserId]);
 
@@ -199,8 +200,57 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [chats, setChats] = useState<any[]>([]);
+    const getUserDetails = async (userId: string) => {
+        try {
+            const userDocRef = doc(db, "users", userId);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                return userDocSnap.data() as User
+            } else {
+                console.log("User not found");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching user details:", error);
+            throw error;
+        }
+    };
+
+    const determineReadReceipt = async () => {
+        try {
+            const recipientDetails = await getUserDetails(chatId.split('_')[1]);
+            if (!userDetails || !recipientDetails) {
+                console.log("Could not fetch both user details.");
+                return null;
+            }
+
+            const userReadReceipts = userData.user_settings?.read_receipts || false;
+            const recipientReadReceipts = recipientDetails.user_settings?.read_receipts || false;
+            const shouldShowReadReceipts = userReadReceipts && recipientReadReceipts;
+
+            console.log(`Read receipts: ${shouldShowReadReceipts ? "Enabled" : "Disabled"}`);
+            return shouldShowReadReceipts;
+        } catch (error) {
+            console.error("Error determining read receipts:", error);
+            throw error;
+        }
+    };
+
+    const handleReadReceipts = async () => {
+        try {
+            const readReceiptsEnabled = await determineReadReceipt() as boolean;
+            setReadReceipt(readReceiptsEnabled)
+            if (readReceiptsEnabled) {
+                console.log("Both users have read receipts enabled.");
+            } else {
+                console.log("One or both users have read receipts disabled.");
+            }
+        } catch (error) {
+            console.error("Error handling read receipts:", error);
+        }
+    };
+
+
 
     useEffect(() => {
         if (!chatId || !currentUserId || activePage !== "selected-chat") {
@@ -220,6 +270,7 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
 
             // Set the messages to state
             setChats(messages);
+            handleReadReceipts()
 
             // Fetch the chat document (used to get lastSenderId)
             const chatDocSnap = await getDoc(chatDocRef);
@@ -258,12 +309,10 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
         return () => {
             unSub();
             setChats([]);
+            updateChatId('nil');
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePage, chatId, currentUserId]);
-
-    useEffect(() => {
-        updateChatId('nil')
-    }, [])
 
 
     const endRef = useRef<HTMLDivElement>(null);
@@ -279,27 +328,51 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
             {activePage === 'selected-chat' &&
                 <>
                     <ActionsModal show={showActionsModal === "action"} hide={() => setShowActionsModal('hidden')} chatName="Temidire" blockUser={() => toast.error('This function isn\'t available yet')} reportUser={() => toast.error('This function isn\'t available yet')} />
-                    <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({ file: null, url: null })} chatName="Davido" blockUser={() => console.log('You have benn blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)} />
+                    <ImagesModal show={Boolean(image.url)} imageUrl={image.url as string} hide={() => setImage({ file: null, url: null })} chatName="Davido" blockUser={() => console.log('You have been blocked')} reportUser={() => console.log('You have been reported')} sendImage={handleSendMessage} text={text} setText={(text) => setText(text)} />
                     <m.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 100 }} transition={{ duration: 0.25 }} className=' relative z-10 bg-white flex flex-col min-h-full'> 
                       {/* {!isLoading ?  */}
                       <>
                         <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{ borderBottom: '1px solid #F6F6F6' }}>
                             <button className="settings-page__title__left gap-x-1" onClick={closePage}>
-                                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                                {!isLoading ? userDetails.profilePicture ? <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={userDetails.profilePicture} alt="profile picture" /> : <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2" >{userDetails.name?.charAt(0)}</div> : <Skeleton width="4.8rem" height="4.8rem" circle />}
+                                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon"/>
+                                {!isLoading ? userDetails.profilePicture ?
+                                        <img className='size-[4.8rem] mr-2 object-cover rounded-full'
+                                             src={userDetails.profilePicture} alt="profile picture"/> : <div
+                                            className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2">{userDetails.name?.charAt(0)}</div> :
+                                    <Skeleton width="4.8rem" height="4.8rem" circle/>}
                                 <div className="space-y-1">
-                                    {userDetails.name ? <p className="font-bold text-left">{userDetails.name}</p> : <Skeleton width="8rem" height="1.6rem" />}
-                                    {userDetails.status?.online ?  <p className="text-[#8A8A8E] text-left font-normal font-sans italic text-[1.5rem]">online</p> : <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">{userDetails.status?.lastSeen ? `last seen ${formatServerTimeStamps(userDetails.status?.lastSeen)}` : !isLoading ? 'last seen recently' :  <Skeleton width={'10rem'} height={'1.2rem'}/>}</p>}
+                                    {userDetails.name ? ( <p className="font-bold text-left">{userDetails.name}</p> ) : ( <Skeleton width="8rem" height="1.6rem"/>)}
+                                    {userDetails?.user_settings?.online_status ? (
+                                        userDetails.status?.online ? (
+                                            <p className="text-[#8A8A8E] text-left font-normal font-sans italic text-[1.5rem]">online</p>
+                                        ) : (
+                                            <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">
+                                                {userDetails.status?.lastSeen
+                                                    ? `last seen ${formatServerTimeStamps(userDetails.status?.lastSeen)}`
+                                                    : !isLoading
+                                                        ? "last seen recently"
+                                                        : <Skeleton width="10rem" height="1.2rem"/>}
+                                            </p>
+                                        )
+                                    ) : (
+                                        <p className="text-[#8A8A8E] font-normal italic text-[1.5rem]">
+                                            {!isLoading ? "last seen recently" :
+                                                <Skeleton width="10rem" height="1.2rem"/>}
+                                        </p>
+                                    )}
                                 </div>
+
                             </button>
                             <button className="cursor-pointer" onClick={() => setShowActionsModal('action')}>
-                                <img src="/assets/icons/three-dots.svg" alt="" />
+                                <img src="/assets/icons/three-dots.svg" alt=""/>
                             </button>
                         </header>
-                        <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
-                            <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
-                                {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatFirebaseTimestampToDate(chats[0]?.timestamp)}</p></header>}
-                                {/* <div className="max-w-[70%] flex gap-x-2 items-center">
+                          <section
+                              className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
+                              <section
+                                  className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar ">
+                                  {/* {chats && Array.isArray(chats) && chats.length !== 0 && <header className=" mt-[1.5rem] flex justify-center"><p>Conversation started on {formatFirebaseTimestampToDate(chats[0]?.timestamp)}</p></header>} */}
+                                  {/* <div className="max-w-[70%] flex gap-x-2 items-center">
                                     <div>
                                         <p className="bg-[#F6F6F6] py-[1.6rem] px-[1.2rem]" style={{borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: '0.4rem', borderBottomRightRadius: '1.2rem'}}>Hi, nice to meet you my name is temidire owoeye and I am a student </p>
                                         <p className="flex justify-start mt-2 text-[#828181]"> <img src="/assets/icons/delivered.svg" alt="" /> Seen: 1 min ago</p>
@@ -321,13 +394,19 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                                             {message.message && <p className={`${message.sender_id === auth?.uid ? 'bg-[#E5F2FF]  self-end' : 'bg-[#f6f6f6]'} py-[1.6rem] px-[1.2rem] mt-4 w-fit`} style={{ borderTopLeftRadius: '1.2rem', borderTopRightRadius: '1.2rem', borderBottomLeftRadius: message.sender_id === auth?.uid ? '1.2rem' : '0.4rem', borderBottomRightRadius: message.sender_id === auth?.uid ? '0.4rem' : '1.2rem' }}>{message.message}</p>}
                                         </div>
                                         <p className="flex justify-end mt-2 text-[#cfcfcf]">
-                                            {message.sender_id === auth?.uid && <IoCheckmarkDone color={message.status === 'seen' ? "#2747d8" : "#cfcfcf"} />}
+                                            {message.sender_id === auth?.uid && (
+                                                <IoCheckmarkDone
+                                                    color={readReceipt ? (message.status === "seen" ? "#2747d8" : "#cfcfcf") : "#cfcfcf"}
+                                                />
+
+                                            )}
+
                                             <span>
-  {message.timestamp && 
-    // typeof message.timestamp === 'object' && 
-    // 'seconds' in message.timestamp &&
-    formatFirebaseTimestampToTime(message.timestamp as { seconds: number, nanoseconds: number })}
-</span>
+                                              {message.timestamp &&
+                                                // typeof message.timestamp === 'object' &&
+                                                // 'seconds' in message.timestamp &&
+                                                formatFirebaseTimestampToTime(message.timestamp as { seconds: number, nanoseconds: number })}
+                                            </span>
                                         </p>
                                     </div>)
                                 }
@@ -354,11 +433,6 @@ const SelectedChat: React.FC<SelectedChatProps> = ({ activePage, closePage, upda
                             </div>
                         </footer>
                     </>
-                     {/* : 
-                    <div className="h-full flex justify-center items-center">
-                    <Puff color="#E8E8E8"/>
-                </div>
-                    } */}
                     </m.div>
                 </>}
         </AnimatePresence>

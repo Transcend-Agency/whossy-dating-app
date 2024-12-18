@@ -298,7 +298,7 @@ const Landing = () => {
                             </div>
     
                             <div className="mt-4">
-                                <p className="text-[1.6rem] text-white">Don't have an account? <a className="text-[1.6rem] font-bold underline" onClick={() => navigate("/auth/create-account")}>Create Account</a></p>
+                                <p className="text-[1.6rem] text-white">Don't have an account? <a className="text-[1.6rem] font-bold underline cursor-pointer" onClick={() => navigate("/auth/create-account")}>Create Account</a></p>
                             </div>
                         </div>
                     </section>

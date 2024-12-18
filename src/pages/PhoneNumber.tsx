@@ -75,8 +75,6 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
             if (result.docs.length !== 0 && result.docs[0].data().auth_provider !== 'phone') {
                 setRequestError("Sign In Using Another Method")
             } else {
-                // advance()
-
                 console.log(data.phone_number, firebaseAuth)
                 const recaptcha = new RecaptchaVerifier(auth, 'recaptcha', {
                     'size': 'invisible',
@@ -103,7 +101,7 @@ const FillInPhoneNumber: React.FC<PhoneNumberPageProps> = ({ advance, key }) => 
             }
 
         } catch (err: any) {
-            console.log(err)
+            console.log(err.code)
             if (err.code == 'auth/invalid-phone-number') {
                 setRequestError("Invalid Phone Number")
             } else if (err.code == 'auth/invalid-app-credential') {

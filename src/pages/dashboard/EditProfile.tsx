@@ -87,6 +87,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, cl
                         <SettingsGroup data={[['Name', userData?.first_name as string, () => {
                             setSettingsModalShowing('name')
                         }],
+                            // @ts-ignore
                         ['Birthday', userData?.date_of_birth ? getFormattedDateFromFirebaseDate(userData?.date_of_birth) : '', () => {  }],
                         ['Gender', userData?.gender as string, () => {
                             setSettingsModalShowing('gender')

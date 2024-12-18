@@ -2,10 +2,58 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 import AuthModalHeader from './AuthModalHeader';
 import AuthPage from './AuthPage';
+import { useAuthStore } from '@/store/UserId';
+import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import {doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/firebase';
 
 const FinalizeSetup = () => {
-    const navigate = useNavigate()
-    const startOnboarding = () => navigate('/onboarding')
+    const navigate = useNavigate();
+    const auth = getAuth();
+    const { setAuth } = useAuthStore();
+    const [_loading, setLoading] = useState(false);
+    const [_error, setError] = useState('');
+    const userId = auth.currentUser?.uid;
+
+    useEffect(() => {
+        const checkAndUpdateUserState = async () => {
+            try {
+                setLoading(true);
+                if (auth.currentUser) {
+                    await auth.currentUser.reload();
+                    const userRef = doc(db, "users", userId!);
+                    const user = await getDoc(userRef);
+
+                    if (!user.exists()) {
+                        setError("User data not found. Please log in again.");
+                        navigate('/auth/login');
+                        return;
+                    }
+
+                    const userData = user.data();
+                    if (!userData.has_completed_account_creation) {
+                        await updateDoc(userRef, { has_completed_account_creation: true });
+                    }
+                    setAuth(
+                        { uid: userId!, has_completed_onboarding: userData.has_completed_onboarding },
+                        userData
+                    );
+                }
+            } catch (err) {
+                console.error("Error checking or updating user state:", err);
+                setError("Something went wrong. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkAndUpdateUserState();
+    }, [auth.currentUser, navigate, setAuth, userId]);
+
+    const startOnboarding = () => {
+        navigate('/onboarding');
+    };
 
     return <AuthPage className='finalize-setup'>
         <div className='auth-page__modal'>

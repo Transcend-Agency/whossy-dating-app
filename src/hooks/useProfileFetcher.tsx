@@ -1,13 +1,11 @@
-import {useCallback } from "react";
+import {useCallback} from "react";
 import {collection, doc, getDoc, getDocs, query, Timestamp, where} from "firebase/firestore";
 import {db} from "@/firebase";
 import {User, UserFilters, UserProfile} from "@/types/user.ts";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import {useAuthStore} from "@/store/UserId.tsx";
 
-
 function useProfileFetcher() {
-
 	const { user } = useAuthStore()
 	const { blockedUsers, setBlockedUsers, setProfiles , selectedOption, setExploreDataLoading } = useDashboardStore()
 
@@ -27,7 +25,6 @@ function useProfileFetcher() {
 	}, [user?.uid]);
 
 	const filterBlockedAndCurrentUser = (userData: User[], blockedUsers: string[]) => {
-		// return userData.filter(u => !blockedUsers.includes(u.uid as string))
 		return userData.filter(u => !blockedUsers.includes(u.uid as string) && u.uid !== user?.uid);
 	};
 
@@ -45,12 +42,10 @@ function useProfileFetcher() {
 			const interestsFilter: boolean = userInterest && userInterest.length > 0;
 
 			let querySnapshot = await getDocs(queryParam);
-			let userData = querySnapshot.docs.map(doc => doc.data() as UserProfile);
+			let userData = querySnapshot.docs.map(doc => doc.data() as User);
 
 			if (selectedOption === "Similar interest" && interestsFilter) {
 				const currentUserInterests2 = userInterest || [];
-				console.log("Interests", currentUserInterests2)
-
 				querySnapshot = await getDocs(query(usersCollection, where("has_completed_onboarding", "==", true), where("interests", "array-contains-any", userInterest || [])))
 				userData = querySnapshot.docs.map(doc => doc.data() as UserProfile)
 
@@ -87,14 +82,37 @@ function useProfileFetcher() {
 		}
 	}, [fetchBlockedUsers]);
 
-	const fetchProfilesBasedOnOption = async () => {
+	const getUsers = (user?: User) => {
 		const usersCollection = collection(db, "users");
+		const q_base = query(usersCollection, where("has_completed_onboarding", "==", true));
+		let q;
+		if (user) {
+			const userGender = user.gender;
+			if (user.meet === 2) {
+				q = query(q_base,
+					where("meet", "in", [2, userGender === "Male" ? 0 : 1])
+				);
+			} else if (user.meet === 0 || user.meet === 1) {
+				const targetGender = user.meet === 0 ? "Male" : "Female";
+				q = query(q_base,
+					where("gender", "==", targetGender),
+				);
+			} else {
+				throw new Error("Invalid meet value provided.");
+			}
+		} else {
+			q = q_base;
+		}
+		return q;
+	};
+
+	const fetchProfilesBasedOnOption = async () => {
 		let fetchQuery;
 		let fourteenDaysAgo;
-		const q = query(usersCollection, where("has_completed_onboarding", "==", true));
+		const q = getUsers(user);
 		switch (selectedOption) {
 			case "Discover":
-				fetchQuery = query(usersCollection, where("has_completed_onboarding", "==", true));
+				fetchQuery = query(q);
 				break;
 			case "Similar interest":
 				fetchQuery = query(q);

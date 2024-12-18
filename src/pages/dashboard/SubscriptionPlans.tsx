@@ -102,7 +102,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
     
       const fetchUserData = async () => {
         const data = await getUserProfile("users", auth?.uid as string) as User;
-        setIsPremiumUser(data.isPremium);
+        setIsPremiumUser(data.is_premium);
       }
     
       useEffect(() => {

@@ -166,6 +166,10 @@
                 @apply text-[#09B45A] bg-[#103B24] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem] text-[1.8rem];
                 border: 1px solid #09B45A;
             }
+            .non-active-badge {
+                @apply text-[#6B7280] bg-[#1F2937] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem] text-[1.8rem];
+                border: 1px solid #6B7280;
+            }
             .location {
                 @apply text-white opacity-80 text-[1.6rem];
             }
