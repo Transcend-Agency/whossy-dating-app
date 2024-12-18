@@ -1,7 +1,7 @@
 import { family_goal, preference } from "@/constants";
 import { User } from "@/types/user";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {getYearFromFirebaseDate} from "@/utils/date.ts";
 
 interface PreviewProfileProps {
@@ -29,10 +29,6 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
             setCurrentImage(value => value - 1)
         }
     }
-
-    useEffect(() => {
-        // console.log(moreDetailsContainer)
-    }, [expanded])
 
     return (
         <>
@@ -94,6 +90,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
+                                    {/*@ts-ignore*/}
                                     <p className="details">{userData?.first_name}, <span className="age">{userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth) : 'NIL'}</span></p>
                                     <img src="/assets/icons/verified.svg" alt={``} />
                                 </div>
@@ -122,7 +119,7 @@ const PreviewProfile: React.FC<PreviewProfileProps> = ({ activePage, closePage, 
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
                                 {profileImages?.map((_image, index) => (
-                                    <div onClick={() => { setCurrentImage(index); }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
+                                    <div key={index} onClick={() => { setCurrentImage(index); }} className={`preview-profile__image-counter ${index == currentImage && "preview-profile__image-counter--active"}`}></div>
                                 ))}
                             </div>
                         </div>

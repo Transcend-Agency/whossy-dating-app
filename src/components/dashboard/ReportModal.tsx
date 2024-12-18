@@ -1,13 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React, {useState} from "react";
 import {useAuthStore} from "@/store/UserId.tsx";
-import {addDoc, collection} from "firebase/firestore";
+import {collection, doc, setDoc} from "firebase/firestore";
 import {db} from "@/firebase";
 import toast from "react-hot-toast";
+import {User} from "@/types/user.ts";
 
 interface ReportModalProps {
   show: boolean
   onCloseModal: () => void;
+  userData: User
 }
 
 const modalVariants = {
@@ -16,7 +18,7 @@ const modalVariants = {
   exit: { opacity: 0, }
 };
 
-const ReportModal: React.FC<ReportModalProps> = ({ show, onCloseModal }) => {
+const ReportModal: React.FC<ReportModalProps> = ({ show, onCloseModal, userData }) => {
 
   const { user } = useAuthStore()
   const [loading, setLoading] = useState<boolean>(false)
@@ -27,19 +29,22 @@ const ReportModal: React.FC<ReportModalProps> = ({ show, onCloseModal }) => {
 
     setLoading(true);
     try {
-      await addDoc(collection(db, "sendReport") , {
-        userId: user?.uid,
-        firstName: user?.first_name,
-        lastName: user?.last_name,
+      const reportRef = collection(db, 'userReports');
+      const reportId = `${user?.uid}_${userData.uid}`
+
+      await setDoc(doc(reportRef, reportId), {
+        reporterId: user?.uid,
+        reportedId: userData.uid,
         message: message,
-        createdAt: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
       });
 
       setMessage("");
       onCloseModal();
-      toast.success("Request Received Successfully. We'll get back to you soon");
+      toast.success("Report Sent Successfully.");
     } catch (error) {
-      toast.error("Error sending help request");
+      console.log("Error sending report", error)
+      toast.error("Error sending report.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +63,10 @@ const ReportModal: React.FC<ReportModalProps> = ({ show, onCloseModal }) => {
             </div>
 
             <div className="flex flex-row gap-x-4"> 
-                <button className="bg-[#F6F6F6] py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer" onClick={onCloseModal}>Cancel</button>
+                <button className="bg-[#F6F6F6] py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer" onClick={() => {
+                  setMessage("")
+                  onCloseModal()
+                }}>Cancel</button>
                 <button onClick={sendReport} className={` ${loading ? 'bg-[#F2243E] text-white' : 'bg-[#F6F6F6]'}  py-[1.3rem] w-full text-[1.8rem] font-bold text-center rounded-lg hover:text-white hover:bg-[#F2243E] transition-all duration-300 cursor-pointer whitespace-nowrap inline-block`} >{loading ? "Sending..." : "Report Account"}</button>
             </div>
           </motion.div>                                                                                                                                                                                         

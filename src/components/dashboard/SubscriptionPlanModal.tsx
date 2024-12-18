@@ -147,7 +147,7 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
   const handleUnsubscription = async () => {
     setIsLoading(true);
     await updateDoc(userDoc, {
-      isPremium: false
+      is_premium: false
     });
     refetchUserData && refetchUserData();
     toast.success('Subscription cancelled successfully');

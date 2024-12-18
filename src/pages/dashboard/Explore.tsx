@@ -130,32 +130,25 @@ const Explore = () => {
             setExploreDataLoading(true);
             const usersCollection = collection(db, 'users');
 
-            // Create the initial query
             let q = query(usersCollection, where("has_completed_onboarding", "==", true));
 
-            // Apply gender filter if selected
             if (advancedSearchPreferences.gender) {
                 q = query(q, where("gender", "==", advancedSearchPreferences.gender));
             }
 
-            // Apply age range filter
             if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
                 const {
                     minDOB,
                     maxDOB
                 } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
 
-                // Filter by date_of_birth range
-                q = query(q, where("date_of_birth", "<=", maxDOB)); // For younger users
-                q = query(q, where("date_of_birth", ">=", minDOB)); // For older users
+                q = query(q, where("date_of_birth", "<=", maxDOB));
+                q = query(q, where("date_of_birth", ">=", minDOB));
             }
 
-            // Apply country filter if selected
             if (advancedSearchPreferences.country) {
                 q = query(q, where("country", "==", advancedSearchPreferences.country));
             }
-
-            // Apply relationship preference filter if selected
             if (advancedSearchPreferences.relationship_preference !== undefined) {
                 q = query(q, where("relationship_preference", "==", advancedSearchPreferences.relationship_preference));
             }
@@ -195,8 +188,6 @@ const Explore = () => {
     ];
 
     useEffect(() => {
-        // if (selectedProfile)
-        //     setTimeout(() => setSelectedProfile(null), 500)
         setSelectedProfile(null)
         return () => setSelectedProfile(null)
     }, [])
@@ -224,7 +215,7 @@ const Explore = () => {
                             </div>
                             <div className='explore-grid-container'>
                                 <AnimatePresence>
-                                    {profiles.length === 0 && !exploreDataLoading &&
+                                    {profiles.filter(user => user?.user_settings?.public_search == true).length === 0 && !exploreDataLoading &&
                                         <motion.div key={`no-search-result`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='empty-state'>
                                             <img className="empty-state__icon" src="/assets/icons/like-empty-state.png" alt={``} />
                                             <div className='empty-state__text'>No Search Results</div>
@@ -269,22 +260,24 @@ const Explore = () => {
                                     }
 
                                     {!exploreDataLoading && <>
-                                        {!exploreDataLoading && profiles.length !== 0 &&
+                                        {!exploreDataLoading && profiles.filter(user => user?.user_settings?.public_search == true).length !== 0 &&
                                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} key="explore-grid" className='explore-grid hidden md:grid'>
 
                                                 {[0, 1, 2, 3, 4].map((value, index) => (
                                                     <div key={index} className={`explore-grid__column`}>
-                                                        {profiles?.map((profile, index: number) => (
+                                                        {profiles.filter(user => user?.user_settings?.public_search == true).map((profile, index: number) => (
                                                             (index % 5 === value) &&
                                                             <ExploreGridProfile
+                                                                // @ts-ignore
                                                                 isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                                 profile_image={profile.photos ? profile.photos![0] : undefined}
                                                                 first_name={profile!.first_name!}
+                                                                // @ts-ignore
                                                                 age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
                                                                 onProfileClick={() => {
                                                                     setSelectedProfile(profile?.uid as string)
                                                                 }}
-                                                                isVerified={profile!.is_verified}
+                                                                isVerified={profile!.is_verified as boolean}
                                                                 hasBeenLiked={hasUserBeenLiked(profile.uid!)}
                                                                 key={profile.uid}
                                                             />
@@ -303,12 +296,14 @@ const Explore = () => {
                                                         (index % 3 == value) &&
                                                         <ExploreGridProfile
                                                             key={`${index}-${profile.uid}`}
+                                                            // @ts-ignore
                                                             isNewUser={isNewUserFromDate(profile.created_at as string)}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             first_name={profile!.first_name!}
+                                                            // @ts-ignore
                                                             age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
                                                             onProfileClick={() => setSelectedProfile(profile?.uid as string)}
-                                                            isVerified={profile!.is_verified}
+                                                            isVerified={profile!.is_verified as boolean}
                                                             hasBeenLiked={hasUserBeenLiked(profile.uid!)}
                                                         />
                                                     ))}

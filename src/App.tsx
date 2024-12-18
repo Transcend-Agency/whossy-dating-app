@@ -79,7 +79,11 @@ function App() {
           </Route>
           <Route path="/dashboard" element={
             <ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
-            <Route path="user-profile" element={<UserProfile />} />
+            <Route path="user-profile" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            /> : <UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<SwipingAndMatching />} />
             <Route path="matches" element={selectedProfile ? <ViewProfile
@@ -89,7 +93,12 @@ function App() {
             /> : <MatchesPage />} />
             <Route path="globalSearch" element={<GlobalSearch />} />
             <Route path="heart" element={<Favorites />} />
-            <Route path="chat" element={<Chat />} />
+            {/*<Route path="chat" element={<Chat />} />*/}
+            <Route path="chat" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            /> : <Chat />} />
             <Route path="notification" element={<Notification />} />
           </Route>
           {/* {location.pathname.startsWith("") && (<MarqueeImageSliderBackground/>)} */}

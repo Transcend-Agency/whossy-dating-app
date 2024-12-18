@@ -11,6 +11,9 @@ import { Chat } from '@/types/chat';
 import { useChatIdStore } from '@/store/ChatStore';
 import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
 import { getUserProfile } from '@/hooks/useUser';
+import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
+import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 
 // type UserProfileProps = {};
 
@@ -24,18 +27,21 @@ const ChatPage = () => {
 
     const { setChatId } = useChatIdStore();
 
-  const {auth} = useAuthStore();
-  const currentUserId= auth?.uid as string;
+    const {auth} = useAuthStore();
+    const currentUserId= auth?.uid as string;
+    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
+    const { refreshProfiles } = useProfileFetcher()
 
-  const [userData, setUserData] = useState<User | null>(null);
+    const [userData, setUserData] = useState<User | null>(null);
 
-  const fetchLoggedUserData = async () => {
-    const data = await getUserProfile("users", auth?.uid as string) as User;
-    setUserData(data);
-}
+    const fetchLoggedUserData = async () => {
+        const data = await getUserProfile("users", auth?.uid as string) as User;
+        setUserData(data);
+    }
 
-  // const [allChats, setAllChats] = useState<string[]>([]);
-  const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
+
+    // const [allChats, setAllChats] = useState<string[]>([]);
+    const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
 
 
   const fetchUserData = async (userId: string) => {
@@ -56,8 +62,14 @@ const ChatPage = () => {
 
   const [isLoadingChats, setIsLoadingChats] = useState(false);
 
+    // useEffect(() => {
+    //     setSelectedProfile(null)
+    //     return () => setSelectedProfile(null)
+    // }, [])
+
   useEffect(() => {
     let isMounted = true;
+    // setSelectedProfile(null)
     setIsLoadingChats(true);
     const unSub = onSnapshot(collection(db, "chats"), async (snapshot) => {
 
@@ -131,12 +143,9 @@ const ChatPage = () => {
     setChatId(newChatId);
   };
 
-  // const [isLoadingSelectedChat, setIsLoadingSelectedChat] = useState<boolean>(false);
-
     return (
     <>
-       {/* <ImagesModalMobile show={true}/> */}
-        <DashboardPageContainer className="block">
+        {!selectedProfile && <DashboardPageContainer className="block">
             <motion.div animate={activePage == 'chats' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full space-y-10'>
                 <section className='space-y-[1.6rem] px-[1.6rem]'>
                   <h1 className='text-[1.6rem] font-medium '>New Likes and Matches</h1>
@@ -155,11 +164,11 @@ const ChatPage = () => {
                 </section>
                 <section>
 
-                  {allChats && allChats.length !==0 && <h1 className='text-[1.6rem] font-medium mb-4 px-[1.6rem]'>Messages</h1>}
+                  {allChats && allChats.length !== 0 && <h1 className='text-[1.6rem] font-medium mb-4 px-[1.6rem]'>Messages</h1>}
 
                   {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
                   allChats.map((chat, i) => (
-                    chat ? <><ChatListItem key={i} userData={userData as User} messageStatus={chat.status === "sent" ? chat.last_sender_id === auth?.uid ? false : true : false} onlineStatus={chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.last_message} profileImage={ chat.user.photos && chat.user.photos[0] } 
+                    chat ? <><ChatListItem key={i} userData={userData as User} messageStatus={chat.status === "sent" ? chat.last_sender_id === auth?.uid ? false : true : false} onlineStatus={chat.user.user_settings?.online_status && chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.last_message} profileImage={ chat.user.photos && chat.user.photos[0] }
                     openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
                     }}
                      />
@@ -171,7 +180,13 @@ const ChatPage = () => {
             </motion.div>
             <SelectedChat activePage={activePage} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}} updateChatId={updateChatId} userData={userData as User}/>
 
-        </DashboardPageContainer>
+        </DashboardPageContainer> }
+        {selectedProfile &&
+            <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            />}
     </>)
 }
 export default ChatPage;

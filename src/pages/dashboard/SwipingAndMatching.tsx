@@ -370,6 +370,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             </div>
                             <motion.div animate={expanded ? { marginBottom: '2.8rem' } : { marginBottom: '1.2rem' }} className="name-row">
                                 <div className="left">
+                                    {/*@ts-ignore */}
                                     <p className="details">{item?.first_name}, <span className="age">{(new Date()).getFullYear() - (getYearFromFirebaseDate(item?.date_of_birth) as number)}</span></p>
                                     {/* <p className="details">{userData?.first_name}, <span className="age">{item?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(item.date_of_birth) : 'NIL'}</span></p> */}
                                     <img src="/assets/icons/verified.svg" alt={``}/>
@@ -490,10 +491,10 @@ const SwipingAndMatching = () => {
 
     useEffect(() => {
         fetchLoggedUserData().catch(err => console.error(err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const { fetchMatches } = useMatchStore()
-
     const { updateUser } = useAuthStore()
     const { userLikes, loading: likesLoading } = useSyncUserLikes(user!.uid!)
     const { userDislikes, loading: dislikesLoading } = useSyncUserDislikes(user!.uid!)
@@ -611,25 +612,48 @@ const SwipingAndMatching = () => {
 
     const [profilesLoading, setProfilesLoading] = useState(true)
 
-
     const fetchUsersWithinSpecifiedRadius = async () => {
-        setProfilesLoading(true)
-        const center = [user?.latitude as number, user?.longitude as number] as [number, number];
-        const radiusInM = (user?.distance as number) * 1000;
+        setProfilesLoading(true);
+
+        if (!user) {
+            console.error("User is not defined.");
+            setProfilesLoading(false);
+            return;
+        }
+
+        const center = [user.latitude as number, user.longitude as number] as [number, number];
+        const radiusInM = (user.distance as number) * 1000;
+
         // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
         // a separate query for each pair. There can be up to 9 pairs of bounds
         // depending on overlap, but in most cases there are 4.
         const bounds = geohashQueryBounds(center, radiusInM);
+
+        const usersCollection = collection(db, 'users');
+        const baseQuery = query(usersCollection, where("has_completed_onboarding", "==", true));
+
+        // Add gender-specific filtering
+        let finalQuery;
+        const userGender = user.gender;
+
+        if (user.meet === 2) {
+            finalQuery = query(baseQuery, where("meet", "in", [2, userGender === "Male" ? 0 : 1]));
+        } else if (user.meet === 0 || user.meet === 1) {
+            const targetGender = user.meet === 0 ? "Male" : "Female";
+            finalQuery = query(baseQuery, where("gender", "==", targetGender));
+        } else {
+            console.error("Invalid meet value provided.");
+            setProfilesLoading(false);
+            return;
+        }
+
+        // Issue geohash queries for each bound
         const promises = [];
         for (const b of bounds) {
-            const q = query(
-                collection(db, 'users'),
-                orderBy('geohash'),
-                startAt(b[0]),
-                endAt(b[1]));
-
-            promises.push(getDocs(q));
+            const geoQuery = query(finalQuery, orderBy('geohash'), startAt(b[0]), endAt(b[1]));
+            promises.push(getDocs(geoQuery));
         }
+
         const snapshots = await Promise.all(promises);
         const matchingDocs = [];
 
@@ -637,24 +661,26 @@ const SwipingAndMatching = () => {
             for (const doc of snap.docs) {
                 const lat = doc.get('latitude');
                 const lng = doc.get('longitude');
-
-                // We have to filter out a few false positives due to GeoHash
-                // accuracy, but most will match
                 const distanceInKm = distanceBetween([lat, lng], center);
                 const distanceInM = distanceInKm * 1000;
-                if ((distanceInM <= radiusInM)
-                    && (userLikes.every(like => like.liked_id !== (doc.data() as User).uid)) && userDislikes.every(dislike => dislike.disliked_id !== (doc.data() as User).uid)
+
+                // Apply geolocation and additional filters
+                const docData = doc.data() as User;
+                if (
+                    distanceInM <= radiusInM &&
+                    userLikes.every(like => like.liked_id !== docData.uid) &&
+                    userDislikes.every(dislike => dislike.disliked_id !== docData.uid) &&
+                    !blockedUsers.includes(docData.uid as string) &&
+                    docData.uid !== user.uid
                 ) {
-                    matchingDocs.push(doc.data() as User);
+                    matchingDocs.push(docData);
                 }
             }
         }
 
-        const filteredMatchingDocs = matchingDocs.filter(u => !blockedUsers.includes(u.uid as string) && u.uid !== user?.uid);
-        setProfilesLoading(false)
-        setProfiles(filteredMatchingDocs)
-        // console.log(matchingDocs);
-    }
+        setProfilesLoading(false);
+        setProfiles(matchingDocs);
+    };
 
     const saveUserLocationToFirebase = async (latitude: number, longitude: number) => {
         try {
@@ -735,7 +761,9 @@ const SwipingAndMatching = () => {
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>
                                     <button className="action-buttons__button action-buttons__button--small"
-                                            onClick={() => loggedUserData?.isPremium ? navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) : toast.error('Upgrade to premium to chat')}>
+                                        onClick={() => {loggedUserData?.is_premium ? navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) : toast.error('Upgrade to premium to chat'); console.log(loggedUserData)}}
+                                        // onClick={() => console.log(loggedUserData)}
+                                    >
                                         <img src="/assets/icons/message-heart.svg" alt={``}/>
                                     </button>
                                 </motion.div>
