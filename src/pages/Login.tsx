@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  where} from 'firebase/firestore';
+import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  updateDoc,  where} from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useForm } from "react-hook-form";
@@ -16,6 +16,8 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
+import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
+import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
     .object({
@@ -48,6 +50,9 @@ const Login = () => {
     const navigate = useNavigate()
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
     const { setAuth } = useAuthStore();
+    const { mutate: paystackReferenceQuery } = useVerify();
+    const { mutate: paystackSubscriptionQuery } = useCreateSubscription();
+    const subscriptionList = useGetSubscriptionCodeAndEmailToken();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
@@ -76,8 +81,47 @@ const Login = () => {
                         setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
                         navigate('/onboarding')
                     } else {
-                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user)
-                        navigate('/dashboard/explore')
+                        setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user);
+                        paystackReferenceQuery(user.paystack.reference as string, { onSuccess: async (paystackRes) => {
+                            const userDocRef = doc(db, "users", res.user?.uid);
+                            navigate('/dashboard/explore');
+                            if (paystackRes.status === true) {
+
+                                await updateDoc(userDocRef, { is_premium: true });
+
+                                if (paystackRes.data.authorization.authorization_code !== user.paystack.authorization_code || paystackRes.data.customer.customer_code !== user.paystack.customer_code) {
+                                    await updateDoc(userDocRef, {
+                                        paystack: {
+                                            reference: user.paystack.reference,
+                                            authorization_code: paystackRes.data.authorization.authorization_code,
+                                            customer_code: paystackRes.data.customer.customer_code,
+                                            customer_id: paystackRes.data.customer.id
+                                        }
+                                    }).then(() => {
+                                        subscriptionList.mutate(paystackRes.data.customer.id, {onSuccess: async(subRes) => {
+                                            await updateDoc(userDocRef, {
+                                                paystack: {
+                                                    reference: user.paystack.reference,
+                                                    authorization_code: paystackRes.data.authorization.authorization_code,
+                                                    customer_code: paystackRes.data.customer.customer_code,
+                                                    customer_id: paystackRes.data.customer.id,
+                                                    subscription_code: subRes.data[0].subscription_code,
+                                                    email_token: subRes.data[0].email_token,
+                                                }
+                                            })
+                                        }});
+                                        // console.log(paystackRes.data.customer.id)
+                                    });
+                                }
+
+                            } else {
+                                await updateDoc(userDocRef, {
+                                    is_premium: false
+                                });
+                                // console.log('This is not paystack');
+                            }
+                            
+                        }, onError: () => toast.error('An error occurred while trying to verify payment') });
                     }
                 }
             }
