@@ -52,6 +52,11 @@ export type User = {
   longitude?: number | null;
   credits?: number | null;
   amount_paid_in_total?: number | null;
+  paystack?: {
+    reference: string,
+    subscription_code: string,
+    email_token: string,
+  } | null;
 };
 
 export type UserFilters = {
