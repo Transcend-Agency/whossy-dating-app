@@ -63,7 +63,7 @@ const plans = [
   },
   {
     name: "Premium Plan",
-    price: 12.99,
+    price: 30000,
     benefits: ["Benefits 1", "Benefits 2", "Benefits 3"],
 
     color: "#FF5C00",

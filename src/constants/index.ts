@@ -1238,6 +1238,10 @@ const getFormattedDateFromFirebaseDate = (firebaseDate: { nanoseconds: number, s
   return formatter.format(date);
 };
 
+const addCommasToNumber = (number: number) => {
+  return new Intl.NumberFormat().format(number);
+};
+
 export {
   alphabet,
   dietary,
@@ -1250,5 +1254,5 @@ export {
   marital_status,
   family_goal, preference, formatServerTimeStamps,
   religion, love_language, zodiac, communication_style, education, countries, getTime, getUserDetails, formatTime12Hour, formatDate, checkUserProfileCompletion, formatFirebaseTimestampToTime,
-  formatFirebaseTimestampToDate, filterOptions, cmToFeetAndInches, getFormattedDateFromFirebaseDate, kilogramsToPounds
+  formatFirebaseTimestampToDate, filterOptions, cmToFeetAndInches, getFormattedDateFromFirebaseDate, kilogramsToPounds, addCommasToNumber
 };
