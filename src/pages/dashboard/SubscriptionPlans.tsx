@@ -4,20 +4,21 @@ import React, { useEffect, useState } from "react";
 import { PremiumPlansHeader } from "./PremiumPlans";
 import { FreePlanBenefit, PremiumPlanBenefit } from "@/components/dashboard/PlanBenefit";
 import { CancelPlanModal, PaystackPaymentDetailsModal, SubscriptionPlanModal } from "@/components/dashboard/SubscriptionPlanModal";
-import { useAuthStore } from "@/store/UserId";
-import { getUserProfile } from "@/hooks/useUser";
 import { User } from "@/types/user";
-import { useVerify } from "@/hooks/usePaystack";
-import { usePaystackStore } from "@/store/Paystack";
+import { addCommasToNumber } from "@/constants";
+// import { useVerify } from "@/hooks/usePaystack";
+// import { usePaystackStore } from "@/store/Paystack";
 
 
 interface SubscriptionPlansProps {
     activePage: boolean;
     currentPlan : 'free' | 'premium' | '';
     closePage: () => void;
+    userData: User;
+    refetchUserData: () => void;
 }
 
-const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, closePage, currentPlan }) => {
+const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, closePage, currentPlan, userData, refetchUserData }) => {
 
     const [plan, setPlan] = useState<'free' | 'premium' | ''>(currentPlan);
 
@@ -88,33 +89,36 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
       const [showPaymentOptionsModal, setShowPaymentOptionsModal] = useState<'hidden' | 'plan' | 'payment-detail' | 'stripe-payment' | 'cancel-subscription'>('hidden');
 
 
-      const {auth} = useAuthStore();
+    //   const {auth} = useAuthStore();
 
-      const { mutate } = useVerify();
+    //   const { mutate } = useVerify();
 
-      const { reference } = usePaystackStore();
-
-      useEffect(() => {
-        mutate( reference as string );
-      }, [])
+    //   useEffect(() => {
+    //     mutate( reference as string );
+    //   }, [])
 
       const [isPremiumUser, setIsPremiumUser] = useState<boolean | null>();
     
-      const fetchUserData = async () => {
-        const data = await getUserProfile("users", auth?.uid as string) as User;
-        setIsPremiumUser(data.is_premium);
-      }
+    //   const fetchUserData = async () => {
+    //     const data = await getUserProfile("users", auth?.uid as string) as User;
+    //     setIsPremiumUser(data.is_premium);
+    //   }
     
       useEffect(() => {
-        fetchUserData();
+        setIsPremiumUser(userData?.is_premium);
+        // userData && mutate(userData?.reference as string, { onSuccess: (res) => {
+        //     if (res.data.status === true) {
+        //         refetchUserData();
+        //     }
+        // } });
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [])
+      }, [userData])
     
 
     return (
         <>
-            <SubscriptionPlanModal show={showPaymentOptionsModal === "plan"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={fetchUserData}/>
-            <CancelPlanModal show={showPaymentOptionsModal === "cancel-subscription"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={fetchUserData}/>
+            <SubscriptionPlanModal show={showPaymentOptionsModal === "plan"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={refetchUserData}/>
+            <CancelPlanModal show={showPaymentOptionsModal === "cancel-subscription"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={refetchUserData}/>
             <PaystackPaymentDetailsModal show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')}  />
             {/* <StripePaymentDetailsModal show={showPaymentOptionsModal === "stripe-payment"} hide={() => setShowPaymentOptionsModal('plan')}  /> */}
             <motion.div onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
@@ -122,7 +126,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
                     <div className="settings-page__title">
                         <button onClick={() => { closePage() }} className="settings-page__title__left">
                             <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
-                            <p> Subscription Plans { reference } </p>
+                            <p> Subscription Plans </p>
                         </button>
                         {/* <button className="settings-page__title__save-button">Save</button> */}
                     </div>
@@ -130,7 +134,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, close
                         <div className="w-full px-[2.4rem]">
                             <div className=" min-w-full px-[1.2rem] py-[1.6rem] text-[#FF5C00] bg-gradient-to-r from-[#ff5e0030] to-white  " style={{border: '1.5px solid #FF5C00', borderRadius: '1.2rem'}}>
                                 <h1 className="text-[2.4rem] font-bold ">Whossy Premium Plan</h1>
-                                <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">$</span><span className="text-[3.2rem] font-medium self-end">12.99</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
+                                <p className="flex gap-[0.4rem]"><span className="text-[1.6rem] font-semibold self-center">₦</span><span className="text-[3.2rem] font-medium self-end">{addCommasToNumber(30000)}</span><span className="text-[1.6rem] font-bold self-end">/month</span></p>
                             </div>
                         </div>
                         <PremiumPlansHeader plan={plan === 'premium'}/>
