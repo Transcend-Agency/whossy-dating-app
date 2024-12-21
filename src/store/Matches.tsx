@@ -85,7 +85,9 @@ export const useMatchStore = create<MatchStore>((set) => ({
             ]);
 
             const uniqueMatchIds = new Set<string>();
-            const filteredMatches = allMatches.filter((match) => {
+            const filteredMatches = allMatches
+                .filter(match => match != null)
+                .filter((match) => {
                 const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
                 if (blockedUsers.includes(matchedUserId)) {
                     return false;

@@ -17,9 +17,9 @@ const MatchesPage = () => {
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
 
     const { auth, user } = useAuthStore()
-    const { matches, loading: matchesLoading } = useSyncUserMatches(auth?.uid)
+    const { matches, loading: matchesLoading } = useSyncUserMatches(auth?.uid as string)
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
-    const { profiles,  selectedProfile,  setSelectedProfile,  previousLocation,  currentLocation} = useDashboardStore()
+    const { profiles,  selectedProfile,  setSelectedProfile } = useDashboardStore()
     const { refreshProfiles } = useProfileFetcher()
 
     useEffect(() => {

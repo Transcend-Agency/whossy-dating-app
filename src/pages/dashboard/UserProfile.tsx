@@ -21,9 +21,6 @@ import AddCredits from './AddCredits';
 import toast from "react-hot-toast";
 import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
 import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
-import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
-import useDashboardStore from "@/store/useDashboardStore.tsx";
-import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');

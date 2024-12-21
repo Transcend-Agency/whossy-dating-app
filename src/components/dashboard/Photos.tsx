@@ -5,10 +5,7 @@ import {PhotoModal, UploadPhotoModal} from "./PhotoModal";
 import toast from "react-hot-toast";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage";
 import {Oval} from "react-loader-spinner";
-import {User, UserProfile} from "@/types/user";
-import {arrayUnion, doc, getDoc, serverTimestamp, setDoc, updateDoc} from "firebase/firestore";
-import {db} from "@/firebase";
-
+import {User} from "@/types/user";
 interface CardProps {
   photo?: string;
   colspan?: string;
@@ -49,11 +46,6 @@ const Photos: FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
   const { auth } = useAuthStore();
 
   const [isUpdating, setIsUpdating] = useState(false)
-
-  const updateUser = async (s: UserProfile) => {
-    updateUserProfile("users", auth?.uid as string, () => {refetchUserData()}, s)
-        .catch(err => console.error(err))
-  }
 
   const fetchUserPhotos = async () => {
     const data = await getUserProfile("users", auth?.uid as string) as User;
