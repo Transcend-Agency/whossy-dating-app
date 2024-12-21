@@ -187,7 +187,7 @@ const Explore = () => {
         { label: 'Religion', value: advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('religion') }
     ];
 
-    const noSearchResults = (profiles: User[]): boolean => {
+    const noSearchResults = (profiles: User[]): number => {
         return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false).length;
     };
 

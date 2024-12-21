@@ -91,11 +91,12 @@ const ChatInterface: FC = () => {
                     })
             );
 
-            if (isMounted) {
+            if (isMounted && chatDataWithUserData != null) {
                 setChats(chatDataWithUserData as ChatDataWithUserData[]);
                 setUnreadChats(
                     chatDataWithUserData.filter(
                         (chat) =>
+                            // @ts-ignore
                             chat.status === 'sent' && chat.last_sender_id !== auth?.uid
                     ).length
                 );
@@ -151,7 +152,7 @@ const ChatInterface: FC = () => {
                                 chats.slice(0, 4).map((chat, i) => (
                                     <ChatListItem
                                         key={`${chat.last_sender_id}_${recipientData?.uid}_${i}`}
-                                        contactName={chat.user.first_name}
+                                        contactName={chat.user.first_name as string}
                                         userData={userData as User}
                                         message={chat.last_message || 'No messages'}
                                         messageStatus={chat.status === 'sent' ? chat.last_sender_id !== auth?.uid : false}

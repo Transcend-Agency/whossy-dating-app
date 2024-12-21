@@ -16,9 +16,6 @@ interface DashboardState {
 	setExploreDataLoading: (exploreDataLoading: boolean) => void;
 	peopleWhoLiked: PopulatedLikeData[]
 	setPeopleWhoLiked: (likes: PopulatedLikeData[]) => void;
-	recipientUserId: string;
-	setRecipientUserId: (uid: string) => void
-
 	previousLocation: string | null;
 	currentLocation: string;
 	setLocation: (newLocation: string) => void;

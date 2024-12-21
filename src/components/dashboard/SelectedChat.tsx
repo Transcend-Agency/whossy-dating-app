@@ -36,13 +36,10 @@ interface SelectedChatProps {
     closePage: () => void
     updateChatId: (newChatId: string) => void;
     currentUser: User;
-    chatUnlocked: boolean;
-    unlockTime: FieldValue | { seconds: number, nanoseconds: number };
-    expirationTime: FieldValue | { seconds: number, nanoseconds: number };
 }
 
 const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,currentUser}) => {
-    const [loading, setLoading] = useState<boolean>(false)
+    const [_loading, setLoading] = useState<boolean>(false)
     const [text, setText] = useState<string>('');
     const [chatModalOpen, setChatModalOpen] = useState<boolean>(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
@@ -288,10 +285,11 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
         );
 
-        if(currentUser?.credits < 30)
-            toast.error("Insufficient credit to unlock chat");
+        // @ts-ignore
+        if(currentUser.credits < 30){
+            toast.error("Insufficient credit to unlock chat");}
         else {
-            const newCredit: number = currentUser?.credits - 30;
+            const newCredit: number = currentUser?.credits as number - 30;
             try {
                 await updateDoc(chatRef, {
                     is_unlocked: true,
@@ -559,7 +557,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
     return (
         <AnimatePresence>
-            <ReportModal key={'report-modal'} userData={recipientUser} show={openModal} onCloseModal={() => setOpenModal(false)} />
+            <ReportModal key={'report-modal'} userData={recipientUser as User} show={openModal} onCloseModal={() => setOpenModal(false)} />
             {activePage === 'selected-chat' &&
                 <>
                     <m.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 100 }} transition={{ duration: 0.25 }} className='relative z-10 bg-white flex flex-col min-h-full'>

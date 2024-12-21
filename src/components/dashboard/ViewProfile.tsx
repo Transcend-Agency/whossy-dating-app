@@ -46,7 +46,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
     const navigate = useNavigate();
     const { user, auth } = useAuthStore()
     const { userLikes } = useSyncUserLikes(user!.uid!)
-    const { selectedProfile, previousLocation, currentLocation, setSelectedProfile, setRecipientUserId } = useDashboardStore()
+    const { selectedProfile } = useDashboardStore()
     const { setChatId } = useChatIdStore()
     const [openModal, setOpenModal] = useState(false);
 
@@ -61,7 +61,7 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         }
     }
 
-    const { fetchMatches, matches } = useMatchStore()
+    const { fetchMatches } = useMatchStore()
 
     const addLike = async () => {
         // const db = getFirestore();

@@ -26,14 +26,14 @@ const ChatPage = () => {
     const { setChatId, chatId } = useChatIdStore();
     const { auth } = useAuthStore();
     const currentUserId = auth?.uid as string;
-    const { selectedProfile, setSelectedProfile, profiles, previousLocation, currentLocation } = useDashboardStore();
+    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore();
     const { refreshProfiles } = useProfileFetcher();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
     const [isLoadingChats, setIsLoadingChats] = useState(false);
 
     const fetchLoggedUserData = async () => {
-        setChatId(null)
+        setChatId("nil")
         console.log("Setting Chat ID:", chatId);
         try {
             const data = await getUserProfile("users", currentUserId) as User;
@@ -114,7 +114,9 @@ const ChatPage = () => {
             const filteredChats = chatDataWithUserData.filter(chat => chat !== null) as ChatDataWithUserData[];
 
             const sortedChats = filteredChats.sort((a, b) => {
+                // @ts-ignore
                 const aTimestamp = a.last_message_timestamp?.seconds || 0;
+                // @ts-ignore
                 const bTimestamp = b.last_message_timestamp?.seconds || 0;
                 return bTimestamp - aTimestamp;
             });
@@ -207,7 +209,7 @@ const ChatPage = () => {
                             )}
                         </section>
                     </motion.div>
-                    {currentUser && chatId != "nil" && (
+                    {currentUser && (
                         <SelectedChat
                             activePage={activePage}
                             closePage={() => {
