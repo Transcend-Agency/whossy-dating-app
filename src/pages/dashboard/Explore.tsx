@@ -187,6 +187,14 @@ const Explore = () => {
         { label: 'Religion', value: advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('religion') }
     ];
 
+    const noSearchResults = (profiles: User[]): boolean => {
+        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false).length;
+    };
+
+    const noSearchResult = (profiles: User[]): User[] => {
+        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false);
+    };
+
     useEffect(() => {
         setSelectedProfile(null)
         return () => setSelectedProfile(null)
@@ -215,14 +223,14 @@ const Explore = () => {
                             </div>
                             <div className='explore-grid-container'>
                                 <AnimatePresence>
-                                    {profiles.filter(user => user?.user_settings?.public_search == true).length === 0 && !exploreDataLoading &&
+                                    {noSearchResults(profiles) === 0 && !exploreDataLoading &&
                                         <motion.div key={`no-search-result`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='empty-state'>
                                             <img className="empty-state__icon" src="/assets/icons/like-empty-state.png" alt={``} />
                                             <div className='empty-state__text'>No Search Results</div>
                                         </motion.div>
                                     }
 
-                                    {exploreDataLoading &&
+                                    {exploreDataLoading && noSearchResults(profiles) !== 0 &&
                                         <>
                                             {exploreDataLoading &&
                                                 <motion.div key="explore-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='explore-grid hidden md:grid'>
@@ -241,7 +249,7 @@ const Explore = () => {
                                                 </motion.div>
                                             }
 
-                                            {exploreDataLoading &&
+                                            {exploreDataLoading && noSearchResults(profiles) !== 0 &&
                                                 <motion.div key="mobile-grid-loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className='mobile-grid'>
                                                     {[0, 1, 2].map((value, index) =>
                                                     (
@@ -260,12 +268,12 @@ const Explore = () => {
                                     }
 
                                     {!exploreDataLoading && <>
-                                        {!exploreDataLoading && profiles.filter(user => user?.user_settings?.public_search == true).length !== 0 &&
+                                        {!exploreDataLoading && noSearchResults(profiles) !== 0 &&
                                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} key="explore-grid" className='explore-grid hidden md:grid'>
 
                                                 {[0, 1, 2, 3, 4].map((value, index) => (
                                                     <div key={index} className={`explore-grid__column`}>
-                                                        {profiles.filter(user => user?.user_settings?.public_search == true).map((profile, index: number) => (
+                                                        {noSearchResult(profiles).map((profile, index: number) => (
                                                             (index % 5 === value) &&
                                                             <ExploreGridProfile
                                                                 // @ts-ignore
@@ -277,7 +285,7 @@ const Explore = () => {
                                                                 onProfileClick={() => {
                                                                     setSelectedProfile(profile?.uid as string)
                                                                 }}
-                                                                isVerified={profile!.is_verified as boolean}
+                                                                isVerified={profile!.is_approved as boolean}
                                                                 hasBeenLiked={hasUserBeenLiked(profile.uid!)}
                                                                 key={profile.uid}
                                                             />
@@ -292,7 +300,7 @@ const Explore = () => {
 
                                             {[0, 1, 2].map((value, i) => (
                                                 <div key={i} className={`mobile-grid__column`}>
-                                                    {profiles?.map((profile, index) => (
+                                                    {noSearchResult(profiles).map((profile, index) => (
                                                         (index % 3 == value) &&
                                                         <ExploreGridProfile
                                                             key={`${index}-${profile.uid}`}
@@ -303,7 +311,7 @@ const Explore = () => {
                                                             // @ts-ignore
                                                             age={(new Date()).getFullYear() - getYearFromFirebaseDate(profile.date_of_birth)}
                                                             onProfileClick={() => setSelectedProfile(profile?.uid as string)}
-                                                            isVerified={profile!.is_verified as boolean}
+                                                            isVerified={profile!.is_approved as boolean}
                                                             hasBeenLiked={hasUserBeenLiked(profile.uid!)}
                                                         />
                                                     ))}

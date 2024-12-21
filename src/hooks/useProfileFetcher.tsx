@@ -84,7 +84,8 @@ function useProfileFetcher() {
 
 	const getUsers = (user?: User) => {
 		const usersCollection = collection(db, "users");
-		const q_base = query(usersCollection, where("has_completed_onboarding", "==", true));
+		const q_base = query(usersCollection,
+			where("has_completed_onboarding", "==", true));
 		let q;
 		if (user) {
 			const userGender = user.gender;

@@ -9,7 +9,7 @@ interface ChatId {
 }
 
 const initialStateChatId = {
-    chatId: 'nil',
+    chatId: "nil",
 };
 
 export const useChatIdStore = create<

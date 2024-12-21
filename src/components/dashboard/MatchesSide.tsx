@@ -43,14 +43,9 @@ export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded}) => 
                         <div className='matches__matched-profile-image--overlay'></div>
                     </figure>
                     <div className='matches__match-content'>
-                        <button onClick={() => {
-                                setSelectedProfile(userData?.uid as string)
-                            }
-                        } className='matches__view-button'>View</button>
-
+                        <button onClick={() => {setSelectedProfile(userData?.uid as string)}} className='matches__view-button'>View</button>
                         <div className='matches__match-details'><span className='first-name'>{userData?.first_name}{userData?.date_of_birth ? ',' : ''}
-                            {/*@ts-ignore*/}
-                        </span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_verified && <img src="/assets/icons/verified.svg" alt={``} />} </div>
+                        </span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_approved && <img src="/assets/icons/verified.svg" alt={``} />} </div>
                     </div>
                 </div>
             </div>
@@ -79,7 +74,6 @@ const Matches: React.FC<MatchesProps> = () => {
                         <h3 className='matches__sub-header'>{'See who you’ve matched with here 💖'}</h3>
                         <div className='matches__total-matches-preview'>
                             <div className='matches__total-matches-preview-inner'>
-                                { /* @ts-expect-error object is possibly null - it isn't */ }
                                 <img src={matches.length > 0 ? matches[0]?.matchedUserData?.photos[0] : ''} alt={``} />
                                 <div className='matches__matches-count'>
                                     <span>{matches.length}</span>

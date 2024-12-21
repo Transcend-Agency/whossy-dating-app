@@ -21,6 +21,9 @@ import AddCredits from './AddCredits';
 import toast from "react-hot-toast";
 import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
 import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
+import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
+import useDashboardStore from "@/store/useDashboardStore.tsx";
+import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -68,9 +71,7 @@ const UserProfile = () => {
     const refetchUserFilters = async () => { await fetchUserFilters() }
 
     return <>
-        
         <DashboardPageContainer>
-        
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
                 <div className='user-profile__container flex flex-col'>
                     <div className='flex justify-between gap-x-4'>

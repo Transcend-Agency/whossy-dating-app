@@ -630,7 +630,7 @@ const SwipingAndMatching = () => {
         const bounds = geohashQueryBounds(center, radiusInM);
 
         const usersCollection = collection(db, 'users');
-        const baseQuery = query(usersCollection, where("has_completed_onboarding", "==", true));
+        const baseQuery = query(usersCollection, where("has_completed_onboarding", "==", true), where("is_banned","==","false"));
 
         // Add gender-specific filtering
         let finalQuery;
