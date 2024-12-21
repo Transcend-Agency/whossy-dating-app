@@ -71,7 +71,7 @@ const CreateAccount = () => {
                 last_name: lastName || "",
                 has_completed_account_creation: false,
                 has_completed_onboarding: false,
-                is_verified: false,
+                is_approved: false,
                 created_at: serverTimestamp(),
             });
             console.log("reached here")

@@ -256,7 +256,7 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
                 } else {
                     setAuth(
                         { uid: id, has_completed_onboarding: false },
-                        { ...user.data(), is_verified: auth.currentUser?.emailVerified }
+                        { ...user.data(), is_approved: auth.currentUser?.emailVerified }
                     );
                     navigate('/auth/finalize-setup');
                 }

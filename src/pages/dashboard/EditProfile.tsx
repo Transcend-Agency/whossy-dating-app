@@ -84,14 +84,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ activePage, activeSubPage, cl
                     <Photos refetchUserData={refetchUserData}/>
 
                     <div className="space-y-3">
-                        <SettingsGroup data={[['Name', userData?.first_name as string, () => {
-                            setSettingsModalShowing('name')
-                        }],
-                            // @ts-ignore
+                        <SettingsGroup data={[['Name', userData?.first_name as string, () => {setSettingsModalShowing('name')}],
                         ['Birthday', userData?.date_of_birth ? getFormattedDateFromFirebaseDate(userData?.date_of_birth) : '', () => {  }],
-                        ['Gender', userData?.gender as string, () => {
-                            setSettingsModalShowing('gender')
-                        }],
+                        ['Gender', userData?.gender as string, () => {}],
                         ['Email', userData?.email as string,
                             () => { }],
                         ['Phone number', userData?.phone_number as string, () => {

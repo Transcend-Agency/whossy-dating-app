@@ -16,6 +16,12 @@ interface DashboardState {
 	setExploreDataLoading: (exploreDataLoading: boolean) => void;
 	peopleWhoLiked: PopulatedLikeData[]
 	setPeopleWhoLiked: (likes: PopulatedLikeData[]) => void;
+	recipientUserId: string;
+	setRecipientUserId: (uid: string) => void
+
+	previousLocation: string | null;
+	currentLocation: string;
+	setLocation: (newLocation: string) => void;
 }
 
 const useDashboardStore = create<DashboardState>((set) => ({
@@ -36,6 +42,14 @@ const useDashboardStore = create<DashboardState>((set) => ({
 
 	peopleWhoLiked: [],
 	setPeopleWhoLiked: (likes) => set({ peopleWhoLiked: likes }),
+
+	previousLocation: null,
+	currentLocation: window.location.pathname,
+	setLocation: (newLocation) =>
+		set((state) => ({
+			previousLocation: state.currentLocation,
+			currentLocation: newLocation,
+		})),
 }));
 
 export default useDashboardStore;

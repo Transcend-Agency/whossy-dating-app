@@ -5,7 +5,9 @@ import {PhotoModal, UploadPhotoModal} from "./PhotoModal";
 import toast from "react-hot-toast";
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage";
 import {Oval} from "react-loader-spinner";
-import {User} from "@/types/user";
+import {User, UserProfile} from "@/types/user";
+import {arrayUnion, doc, getDoc, serverTimestamp, setDoc, updateDoc} from "firebase/firestore";
+import {db} from "@/firebase";
 
 interface CardProps {
   photo?: string;
@@ -48,12 +50,24 @@ const Photos: FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
 
   const [isUpdating, setIsUpdating] = useState(false)
 
-  const fetchUserPhotos = async () => { const data = await getUserProfile("users", auth?.uid as string) as User; setPhoto(data?.photos as string[] || []) }
+  const updateUser = async (s: UserProfile) => {
+    updateUserProfile("users", auth?.uid as string, () => {refetchUserData()}, s)
+        .catch(err => console.error(err))
+  }
+
+  const fetchUserPhotos = async () => {
+    const data = await getUserProfile("users", auth?.uid as string) as User;
+    console.log(data)
+    setPhoto(data?.photos as string[] || [])
+  }
+
   const updateUserPhotos = (s: string[]) => {
     updateUserProfile("users", auth?.uid as string, () => {
-      fetchUserPhotos();
+      fetchUserPhotos().catch(e => console.error(e));
       refetchUserData();
-      setIsUpdating(false) }, { photos: s }) }
+      setIsUpdating(false)
+    }, {photos: s, is_approved: false}).catch(e => console.error(e))
+  }
 
   useEffect(() => { fetchUserPhotos().catch(err => console.log("Error occurred while fetching photos: ", err)) }, [])
   useEffect(() => { setPhoto(photo); setMutatedPhoto(photo) }, [photo])

@@ -1,9 +1,9 @@
-import {GeoPoint } from "firebase/firestore";
+import {GeoPoint, Timestamp} from "firebase/firestore";
 
 export type User = {
   bio?: string | null;
-  date_of_birth?: number | null;
-  created_at?: number | null;
+  date_of_birth?: Timestamp | Date | null;
+  created_at?: Timestamp | Date | null;
   distance?: number | null;
   geohash?: string | null;
   is_premium?: boolean | null;
@@ -31,7 +31,7 @@ export type User = {
   height?: number | null;
   religion?: number | null;
   interests?: string[] | null;
-  is_verified?: boolean | null;
+  is_approved?: boolean | null;
   status?: {
     online: boolean;
     lastSeen: number;
@@ -50,6 +50,14 @@ export type User = {
   location?: GeoPoint | null;
   latitude?: number | null;
   longitude?: number | null;
+  credits?: number | null;
+  amount_paid_in_total?: number | null;
+  paystack?: {
+    reference: string,
+    subscription_code: string,
+    email_token: string,
+  } | null;
+  is_banned?: boolean | null;
 };
 
 export type UserFilters = {

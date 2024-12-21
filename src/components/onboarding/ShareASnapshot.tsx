@@ -68,8 +68,13 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         workout: data["workout-preference"],
         uid: auth.uid,
         is_premium: false,
+        credits: 0,
+        amount_paid_in_total: 0,
+        paystack: {reference: ""},
         created_at: serverTimestamp(),
         blockedIds: arrayUnion(),
+        credit_balance: 0,
+        is_banned: false,
         has_completed_onboarding: true,
         user_settings: {
           ...userSettings

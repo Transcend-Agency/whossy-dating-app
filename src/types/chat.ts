@@ -9,6 +9,10 @@ export type Chat = {
     is_seen_by_initiator: boolean;
     is_seen_by_receiver: boolean;
     last_message_timestamp: FieldValue | { seconds: number, nanoseconds: number };
+    unlock_time: FieldValue | { seconds: number, nanoseconds: number };
+    expiration_time: FieldValue | { seconds: number, nanoseconds: number };
+    is_unlocked: boolean;
+    user_blocked: [boolean, boolean]
 };
 
 export type Messages = {

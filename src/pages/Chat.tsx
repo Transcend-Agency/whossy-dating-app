@@ -1,192 +1,234 @@
 import { motion } from 'framer-motion';
-import  { useEffect, useState } from 'react';
-import DashboardPageContainer from '@/components/dashboard/DashboardPageContainer';
+import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import DashboardPageContainer from '@/components/dashboard/DashboardPageContainer';
 import SelectedChat from '@/components/dashboard/SelectedChat';
+import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
 import { User } from '@/types/user';
 import { Chat } from '@/types/chat';
 import { useChatIdStore } from '@/store/ChatStore';
-import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
 import { getUserProfile } from '@/hooks/useUser';
-import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
-import useDashboardStore from "@/store/useDashboardStore.tsx";
-import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
-
-// type UserProfileProps = {};
+import ViewProfile from "@/components/dashboard/ViewProfile";
+import useDashboardStore from "@/store/useDashboardStore";
+import useProfileFetcher from "@/hooks/useProfileFetcher";
 
 interface ChatDataWithUserData extends Chat {
-  user: User;
+    user: User;
 }
 
 const ChatPage = () => {
     const [activePage, setActivePage] = useState<'chats' | 'selected-chat'>('chats');
     const navigate = useNavigate();
-
-    const { setChatId } = useChatIdStore();
-
-    const {auth} = useAuthStore();
-    const currentUserId= auth?.uid as string;
-    const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore()
-    const { refreshProfiles } = useProfileFetcher()
-
-    const [userData, setUserData] = useState<User | null>(null);
+    const location = useLocation();
+    const { setChatId, chatId } = useChatIdStore();
+    const { auth } = useAuthStore();
+    const currentUserId = auth?.uid as string;
+    const { selectedProfile, setSelectedProfile, profiles, previousLocation, currentLocation } = useDashboardStore();
+    const { refreshProfiles } = useProfileFetcher();
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
+    const [isLoadingChats, setIsLoadingChats] = useState(false);
 
     const fetchLoggedUserData = async () => {
-        const data = await getUserProfile("users", auth?.uid as string) as User;
-        setUserData(data);
-    }
+        setChatId(null)
+        console.log("Setting Chat ID:", chatId);
+        try {
+            const data = await getUserProfile("users", currentUserId) as User;
+            setCurrentUser(data);
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
 
-
-    // const [allChats, setAllChats] = useState<string[]>([]);
-    const [allChats, setAllChats] = useState<ChatDataWithUserData[]>([]);
-
-
-  const fetchUserData = async (userId: string) => {
-    const userDocRef = doc(db, "users", userId);
-    const userDocSnap = await getDoc(userDocRef);
-    if (userDocSnap.exists()) { 
-      return userDocSnap.data();
-    } 
-    else {  console.log(`No such user document for user_id: ${userId}`); return null;}
-  };
-
-  const fetchUserChats = async (id: string) => {
-    const userChatsDocRef = doc(db, "chats", id);
-    const userChatsDocSnap = await getDoc(userChatsDocRef);
-    if (userChatsDocSnap.exists()) {  return userChatsDocSnap.data() as Chat;} 
-    else {  console.log(`No such user chats document for user_id: ${id}`); return null;}
-  }
-
-  const [isLoadingChats, setIsLoadingChats] = useState(false);
-
-    // useEffect(() => {
-    //     setSelectedProfile(null)
-    //     return () => setSelectedProfile(null)
-    // }, [])
-
-  useEffect(() => {
-    let isMounted = true;
-    // setSelectedProfile(null)
-    setIsLoadingChats(true);
-    const unSub = onSnapshot(collection(db, "chats"), async (snapshot) => {
-
-        if (!isMounted) return;
-
-        const chatIds: string[] = [];
-
-        snapshot.forEach((doc) => {
-          if (doc.id.includes(currentUserId)) {
-            chatIds.push(doc.id);
-          }
-        });
-
-        const userChats = await Promise.all(
-            chatIds.map((chatUserId) => fetchUserChats(chatUserId))
-        );
-
-        const chatDataWithUserData = await Promise.all(
-            userChats
-            .filter(chat => chat !== null)
-            .map(async (chat: Chat) => {
-                const recipientData = chat?.participants?.filter((participant: string) => participant !== currentUserId);
-                const recipientUserData = await fetchUserData(recipientData[0]) as User;
-                return { ...chat, user: recipientUserData }; 
-            })
-        );
-
-        // Sort by timestamp in descending order (latest message first)
-        const sortedChats = chatDataWithUserData.sort((a, b) => {
-          const aTimestamp = 
-              'seconds' in a.last_message_timestamp 
-                  ? a.last_message_timestamp.seconds * 1000 + a.last_message_timestamp.nanoseconds / 1e6 
-                  : 0;
-          const bTimestamp = 
-              'seconds' in b.last_message_timestamp 
-                  ? b.last_message_timestamp.seconds * 1000 + b.last_message_timestamp.nanoseconds / 1e6 
-                  : 0;
-          
-          return bTimestamp - aTimestamp;
-        });
-
-        if (isMounted) {
-            setAllChats(sortedChats);  // Update the state with the chat data
+    const fetchUserData = async (userId: string) => {
+        if (!userId) {
+            console.error("Invalid userId:", userId);
+            return null;
         }
 
-        setIsLoadingChats(false);  
-    });
-
-    return () => {
-        isMounted = false;
-        unSub();
+        try {
+            const userDocRef = doc(db, "users", userId);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                return userDocSnap.data() as User;
+            } else {
+                console.warn("No user found for userId:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching user data for userId:", userId, error);
+            return null;
+        }
     };
-}, [])
-  
-  const queryParams = new URLSearchParams(location.search);
-  const recipientUserId = queryParams.get('recipient-user-id');
 
-  useEffect(() => {
-    if (recipientUserId) {
-      setActivePage('selected-chat');
-    } else {
-      setActivePage('chats');
-    }
-  }, [recipientUserId])
+    const fetchUserChats = async (id: string) => {
+        const chatDocRef = doc(db, "chats", id);
+        const chatDocSnap = await getDoc(chatDocRef);
+        return chatDocSnap.exists() ? chatDocSnap.data() as Chat : null;
+    };
 
-  useEffect(() => {
-    fetchLoggedUserData().catch(err => console.error(err));
-  })
+    useEffect(() => {
+        fetchLoggedUserData();
+    }, []);
 
-  const updateChatId = (newChatId: string) => {
-    setChatId(newChatId);
-  };
+    useEffect(() => {
+        let isMounted = true;
+        setIsLoadingChats(true);
+
+        const unSub = onSnapshot(collection(db, "chats"), async (snapshot) => {
+            if (!isMounted) return;
+
+            const chatIds: string[] = snapshot.docs
+                .map((doc) => doc.id)
+                .filter((id) => id.includes(currentUserId));
+
+            const userChats = await Promise.all(
+                chatIds.map(async (chatId) => {
+                    const chat = await fetchUserChats(chatId);
+                    if (!chat || !chat.participants || chat.participants.length < 2) {
+                        console.warn("Invalid chat data:", chat);
+                        return null;
+                    }
+                    return chat;
+                })
+            );
+
+            const chatDataWithUserData = await Promise.all(
+                userChats
+                    .filter(chat => chat !== null)
+                    .map(async (chat) => {
+                        const recipientId = chat?.participants.find(participant => participant !== currentUserId);
+                        const recipientUserData = await fetchUserData(recipientId!);
+
+                        if (!recipientUserData || recipientUserData.is_banned) {
+                            console.warn("Skipping chat due to missing user data:", chat);
+                            return null;
+                        }
+
+                        return { ...chat, user: recipientUserData };
+                    })
+            );
+            const filteredChats = chatDataWithUserData.filter(chat => chat !== null) as ChatDataWithUserData[];
+
+            const sortedChats = filteredChats.sort((a, b) => {
+                const aTimestamp = a.last_message_timestamp?.seconds || 0;
+                const bTimestamp = b.last_message_timestamp?.seconds || 0;
+                return bTimestamp - aTimestamp;
+            });
+
+            if (isMounted) setAllChats(sortedChats);
+            setIsLoadingChats(false);
+        });
+
+        return () => {
+            isMounted = false;
+            unSub();
+        };
+    }, [currentUserId]);
+
+    const queryParams = new URLSearchParams(location.search);
+    const recipientUserId = queryParams.get('recipient-user-id');
+
+    useEffect(() => {
+        if (recipientUserId) {
+            setActivePage('selected-chat');
+        } else {
+            setActivePage('chats');
+        }
+    }, [recipientUserId]);
+
+    const openChat = (chat: ChatDataWithUserData) => {
+        const newChatId = `${chat.participants[0]}_${chat.participants[1]}`;
+        console.log("Setting Chat ID:", newChatId);
+        setChatId(newChatId);
+        navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`);
+    };
 
     return (
-    <>
-        {!selectedProfile && <DashboardPageContainer className="block">
-            <motion.div animate={activePage == 'chats' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full space-y-10'>
-                <section className='space-y-[1.6rem] px-[1.6rem]'>
-                  <h1 className='text-[1.6rem] font-medium '>New Likes and Matches</h1>
-                  <div className='flex gap-x-4'>
-                    <div className='w-[11.2rem] h-[12rem] rounded-[1.2rem] p-2 relative' style={{border: '2px solid #FF5C00'}}>
-                      <img src="/assets/images/matches/stephen.png" className='w-full h-full object-cover rounded-[1.2rem] blur-sm' alt="" />
-                      <div className='absolute from-[#FF5C00] top-16 left-10 to-[#F0174B] rounded-full bg-gradient-to-b text-white font-medium text-[1.4rem] flex gap-x-1 p-[0.8rem]'><p>24</p> <img src='/assets/icons/likes.svg'/></div>
-                      <div className='text-[1.2rem] text-white font-medium bg-gradient-to-b from-[#FF5C00] to-[#F0174B] absolute bottom-4 left-10 rounded-full w-fit p-2 px-4'>Likes</div>
-                    </div>
-                    <div className='w-[11.2rem] h-[12rem] flex flex-col justify-center items-center rounded-[1.2rem] p-2 relative bg-[#F6F6F6]'>
-                      <img src="/assets/icons/no-matches-yet.svg" alt="" />
-                      <p className='text-[#8A8A8E] text-[1.4rem]'>No match found!</p>
-                      <p className='leading-[0.8px] text-[#8A8A8E] text-[1.4rem]'>-</p>
-                    </div>
-                  </div>
-                </section>
-                <section>
+        <>
+            {!selectedProfile && currentUser && (
+                <DashboardPageContainer className="block">
+                    <motion.div
+                        animate={activePage === 'chats' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="user-profile h-full space-y-10"
+                    >
+                        <section className="space-y-[1.6rem] px-[1.6rem]">
+                            <h1 className="text-[1.6rem] font-medium">New Likes and Matches</h1>
+                            <div className="flex gap-x-4">
+                                <div className="w-[11.2rem] h-[12rem] rounded-[1.2rem] p-2 relative" style={{ border: '2px solid #FF5C00' }}>
+                                    <img src="/assets/images/matches/stephen.png" className="w-full h-full object-cover rounded-[1.2rem] blur-sm" alt="" />
+                                    <div className="absolute from-[#FF5C00] top-16 left-10 to-[#F0174B] rounded-full bg-gradient-to-b text-white font-medium text-[1.4rem] flex gap-x-1 p-[0.8rem]">
+                                        <p>24</p> <img src="/assets/icons/likes.svg" />
+                                    </div>
+                                    <div className="text-[1.2rem] text-white font-medium bg-gradient-to-b from-[#FF5C00] to-[#F0174B] absolute bottom-4 left-10 rounded-full w-fit p-2 px-4">
+                                        Likes
+                                    </div>
+                                </div>
+                                <div className="w-[11.2rem] h-[12rem] flex flex-col justify-center items-center rounded-[1.2rem] p-2 relative bg-[#F6F6F6]">
+                                    <img src="/assets/icons/no-matches-yet.svg" alt="" />
+                                    <p className="text-[#8A8A8E] text-[1.4rem]">No match found!</p>
+                                </div>
+                            </div>
+                        </section>
+                        <section>
+                            {allChats.length !== 0 && <h1 className="text-[1.6rem] font-medium mb-4 px-[1.6rem]">Messages</h1>}
+                            {!isLoadingChats ? (
+                                allChats.length === 0 ? (
+                                    <div className="text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]">
+                                        <p>No messages yet, go to the explore page to start chatting</p>.
+                                        <button
+                                            className="bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]"
+                                            onClick={() => navigate('/dashboard/explore')}
+                                        >
+                                            Explore
+                                        </button>
+                                    </div>
+                                ) : (
+                                    allChats.map((chat, i) => (
+                                        <ChatListItem
+                                            key={`${chat.last_sender_id}_${currentUserId}_${i}`}
+                                            userData={currentUser as User}
+                                            messageStatus={chat.status === "sent" || (!chat.is_unlocked && currentUser.is_premium == false) ? chat.last_sender_id !== auth?.uid : false}
+                                            onlineStatus={chat.user?.user_settings?.online_status && chat.user?.status?.online}
+                                            contactName={chat.user.first_name || "Unknown"}
+                                            message={chat.last_message}
+                                            profileImage={chat.user.photos && chat.user.photos[0]}
+                                            chatUnlocked={chat.is_unlocked}
+                                            openChat={() => openChat(chat)}
+                                        />
+                                    ))
+                                )
+                            ) : (
+                                Array.from({ length: 7 }).map((_, i) => <ChatListItemLoading key={i} />)
+                            )}
+                        </section>
+                    </motion.div>
+                    {currentUser && chatId != "nil" && (
+                        <SelectedChat
+                            activePage={activePage}
+                            closePage={() => {
+                                setActivePage('chats');
+                                navigate('/dashboard/chat');
+                            }}
+                            updateChatId={setChatId}
+                            currentUser={currentUser}
+                        />
+                    )}
+                </DashboardPageContainer>
+            )}
+            {selectedProfile && (
+                <ViewProfile
+                    onBackClick={() => setSelectedProfile(null)}
+                    userData={profiles.find(profile => selectedProfile === profile.uid)!}
+                    onBlockChange={refreshProfiles}
+                />
+            )}
+        </>
+    );
+};
 
-                  {allChats && allChats.length !== 0 && <h1 className='text-[1.6rem] font-medium mb-4 px-[1.6rem]'>Messages</h1>}
-
-                  {!isLoadingChats ? allChats.length === 0 ? <div className='text-[1.6rem] font-medium mb-4 px-[1.6rem] flex flex-col justify-center items-center h-full text-[#D3D3D3]'><p>No messages yet, go to the explore page to start chatting</p>. <button className='bg-[#F2243E] text-white py-3 px-6 rounded-lg active:scale-[0.95] transition ease-in-out duration-300 hover:scale-[1.02]' onClick={(e) => {e.preventDefault(); navigate('/dashboard/swipe-and-match');}}>Explore</button></div> : 
-                  allChats.map((chat, i) => (
-                    chat ? <><ChatListItem key={i} userData={userData as User} messageStatus={chat.status === "sent" ? chat.last_sender_id === auth?.uid ? false : true : false} onlineStatus={chat.user.user_settings?.online_status && chat.user.status?.online} contactName={chat.user.first_name as string} message={chat.last_message} profileImage={ chat.user.photos && chat.user.photos[0] }
-                    openChat={() => {setActivePage('selected-chat'); navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`); setChatId(chat.participants[0] + '_' + chat.participants[1]);
-                    }}
-                     />
-                      </>
-                       : null
-                  ))
-                   : Array.from({ length: 7 }).map(() => <ChatListItemLoading />)}
-                </section>
-            </motion.div>
-            <SelectedChat activePage={activePage} closePage={() => {setActivePage('chats'); navigate('/dashboard/chat')}} updateChatId={updateChatId} userData={userData as User}/>
-
-        </DashboardPageContainer> }
-        {selectedProfile &&
-            <ViewProfile
-                onBackClick={() => { setSelectedProfile(null) }}
-                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                onBlockChange={refreshProfiles}
-            />}
-    </>)
-}
 export default ChatPage;

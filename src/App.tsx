@@ -44,14 +44,8 @@ function App() {
   useTrackUserPresence();
   useAutoLogout()
 
-  const { profiles,
-    selectedProfile,
-    setSelectedProfile,
-    blockedUsers,
-    selectedOption,
-  } = useDashboardStore()
+  const { profiles, selectedProfile, setSelectedProfile, blockedUsers, selectedOption, currentLocation,previousLocation } = useDashboardStore()
   const { fetchProfilesBasedOnOption, refreshProfiles } = useProfileFetcher()
-
 
   useEffect(() => {
     fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
@@ -62,6 +56,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       {location.pathname.startsWith("/auth") && (<MarqueeImageSliderBackground />)}
       <AnimatePresence>
+        <RouteWatcher key={`${currentLocation}_${previousLocation}`} />
         <Routes location={location} key={location.pathname}>
           <Route path="/auth" element={<AuthLayout />}>
             <Route index element={<Home />} />
@@ -80,28 +75,26 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedDashboard><DashboardLayout /></ProtectedDashboard>}>
             <Route path="user-profile" element={selectedProfile ? <ViewProfile
-                onBackClick={() => { setSelectedProfile(null) }}
+                onBackClick={() => {setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}
             /> : <UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="swipe-and-match" element={<SwipingAndMatching />} />
             <Route path="matches" element={selectedProfile ? <ViewProfile
-              onBackClick={() => { setSelectedProfile(null) }}
+              onBackClick={() => {setSelectedProfile(null) }}
               userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
               onBlockChange={refreshProfiles}
             /> : <MatchesPage />} />
             <Route path="globalSearch" element={<GlobalSearch />} />
             <Route path="heart" element={<Favorites />} />
-            {/*<Route path="chat" element={<Chat />} />*/}
             <Route path="chat" element={selectedProfile ? <ViewProfile
-                onBackClick={() => { setSelectedProfile(null) }}
+                onBackClick={() => {setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}
             /> : <Chat />} />
             <Route path="notification" element={<Notification />} />
           </Route>
-          {/* {location.pathname.startsWith("") && (<MarqueeImageSliderBackground/>)} */}
           <Route path="" element={<Landing />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/contact" element={<Contact />} />
@@ -111,7 +104,6 @@ function App() {
     </QueryClientProvider>
   );
 }
-
 export default App;
 
 const ToastContainer: React.FC = () => {
@@ -127,4 +119,15 @@ const ToastContainer: React.FC = () => {
       }}
     />
   );
+};
+
+const RouteWatcher = () => {
+  const location = useLocation()
+  const { setLocation } = useDashboardStore()
+
+  useEffect(() => {
+    setLocation(location.pathname)
+  }, [location, setLocation])
+
+  return null
 };

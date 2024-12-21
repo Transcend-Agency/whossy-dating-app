@@ -2,7 +2,7 @@ import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser";
 import useSyncUserMatches from "@/hooks/useSyncUserMatches";
 import { useAuthStore } from "@/store/UserId";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Skeleton from "react-loading-skeleton";
 import DashboardPageContainer from "./DashboardPageContainer";
 import { MatchItem } from "./MatchesSide";
@@ -14,16 +14,23 @@ import SubscriptionPlans from "@/pages/dashboard/SubscriptionPlans.tsx";
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match' | 'plans'>('like')
     const [likes] = useState([1, 2, 3, 4, 5])
-    const { user } = useAuthStore()
-    const { matches, loading: matchesLoading } = useSyncUserMatches(user!.uid!)
-    const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
-    const {
-        profiles,
-        selectedProfile,
-        setSelectedProfile,
-    } = useDashboardStore()
-    const { refreshProfiles } = useProfileFetcher()
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
+
+    const { auth, user } = useAuthStore()
+    const { matches, loading: matchesLoading } = useSyncUserMatches(auth?.uid)
+    const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
+    const { profiles,  selectedProfile,  setSelectedProfile,  previousLocation,  currentLocation} = useDashboardStore()
+    const { refreshProfiles } = useProfileFetcher()
+
+    useEffect(() => {
+        if(location.pathname === "/dashboard/matches"){
+            return
+        }else{
+            setSelectedProfile(null)
+            console.log("I am getting here, profile:", selectedProfile)
+            return () => setSelectedProfile(null)
+        }
+    }, [])
 
     const LikesEmptyState = () => {
         return (
@@ -159,8 +166,9 @@ const MatchesPage = () => {
                     {activePage == 'plans' &&
                         <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'plans'} closePage={() => setActivePage('like')} /> }
                 </AnimatePresence>
-            </DashboardPageContainer>}
-            {selectedProfile && <ViewProfile
+            </DashboardPageContainer> }
+            {selectedProfile &&
+                <ViewProfile
                 onBackClick={() => { setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}
