@@ -97,17 +97,17 @@ const UserProfile = () => {
                             {userData ? (
                                 // @ts-ignore
                                 <p> {userData?.first_name}, <span className='user-profile__profile-details__age'> {userData?.date_of_birth  ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth!) : 'NIL'} </span>
-                                    <img src="/assets/icons/verified-badge.svg" alt="verified" />
+                                    {userData?.is_approved && <img src="/assets/icons/verified-badge.svg" alt="verified" />}
                                 </p>
                             ) : ( <Skeleton width='21rem' height='2.9rem' /> )}
                         </div>
-                        {completed ?
+                        { completed ?
                             <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") :  setActivePage('edit-profile')}} className='user-profile__profile-details__completion-status cursor-pointer'>
                                 {Math.ceil(completed / 19 * 100)}% Complete
                             </div> :
                             <div className='mt-[1.2rem] flex justify-center'>
                                 <Skeleton width='14rem' height='3.3rem' />
-                            </div>}
+                            </div> }
                     </section>
                     <div className='user-profile__banner user-profile__banner--info'>
                         <img src="/assets/icons/notification-alert.svg" alt={``} />
@@ -119,9 +119,9 @@ const UserProfile = () => {
                     </div>
 
                     <section className='user-profile__credit-buttons'>
-                        <ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
+                        {/*<ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>*/}
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description={`Credits: ${userData?.credits} `} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance} `} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
@@ -131,7 +131,7 @@ const UserProfile = () => {
                 </section>
 
             </motion.div>
-            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} refetchUserData={refetchUserData}/>
+            <AddCredits activePage={activePage} closePage={() => {refetchUserData(); setActivePage('user-profile')} } refetchUserData={refetchUserData}/>
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings

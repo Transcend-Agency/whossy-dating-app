@@ -14,6 +14,7 @@ import { getUserProfile } from '@/hooks/useUser';
 import ViewProfile from "@/components/dashboard/ViewProfile";
 import useDashboardStore from "@/store/useDashboardStore";
 import useProfileFetcher from "@/hooks/useProfileFetcher";
+import {chat} from "@/assets/icons";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -33,7 +34,7 @@ const ChatPage = () => {
     const [isLoadingChats, setIsLoadingChats] = useState(false);
 
     const fetchLoggedUserData = async () => {
-        setChatId("nil")
+        setChatId(null)
         console.log("Setting Chat ID:", chatId);
         try {
             const data = await getUserProfile("users", currentUserId) as User;
@@ -113,7 +114,7 @@ const ChatPage = () => {
             );
             const filteredChats = chatDataWithUserData.filter(chat => chat !== null) as ChatDataWithUserData[];
 
-            const sortedChats = filteredChats.sort((a, b) => {
+            const sortedChats = filteredChats.filter(chat => chat.last_sender_id !== null || chat.last_message !== null).sort((a, b) => {
                 // @ts-ignore
                 const aTimestamp = a.last_message_timestamp?.seconds || 0;
                 // @ts-ignore
@@ -143,7 +144,7 @@ const ChatPage = () => {
     }, [recipientUserId]);
 
     const openChat = (chat: ChatDataWithUserData) => {
-        const newChatId = `${chat.participants[0]}_${chat.participants[1]}`;
+        const newChatId = `${chat.participants.sort().join('_')}`
         console.log("Setting Chat ID:", newChatId);
         setChatId(newChatId);
         navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`);

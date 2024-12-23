@@ -9,6 +9,7 @@ import { User } from '@/types/user';
 import { useChatIdStore } from '@/store/ChatStore';
 import { getUserProfile } from '@/hooks/useUser';
 import {ChatListItem} from "@/components/dashboard/ChatListItem.tsx";
+import {createOrFetchChat} from "@/utils/chatService.ts";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -157,15 +158,19 @@ const ChatInterface: FC = () => {
                                         message={chat.last_message || 'No messages'}
                                         messageStatus={chat.status === 'sent' ? chat.last_sender_id !== auth?.uid : false}
                                         profileImage={chat.user.photos?.[0]}
-                                        openChat={() => {
-                                            const chatId = `${chat.participants[0]}_${chat.participants[1]}`
-                                            setChatId(chatId);
-                                            if (chatId != "nil") {
-                                                navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`, {
-                                                    state: { chatId, recipientUser: chat.user },
-                                                });
-                                                setChatId(chatId)
-                                            }
+                                        openChat={ async () => {
+                                            const chatId = [auth?.uid, userData.uid].sort().join('_');
+                                            setChatId(chatId)
+                                            await createOrFetchChat(auth?.uid, userData.uid, setChatId).then(
+                                                () => {
+                                                    if (chatId != "nil") {
+                                                        navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
+                                                            state: {chatId, recipientUser: userData},
+                                                        });
+                                                        setChatId(chatId)
+                                                    }
+                                                }
+                                            )
                                         }}
                                     />
                                 ))

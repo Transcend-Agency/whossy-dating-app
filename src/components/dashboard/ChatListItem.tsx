@@ -26,8 +26,7 @@ export const ChatListItem: React.FC<ChatListItemProps> = ({profileImage, contact
             </div>
             <div>
                 <p className='text-[1.8rem] leading-[2.16rem]'>{contactName} </p>
-                {userData?.is_premium || chatUnlocked ? (<p className={`text-[1.6rem] leading-[1.92rem] ${message === 'Image' ? 'italic text-[#b2b2b5]' : 'text-[#8A8A8E]'}`}> {message !== "Image" ? (chatInterface ? message.length > 25 ? message.slice(0, 25) + '...' : message
-                                    : message.length > 35 ? message.slice(0, 35) + '...' : message) : 'sent a photo'}
+                {userData?.is_premium || chatUnlocked ? (<p className={`text-[1.6rem] leading-[1.92rem] ${message === 'Image' ? 'italic text-[#b2b2b5]' : 'text-[#8A8A8E]'}`}> {message !== "Image" ? (chatInterface ? message.length > 25 ? message.slice(0, 25) + '...' : message : message.length > 35 ? message.slice(0, 35) + '...' : message) : 'sent a photo'}
                         </p> ) : (<p className="text-[1.6rem] leading-[1.92rem] text-[#8A8A8E]">Upgrade plan or use credits to chat</p>)}
             </div>
         </div>
