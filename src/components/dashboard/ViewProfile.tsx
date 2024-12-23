@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import DashboardPageContainer from "./DashboardPageContainer";
 import {useChatIdStore} from "@/store/ChatStore.tsx";
+import {createOrFetchChat} from "@/utils/chatService.ts";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -202,24 +203,19 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                     </div>
                     }
                     {<div className="preview-profile__action-button"
-                          onClick={() => {
-                              // const matchesExist = matches.some(
-                              //     match => match.user1_id === userData.uid || match.user2_id === userData.uid
-                              // );
-                              //
-                              // if (!matchesExist) {
-                              //     toast.error("You have not matched with this user yet");
-                              //     return
-                              // }
-
+                          onClick={async () => {
                               const chatId = [auth?.uid, userData.uid].sort().join('_');
                               setChatId(chatId)
-                              if (chatId != "nil") {
-                                  navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
-                                      state: { chatId, recipientUser: userData },
-                                  });
-                                  setChatId(chatId)
-                              }
+                              await createOrFetchChat(auth?.uid, userData.uid, setChatId).then(
+                                  () => {
+                                      if (chatId != "nil") {
+                                          navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
+                                              state: {chatId, recipientUser: userData},
+                                          });
+                                          setChatId(chatId)
+                                      }
+                                  }
+                              )
                           }}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}

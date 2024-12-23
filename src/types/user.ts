@@ -50,7 +50,7 @@ export type User = {
   location?: GeoPoint | null;
   latitude?: number | null;
   longitude?: number | null;
-  credits?: number | null;
+  credit_balance?: number | null;
   amount_paid_in_total?: number | null;
   paystack?: {
     reference: string,

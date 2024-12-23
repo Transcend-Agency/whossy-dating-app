@@ -61,7 +61,8 @@
     }
 
     &__credit-buttons {
-        @apply grid grid-cols-2 gap-[0.8rem] mt-[0.8rem];
+        // grid-cols-2 was removed { no more profile boost }
+        @apply grid gap-[0.8rem] mt-[0.8rem];
         &__button {
             @apply py-[2rem] bg-[#FDFAE7] rounded-[1.2rem] text-[1.8rem] font-medium flex justify-center items-center;
             &:first-of-type {

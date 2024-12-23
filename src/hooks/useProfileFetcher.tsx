@@ -46,7 +46,8 @@ function useProfileFetcher() {
 
 			if (selectedOption === "Similar interest" && interestsFilter) {
 				const currentUserInterests2 = userInterest || [];
-				querySnapshot = await getDocs(query(usersCollection, where("has_completed_onboarding", "==", true), where("interests", "array-contains-any", userInterest || [])))
+				const initialQuery = getUsers(user)
+				querySnapshot = await getDocs(query(initialQuery, where("interests", "array-contains-any", userInterest || [])))
 				userData = querySnapshot.docs.map(doc => doc.data() as UserProfile)
 
 				data = userData.sort((a , b) => {

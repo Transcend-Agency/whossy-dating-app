@@ -689,16 +689,22 @@ const SwipingAndMatching = () => {
             // Create a document reference for the user
             const userDocRef = doc(db, 'users', userId!);
 
+			const geoPoint = new GeoPoint(latitude, longitude)
+            const geoHash = geohashForLocation([latitude, longitude])
+            const geography = { geoHash , geoPoint  }
+
             // Save location data under the user document with merge option
             await setDoc(userDocRef, {
-                location: new GeoPoint(latitude, longitude),
+                location: geoPoint,
                 latitude, longitude,
-                geohash: geohashForLocation([latitude, longitude])
+                geohash: geoHash,
+                geography: geography
             }, { merge: true });
 
-            updateUser({ location: new GeoPoint(latitude, longitude),
-                    geohash: geohashForLocation([latitude, longitude]),
-                latitude, longitude })
+            updateUser({
+                location: new GeoPoint(latitude, longitude),
+                geohash: geohashForLocation([latitude, longitude]),
+                latitude, longitude, geography: geography })
             setProfilesLoading(true)
 
         } catch (error) {
