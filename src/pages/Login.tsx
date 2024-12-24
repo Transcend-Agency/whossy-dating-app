@@ -1,10 +1,13 @@
+import { auth, db } from "@/firebase";
+import { useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
 import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  updateDoc,  where} from 'firebase/firestore';
+import { collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from 'react-router-dom';
 import { ZodType, z } from "zod";
 import AuthInput from '../components/auth/AuthInput';
@@ -12,12 +15,9 @@ import AuthModalBackButton from '../components/auth/AuthModalBackButton';
 import AuthModalHeader from '../components/auth/AuthModalHeader';
 import AuthModalRequestMessage from '../components/auth/AuthModalRequestMessage';
 import AuthPage from '../components/auth/AuthPage';
-import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
-import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
     .object({
@@ -51,7 +51,6 @@ const Login = () => {
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
     const { setAuth } = useAuthStore();
     const { mutate: paystackReferenceQuery } = useVerify();
-    const { mutate: paystackSubscriptionQuery } = useCreateSubscription();
     const subscriptionList = useGetSubscriptionCodeAndEmailToken();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {

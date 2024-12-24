@@ -276,7 +276,7 @@ const Landing = () => {
                 <div className="flex flex-col items-center">
                     {/* FIRST PAGE */}
                     
-                    <section className='relative h-screen flex flex-col justify-center items-center'>
+                    <section className='relative h-screen flex flex-col justify-center items-center overflow-hidden'>
                         {/* <MarqueeImageSliderBackground /> */}
                         <div className='relative w-full '>
                             <div className='absolute w-full inset h-full bg-[#080808] opacity-80 z-20'></div>

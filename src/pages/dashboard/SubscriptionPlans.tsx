@@ -14,8 +14,8 @@ interface SubscriptionPlansProps {
     activePage: boolean;
     currentPlan : 'free' | 'premium' | '';
     closePage: () => void;
-    userData: User;
-    refetchUserData: () => void;
+    userData?: User;
+    refetchUserData?: () => void;
 }
 
 const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, closePage, currentPlan, userData, refetchUserData }) => {

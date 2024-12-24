@@ -1,27 +1,26 @@
+import Circle from '@/components/dashboard/Circle';
+import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
+import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
+import { checkUserProfileCompletion } from '@/constants';
+import { getUserProfile } from '@/hooks/useUser';
+import { useAuthStore } from '@/store/UserId';
+import { User, UserFilters } from '@/types/user';
+import { getYearFromFirebaseDate } from '@/utils/date';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import toast from "react-hot-toast";
+import Skeleton from 'react-loading-skeleton';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfilePlan from '../../components/dashboard/ProfilePlan';
+import AddCredits from './AddCredits';
 import EditProfile from './EditProfile';
+import Preferences from './Preferences';
+import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
-import { getUserProfile } from '@/hooks/useUser';
-import { User, UserFilters } from '@/types/user';
-import Preferences from './Preferences';
 import SafetyGuide from './SafetyGuide';
-import { useAuthStore } from '@/store/UserId';
-import PreferredInterestsDesktop from './PreferredInterestsDesktop';
-import UserInterestsDesktop from './UserInterestsDesktop';
-import { getYearFromFirebaseDate } from '@/utils/date';
 import SubscriptionPlans from './SubscriptionPlans';
-import Skeleton from 'react-loading-skeleton';
-import Circle from '@/components/dashboard/Circle';
-import { checkUserProfileCompletion } from '@/constants';
-import AddCredits from './AddCredits';
-import toast from "react-hot-toast";
-import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
-import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
-import { usePaystackStore } from '@/store/Paystack';
+import UserInterestsDesktop from './UserInterestsDesktop';
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -32,10 +31,6 @@ const UserProfile = () => {
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
     const [completed, setCompleted] = useState<number>();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -67,8 +62,6 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
-
-    const { reference } = usePaystackStore();
 
     return <>
         <DashboardPageContainer>
