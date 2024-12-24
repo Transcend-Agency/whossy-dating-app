@@ -16,16 +16,17 @@
     }
 
     &__container {
-        @apply flex flex-col  rotate-[5deg];
+        @apply flex flex-col rotate-[5deg];
     }
 
     &__landing {
         @apply flex flex-col ;
-}
-}
-.marquee-landing {
-    @apply w-full flex flex-col items-center justify-center bg-black;
+    }
 
-    
+}
+
+.marquee-landing {
+    @apply w-full min-h-[100dvh] flex flex-col items-center justify-center bg-black;
+
 
 }
