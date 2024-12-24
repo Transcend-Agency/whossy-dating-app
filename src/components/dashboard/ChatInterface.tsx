@@ -159,12 +159,12 @@ const ChatInterface: FC = () => {
                                         messageStatus={chat.status === 'sent' ? chat.last_sender_id !== auth?.uid : false}
                                         profileImage={chat.user.photos?.[0]}
                                         openChat={ async () => {
-                                            const chatId = [auth?.uid, userData.uid].sort().join('_');
+                                            const chatId = [auth?.uid, userData?.uid].sort().join('_');
                                             setChatId(chatId)
-                                            await createOrFetchChat(auth?.uid, userData.uid, setChatId).then(
+                                            await createOrFetchChat(auth?.uid as string, userData?.uid as string, setChatId).then(
                                                 () => {
                                                     if (chatId != "nil") {
-                                                        navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
+                                                        navigate(`/dashboard/chat?recipient-user-id=${userData?.uid}`, {
                                                             state: {chatId, recipientUser: userData},
                                                         });
                                                         setChatId(chatId)

@@ -1,20 +1,19 @@
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/firebase';
-import { useAuthStore } from '@/store/UserId';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
 import DashboardPageContainer from '@/components/dashboard/DashboardPageContainer';
 import SelectedChat from '@/components/dashboard/SelectedChat';
-import { ChatListItem, ChatListItemLoading } from '@/components/dashboard/ChatListItem';
-import { User } from '@/types/user';
-import { Chat } from '@/types/chat';
-import { useChatIdStore } from '@/store/ChatStore';
-import { getUserProfile } from '@/hooks/useUser';
 import ViewProfile from "@/components/dashboard/ViewProfile";
-import useDashboardStore from "@/store/useDashboardStore";
+import { db } from '@/firebase';
 import useProfileFetcher from "@/hooks/useProfileFetcher";
-import {chat} from "@/assets/icons";
+import { getUserProfile } from '@/hooks/useUser';
+import { useChatIdStore } from '@/store/ChatStore';
+import useDashboardStore from "@/store/useDashboardStore";
+import { useAuthStore } from '@/store/UserId';
+import { Chat } from '@/types/chat';
+import { User } from '@/types/user';
+import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ChatDataWithUserData extends Chat {
     user: User;

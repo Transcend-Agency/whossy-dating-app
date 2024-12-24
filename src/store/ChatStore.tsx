@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface ChatId {
     chatId: string,
-    setChatId: (chatId: string) => void;
+    setChatId: (chatId: string | null) => void;
     reset: () => void;
 }
 
@@ -19,7 +19,7 @@ export const useChatIdStore = create<
   persist(
     (set) => ({
         ...initialStateChatId,
-        setChatId: (id) =>  set({chatId: id}),
+        setChatId: (id) =>  set({chatId: id as string}),
         reset: () => set(initialStateChatId),
     }),
     {

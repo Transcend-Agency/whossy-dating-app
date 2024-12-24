@@ -58,6 +58,10 @@ export type User = {
     email_token: string,
   } | null;
   is_banned?: boolean | null;
+  geography?: {
+    geoHash: string;
+    geoPoint: GeoPoint;
+}
 };
 
 export type UserFilters = {

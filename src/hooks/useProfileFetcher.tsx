@@ -38,7 +38,6 @@ function useProfileFetcher() {
 			const userInfo = userDoc.exists() ? userDoc.data() : {};
 			const userInterest = userInfo.interests || []
 
-			const usersCollection = collection(db, "users");
 			const interestsFilter: boolean = userInterest && userInterest.length > 0;
 
 			let querySnapshot = await getDocs(queryParam);

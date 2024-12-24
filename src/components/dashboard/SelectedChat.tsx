@@ -1,15 +1,19 @@
-import {ChangeEvent, FC, useEffect, useRef, useState} from "react";
-import {AnimatePresence, motion, motion as m} from "framer-motion";
-import Skeleton from "react-loading-skeleton";
+import ReportModal from "@/components/dashboard/ReportModal.tsx";
+import { formatFirebaseTimestampToTime, formatServerTimeStamps } from "@/constants";
+import { db } from "@/firebase";
+import upload from "@/hooks/upload";
+import { getUserProfile, updateUserProfile } from "@/hooks/useUser.ts";
+import { useChatIdStore } from "@/store/ChatStore";
+import { useMatchStore } from "@/store/Matches.tsx";
+import { Chat, Messages } from "@/types/chat";
+import { User } from "@/types/user";
 import EmojiPicker from "emoji-picker-react";
-import {IoCheckmarkDone} from "react-icons/io5";
 import {
     arrayRemove, arrayUnion,
     collection,
     doc,
     FieldValue,
     getDoc,
-    getDocs,
     onSnapshot,
     orderBy,
     query,
@@ -18,18 +22,13 @@ import {
     Timestamp,
     updateDoc
 } from "firebase/firestore";
-import {db} from "@/firebase";
-import {v4 as uuidv4} from "uuid";
-import upload from "@/hooks/upload";
-import {getUserProfile, updateUserProfile} from "@/hooks/useUser.ts";
-import {formatFirebaseTimestampToTime, formatServerTimeStamps} from "@/constants";
-import {useChatIdStore} from "@/store/ChatStore";
-import {Chat, Messages} from "@/types/chat";
-import {User} from "@/types/user";
+import { AnimatePresence, motion as m, motion } from "framer-motion";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import {useLocation} from "react-router-dom";
-import {useMatchStore} from "@/store/Matches.tsx";
-import ReportModal from "@/components/dashboard/ReportModal.tsx";
+import { IoCheckmarkDone } from "react-icons/io5";
+import Skeleton from "react-loading-skeleton";
+import { useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 interface SelectedChatProps {
     activePage: string
@@ -260,7 +259,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
     const updateChatDocument = async () => {
         const currentUserBlockedRecipient = await checkIfUserBlocked(currentUser.uid as string, recipientUserId as string);
         const recipientBlockedCurrentUser = await checkIfUserBlocked(recipientUserId as string, currentUser.uid as string);
-        const userBlockedStatus: boolean[] = [currentUserBlockedRecipient, recipientBlockedCurrentUser];
+        const userBlockedStatus: [boolean, boolean] = [currentUserBlockedRecipient, recipientBlockedCurrentUser];
 
         try {
             updateUserChat(chatId, () => console.log("Chat document updated!"), { user_blocked: userBlockedStatus }).catch(e => console.error(e))
