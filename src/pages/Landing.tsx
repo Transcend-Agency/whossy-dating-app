@@ -288,7 +288,7 @@ const Landing = () => {
                     <section className='relative h-screen flex flex-col justify-center items-center'>
                         {/* <MarqueeImageSliderBackground /> */}
 
-                        <div className='relative w-full '>
+                        <div className='relative w-full mb-[20rem]'>
                             <div className='absolute w-full inset-0 bg-[#080808] opacity-80 z-20'></div>
                             <MarqueeImageSlider />
                         </div>
