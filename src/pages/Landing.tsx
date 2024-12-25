@@ -68,7 +68,7 @@ const DesktopWebsiteFeatures = () => {
                             <img className='h-[94dvh] absolute z-[0] image-1' src="/assets/images/website/match.png" />
                             <img className='h-[94dvh] absolute z-[1] image-2 opacity-0' src="/assets/images/website/chat.png" />
                             <img className='h-[94dvh] absolute z-[2] image-3 opacity-0' src="/assets/images/website/explore.png" />
-                            <img className='h-[94dvh] absolute z-[3] image-4 opacity-0' src="/assets/images/website/swipe.png" />
+                            <img className='h-[94dvh] absolute z-[3] image-4 opacity-0 ' src="/assets/images/website/swipe.png" />
                         </div>
                         <div className='absolute bottom-[80px] -right-[335px] xl:-right-[420px] bottom-right-text'>
                             <div className='relative w-fit'>
@@ -142,7 +142,7 @@ const DesktopWebsiteFeatures = () => {
                 </div>
             </div>
 
-            <div className='block lg:hidden space-y-[8rem] pt-28'>
+            <div className='block lg:hidden space-y-[8rem] pt-[20rem]'>
                 <div className="h-[90dvh] relative top-[10dvh] aspect-[0.49] px-[5rem] ">
                     <div className="flex flex-col items-center justify-center bg-white">
                         <h1 className="text-[2rem] font-bold text-center">Get Matched Faster</h1>
@@ -265,6 +265,11 @@ const MarqueeImageSlider = () => {
             </Marquee>
             <Marquee direction='right' speed={20}>
                 {imageNumbers.slice(30, 40).map(image => (
+                    <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
+                ))}
+            </Marquee>
+            <Marquee speed={20}>
+                {imageNumbers.slice(0, 10).map(image => (
                     <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
                 ))}
             </Marquee>
