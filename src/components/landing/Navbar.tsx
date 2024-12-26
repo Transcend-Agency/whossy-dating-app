@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useCycle } from "framer-motion";
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [mobileNav, toggleMobileNav] = useCycle(false, true);
@@ -58,30 +58,30 @@ const Navbar = () => {
               className="fixed inset-0 bg-white text-black flex flex-col items-start pt-20 space-y-8 z-30"
             >
               <button onClick={() => toggleMobileNav()} ref={buttonRef} className="absolute top-8 right-8"><img src={"/assets/icons/close-button.svg"} alt="close-button" /></button>
-              
 
 
-                <div className="flex flex-col items-start pl-10 space-y-12">
-                  <button onClick={() => navigate("/auth/login")} className="text-[2.4rem]">
-                    LOGIN
-                  </button>
-                  <button onClick={() =>  navigate("/auth/create-account")} className="text-[2.4rem]">
-                    CREATE ACCOUNT
-                  </button>
+
+              <div className="flex flex-col items-start pl-10 space-y-12">
+                <button onClick={() => navigate("/auth/login")} className="text-[2.4rem]">
+                  LOGIN
+                </button>
+                <button onClick={() => navigate("/auth/create-account")} className="text-[2.4rem]">
+                  CREATE ACCOUNT
+                </button>
+              </div>
+
+              <div className="space-y-[2rem] fixed bottom-12 pl-10 flex flex-col">
+                <div>
+                  <a href="#app-store">
+                    <img src={'/assets/icons/AppleStore.svg'} alt="App Store" />
+                  </a>
                 </div>
-              
-                <div className="space-y-[2rem] fixed bottom-12 pl-10 flex flex-col">
-                  <div>
-                    <a href="#app-store">
-                      <img src={'/assets/icons/AppleStore.svg'} alt="App Store" />
-                    </a>
-                  </div>
-                  <div>
-                    <a href="#play-store">
-                      <img src={'/assets/icons/Play-Store.svg'} alt="Play Store" />
-                    </a>
-                  </div>
+                <div>
+                  <a href="#play-store">
+                    <img src={'/assets/icons/Play-Store.svg'} alt="Play Store" />
+                  </a>
                 </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -90,10 +90,12 @@ const Navbar = () => {
       {/* DESKTOP HEADER */}
       <header className="relative z-50 bg-red text-white max-w-[60rem] m-[4rem] rounded-[0.8rem] hidden lg:block">
         <div className="container flex justify-between items-center py-[1.2rem] px-[2.4rem]">
-          <div className="flex items-center">
-            <img src={"/assets/icons/logo.svg"} alt="Logo" className="mr-[0.8rem]" />
-            <p className="text-[1.6rem] font-black">whossy</p>
-          </div>
+          <Link to="/">
+            <div className="flex items-center">
+              <img src={"/assets/icons/logo.svg"} alt="Logo" className="mr-[0.8rem]" />
+              <p className="text-[1.6rem] font-black">whossy</p>
+            </div>
+          </Link>
 
           <div className="h-[3rem]" style={{ borderLeft: '1px solid #FFFFFF' }}></div>
 

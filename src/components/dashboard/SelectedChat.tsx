@@ -54,7 +54,6 @@ export const checkIfUserBlocked = async (userId: string, targetUserId: string): 
 
 const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,currentUser}) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
-
     const [text, setText] = useState<string>('');
     const [chatModalOpen, setChatModalOpen] = useState<boolean>(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
@@ -138,18 +137,11 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             } catch (error) {
                 console.log("Error getting document:", error);
             }
-            // finally {
-            //     if (isMounted) setIsLoading(false);
-            // }
         };
-
 
         if (recipientUserId) {
             updateChatDocument().catch(e => console.error(e))
-            // fetchRecipientUserData().catch(e => console.log(e))
             getUserDetails().then(
-                    // () => fetchRecipientUserData().catch(e => console.error(e))
-            ).then(
                 () => handleReadReceipts().then(() => setIsLoading(false))
             )
         }
@@ -158,19 +150,6 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             isMounted = false;
         };
     }, [recipientUserId]);
-    //
-    // const fetchRecipientUserData = async () => {
-    //     try {
-    //         if (chatId != null) {
-    //             const data = await getUserProfile("users", recipientUserId as string);
-    //             if (data) {
-    //                 setRecipientUser(data);
-    //             }
-    //         }
-    //     } catch (err) {
-    //         console.log("Error fetching user data:", err);
-    //     }
-    // };
 
     useEffect(() => {
         if (!chatId || !currentUser.uid || activePage !== "selected-chat") return;
