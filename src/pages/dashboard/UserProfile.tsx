@@ -52,7 +52,8 @@ const UserProfile = () => {
 
     const fetchUserFilters = async () => {
         const data = await getUserProfile("filters", auth?.uid as string) as UserFilters;
-        setUserFilters(data) }
+        setUserFilters(data)
+    }
 
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
@@ -92,13 +93,13 @@ const UserProfile = () => {
                                 </p>
                             ) : ( <Skeleton width='21rem' height='2.9rem' /> )}
                         </div>
-                        { completed ?
+                        {completed ?
                             <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") :  setActivePage('edit-profile')}} className='user-profile__profile-details__completion-status cursor-pointer'>
                                 {Math.ceil(completed / 19 * 100)}% Complete
                             </div> :
                             <div className='mt-[1.2rem] flex justify-center'>
                                 <Skeleton width='14rem' height='3.3rem' />
-                            </div> }
+                            </div>}
                     </section>
                     <div className='user-profile__banner user-profile__banner--info'>
                         <img src="/assets/icons/notification-alert.svg" alt={``} />
@@ -118,7 +119,7 @@ const UserProfile = () => {
                 </div>
                 <section className='user-profile__plans'>
                     <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth={30000} benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setCurrentPlan('free'); setActivePage('subscription-plans'); console.log(currentPlan) }} />
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
                 </section>
 
             </motion.div>

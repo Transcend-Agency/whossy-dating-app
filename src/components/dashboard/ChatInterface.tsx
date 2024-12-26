@@ -93,7 +93,7 @@ const ChatInterface: FC = () => {
                         );
 
                         if (!recipientData || recipientData.length === 0) {
-                            return null; // Skip this chat if no recipient data is found
+                            return null;
                         }
 
                         const recipientUserData = await fetchUserData(recipientData[0]);
@@ -188,7 +188,6 @@ const ChatInterface: FC = () => {
                                         chatUnlocked={chat.is_unlocked}
                                         openChat={async () => {
                                             if(chat.user.uid){
-                                                // const chatId = [auth?.uid, userData.uid as string].sort().join('_');
                                                 const chatId = chat.participants.sort().join('_')
                                                 setChatId(chatId)
                                                 await createOrFetchChat(auth?.uid as string, chat.user.uid as string, setChatId).then(
