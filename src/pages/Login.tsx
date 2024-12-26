@@ -16,7 +16,7 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
+import { useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
 import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
@@ -51,7 +51,6 @@ const Login = () => {
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
     const { setAuth } = useAuthStore();
     const { mutate: paystackReferenceQuery } = useVerify();
-    const { mutate: paystackSubscriptionQuery } = useCreateSubscription();
     const subscriptionList = useGetSubscriptionCodeAndEmailToken();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {

@@ -1,4 +1,4 @@
-import {GeoPoint, Timestamp} from "firebase/firestore";
+import {GeoPoint, Timestamp } from "firebase/firestore";
 
 export type User = {
   bio?: string | null;
@@ -50,6 +50,10 @@ export type User = {
   location?: GeoPoint | null;
   latitude?: number | null;
   longitude?: number | null;
+  geography?: {
+    geohash: string,
+    geopoint: GeoPoint
+  };
   credit_balance?: number | null;
   amount_paid_in_total?: number | null;
   paystack?: {

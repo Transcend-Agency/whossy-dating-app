@@ -12,7 +12,7 @@ export type Chat = {
     unlock_time: FieldValue | { seconds: number, nanoseconds: number };
     expiration_time: FieldValue | { seconds: number, nanoseconds: number };
     is_unlocked: boolean;
-    user_blocked: [boolean, boolean]
+    user_blocked: boolean[]
 };
 
 export type Messages = {

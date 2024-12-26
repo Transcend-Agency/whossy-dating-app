@@ -38,7 +38,6 @@ function useProfileFetcher() {
 			const userInfo = userDoc.exists() ? userDoc.data() : {};
 			const userInterest = userInfo.interests || []
 
-			const usersCollection = collection(db, "users");
 			const interestsFilter: boolean = userInterest && userInterest.length > 0;
 
 			let querySnapshot = await getDocs(queryParam);
@@ -98,6 +97,7 @@ function useProfileFetcher() {
 				const targetGender = user.meet === 0 ? "Male" : "Female";
 				q = query(q_base,
 					where("gender", "==", targetGender),
+					// where("meet","in", [2, user.meet === 0 ? 1 : 0])
 				);
 			} else {
 				throw new Error("Invalid meet value provided.");

@@ -10,17 +10,29 @@ import useDashboardStore from "@/store/useDashboardStore";
 import ViewProfile from "./ViewProfile";
 import useProfileFetcher from "@/hooks/useProfileFetcher";
 import SubscriptionPlans from "@/pages/dashboard/SubscriptionPlans.tsx";
+import {User} from "@/types/user.ts";
+import { getUserProfile } from '@/hooks/useUser';
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match' | 'plans'>('like')
     const [likes] = useState([1, 2, 3, 4, 5])
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
-
+    const [userData, setUserData] = useState<User>();
     const { auth, user } = useAuthStore()
     const { matches, loading: matchesLoading } = useSyncUserMatches(auth?.uid as string)
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
     const { profiles,  selectedProfile,  setSelectedProfile } = useDashboardStore()
     const { refreshProfiles } = useProfileFetcher()
+
+    const fetchUserData = async () => {
+        try {
+            const data = await getUserProfile("users", auth?.uid as string) as User;
+            setUserData(data);
+        } catch (err) {
+            console.log("Error fetching user data:", err);
+        }
+    };
+    const refetchUserData = async () => { await fetchUserData() }
 
     useEffect(() => {
         if(location.pathname === "/dashboard/matches"){
@@ -30,6 +42,7 @@ const MatchesPage = () => {
             console.log("I am getting here, profile:", selectedProfile)
             return () => setSelectedProfile(null)
         }
+        fetchUserData().catch(err => console.log(err));
     }, [])
 
     const LikesEmptyState = () => {
@@ -164,7 +177,12 @@ const MatchesPage = () => {
 
                     </motion.div>}
                     {activePage == 'plans' &&
-                        <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'plans'} closePage={() => setActivePage('like')} /> }
+                        <SubscriptionPlans currentPlan={currentPlan}
+                                           activePage={activePage == 'plans'}
+                                           closePage={() => setActivePage('like')}
+                                           userData={userData as User}
+                                           refetchUserData={refetchUserData}
+                        /> }
                 </AnimatePresence>
             </DashboardPageContainer> }
             {selectedProfile &&
