@@ -9,7 +9,6 @@ import {
     doc,
     FieldValue,
     getDoc,
-    getDocs,
     onSnapshot,
     orderBy,
     query,
@@ -21,7 +20,7 @@ import {
 import {db} from "@/firebase";
 import {v4 as uuidv4} from "uuid";
 import upload from "@/hooks/upload";
-import {getUserProfile, updateUserProfile} from "@/hooks/useUser.ts";
+import { updateUserProfile} from "@/hooks/useUser.ts";
 import {formatFirebaseTimestampToTime, formatServerTimeStamps} from "@/constants";
 import {useChatIdStore} from "@/store/ChatStore";
 import {Chat, Messages} from "@/types/chat";
@@ -45,7 +44,6 @@ export const checkIfUserBlocked = async (userId: string, targetUserId: string): 
             const data = userDoc.data() as User
             const blockedList: string[] = data.blockedIds || [];
 
-            console.log("Blocked List and data: ", blockedList, data)
             return blockedList.includes(targetUserId);
         }
     } catch (error) {
@@ -55,7 +53,8 @@ export const checkIfUserBlocked = async (userId: string, targetUserId: string): 
 };
 
 const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,currentUser}) => {
-    const [_loading, setLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
     const [text, setText] = useState<string>('');
     const [chatModalOpen, setChatModalOpen] = useState<boolean>(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
@@ -68,7 +67,6 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
     const [readReceiptDisabledAt, setReadReceiptDisabledAt] = useState<Date | null>(null);
     const [openEmoji, setOpenEmoji] = useState(false);
     const [chats, setChats] = useState<Messages[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [recipientDetails, setRecipientDetails] = useState<{
         name: string | null,
         profilePicture: string | null,
@@ -87,15 +85,19 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
     //getting recipient user's name and profile picture from query params
     const queryParams = new URLSearchParams(location.search);
-    const recipientUserId = queryParams.get('recipient-user-id');
+    const recipientUserId = queryParams.get('recipient-user-id') as string;
 
     const location2 = useLocation();
-    const state = location2.state as { chatId: string; recipientUser: User };
+    const state = location2.state as { chatId: string; recipientUser: User; chatUnlocked: boolean };
+    const checkChatUnlocked = state?.chatUnlocked ?? false;
 
 // Initialize chatId from state
     useEffect(() => {
         if (state?.chatId) {
             setChatId(state.chatId);
+        }
+        if(state?.recipientUser){
+            setRecipientUser(state.recipientUser as User)
         }
     }, [state]);
 
@@ -114,9 +116,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
     useEffect(() => {
         let isMounted = true;
-        setLoading(true)
-
-        console.log("Recipient User ID", recipientUserId);
+        setIsLoading(true)
 
         const getUserDetails = async () => {
             setIsLoading(true);
@@ -126,8 +126,6 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
                 if (docSnap.exists() && isMounted) {
                     const data = docSnap.data();
-                    console.log("Fetched User Data:", data);
-                    setRecipientUser(data as User);
                     setRecipientDetails({
                         name: data?.first_name || null,
                         profilePicture: (data?.photos && Array.isArray(data.photos) && data.photos.length > 0) ? data.photos[0] : null,
@@ -139,51 +137,40 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                 }
             } catch (error) {
                 console.log("Error getting document:", error);
-            } finally {
-                if (isMounted) setIsLoading(false);
             }
+            // finally {
+            //     if (isMounted) setIsLoading(false);
+            // }
         };
 
 
         if (recipientUserId) {
-            // updateChatDocument().catch(e => console.error(e))
+            updateChatDocument().catch(e => console.error(e))
+            // fetchRecipientUserData().catch(e => console.log(e))
             getUserDetails().then(
-                    () => fetchRecipientUserData().then(
-                        () =>  updateChatDocument().then(
-                            () => handleReadReceipts().then(
-                                () => setLoading(false)
-                            ).catch(e => console.error(e))
-                        ).catch(e => console.error(e))
-                    ).catch(e => console.error(e))
-            ).catch(e => console.error(e))
+                    // () => fetchRecipientUserData().catch(e => console.error(e))
+            ).then(
+                () => handleReadReceipts().then(() => setIsLoading(false))
+            )
         }
 
         return () => {
             isMounted = false;
         };
     }, [recipientUserId]);
-
-    useEffect(() => {
-        console.log("Recipient User Updated:", recipientUser);
-    }, [recipientUser]);
-
-    useEffect(() => {
-        console.log("Recipient Details Updated:", recipientDetails);
-    }, [recipientDetails]);
-
-    const fetchRecipientUserData = async () => {
-        console.log("Chat ID:", chatId);
-        console.log("Recipient User before fetching:", recipientUser);
-        try {
-            const data = await getUserProfile("users", chatId.split('_')[1] as string);
-            console.log("Fetched data:", data);
-            if (data) {
-                setRecipientUser(data); // State update is asynchronous
-            }
-        } catch (err) {
-            console.log("Error fetching user data:", err);
-        }
-    };
+    //
+    // const fetchRecipientUserData = async () => {
+    //     try {
+    //         if (chatId != null) {
+    //             const data = await getUserProfile("users", recipientUserId as string);
+    //             if (data) {
+    //                 setRecipientUser(data);
+    //             }
+    //         }
+    //     } catch (err) {
+    //         console.log("Error fetching user data:", err);
+    //     }
+    // };
 
     useEffect(() => {
         if (!chatId || !currentUser.uid || activePage !== "selected-chat") return;
@@ -259,25 +246,30 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
     const updateChatDocument = async () => {
         const currentUserBlockedRecipient = await checkIfUserBlocked(currentUser.uid as string, recipientUserId as string);
-        const recipientBlockedCurrentUser = await checkIfUserBlocked(recipientUserId as string, currentUser.uid as string);
+        const recipientBlockedCurrentUser = await checkIfUserBlocked(state.recipientUser.uid as string, currentUser.uid as string);
         const userBlockedStatus: boolean[] = [currentUserBlockedRecipient, recipientBlockedCurrentUser];
 
+        if(!chatId) return
         try {
+            const chatId = [currentUser.uid, state.recipientUser.uid].sort().join('_')
+
             updateUserChat(chatId, () => console.log("Chat document updated!"), { user_blocked: userBlockedStatus }).catch(e => console.error(e))
-
             const chatDocRef = doc(db, "chats", chatId);
-            const chatDocSnap = await getDoc(chatDocRef);
-
-            if (chatDocSnap.exists()) {
-                const chatData = chatDocSnap.data() as Chat;
-                setCurrentChat(chatData);
-                setIsBlocked(currentUserBlockedRecipient)
-            } else {
-                console.warn("Chat document does not exist.");
+            if (chatDocRef) {
+                const chatDocSnap = await getDoc(chatDocRef);
+                if (chatDocSnap.exists()) {
+                    const chatData = chatDocSnap.data() as Chat;
+                    setCurrentChat(chatData);
+                    setIsBlocked(currentUserBlockedRecipient)
+                } else {
+                    console.warn("Chat document does not exist.");
+                }
             }
+
             updateChatId(chatId);
-        } catch (error) {
-            console.error("Error updating or fetching chat:", error);
+        } catch (e) {
+            console.log("Still updating chat", e);
+            // console.error("Error updating or fetching chat:", error);
         }
     };
 
@@ -361,7 +353,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
         // const chats = await getDocs(collection(db, "chats"));
         // const recipientsId: string[] = [];
         let imgUrl: string | null = null;
-
+        if(!chatId) return
         if(!await isChatUnlocked(chatId) && !currentUser.is_premium){
             toast.error("Chat Unlock Duration Expired")
             setChatUnlocked(false)
@@ -437,29 +429,24 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
     };
 
     const determineReadReceipt = async () => {
-        try {
-            if (!chatUnlocked) {
-                console.log("Chat is locked. Read receipts are unavailable.");
-                return false;
-            }
-
-            if (!recipientUser || !currentUser) {
-                console.log("Could not fetch both user details.");
-                return null;
-            }
-
-            const userReadReceipts = currentUser.user_settings?.read_receipts || false;
-            const recipientReadReceipts = recipientUser.user_settings?.read_receipts || false;
-
-            if (!userReadReceipts || !recipientReadReceipts) {
-                setReadReceiptDisabledAt(new Date());
-            }
-
-            return userReadReceipts && recipientReadReceipts;
-        } catch (error) {
-            console.error("Error determining read receipts:", error);
-            throw error;
+        if (!state.recipientUser || !currentUser) {
+            console.log("Could not fetch both user details.");
+            return null;
         }
+
+        if (!state.chatUnlocked) {
+            console.log("Chat is locked. Read receipts are unavailable.");
+            return false;
+        }
+
+        const userReadReceipts = currentUser.user_settings?.read_receipts || false;
+        const recipientReadReceipts = state.recipientUser.user_settings?.read_receipts || false;
+
+        if (!userReadReceipts || !recipientReadReceipts) {
+            setReadReceiptDisabledAt(new Date());
+        }
+
+        return userReadReceipts && recipientReadReceipts;
     };
 
     const handleReadReceipts = async () => {
@@ -521,7 +508,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                         <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{ borderBottom: '1px solid #F6F6F6' }}>
                             <button className="settings-page__title__left gap-x-1" onClick={closePage}>
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``}/>
-                                { !isLoading ? recipientDetails.profilePicture ?
+                                {!isLoading ? recipientDetails.profilePicture ?
                                         <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={recipientDetails.profilePicture} alt="profile picture"/> :
                                         <div className="rounded-full size-[4.8rem] bg-[#D3D3D3] flex justify-center items-center font-semibold mr-2">
                                             {recipientDetails.name?.charAt(0)}
@@ -560,7 +547,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                           <section className="text-[1.6rem] text-[#121212] flex-1 px-8 flex flex-col overflow-y-scroll pb-20 no-scrollbar">
                               <section className="messages flex flex-col gap-y-6 h-[calc(100vh-32.4rem)] overflow-y-scroll no-scrollbar relative">
                                   <div className={`max-w-[70%] flex`} key={'no-chat-yet'}>
-                                      {!chatUnlocked && currentUser.is_premium != true && chats.length === 0 && (
+                                      {!isLoading && !checkChatUnlocked && currentUser.is_premium != true && chats.length === 0 && (
                                           <div className="overlay backdrop-blur-sm absolute inset-0 rounded-md bg-black/25 flex items-center pt-[24px] justify-center z-50">
                                               <div className={`grid p-4 items-center text-[2rem] bg-[#ff1f1] text-white rounded-md font-bold mx-[50px] w-[300px] text-center gap-8`}>
                                                   <img className={`size-[50px] mx-auto`} src="/assets/icons/no-message.svg" alt={``} />
@@ -571,8 +558,10 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                   <div className={`flex justify-center gap-4 items-center`}>
                                                       <button onClick={(e) => {
                                                           e.preventDefault();
-                                                          unlockChat(chatId)
-                                                              .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
+                                                          if(chatId) {
+                                                              unlockChat(chatId)
+                                                                  .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
+                                                          }
                                                       }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>Use Credits</button>
                                                   </div>
                                               </div>
@@ -581,7 +570,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                   </div>
                                 {chats && Array.isArray(chats) && chats?.map((message: Messages, i: number) =>
                                     <div className={`max-w-[70%] flex ${message.sender_id === currentUser?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}>
-                                        {!chatUnlocked && currentUser.is_premium != true && (
+                                        {!isLoading && !checkChatUnlocked && currentUser.is_premium != true && (
                                             <div className="overlay backdrop-blur-sm absolute inset-0 rounded-md bg-black/25 flex items-center pt-[24px] justify-center z-50">
                                                 <div className={`grid p-4 items-center text-[2rem] bg-[#ff1f1] text-white rounded-md font-bold mx-[50px] w-[300px] text-center gap-8`}>
                                                     <img className={`size-[50px] mx-auto`} src="/assets/icons/no-message.svg" alt={``} />
@@ -592,8 +581,10 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                     <div className={`flex justify-center gap-4 items-center`}>
                                                         <button onClick={(e) => {
                                                             e.preventDefault();
-                                                            unlockChat(chatId)
-                                                                .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
+                                                            if(chatId) {
+                                                                unlockChat(chatId)
+                                                                    .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
+                                                            }
                                                         }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>Use Credits</button>
                                                     </div>
                                                 </div>

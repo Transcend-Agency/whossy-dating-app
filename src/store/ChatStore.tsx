@@ -3,8 +3,8 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface ChatId {
-    chatId: string,
-    setChatId: (chatId: string) => void;
+    chatId: string | null,
+    setChatId: (chatId: string | null) => void;
     reset: () => void;
 }
 

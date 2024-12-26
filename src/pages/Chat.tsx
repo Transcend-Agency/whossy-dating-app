@@ -14,7 +14,6 @@ import { getUserProfile } from '@/hooks/useUser';
 import ViewProfile from "@/components/dashboard/ViewProfile";
 import useDashboardStore from "@/store/useDashboardStore";
 import useProfileFetcher from "@/hooks/useProfileFetcher";
-import {chat} from "@/assets/icons";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -24,7 +23,7 @@ const ChatPage = () => {
     const [activePage, setActivePage] = useState<'chats' | 'selected-chat'>('chats');
     const navigate = useNavigate();
     const location = useLocation();
-    const { setChatId, chatId } = useChatIdStore();
+    const { setChatId } = useChatIdStore();
     const { auth } = useAuthStore();
     const currentUserId = auth?.uid as string;
     const { selectedProfile, setSelectedProfile, profiles } = useDashboardStore();
@@ -35,7 +34,6 @@ const ChatPage = () => {
 
     const fetchLoggedUserData = async () => {
         setChatId(null)
-        console.log("Setting Chat ID:", chatId);
         try {
             const data = await getUserProfile("users", currentUserId) as User;
             setCurrentUser(data);
@@ -46,7 +44,6 @@ const ChatPage = () => {
 
     const fetchUserData = async (userId: string) => {
         if (!userId) {
-            console.error("Invalid userId:", userId);
             return null;
         }
 
@@ -147,7 +144,9 @@ const ChatPage = () => {
         const newChatId = `${chat.participants.sort().join('_')}`
         console.log("Setting Chat ID:", newChatId);
         setChatId(newChatId);
-        navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`);
+        navigate(`/dashboard/chat?recipient-user-id=${chat.user.uid}`, {
+            state: {newChatId, recipientUser: chat.user, chatUnlocked: chat.is_unlocked},
+        });
     };
 
     return (
