@@ -1,10 +1,11 @@
+import { Timestamp } from "firebase/firestore";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface OnboardingData {
   "relationship-preference"?: number | null;
   "gender-preference"?: number | null;
-  "date-of-birth"?: Date | null | string;
+  "date-of-birth"?: Timestamp | Date | null | string;
   "distance-search"?: number;
   interests?: string[];
   education?: number | null;
@@ -44,8 +45,7 @@ const initialState = {
 
 export const useOnboardingStore = create<
   Onboarding,
-  [["zustand/persist", Onboarding]]
->(
+  [["zustand/persist", Onboarding]]>(
   persist(
     (set) => ({
       ...initialState,

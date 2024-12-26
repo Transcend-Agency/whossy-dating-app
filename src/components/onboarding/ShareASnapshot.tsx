@@ -23,13 +23,22 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   const { photos, reset: resetPhoto } = usePhotoStore();
   const { "onboarding-data": data, reset } = useOnboardingStore();
 
+  const userSettings = {
+    incoming_messages: true,
+    public_search: true,
+    read_receipts: true,
+    online_status: true
+  }
+
   useEffect(() => {
+    console.log(auth, userSettings)
     if (auth?.has_completed_onboarding) {
       navigate('/dashboard/explore');
     }
   }, [auth?.has_completed_onboarding]);
 
   const uploadToFirestore = async () => {
+    console.log(auth?.uid)
     console.log("Loading...");
 
     if (!auth?.uid) {
@@ -40,6 +49,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
 
     try {
       console.log(auth.uid)
+      console.log(data['date-of-birth'])
       const userDocRef = doc(db, "users", auth.uid);
 
       // Completing the user's profile update in Firestore
@@ -57,14 +67,17 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         smoke: data["smoking-preference"],
         workout: data["workout-preference"],
         uid: auth.uid,
-        isPremium: false,
+        is_premium: false,
+        amount_paid_in_total: 0,
+        paystack: {reference: ""},
         created_at: serverTimestamp(),
-        blockedIds: arrayUnion()
-      });
-
-      // Updating the `has_completed_onboarding` flag
-      await updateDoc(userDocRef, {
-        has_completed_onboarding: true
+        blockedIds: arrayUnion(),
+        credit_balance: 0,
+        is_banned: false,
+        has_completed_onboarding: true,
+        user_settings: {
+          ...userSettings
+        },
       });
 
       toast.success("Account has been created successfully 🚀");

@@ -23,7 +23,10 @@ const HelpModal: FC<HelpModalProps> = ({ show, onCloseModal }) => {
   const [message, setMessage] = useState<string>("")
 
   const requestHelp = async () => {
-    if (!message.trim()) return; // Avoid sending empty messages
+    if (!message.trim()) {
+      toast.error("No message")
+      return
+    } // Avoid sending empty messages
 
     setLoading(true);
     try {

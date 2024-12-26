@@ -123,7 +123,7 @@
         @apply min-w-full h-full object-cover absolute;
     }
     &__overlay {
-        @apply w-full h-full bg-gradient-to-b from-[#08080800] from-[50%] to-[75%] to-[#080808] absolute grid grid-cols-2 gap-[1rem];
+        @apply w-full h-full bg-gradient-to-b from-[#08080800] from-[60%] to-[80%] to-[#080808] absolute grid grid-cols-2 gap-[1rem];
         @include media('<=1023px') {
             @apply rounded-b-[2.4rem] overflow-hidden;
         }
@@ -165,6 +165,10 @@
             .active-badge {
                 @apply text-[#09B45A] bg-[#103B24] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem] text-[1.8rem];
                 border: 1px solid #09B45A;
+            }
+            .non-active-badge {
+                @apply text-[#6B7280] bg-[#1F2937] p-[0.8rem] w-fit rounded-[0.6rem] mr-[0.8rem] text-[1.8rem];
+                border: 1px solid #6B7280;
             }
             .location {
                 @apply text-white opacity-80 text-[1.6rem];

@@ -66,9 +66,16 @@ export const useMatchStore = create<MatchStore>((set) => ({
             const populateUserData = async (match: Match) => {
                 const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
                 const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
+                if (!matchedUserDoc.exists()) {
+                    return null;
+                }
+                const matchedUserData = matchedUserDoc.data() as User;
+                if (matchedUserData.is_banned) {
+                    return null;
+                }
                 return {
                     ...match,
-                    matchedUserData: matchedUserDoc.exists() ? matchedUserDoc.data() : null,
+                    matchedUserData
                 };
             };
 
@@ -78,7 +85,9 @@ export const useMatchStore = create<MatchStore>((set) => ({
             ]);
 
             const uniqueMatchIds = new Set<string>();
-            const filteredMatches = allMatches.filter((match) => {
+            const filteredMatches = allMatches
+                .filter(match => match != null)
+                .filter((match) => {
                 const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
                 if (blockedUsers.includes(matchedUserId)) {
                     return false;

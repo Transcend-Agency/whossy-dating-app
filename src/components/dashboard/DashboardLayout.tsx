@@ -1,7 +1,6 @@
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
-import { User } from '@/types/user';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import {collection, getDocs } from 'firebase/firestore';
 import { AnimatePresence } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { IoIosNotifications } from "react-icons/io";
@@ -11,32 +10,46 @@ import DashboardNavIcon from './DashboardNavIcon';
 import ShortcutControls from './ShortcutControls';
 import MatchesSide from "@/components/dashboard/MatchesSide.tsx";
 
+type Notification = {
+    id: string;
+    likedId: string;
+    likerId: string;
+    likerName: string;
+    likerProfilePicture: string;
+    seen: boolean;
+    timestamp: string;
+    title: string;
+};
+
 const Dashboard: React.FC = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const [newNotification, setNewNotification] = useState(false);
-
+    const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(0);
     const { auth } = useAuthStore();
 
     useEffect(() => {
+        fetchNotifications()
+    }, []);
 
-        const userDocRef = doc(db, "users", auth?.uid as string);
+    const fetchNotifications = async () => {
+        if (!auth?.uid) {
+            console.error("User is not authenticated");
+            return;
+        }
+        const notificationsRef = collection(db, `users/${auth.uid}/notifications`);
+        try {
+            const querySnapshot = await getDocs(notificationsRef);
+            const notifications = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Notification[];
+            const unreadNotifications = notifications.filter(notifications => notifications.seen == false).length
+            setUnseenNotificationsCount(unreadNotifications);
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+        }
+    };
 
-        const unSub = onSnapshot(userDocRef, async () => {
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists()) {
-                const data = userDocSnap.data() as User;
-                if (data.notifications !== undefined && data.notifications !== null) {
-                    setNewNotification(data.notifications)
-                }
-            }
-        });
-
-        return () => {
-            unSub();
-        };
-    }, [auth?.uid])
     return <>
         <div className='dashboard-layout hidden lg:block'>
             <ChatInterface />
@@ -58,13 +71,16 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className='dashboard-layout__top-nav__control-icons-container relative' onClick={() => navigate('/dashboard/notification')}>
                         <IoIosNotifications className={`size-[2.8rem] hover:scale-[1.02] active:scale-[0.95] cursor-pointer ${pathname === '/dashboard/notification' ? 'text-[#F2243E]' : 'text-[#8A8A8E]'}`} />
-                        {!newNotification && <div className='bg-red-700 absolute size-[0.8rem] rounded-full right-[1px] ' />}
+                        {unseenNotificationsCount > 0 &&
+                            <div className='bg-[#ff0000]/70 absolute font-medium size-[1.6rem] text-[1.3rem] rounded-full right-[1px] text-white'>
+                                <p className={`text-center pt-[1.2px]`}>{unseenNotificationsCount}</p>
+                            </div>}
                     </div>
                 </div>
             </nav>
             <main className='dashboard-layout__main-app'>
                 <MatchesSide />
-                <Outlet />
+                <Outlet/>
             </main>
         </div>
         <div className="h-screen flex flex-col lg:hidden">
