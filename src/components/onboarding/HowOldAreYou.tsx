@@ -33,6 +33,7 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
       data["date-of-birth"] !== null &&
       data["date-of-birth"] !== ""
     ) {
+        // @ts-ignore
       const the_date = new Date(data["date-of-birth"]);
       setBirthDate({
         day: (the_date.getDate() - 1).toString(),
@@ -63,7 +64,7 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
               (value === "" || (Number(value) >= 1 && Number(value) <= 31))
             ) {
               setBirthDate((prev) => ({ ...prev, day: value }));
-            } else {toast.error("enter a valid day")}
+            } else {toast.error("Enter a valid month (1 - 31)")}
           }}
         />
         <input
@@ -80,7 +81,7 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
               (value === "" || (Number(value) >= 1 && Number(value) <= 12))
             ) {
               setBirthDate((prev) => ({ ...prev, month: value }));
-            } else {toast.error("enter a valid month")}
+            } else {toast.error("Enter a valid month (1 - 12)")}
           }}
         />
         <input
@@ -100,11 +101,11 @@ const HowOldAreYou: React.FC<OnboardingProps> = ({ advance, goBack }) => {
           advance={() => {
             advance();
             updateOnboardingData({
-              "date-of-birth": new Date(
-                parseInt(birth_date.year),
-                parseInt(birth_date.month) - 1,
-                parseInt(birth_date.day)
-              ),
+                "date-of-birth": new Date(
+                        parseInt(birth_date.year),
+                        parseInt(birth_date.month) - 1,
+                        parseInt(birth_date.day)
+                ),
             });
           }}
           selected={active}

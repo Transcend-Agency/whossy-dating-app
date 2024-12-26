@@ -2,11 +2,9 @@ import { useGSAP } from '@gsap/react';
 import { motion } from "framer-motion";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import Footer from '../components/landing/Footer';
 import Navbar from '../components/landing/Navbar';
-import MarqueeImageSliderBackground from '@/components/auth/MarqueeImageSliderBackground';
 import Marquee from 'react-fast-marquee';
 
 const DesktopWebsiteFeatures = () => {
@@ -285,7 +283,7 @@ const Landing = () => {
                 <div className="flex flex-col items-center">
                     {/* FIRST PAGE */}
                     
-                    <section className='relative h-screen flex flex-col justify-center items-center'>
+                    <section className='relative h-screen flex flex-col justify-center items-center overflow-hidden'>
                         {/* <MarqueeImageSliderBackground /> */}
 
                         <div className='relative w-full mb-[20rem]'>
@@ -309,7 +307,7 @@ const Landing = () => {
                             </div>
     
                             <div className="mt-4">
-                                <p className="text-[1.6rem] text-white">Don't have an account? <a className="text-[1.6rem] font-bold underline" onClick={() => navigate("/auth/create-account")}>Create Account</a></p>
+                                <p className="text-[1.6rem] text-white">Don't have an account? <a className="text-[1.6rem] font-bold underline cursor-pointer" onClick={() => navigate("/auth/create-account")}>Create Account</a></p>
                             </div>
                         </div>
 

@@ -20,6 +20,8 @@ import { db } from "@/firebase";
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from '../types/auth';
 import { useAuthStore } from '@/store/UserId';
+// import firebase from "firebase/compat";
+// import auth = firebase.auth;
 
 interface AccountSetupFormPage {
     advance: () => void
@@ -210,52 +212,63 @@ const FillInGender: React.FC<AccountSetupFormPage> = ({ goBack, pageKey }) => {
     const { setAuth } = useAuthStore();
 
     const onFinishCreateAccount = async (data: any) => {
-        setGender(data.gender)
+        setGender(data.gender);
         try {
-            setLoading(true)
-            if (auth_provider == 'phone') {
+            setLoading(true);
+
+            if (auth_provider === 'phone') {
                 await setDoc(doc(db, "users", id), {
                     uid: id,
                     auth_provider: "phone",
-                    email: auth.currentUser?.email ? auth.currentUser?.email : email,
+                    email: auth.currentUser?.email || email,
                     has_completed_account_creation: true,
                     has_completed_onboarding: false,
                     ...getAccountSetupData(),
                 });
-                // await updateEmail(auth.currentUser!, email)
+
                 await verifyBeforeUpdateEmail(auth.currentUser!, email, {
-                    url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/login`
-                })
-                navigate('/auth/email-verification')
+                    url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/finalize-setup`,
+                });
+
+                navigate('/auth/email-verification');
             } else {
                 const userRef = doc(db, "users", id);
-                const user = await getDoc(userRef)
+                const user = await getDoc(userRef);
+
                 await updateDoc(userRef, {
                     ...getAccountSetupData(),
                     gender: data.gender,
                     has_completed_account_creation: true,
                 });
+
                 await updateProfile(auth.currentUser!, {
-                    displayName: `${getAccountSetupData().first_name} ${getAccountSetupData().last_name}`
-                })
+                    displayName: `${getAccountSetupData().first_name} ${getAccountSetupData().last_name}`,
+                });
+
+                await auth.currentUser?.reload();
+
                 if (!auth.currentUser?.emailVerified) {
                     await sendEmailVerification(auth.currentUser!, {
-                        url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/login`
-                    })
-                    navigate('/auth/email-verification')
+                        url: `${import.meta.env.VITE_APP_FRONTEND_URL}/auth/finalize-setup`,
+                    });
+
+                    navigate('/auth/email-verification');
                 } else {
-                    setAuth({ uid: id, has_completed_onboarding: false }, user.data())
-                    navigate('/auth/finalize-setup')
+                    setAuth(
+                        { uid: id, has_completed_onboarding: false },
+                        { ...user.data(), is_approved: auth.currentUser?.emailVerified }
+                    );
+                    navigate('/auth/finalize-setup');
                 }
             }
         } catch (err) {
-            setRequestError("Something Went Wrong")
-            console.log(err)
+            setRequestError("Something Went Wrong");
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-        finally {
-            setLoading(false)
-        }
-    }
+    };
+
 
     return (
         <AuthPage identifier={pageKey} className='gender'>

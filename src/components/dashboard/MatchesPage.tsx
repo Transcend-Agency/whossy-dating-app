@@ -2,7 +2,7 @@ import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser";
 import useSyncUserMatches from "@/hooks/useSyncUserMatches";
 import { useAuthStore } from "@/store/UserId";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Skeleton from "react-loading-skeleton";
 import DashboardPageContainer from "./DashboardPageContainer";
 import { MatchItem } from "./MatchesSide";
@@ -10,20 +10,40 @@ import useDashboardStore from "@/store/useDashboardStore";
 import ViewProfile from "./ViewProfile";
 import useProfileFetcher from "@/hooks/useProfileFetcher";
 import SubscriptionPlans from "@/pages/dashboard/SubscriptionPlans.tsx";
+import {User} from "@/types/user.ts";
+import { getUserProfile } from '@/hooks/useUser';
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match' | 'plans'>('like')
     const [likes] = useState([1, 2, 3, 4, 5])
-    const { user } = useAuthStore()
-    const { matches, loading: matchesLoading } = useSyncUserMatches(user!.uid!)
-    const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
-    const {
-        profiles,
-        selectedProfile,
-        setSelectedProfile,
-    } = useDashboardStore()
-    const { refreshProfiles } = useProfileFetcher()
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
+    const [userData, setUserData] = useState<User>();
+    const { auth, user } = useAuthStore()
+    const { matches, loading: matchesLoading } = useSyncUserMatches(auth?.uid as string)
+    const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
+    const { profiles,  selectedProfile,  setSelectedProfile } = useDashboardStore()
+    const { refreshProfiles } = useProfileFetcher()
+
+    const fetchUserData = async () => {
+        try {
+            const data = await getUserProfile("users", auth?.uid as string) as User;
+            setUserData(data);
+        } catch (err) {
+            console.log("Error fetching user data:", err);
+        }
+    };
+    const refetchUserData = async () => { await fetchUserData() }
+
+    useEffect(() => {
+        if(location.pathname === "/dashboard/matches"){
+            return
+        }else{
+            setSelectedProfile(null)
+            console.log("I am getting here, profile:", selectedProfile)
+            return () => setSelectedProfile(null)
+        }
+        fetchUserData().catch(err => console.log(err));
+    }, [])
 
     const LikesEmptyState = () => {
         return (
@@ -60,7 +80,7 @@ const MatchesPage = () => {
                             {peopleWhoLiked.length == 0 && !likesLoading &&
                                 <LikesEmptyState />}
                             {likesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
+                                {!user?.is_premium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
                                     <Skeleton containerClassName="rounded-[1.2rem] overflow-hidden h-full block" width={'100%'} height={"100%"} />
                                 </div>}
                                 <div className="matches-page__grid">
@@ -73,7 +93,7 @@ const MatchesPage = () => {
                             </motion.div>}
 
                             {!likesLoading && peopleWhoLiked.length !== 0 && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="likes-subscribe-cta-container">
+                                {!user?.is_premium && <div className="likes-subscribe-cta-container">
                                     <div className="likes-subscribe-cta">
                                         <figure className="likes-subscribe-cta__image">
                                             <img src="/assets/images/matches/stephen.png" alt={``} />
@@ -112,7 +132,7 @@ const MatchesPage = () => {
                             {matches.length == 0 && !matchesLoading &&
                                 <MatchesEmptyState />}
                             {matchesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                {!user?.isPremium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
+                                {!user?.is_premium && <div className="px-[2.4rem] h-[13.6rem] mt-[1.6rem]">
                                     <Skeleton containerClassName="rounded-[1.2rem] overflow-hidden h-full block" width={'100%'} height={"100%"} />
                                 </div>}
                                 <div className="matches-page__grid">
@@ -125,7 +145,7 @@ const MatchesPage = () => {
                             </motion.div>}
                             {!matchesLoading && matches.length !== 0 && <motion.div key="matches" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
 
-                                {!user?.isPremium && <div className="matches-subscribe-cta-container">
+                                {!user?.is_premium && <div className="matches-subscribe-cta-container">
                                     <div className="matches-subscribe-cta">
                                         <div className="matches-subscribe-cta__grid">
                                             <div className="matches-subscribe-cta__text-container">
@@ -157,10 +177,16 @@ const MatchesPage = () => {
 
                     </motion.div>}
                     {activePage == 'plans' &&
-                        <SubscriptionPlans currentPlan={currentPlan} activePage={activePage == 'plans'} closePage={() => setActivePage('like')} /> }
+                        <SubscriptionPlans currentPlan={currentPlan}
+                                           activePage={activePage == 'plans'}
+                                           closePage={() => setActivePage('like')}
+                                           userData={userData as User}
+                                           refetchUserData={refetchUserData}
+                        /> }
                 </AnimatePresence>
-            </DashboardPageContainer>}
-            {selectedProfile && <ViewProfile
+            </DashboardPageContainer> }
+            {selectedProfile &&
+                <ViewProfile
                 onBackClick={() => { setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}

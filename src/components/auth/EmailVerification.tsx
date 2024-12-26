@@ -37,6 +37,32 @@ const EmailVerification = () => {
         }
     };
 
+    // const onContinue = async () => {
+    //     if (!auth.currentUser) {
+    //         navigate('/auth/login');
+    //         return;
+    //     }
+    //
+    //     setLoading(true);
+    //     try {
+    //         await auth.currentUser.reload();
+    //         if (auth.currentUser.emailVerified) {
+    //             const userRef = doc(db, "users", id);
+    //             const user = await getDoc(userRef)
+    //
+    //             setAuth({ uid: id, has_completed_onboarding: false }, user.data())
+    //             navigate('/auth/finalize-setup')
+    //             // navigate('/onboarding');
+    //         } else {
+    //             setRequestError('Please verify your email to continue.');
+    //         }
+    //     } catch (error) {
+    //         setRequestError("An error occurred while checking verification. Please try again.");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const onContinue = async () => {
         if (!auth.currentUser) {
             navigate('/auth/login');
@@ -45,23 +71,29 @@ const EmailVerification = () => {
 
         setLoading(true);
         try {
+            // Reload the user's authentication state
             await auth.currentUser.reload();
+
+            // Check if the email is verified
             if (auth.currentUser.emailVerified) {
                 const userRef = doc(db, "users", id);
-                const user = await getDoc(userRef)
+                const user = await getDoc(userRef);
 
-                setAuth({ uid: id, has_completed_onboarding: false }, user.data())
-                navigate('/auth/finalize-setup')
-                // navigate('/onboarding');
+                // Update the auth store and navigate to the next page
+                setAuth({ uid: id, has_completed_onboarding: false }, user.data());
+                navigate('/auth/finalize-setup');
             } else {
-                setRequestError('Email is still unverified. Please verify your email to continue.');
+                // If not verified, show an error message
+                setRequestError('Please verify your email to continue.');
             }
         } catch (error) {
             setRequestError("An error occurred while checking verification. Please try again.");
+            console.error("Error during email verification check:", error);
         } finally {
             setLoading(false);
         }
     };
+
 
     if (!auth.currentUser) {
         navigate('/auth/login');
