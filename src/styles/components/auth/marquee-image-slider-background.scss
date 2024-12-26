@@ -6,7 +6,7 @@
     }
 
     &__image {
-        @apply w-[20rem] lg:w-[20rem] lg:h-[25rem] mr-[4px] mt-[4px];
+        @apply w-[20rem] lg:w-[21rem] lg:h-[25rem] mr-[4px] mt-[4px];
         z-index: z('marquee-background-image');
     }
 
