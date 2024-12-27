@@ -216,8 +216,9 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                               await createOrFetchChat(auth?.uid as string, userData?.uid as string, setChatId).then(
                                   () => {
                                       if (chatId != "nil" || !chat || !chat.participants || chat.participants.length < 2) {
+                                          const bothPremiumUsers = userData.is_premium && user?.is_premium
                                           navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
-                                              state: {chatId, recipientUser: userData, chatUnlocked: chat.is_unlocked},
+                                              state: {chatId, recipientUser: userData, chatUnlocked: bothPremiumUsers ? true : chat.is_unlocked },
                                           });
                                           setChatId(chatId)
                                       }
