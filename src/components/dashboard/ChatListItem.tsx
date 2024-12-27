@@ -27,7 +27,12 @@ export const ChatListItem: FC<ChatListItemProps> = ({profileImage, contactName, 
             const message = await getLastValidMessage(chat as Chat, userData?.uid as string) as Messages;
             const messageStatus = await getMessageStatus(chat as Chat, userData?.uid as string) as boolean
             if(message != null){
-                setLastMessage(message.message as string);
+                if(message.message == null) {
+                    setLastMessage('Image')
+                }else{
+                    setLastMessage(message.message as string);
+                }
+                console.log(lastMessage)
             }
             setMessageStatus(messageStatus)
         };
