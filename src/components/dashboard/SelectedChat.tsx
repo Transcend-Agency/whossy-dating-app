@@ -497,7 +497,10 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                     <m.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 100 }} transition={{ duration: 0.25 }} className='relative z-10 bg-white flex flex-col min-h-full'>
                       <>
                         <header className=" text-[1.8rem] py-[1.6rem] px-[2.4rem] flex justify-between items-center" style={{ borderBottom: '1px solid #F6F6F6' }}>
-                            <button className="settings-page__title__left gap-x-1" onClick={closePage}>
+                            <button className="settings-page__title__left gap-x-1" onClick={() => {
+                                closePage()
+                                setImage({ file: null, url: null }); }
+                            }>
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``}/>
                                 {!isLoading ? recipientDetails.profilePicture ?
                                         <img className='size-[4.8rem] mr-2 object-cover rounded-full' src={recipientDetails.profilePicture} alt="profile picture"/> :
@@ -610,33 +613,75 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                         </section>
                         <AnimatePresence>
                             {openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 "><EmojiPicker onEmojiClick={(e) => { if (!(chatUnlocked || currentUser?.is_premium)) return; setText((prev) => prev + e.emoji) } } /> </m.div>}</AnimatePresence>
-                        {!currentChat?.user_blocked[0] || isLoading ? <footer className="flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
-                            <div className="flex-1 flex gap-x-4">
-                                <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={
-                                    () => imageRef.current?.click()} />
-                                <input type="file" className="hidden" ref={imageRef} onChange={handleImage} accept="image/*" />
-
-                                <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden">
+                        {!currentChat?.user_blocked[0] || isLoading ? <footer className="relative flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
+                                <div className="flex-1 flex gap-x-4">
+                                    {/* Image Upload Section */}
+                                    <img
+                                        className="size-[4.4rem] cursor-pointer"
+                                        src="/assets/icons/add-image.svg"
+                                        alt=""
+                                        onClick={() => imageRef.current?.click()}
+                                    />
                                     <input
-                                        disabled={!(chatUnlocked || currentUser?.is_premium)}
-                                        type="text" className="bg-inherit outline-none w-full" placeholder="say something nice"
-                                           value={image.url ? "" : text}
-                                           onChange={(e) => setText(e.target.value) }
-                                           onKeyDown={(e) => { if (e.key == 'Enter' && text != '') { handleSendMessage().catch(e => console.error("Unable to send message", e)) } else return; }}/>
-                                    <img className="size-[1.6rem] ml-4 cursor-pointer" src="/assets/icons/emoji.svg" alt="Emoji selector"
-                                         onClick={() => setOpenEmoji(true)} />
+                                        type="file"
+                                        className="hidden"
+                                        ref={imageRef}
+                                        onChange={handleImage}
+                                        accept="image/*"
+                                    />
+
+                                    {/* Text Input Section */}
+                                    <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden">
+                                        {image.url && (
+                                            <img
+                                                src={image.url}
+                                                alt="Selected preview"
+                                                className="absolute left-[5rem] -top-[110px] transform size-[100px] object-cover rounded-md"
+                                            />
+                                        )}
+
+                                        <input
+                                            disabled={!(chatUnlocked || currentUser?.is_premium)}
+                                            type="text"
+                                            className={`bg-inherit outline-none w-full`}
+                                            placeholder="Say something nice"
+                                            value={text} // Keep only the `text` value
+                                            onChange={(e) => setText(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && (text || image.url)) {
+                                                    handleSendMessage()
+                                                        .catch((e) => console.error("Unable to send message", e));
+                                                }
+                                            }}
+                                        />
+                                        <img
+                                            className="size-[1.6rem] ml-4 cursor-pointer"
+                                            src="/assets/icons/emoji.svg"
+                                            alt="Emoji selector"
+                                            onClick={() => setOpenEmoji(true)}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-x-4">
-                                <button className={`bg-black text-white py-4 font-semibold px-4 rounded-full ${text === '' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                    onClick={handleSendMessage}
-                                    disabled={text === ''}
-                                >Send</button>
-                            </div>
-                        </footer> :
-                            <footer className={`grid text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-5 border border-black`}>
-                                <div className={`text-center border-b-[0.1px] border-opacity-30 border-black border-solid pb-[1rem]`}>
-                                    <p>You can't message <span className={`font-medium`}>{recipientDetails.name}</span>.</p>
+
+                                {/* Send Button Section */}
+                                <div className="space-x-4">
+                                    <button
+                                        className={`bg-black text-white py-4 font-semibold px-4 rounded-full ${
+                                            !text && !image.url ? 'cursor-not-allowed' : 'cursor-pointer'
+                                        }`}
+                                        onClick={handleSendMessage}
+                                        disabled={!text && !image.url}
+                                    >
+                                        Send
+                                    </button>
+                                </div>
+                            </footer> :
+                            <footer
+                                className={`grid text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-5 border border-black`}>
+                                <div
+                                    className={`text-center border-b-[0.1px] border-opacity-30 border-black border-solid pb-[1rem]`}>
+                                    <p>You can't message <span className={`font-medium`}>{recipientDetails.name}</span>.
+                                    </p>
                                 </div>
                                 {isBlockLoading ?
                                     <div className={`action-button grid place-items-center pt-2 items-center w-full`}>

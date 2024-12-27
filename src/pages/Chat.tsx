@@ -252,17 +252,8 @@ const ChatPage = () => {
                                         <ChatListItem
                                             key={`${chat.last_sender_id}_${currentUserId}_${i}`}
                                             userData={currentUser as User}
-
-                                            // check if the sender_id_blocked
-                                            // messageStatus={chat.status === "sent" || (!chat.is_unlocked && currentUser.is_premium == false)
-                                            //     ? chat.last_sender_id !== auth?.uid : false}
-
-
                                             onlineStatus={chat.user?.user_settings?.online_status && chat.user?.status?.online}
                                             contactName={chat.user.first_name || "Unknown"}
-
-                                            // message={chat.last_message}
-
                                             profileImage={chat.user.photos && chat.user.photos[0]}
                                             chatUnlocked={chat.is_unlocked}
                                             openChat={() => openChat(chat)}

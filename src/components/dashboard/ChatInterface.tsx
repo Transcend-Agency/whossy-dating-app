@@ -197,12 +197,6 @@ const ChatInterface: FC = () => {
                                         key={`${chat.last_sender_id}_${currentUserId}_${i}`}
                                         contactName={chat.user.first_name as string}
                                         userData={userData as User}
-                                        // message={chat.last_message}
-
-
-                                        // messageStatus={chat.status === "sent" || (!chat.is_unlocked && userData && userData.is_premium == false) ? chat.last_sender_id !== auth?.uid : false}
-
-
                                         onlineStatus={chat.user?.user_settings?.online_status && chat.user?.status?.online}
                                         profileImage={chat.user.photos && chat.user.photos[0]}
                                         chatUnlocked={chat.is_unlocked}
