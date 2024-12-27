@@ -1,6 +1,6 @@
 import { usePhotoStore } from "@/store/PhotoStore";
 import { useAuthStore } from "@/store/UserId";
-import {arrayUnion, doc, getDoc, serverTimestamp, updateDoc} from "firebase/firestore";
+import {arrayUnion, doc, getDoc, serverTimestamp, setDoc, updateDoc} from "firebase/firestore";
 import Lottie from "lottie-react";
 import {FC, useEffect, useState} from "react";
 import toast from "react-hot-toast";
@@ -15,7 +15,7 @@ import BigSnapshots from "./BigSnapshots";
 import OnboardingBackButton from "./OnboardingBackButton";
 import OnboardingPage from "./OnboardingPage";
 import SmallSnapshots from "./SmallSnapshots";
-import {User} from "@/types/user.ts";
+import {AdvancedSearchPreferences, User} from "@/types/user.ts";
 
 const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   const navigate = useNavigate();
@@ -79,6 +79,14 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
           ...userSettings
         },
       });
+
+      await setDoc(doc(db, "advancedSearchPreferences", auth.uid as string), {
+        ggender: '',
+        age_range: { min: 18, max: 100 },
+        country: '',
+        relationship_preference: null,
+        religion: null,
+      } as AdvancedSearchPreferences);
 
       toast.success("Account has been created successfully 🚀");
       resetPhoto();

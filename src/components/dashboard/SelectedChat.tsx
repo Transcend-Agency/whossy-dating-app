@@ -183,11 +183,14 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
             // Check each message to see if it should be marked as 'seen'
             for (const doc1 of snapshot.docs) {
-                const messageData = doc1.data();
+                const messageData = doc1.data() as Messages;
                 const messageSenderId = messageData.sender_id;
 
                 // Only update the message if the sender is not the current user and status is not 'seen'
-                if (messageSenderId !== currentUser.uid && messageData.status !== "seen" && activePage === "selected-chat") {
+                if (messageSenderId !== currentUser.uid
+                    && messageData.status !== "seen"
+                    && activePage === "selected-chat"
+                    && !messageData.sender_id_blocked ) {
                     try {
                         // Update the status field of the message to "seen"
                         await updateDoc(doc1.ref, 'status', "seen" );
@@ -227,12 +230,15 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
         const currentUserBlockedRecipient = await checkIfUserBlocked(currentUser.uid as string, recipientUserId as string);
         const recipientBlockedCurrentUser = await checkIfUserBlocked(state.recipientUser.uid as string, currentUser.uid as string);
         const userBlockedStatus: boolean[] = [currentUserBlockedRecipient, recipientBlockedCurrentUser];
+        const bothPremiumUsers = state.recipientUser.is_premium && currentUser.is_premium
 
         if(!chatId) return
         try {
             const chatId = [currentUser.uid, state.recipientUser.uid].sort().join('_')
+            const updateData: Partial<Chat> = { user_blocked: userBlockedStatus, };
+            if (bothPremiumUsers) { updateData.is_unlocked = true }
 
-            updateUserChat(chatId, () => console.log("Chat document updated!"), { user_blocked: userBlockedStatus }).catch(e => console.error(e))
+            updateUserChat(chatId, () => console.log("Chat document updated!"), updateData).catch(e => console.error(e))
             const chatDocRef = doc(db, "chats", chatId);
             if (chatDocRef) {
                 const chatDocSnap = await getDoc(chatDocRef);
@@ -287,6 +293,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                     unlock_time: serverTimestamp(),
                     expiration_time: expirationTime,
                 });
+                state.chatUnlocked = true
                 setChatUnlocked(true)
                 console.log("Chat unlocked successfully!");
                 toast.success("Chat unlocked successfully!")
@@ -315,6 +322,8 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             const isUnlocked = chatData.is_unlocked;
             const expirationTime = chatData.expiration_time as Timestamp;
 
+            console.log(isUnlocked)
+
             if (!isUnlocked || !expirationTime) return false;
 
             const currentTime = Date.now();
@@ -329,13 +338,12 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
     //sending text message to the recipient
     const handleSendMessage = async () => {
-        // const chats = await getDocs(collection(db, "chats"));
-        // const recipientsId: string[] = [];
         let imgUrl: string | null = null;
         if(!chatId) return
         if(!await isChatUnlocked(chatId) && !currentUser.is_premium){
             toast.error("Chat Unlock Duration Expired")
             setChatUnlocked(false)
+            state.chatUnlocked = false
             closePage()
             return;
         }
@@ -352,10 +360,12 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             nanoseconds: 0
         };
 
+        const recipientBlockedCurrentUser = await checkIfUserBlocked(state.recipientUser.uid as string, currentUser.uid as string);
         // Create optimistic message object with a placeholder for image if it's being uploaded
         const optimisticMessage: Messages = {
             id: messageId,
             sender_id: currentUser?.uid as string,
+            sender_id_blocked: recipientBlockedCurrentUser,
             message: text !== '' ? text : null,
             photo: image.file ? 'loading_image_placeholder' : null, // Placeholder for image
             timestamp: temporaryTimestamp,
@@ -385,20 +395,22 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             await setDoc(messageRef, {
                 id: messageId,
                 sender_id: currentUser.uid,
+                sender_id_blocked: recipientBlockedCurrentUser,
                 message: text !== '' ? text : null,
                 photo: imgUrl ?? null,
                 timestamp: serverTimestamp(),
                 status: "sent"
             });
 
-            // Update chat with last message
-            await updateDoc(doc(db, "chats", chatId), {
-                last_message: text || 'Image',
-                last_message_id: messageId,
-                last_sender_id: currentUser.uid,
-                status: "sent",
-                last_message_timestamp: serverTimestamp(),
-            });
+            // {
+                await updateDoc(doc(db, "chats", chatId), {
+                    last_message: text || 'Image',
+                    last_message_id: messageId,
+                    last_sender_id: currentUser.uid,
+                    status: "sent",
+                    last_message_timestamp: serverTimestamp(),
+                });
+            // }
 
         } catch (err) {
             console.error('Error sending message:', err);
@@ -547,7 +559,9 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                           </div>
                                       )}
                                   </div>
-                                {chats && Array.isArray(chats) && chats?.map((message: Messages, i: number) =>
+                                {chats && Array.isArray(chats) && chats?.filter((message: Messages) => {
+                                    return !(message.sender_id_blocked && message.sender_id !== currentUser.uid)
+                                }).map((message: Messages, i: number) =>
                                     <div className={`max-w-[70%] flex ${message.sender_id === currentUser?.uid ? " flex-col self-end our_message" : ' gap-x-2 items-start flex-col their_message'}`} key={i}>
                                         {!isLoading && !checkChatUnlocked && currentUser.is_premium != true && (
                                             <div className="overlay backdrop-blur-sm absolute inset-0 rounded-md bg-black/25 flex items-center pt-[24px] justify-center z-50">
@@ -598,15 +612,17 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                             {openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 "><EmojiPicker onEmojiClick={(e) => { if (!(chatUnlocked || currentUser?.is_premium)) return; setText((prev) => prev + e.emoji) } } /> </m.div>}</AnimatePresence>
                         {!currentChat?.user_blocked[0] || isLoading ? <footer className="flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
                             <div className="flex-1 flex gap-x-4">
-                                <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={() => imageRef.current?.click()} />
+                                <img className="size-[4.4rem] cursor-pointer" src="/assets/icons/add-image.svg" alt="" onClick={
+                                    () => imageRef.current?.click()} />
                                 <input type="file" className="hidden" ref={imageRef} onChange={handleImage} accept="image/*" />
+
                                 <div className="flex bg-[#F6F6F6] w-full rounded-l-full px-5 items-center rounded-r-full overflow-hidden">
                                     <input
                                         disabled={!(chatUnlocked || currentUser?.is_premium)}
                                         type="text" className="bg-inherit outline-none w-full" placeholder="say something nice"
                                            value={image.url ? "" : text}
                                            onChange={(e) => setText(e.target.value) }
-                                           onKeyDown={(e) => { if (e.key == 'Enter') { handleSendMessage().catch(e => console.error("Unable to send message", e)) } else return; }}/>
+                                           onKeyDown={(e) => { if (e.key == 'Enter' && text != '') { handleSendMessage().catch(e => console.error("Unable to send message", e)) } else return; }}/>
                                     <img className="size-[1.6rem] ml-4 cursor-pointer" src="/assets/icons/emoji.svg" alt="Emoji selector"
                                          onClick={() => setOpenEmoji(true)} />
                                 </div>

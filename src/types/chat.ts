@@ -20,6 +20,7 @@ export type Messages = {
     message: string | null;
     photo: string | null;
     sender_id: string;
+    sender_id_blocked: boolean;
     timestamp: FieldValue | { seconds: number, nanoseconds: number };
     status: 'sent' | 'seen'
 }

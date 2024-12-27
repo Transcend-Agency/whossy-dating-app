@@ -4,12 +4,12 @@ import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { useNavigate } from 'react-router-dom';
-import { Chat } from '@/types/chat';
+import {Chat, Messages} from '@/types/chat';
 import { User } from '@/types/user';
 import { useChatIdStore } from '@/store/ChatStore';
 import { getUserProfile } from '@/hooks/useUser';
 import {ChatListItem} from "@/components/dashboard/ChatListItem.tsx";
-import {createOrFetchChat} from "@/utils/chatService.ts";
+import {createOrFetchChat, getLastValidMessage} from "@/utils/chatService.ts";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -56,6 +56,27 @@ const ChatInterface: FC = () => {
         } catch (error) {
             console.error("Error fetching user data:", error);
         }
+    };
+
+    const getUnreadChats = async (sortedChats: Chat[], currentUserUid: string) => {
+        const unreadChatsCount = await Promise.all(
+            sortedChats.map(async (chat) => {
+                // Get the last valid message for each chat
+                const lastMessage = await getLastValidMessage(chat, currentUserUid) as Messages;
+
+                // If there is no valid message or the last message's sender is blocked, don't count the chat
+                if (!lastMessage || lastMessage.sender_id_blocked) {
+                    return false;
+                }
+
+                // Check if the chat is sent, unlocked (or not if user is not premium), and not the user's own chat
+                return chat.status === "sent" && chat.last_sender_id !== auth?.uid && !chat.is_unlocked;
+            })
+        );
+
+        // Filter only the valid unread chats
+        const unreadChats = unreadChatsCount.filter((isUnread) => isUnread);
+        setUnreadChats(unreadChats.length);  // Set the unread chats count
     };
 
     useEffect(() => {
@@ -122,14 +143,9 @@ const ChatInterface: FC = () => {
             });
 
             if (isMounted) {
+
                 setChats(sortedChats);
-                setUnreadChats(
-                    sortedChats.filter(
-                        (chat) =>
-                            // @ts-ignore
-                            chat.status === 'sent' && chat.last_sender_id !== auth?.uid
-                    ).length
-                );
+                getUnreadChats(chats as Chat[], currentUserId as string)
             }
             setIsLoadingChats(false);
         });
@@ -181,11 +197,16 @@ const ChatInterface: FC = () => {
                                         key={`${chat.last_sender_id}_${currentUserId}_${i}`}
                                         contactName={chat.user.first_name as string}
                                         userData={userData as User}
-                                        message={chat.last_message}
-                                        messageStatus={chat.status === "sent" || (!chat.is_unlocked && userData && userData.is_premium == false) ? chat.last_sender_id !== auth?.uid : false}
+                                        // message={chat.last_message}
+
+
+                                        // messageStatus={chat.status === "sent" || (!chat.is_unlocked && userData && userData.is_premium == false) ? chat.last_sender_id !== auth?.uid : false}
+
+
                                         onlineStatus={chat.user?.user_settings?.online_status && chat.user?.status?.online}
                                         profileImage={chat.user.photos && chat.user.photos[0]}
                                         chatUnlocked={chat.is_unlocked}
+                                        chat={chat}
                                         openChat={async () => {
                                             if(chat.user.uid){
                                                 const chatId = chat.participants.sort().join('_')

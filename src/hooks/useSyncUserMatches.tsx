@@ -31,7 +31,6 @@ const useSyncUserMatches = (userId: string) => {
         const uniqueMatchIds = new Set<string>();
 
         const populateUserData = async (match: Match) => {
-            console.log(match)
             const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
             const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
 
