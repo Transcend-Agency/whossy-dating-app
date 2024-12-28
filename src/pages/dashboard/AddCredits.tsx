@@ -106,7 +106,7 @@ const AddCredits: React.FC<AddCreditProps> = ({ activePage, closePage, refetchUs
         {/* <button className="w-full bg-red text-white py-[1.6rem] rounded-[0.8rem] mx-6 text-[1.8rem] text-center " onClick={() => toast.success(amount + '.')} >
             Continue
             </button> */}
-            <PaystackButton disabled={ selectedCreditOption ? false : true } className={` w-full bg-red text-white py-[1.6rem] rounded-[0.8rem] mx-6 text-[1.8rem] text-center ${!selectedCreditOption && "cursor-not-allowed"}`} {...componentProps} />
+            <PaystackButton disabled={ selectedCreditOption ? false : true } currency="usd" className={` w-full bg-red text-white py-[1.6rem] rounded-[0.8rem] mx-6 text-[1.8rem] text-center ${!selectedCreditOption && "cursor-not-allowed"}`} {...componentProps} />
         </div>
         
     </motion.div>

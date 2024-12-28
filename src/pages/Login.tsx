@@ -16,7 +16,7 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystack";
+import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystackNgn";
 import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
@@ -51,7 +51,6 @@ const Login = () => {
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
     const { setAuth } = useAuthStore();
     const { mutate: paystackReferenceQuery } = useVerify();
-    const { mutate: paystackSubscriptionQuery } = useCreateSubscription();
     const subscriptionList = useGetSubscriptionCodeAndEmailToken();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
@@ -98,18 +97,37 @@ const Login = () => {
                                             customer_id: paystackRes.data.customer.id
                                         }
                                     }).then(() => {
-                                        subscriptionList.mutate(paystackRes.data.customer.id, {onSuccess: async(subRes) => {
-                                            await updateDoc(userDocRef, {
-                                                paystack: {
-                                                    reference: user.paystack.reference,
-                                                    authorization_code: paystackRes.data.authorization.authorization_code,
-                                                    customer_code: paystackRes.data.customer.customer_code,
-                                                    customer_id: paystackRes.data.customer.id,
-                                                    subscription_code: subRes.data[0].subscription_code,
-                                                    email_token: subRes.data[0].email_token,
+                                        subscriptionList.mutate(paystackRes.data.customer.id, {
+                                            onSuccess: async (subRes) => {
+                                                try {
+                                                    console.log("Subscription Response:", subRes); // Debugging
+                                                    const subscriptionData = subRes?.data?.[0];
+                                        
+                                                    if (!subscriptionData) {
+                                                        console.error("No subscription data found.");
+                                                        return;
+                                                    }
+                                        
+                                                    // Update Firestore
+                                                    await updateDoc(userDocRef, {
+                                                        paystack: {
+                                                            reference: user.paystack.reference,
+                                                            authorization_code: paystackRes.data.authorization.authorization_code,
+                                                            customer_code: paystackRes.data.customer.customer_code,
+                                                            customer_id: paystackRes.data.customer.id,
+                                                            subscription_code: subscriptionData.subscription_code,
+                                                            email_token: subscriptionData.email_token,
+                                                        },
+                                                    });
+                                                    console.log("Document updated successfully!");
+                                                } catch (error) {
+                                                    console.error("Error updating Firestore document:", error);
                                                 }
-                                            })
-                                        }});
+                                            },
+                                            onError: (err) => {
+                                                console.error("Error during mutation:", err);
+                                            },
+                                        });
                                         // console.log(paystackRes.data.customer.id)
                                     });
                                 }
