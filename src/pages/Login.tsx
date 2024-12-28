@@ -16,7 +16,7 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useCreateSubscription, useGetSubscriptionCodeAndEmailToken, useVerify } from "@/hooks/usePaystackNgn";
+import { useGetSubscriptionCodeAndEmailToken, useUnsubscribe, useVerify } from "@/hooks/usePaystackNgn";
 import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
@@ -52,6 +52,7 @@ const Login = () => {
     const { setAuth } = useAuthStore();
     const { mutate: paystackReferenceQuery } = useVerify();
     const subscriptionList = useGetSubscriptionCodeAndEmailToken();
+    const unsubscribeUser = useUnsubscribe();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
@@ -128,14 +129,24 @@ const Login = () => {
                                                 console.error("Error during mutation:", err);
                                             },
                                         });
-                                        // console.log(paystackRes.data.customer.id)
                                     });
                                 }
 
                             } else {
                                 await updateDoc(userDocRef, {
                                     is_premium: false
-                                });
+                                }).then(() => {
+                                    if (user.paystack.subscription_code || user.paystack.email_token) {
+                                        unsubscribeUser.mutate({ code: user.paystack.subscription_code, token: user.paystack.email_token }, {
+                                            onSuccess: () => {
+                                                console.log("User unsubscribed successfully!");
+                                            },
+                                            onError: () => {
+                                                console.error("Error unsubscribing user!");
+                                            },
+                                        })
+                                    }
+                            });
                                 // console.log('This is not paystack');
                             }
                             
