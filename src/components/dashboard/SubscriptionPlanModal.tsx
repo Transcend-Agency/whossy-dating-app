@@ -6,7 +6,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth as firebaseAuth, db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { Oval } from 'react-loader-spinner';
-import { useSubscribe, useUnsubscribe } from '@/hooks/usePaystack';
+import { useSubscribe, useUnsubscribe } from '@/hooks/usePaystackNgn';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -177,6 +177,7 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
     const userDocSnap = await getDoc(userDoc);
 
     if (userDocSnap.exists()) {
+      console.log(userDocSnap.data())
       mutate ({
         code: userDocSnap.data()?.paystack?.subscription_code,
         token: userDocSnap.data()?.paystack?.email_token
@@ -188,7 +189,7 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
         toast.success('Subscription cancelled successfully');
         window.location.reload();
         hide();
-      }})
+      }, onError: () => { setIsLoading(false); toast.error('An error occurred while trying to cancel subscription. Please try again later') }})
     } 
   } 
 

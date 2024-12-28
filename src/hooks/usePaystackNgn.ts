@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ApiClient from "@/services/apiClient";
+import ApiClient from "@/services/paystackApiClient";
 import { useMutation } from "@tanstack/react-query";
 
 export const useSubscribe = () => {
@@ -39,15 +39,14 @@ export const useUnsubscribe = () => {
 };
 
 export const useGetSubscriptionCodeAndEmailToken = () => {
-  // The `ApiClient` endpoint will be dynamic, as it depends on the `reference`
-
   return useMutation({
-
-    mutationFn: async (customer_id: string) => {
-      const apiClient = new ApiClient<any, never>(`/subscription?customer=${customer_id}`);
-      return apiClient.get();
-    },
-    
+      mutationFn: async (customer_id: string) => {
+          const apiClient = new ApiClient<any, never>(`/subscription?customer=${customer_id}`);
+          const response = await apiClient.get();
+          // Log response to check structure
+          console.log("API Response:", response);
+          return response;
+      },
   });
 };
 
