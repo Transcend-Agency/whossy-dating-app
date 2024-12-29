@@ -18,7 +18,7 @@ const DesktopWebsiteFeatures = () => {
                 scrollTrigger: {
                     trigger: '.features-section',
                     start: 'top top',
-                    end: 'bottom top',
+                    end: 'bottom bottom',
                     scrub: 1,
 
                 },
