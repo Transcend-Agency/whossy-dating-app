@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import {collection, getDocs} from "firebase/firestore";
 import { AnimatePresence, motion } from 'framer-motion';
 import { query, Timestamp, where } from "firebase/firestore";
 import { useEffect, useState } from 'react';
@@ -33,14 +33,14 @@ const Explore = () => {
 
     const {
         profiles,
-        setProfiles,
         selectedProfile,
         setSelectedProfile,
         blockedUsers,
         selectedOption,
         setSelectedOption,
         exploreDataLoading,
-        setExploreDataLoading
+        advancedSearchPreferences,
+        setAdvancedSearchPreferences
     } = useDashboardStore()
     const { fetchBlockedUsers, fetchProfilesBasedOnOption, refreshProfiles } = useProfileFetcher()
 
@@ -54,26 +54,6 @@ const Explore = () => {
     const [advancedSearchShowing, setAdvancedSearchShowing] = useState(false)
     const [advancedSearchModalShowing, setAdvancedSearchModalShowing] = useState('hidden')
     const hideModal = () => setAdvancedSearchModalShowing('hidden')
-    const [advancedSearchPreferences, setAdvancedSearchPreferences] = useState<AdvancedSearchPreferences>({
-        gender: '',
-        age_range: { min: 18, max: 100 },
-        country: '',
-        relationship_preference: null,
-        religion: null
-    })
-
-    const calculateDOBRange = (minAge: any, maxAge: any) => {
-        const today = new Date();
-        const currentYear = today.getFullYear();
-
-        const minDOB = new Date(currentYear - maxAge, today.getMonth(), today.getDate()); // For oldest age (e.g., 30)
-        const maxDOB = new Date(currentYear - minAge, today.getMonth(), today.getDate()); // For youngest age (e.g., 25)
-
-        return {
-            minDOB: Timestamp.fromDate(minDOB),
-            maxDOB: Timestamp.fromDate(maxDOB),
-        };
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -98,6 +78,7 @@ const Explore = () => {
     useEffect(() => {
         fetchLikes().catch((err) => console.error("An error occurred while trying to fetch Likes: ", err))
         fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
+        fetchSearchPreferences().catch(e => console.log(e))
     }, [selectedOption, blockedUsers]);
 
     const isNewUserFromDate = (timestampDate: string) => {
@@ -105,62 +86,6 @@ const Explore = () => {
         const twoDaysAgo = new Date();
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
         return timestamp >= Timestamp.fromDate(twoDaysAgo);
-    };
-
-    const resetAdvancedSearch = async () => {
-        console.log('this is being called')
-        try {
-            setResetLoading(true)
-            await updateAdvancedSearchPreferences(auth?.uid as string, () => { refetchSearchPreferences() }, {
-                gender: '',
-                age_range: { min: 18, max: 100 },
-                country: '',
-                relationship_preference: null,
-                religion: null
-            })
-        } catch (err) {
-            console.log(err)
-        } finally {
-            setResetLoading(false)
-        }
-    }
-
-    const onAdvancedSearch = async () => {
-        try {
-            setExploreDataLoading(true);
-            const usersCollection = collection(db, 'users');
-
-            let q = query(usersCollection, where("has_completed_onboarding", "==", true));
-
-            if (advancedSearchPreferences.gender) {
-                q = query(q, where("gender", "==", advancedSearchPreferences.gender));
-            }
-
-            if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
-                const {
-                    minDOB,
-                    maxDOB
-                } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
-
-                q = query(q, where("date_of_birth", "<=", maxDOB));
-                q = query(q, where("date_of_birth", ">=", minDOB));
-            }
-
-            if (advancedSearchPreferences.country) {
-                q = query(q, where("country", "==", advancedSearchPreferences.country));
-            }
-            if (advancedSearchPreferences.relationship_preference !== undefined) {
-                q = query(q, where("relationship_preference", "==", advancedSearchPreferences.relationship_preference));
-            }
-
-            const querySnapshot = await getDocs(q);
-            const userData = querySnapshot.docs.map((user) => user.data());
-            setProfiles(userData as User[]);
-        } catch (err) {
-            console.log(err);
-        } finally {
-            setExploreDataLoading(false);
-        }
     };
 
     const fetchSearchPreferences = async () => {
@@ -178,6 +103,24 @@ const Explore = () => {
             refetchSearchPreferences()
         }, s)
     }
+
+    const resetAdvancedSearch = async () => {
+        console.log('This is being called');
+        try {
+            setResetLoading(true);
+            await updateAdvancedSearchPreferences(auth?.uid as string, () => refetchSearchPreferences() ,
+                {
+                    gender: '',
+                    age_range: { min: 18, max: 100 },
+                    country: '',
+                    relationship_preference: null,
+                    religion: null,
+                }
+            ).then(() => setResetLoading(false))
+        } catch (e) {
+            console.error('Error refreshing document:', e);
+        }
+    };
 
     const settingsData: SettingsDataItem[] = [
         { label: 'Gender', value: advancedSearchPreferences.gender || 'Choose', onClick: () => setAdvancedSearchModalShowing('gender') },
@@ -331,18 +274,20 @@ const Explore = () => {
                         <div className="settings-page__title">
                             <button onClick={() => {
                                 setAdvancedSearchShowing(false);
-                                if (selectedOption == 'Advanced Search') { onAdvancedSearch().catch(err => console.error("An error occurred during Advanced Search", err)) }
+                                if (selectedOption == 'Advanced Search') {
+                                    fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
+                                }
                             }} className="settings-page__title__left">
                                 <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                                 <p>Advanced Search Preferences</p>
                             </button>
                             <button onClick={resetAdvancedSearch} className='self-center text-[#485FE6]'>{!resetLoading ? 'Reset' : <Oval color="#485FE6" secondaryColor="#485FE6" width={20} height={20} />}</button>
 
-                            <GenderSettingsModal
+                            {<GenderSettingsModal
                                 showing={advancedSearchModalShowing === 'gender'}
                                 hideModal={hideModal}
                                 userGender={advancedSearchPreferences?.gender as string}
-                                handleSave={async (gender) => await updateSearchPreferences({ gender })} />
+                                handleSave={async (gender) => await updateSearchPreferences({ gender })} />}
 
                             <AgeRangeModal
                                 showing={advancedSearchModalShowing === 'age-range'}
@@ -372,7 +317,9 @@ const Explore = () => {
                             <div className="flex justify-between">
                             </div>
                         </div>
-                        <SettingsGroup data={settingsData.map(item => [item.label, item.value, item.onClick])} />
+                        <SettingsGroup data={settingsData
+                            .filter(item => !(user?.meet !== 2 && item.label === 'Gender'))
+                            .map(item => [item.label, item.value, item.onClick])} />
                     </div>
                 </DashboardPageContainer>
                 }

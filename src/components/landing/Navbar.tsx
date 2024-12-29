@@ -1,18 +1,22 @@
 import { AnimatePresence, motion, useCycle } from "framer-motion";
 import { useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [mobileNav, toggleMobileNav] = useCycle(false, true);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
-
+  
+  const handleLogoClick = () => {
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   return (
     <>
       {/* MOBILE HEADER */}
       <header className="absolute top-0 z-50 lg:hidden bg-red text-white max-w-[10000px] rounded-[8px] m-[28px] overflow-hidden">
         <div className="container flex items-center justify-between py-[12px] px-[12px]">
-          <div className="flex items-center mr-[80px]">
+          <div onClick={handleLogoClick} className="flex items-center mr-[80px]">
             <img src={"/assets/icons/logo.svg"} alt="Logo" className="mr-[8px]" />
             <p className="text-[16px] font-black">whossy</p>
           </div>
@@ -90,12 +94,10 @@ const Navbar = () => {
       {/* DESKTOP HEADER */}
       <header className="relative z-50 bg-red text-white max-w-[60rem] m-[4rem] rounded-[0.8rem] hidden lg:block">
         <div className="container flex justify-between items-center py-[1.2rem] px-[2.4rem]">
-          <Link to="/">
-            <div className="flex items-center">
-              <img src={"/assets/icons/logo.svg"} alt="Logo" className="mr-[0.8rem]" />
-              <p className="text-[1.6rem] font-black">whossy</p>
-            </div>
-          </Link>
+          <div onClick={handleLogoClick} className="flex items-center">
+            <img src={"/assets/icons/logo.svg"} alt="Logo" className="mr-[0.8rem]" />
+            <p className="text-[1.6rem] font-black">whossy</p>
+          </div>
 
           <div className="h-[3rem]" style={{ borderLeft: '1px solid #FFFFFF' }}></div>
 

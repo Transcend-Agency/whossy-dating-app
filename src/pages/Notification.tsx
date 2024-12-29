@@ -2,13 +2,14 @@ import DashboardPageContainer from '@/components/dashboard/DashboardPageContaine
 import { db } from '@/firebase';
 import {motion} from 'framer-motion';
 import { useAuthStore } from '@/store/UserId';
-import { collection, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import {collection, doc, getDoc, onSnapshot, updateDoc} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { Notifications } from '@/types/notification';
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import ViewProfile from "@/components/dashboard/ViewProfile.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 import SkeletonNotification from "@/components/dashboard/SkeletonNotification.tsx";
+import {User} from "@/types/user.ts";
 
 const Notification = () => {
     const {auth} = useAuthStore();
@@ -30,8 +31,25 @@ const Notification = () => {
                 const notifications = snapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
-                }));
-                setNotifications(notifications);
+                })) as Notifications[];
+
+                const filteredNotifications = [];
+                for (const notification of notifications) {
+                    try {
+                        const id = notification.user2_id === user?.uid ? notification.user1_id : notification.user2_id
+                        const userId = notification.likerId || id
+                        if (userId) {
+                            const userData = await fetchUserData(userId);
+                            const currentUser = await fetchUserData(user?.uid as string)
+                            if (userData && userData.is_approved && currentUser && !currentUser.blockedIds?.includes(userId)) {
+                                filteredNotifications.push(notification);
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error fetching user data for notification:", notification.id, error);
+                    }
+                }
+                setNotifications(filteredNotifications);
                 setLoading(false);
             },
             (err) => {
@@ -43,6 +61,26 @@ const Notification = () => {
             unSub();
         };
     }, [loggedUserId]);
+
+    const fetchUserData = async (userId: string) => {
+        if (!userId) {
+            return null;
+        }
+
+        try {
+            const userDocRef = doc(db, "users", userId);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                return userDocSnap.data() as User;
+            } else {
+                console.warn("No user found for userId:", userId);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching user data for userId:", userId, error);
+            return null;
+        }
+    };
 
     return (
     <>

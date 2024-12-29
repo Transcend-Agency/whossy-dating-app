@@ -1,26 +1,26 @@
-import Circle from '@/components/dashboard/Circle';
-import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
-import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
-import { checkUserProfileCompletion } from '@/constants';
-import { getUserProfile } from '@/hooks/useUser';
-import { useAuthStore } from '@/store/UserId';
-import { User, UserFilters } from '@/types/user';
-import { getYearFromFirebaseDate } from '@/utils/date';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import toast from "react-hot-toast";
-import Skeleton from 'react-loading-skeleton';
 import DashboardPageContainer from '../../components/dashboard/DashboardPageContainer';
 import ProfilePlan from '../../components/dashboard/ProfilePlan';
-import AddCredits from './AddCredits';
 import EditProfile from './EditProfile';
-import Preferences from './Preferences';
-import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 import PreviewProfile from './PreviewProfile';
 import ProfileSettings from './ProfileSettings';
+import { getUserProfile } from '@/hooks/useUser';
+import { User, UserFilters } from '@/types/user';
+import Preferences from './Preferences';
 import SafetyGuide from './SafetyGuide';
-import SubscriptionPlans from './SubscriptionPlans';
+import { useAuthStore } from '@/store/UserId';
+import PreferredInterestsDesktop from './PreferredInterestsDesktop';
 import UserInterestsDesktop from './UserInterestsDesktop';
+import { getYearFromFirebaseDate } from '@/utils/date';
+import SubscriptionPlans from './SubscriptionPlans';
+import Skeleton from 'react-loading-skeleton';
+import Circle from '@/components/dashboard/Circle';
+import { checkUserProfileCompletion } from '@/constants';
+import AddCredits from './AddCredits';
+import toast from "react-hot-toast";
+import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
+import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -36,7 +36,6 @@ const UserProfile = () => {
         setIsModalOpen(false);
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
     const { auth } = useAuthStore();
 
     const fetchUserData = async () => {
@@ -63,7 +62,6 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
-
     return <>
         <DashboardPageContainer>
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
@@ -90,13 +88,13 @@ const UserProfile = () => {
                             {/*</p> : <Skeleton width='21rem' height='2.9rem' />}*/}
                             {userData ? (
                                 // @ts-ignore
-                                <p> {userData?.first_name}, <span className='user-profile__profile-details__age'> {userData?.date_of_birth ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth!) : 'NIL'} </span>
+                                <p> {userData?.first_name}, <span className='user-profile__profile-details__age'> {userData?.date_of_birth  ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth!) : 'NIL'} </span>
                                     {userData?.is_approved && <img src="/assets/icons/verified-badge.svg" alt="verified" />}
                                 </p>
-                            ) : (<Skeleton width='21rem' height='2.9rem' />)}
+                            ) : ( <Skeleton width='21rem' height='2.9rem' /> )}
                         </div>
                         {completed ?
-                            <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") : setActivePage('edit-profile') }} className='user-profile__profile-details__completion-status cursor-pointer'>
+                            <div onClick={() => { Math.ceil(completed / 19 * 100) === 100 ? toast.success("Profile has been completed") :  setActivePage('edit-profile')}} className='user-profile__profile-details__completion-status cursor-pointer'>
                                 {Math.ceil(completed / 19 * 100)}% Complete
                             </div> :
                             <div className='mt-[1.2rem] flex justify-center'>
@@ -115,17 +113,17 @@ const UserProfile = () => {
                     <section className='user-profile__credit-buttons'>
                         {/*<ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>*/}
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance ? userData?.credit_balance : ''} `} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')} />
+                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance !== undefined ? userData.credit_balance : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
                 <section className='user-profile__plans'>
                     <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth={30000} benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setCurrentPlan('free'); setActivePage('subscription-plans'); console.log(currentPlan) }} />
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']} type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
                 </section>
 
             </motion.div>
-            <AddCredits activePage={activePage} closePage={() => { refetchUserData(); setActivePage('user-profile') }} refetchUserData={refetchUserData} />
+            <AddCredits activePage={activePage} closePage={() => {refetchUserData(); setActivePage('user-profile')} } refetchUserData={refetchUserData}/>
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings
@@ -136,7 +134,7 @@ const UserProfile = () => {
             <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userFilters={userFilters} refetchUserFilters={refetchUserFilters} />
             <UserInterestsDesktop activePage={activePage == 'user-interests'} closePage={() => setActivePage('edit-profile')} onInterests={() => setActivePage('interests')} userData={userData} refetchUserData={refetchUserData} />
-            <SubscriptionPlans userData={userData as User} currentPlan={currentPlan} activePage={activePage == 'subscription-plans'} closePage={() => setActivePage('user-profile')} refetchUserData={refetchUserData} />
+            <SubscriptionPlans userData={userData as User} currentPlan={currentPlan} activePage={activePage == 'subscription-plans'} closePage={() => setActivePage('user-profile')} refetchUserData={refetchUserData}/>
         </DashboardPageContainer >
     </>
 }
