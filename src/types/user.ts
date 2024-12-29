@@ -57,6 +57,7 @@ export type User = {
     subscription_code: string,
     email_token: string,
   } | null;
+  currency?: string | null;
 };
 
 export type UserFilters = {

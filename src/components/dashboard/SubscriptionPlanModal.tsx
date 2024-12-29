@@ -1,63 +1,34 @@
 import React, { useState } from 'react';
 import DashboardSettingsModal from './DashboardSettingsModal'
-import StripeCheckoutForm from './StripeCheckoutForm';
+// import StripeCheckoutForm from './StripeCheckoutForm';
 import toast from 'react-hot-toast';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { auth as firebaseAuth, db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { Oval } from 'react-loader-spinner';
-import { useSubscribe, useUnsubscribe } from '@/hooks/usePaystackNgn';
+import { useSubscribe, useUnsubscribe } from '@/hooks/usePaystack';
 import { useNavigate } from 'react-router-dom';
+import { User } from '@/types/user';
 
 
 interface SubscriptionPlanModalProps {
   show: boolean, hide: () => void; advance?: (val: 'stripe-payment' | 'payment-detail') => void, refetchUserData?: () => void
 }
 
-type UserDetails = {name: string, email: string, phone: string, amount: number}
+type UserDetails = {name: string, phone: string, amount: number}
 
 
 
-export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, advance}) => {
+export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps & { setCurrency: (currency: 'ngn' | 'kes' | 'usd') => void }> = ({ show, hide, advance, setCurrency}) => {
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'paystack' | 'usd'>('paystack');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'ngn' | 'kes' | 'usd'>('ngn');
 
 
   const handlePayment = async () => {
-    advance && advance(selectedPaymentMethod === 'paystack' ? 'payment-detail' : 'stripe-payment');
-
-    // const userDocRef = doc(db, "users", auth?.uid as string);
-    // const userDocSnap = await getDoc(userDocRef);
-
-    // if (userDocSnap.exists()) {
-    //   const user = userDocSnap.data();
-    //   setIsLoading(true);
-    //   if (user.paystack && user.paystack.reference !== "") {
-    //     mutate({ 
-    //       code: user.paystack.subscription_code,
-    //       token: user.paystack.email_token
-    //      }, { onSuccess: async() => {
-    //       await updateDoc(userDocRef, {
-    //         is_premium: true
-    //       });
-    //       toast.success('Subscription successful');
-    //       window.location.reload();
-    //       hide();
-    //      }})
-    //   } else {
-    //     advance && advance(selectedPaymentMethod === 'paystack' ? 'payment-detail' : 'stripe-payment');
-    //   }
-    // }
-
-    // setIsLoading(true);
-    // await updateDoc(userDoc, {
-    //   isPremium: true
-    // });
-    // setIsLoading(false);
-    // toast.success('Payment successful');
-    // refetchUserData && refetchUserData();
-    // window.location.reload();
-    // hide();
+    if (advance) {
+      setCurrency(selectedPaymentMethod);
+      advance((selectedPaymentMethod === 'ngn' || selectedPaymentMethod === 'kes') ? 'payment-detail' : 'stripe-payment');
+    }
   }
 
   
@@ -65,15 +36,20 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
       <div className="flex flex-col gap-y-4">
-        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'paystack' ? '#f46a1afa' : '#ececec'}}
-         onClick={() => setSelectedPaymentMethod('paystack')}>
-            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'paystack' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
-            <p className='text-center w-full text-[#8A8A8E]'>Pay using Naira (Paystack)</p>
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'ngn' ? '#f46a1afa' : '#ececec'}}
+          onClick={() => setSelectedPaymentMethod('ngn')}>
+            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'ngn' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using NGN (Paystack)</p>
+        </div>
+        <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'kes' ? '#f46a1afa' : '#ececec'}}
+          onClick={() => setSelectedPaymentMethod('kes')}>
+            <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'kes' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using KES (Nomba)</p>
         </div>
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#ececec'}}
-         onClick={() => toast.error("Coming soon. Stay tuned!")}>
+          onClick={() => toast.error("Coming soon. Stay tuned!")}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
-            <p className='text-center w-full text-[#8A8A8E]'>Pay using USD (Stripe)</p>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using USD (Nomba)</p>
         </div>
         <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={
           handlePayment
@@ -84,14 +60,14 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps> = ({ sh
   )
 }
 
-export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide}) => {
+export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps & { currency: 'ngn' | 'kes' | 'usd', userEmail: string }> = ({ show, hide, currency, userEmail}) => {
 
-const [userDetails, setUserDetails] = useState<UserDetails>({name: "", email: "", phone: "", amount: 200000});
+const [userDetails, setUserDetails] = useState<UserDetails>({name: "", phone: "", amount: 200000});
 const navigate = useNavigate();
 
 const { reset, user } = useAuthStore();
 
-const { mutate } = useSubscribe();
+const { mutate } = useSubscribe(currency === 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES);
 
 const logout = () => {
   firebaseAuth.signOut().then(
@@ -108,29 +84,38 @@ return (
     <form className="flex flex-col gap-y-6" 
       onSubmit= { (e) => { 
         e.preventDefault(); 
-        if (userDetails.name !== "" && userDetails.email !== "" && userDetails.phone !== "") {
+        if (userDetails.name !== "" && userDetails.phone !== "") {
         setIsLoading(true);
-        mutate({email: userDetails.email, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, { onSuccess: async(res) => {  
-          const userDocRef = doc(db, "users", user?.uid as string);
-          await updateDoc(userDocRef, {
-            paystack: {
-              reference: res.data.reference
-            },
-          });
 
-          // setTimeout(() => { 
-            window.open(res.data.authorization_url, '_blank');
-            logout();
-          //  }, 2000)
-           }, onError: () => { toast.error('Payment failed. Please try again'); setIsLoading(false); }});
-          } else {
+        if (currency === 'ngn') {
+          mutate({email: userEmail, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, { onSuccess: async(res) => {  
+            const userDocRef = doc(db, "users", user?.uid as string);
+            await updateDoc(userDocRef, {
+              paystack: {
+                reference: res.data.reference
+              },
+              currency: 'ngn'
+            });
+  
+            // setTimeout(() => { 
+              window.open(res.data.authorization_url, '_blank');
+              logout();
+            //  }, 2000)
+          }, onError: () => { toast.error('Payment failed. Please try again'); setIsLoading(false); }});
+        }
+        else {
+          toast.error('Plan for kenyan shellings hasn\'t been created');
+          setIsLoading(false);
+        }
+        
+        } else {
             toast.error("Please fill in all fields");
           }
         }
       }
       >
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
-          <label htmlFor="name" className='text-[#666]'>Name</label>
+          <label htmlFor="name" className='text-[#666]'>Name {currency}</label>
           <input id='name' type="text" value={userDetails.name} placeholder='Enter your full name' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
           onChange={(e) => setUserDetails((prev) => ({...prev, name: e.target.value}) )} />
       </div>
@@ -141,8 +126,9 @@ return (
       </div>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
           <label htmlFor="name" className='text-[#666]'>Email</label>
-          <input id='name' type="email" placeholder='Enter your email address' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
-          onChange={(e) => setUserDetails((prev) => ({...prev, email: e.target.value}) )} />
+          <input id='name' type="email"  placeholder='Enter your email address' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
+          value={userEmail} readOnly
+          />
       </div>
       <button 
       className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center items-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" 
@@ -154,15 +140,15 @@ return (
 )
 }
 
-export const StripePaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide}) => {
-  return (
-    <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
-      <StripeCheckoutForm />
-    </DashboardSettingsModal>
-  )
-}
+// export const StripePaymentDetailsModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide}) => {
+//   return (
+//     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
+//       <StripeCheckoutForm />
+//     </DashboardSettingsModal>
+//   )
+// }
 
-export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hide, refetchUserData}) => {
+export const CancelPlanModal: React.FC<SubscriptionPlanModalProps & { userData: User }> = ({ show, hide, refetchUserData, userData}) => {
 
   const { auth } = useAuthStore();
 
@@ -170,20 +156,23 @@ export const CancelPlanModal: React.FC<SubscriptionPlanModalProps> = ({ show, hi
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const sk = userData?.currency === 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES;
+
   const { mutate } = useUnsubscribe();
 
   const handleUnsubscription = async () => {
     setIsLoading(true);
-    const userDocSnap = await getDoc(userDoc);
 
-    if (userDocSnap.exists()) {
-      console.log(userDocSnap.data())
+    if (userData) {
+      console.log(userData)
       mutate ({
-        code: userDocSnap.data()?.paystack?.subscription_code,
-        token: userDocSnap.data()?.paystack?.email_token
+        code: userData.paystack?.subscription_code as string,
+        token: userData.paystack?.email_token as string,
+        sk
       }, { onSuccess: async() => {
         await updateDoc(userDoc, {
-          is_premium: false
+          is_premium: false,
+          paystack: {}
         });
         refetchUserData && refetchUserData();
         toast.success('Subscription cancelled successfully');
