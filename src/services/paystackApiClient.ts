@@ -15,27 +15,27 @@ class ApiClient<T, PostDataType> {
     this.endpoint = endpoint;
   }
 
-  get = async () => {
+  get = async (headers?: Record<string, string>) => {
     try {
-      const response = await axiosInstance.get<T>(this.endpoint);
+      const response = await axiosInstance.get<T>(this.endpoint, { headers });
       return response.data;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  post = async (data: PostDataType) => {
+  post = async (data: PostDataType, headers?: Record<string, string>) => {
     try {
-      return axiosInstance.post<T>(this.endpoint, data).then((res) => res.data);
+      return axiosInstance.post<T>(this.endpoint, data, { headers }).then((res) => res.data);
     } catch (error) {
         console.error("Error posting data:", error);
         throw error;
     }
   };
 
-  patch = async (data: PostDataType) => {
+  patch = async (data: PostDataType, headers?: Record<string, string>) => {
     try {
-      const response = await axiosInstance.patch<T>(this.endpoint, data);
+      const response = await axiosInstance.patch<T>(this.endpoint, data, { headers });
       return response.data;
     } catch (error) {
       console.error("Error patching data:", error);
@@ -43,9 +43,9 @@ class ApiClient<T, PostDataType> {
     }
   };
 
-  delete = async () => {
+  delete = async (headers?: Record<string, string>) => {
     try {
-      const response = await axiosInstance.delete<T>(this.endpoint);
+      const response = await axiosInstance.delete<T>(this.endpoint, { headers });
       return response.data;
     } catch (error) {
       console.error("Error deleting data:", error);

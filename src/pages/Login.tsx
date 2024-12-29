@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -16,7 +17,7 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useGetSubscriptionCodeAndEmailToken, useUnsubscribe, useVerify } from "@/hooks/usePaystackNgn";
+import { useGetSubscriptionCodeAndEmailToken, useUnsubscribe, useVerify } from "@/hooks/usePaystack";
 import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
@@ -82,9 +83,11 @@ const Login = () => {
                         navigate('/onboarding')
                     } else {
                         setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user);
-                        paystackReferenceQuery(user.paystack.reference as string, { onSuccess: async (paystackRes) => {
-                            const userDocRef = doc(db, "users", res.user?.uid);
-                            navigate('/dashboard/explore');
+                        const userDocRef = doc(db, "users", res.user?.uid);
+                        if ( user.paystack.reference) {
+                            const sk = user.currency == 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES
+                            paystackReferenceQuery({reference: user.paystack.reference as string, sk }, { onSuccess: async (paystackRes) => {
+                            // navigate('/dashboard/explore');
                             if (paystackRes.status === true) {
 
                                 await updateDoc(userDocRef, { is_premium: true });
@@ -95,10 +98,10 @@ const Login = () => {
                                             reference: user.paystack.reference,
                                             authorization_code: paystackRes.data.authorization.authorization_code,
                                             customer_code: paystackRes.data.customer.customer_code,
-                                            customer_id: paystackRes.data.customer.id
+                                            customer_id: paystackRes.data.customer.id,
                                         }
                                     }).then(() => {
-                                        subscriptionList.mutate(paystackRes.data.customer.id, {
+                                        subscriptionList.mutate({ customer_id:paystackRes.data.customer.id, sk}, {
                                             onSuccess: async (subRes) => {
                                                 try {
                                                     console.log("Subscription Response:", subRes); // Debugging
@@ -137,7 +140,7 @@ const Login = () => {
                                     is_premium: false
                                 }).then(() => {
                                     if (user.paystack.subscription_code || user.paystack.email_token) {
-                                        unsubscribeUser.mutate({ code: user.paystack.subscription_code, token: user.paystack.email_token }, {
+                                        unsubscribeUser.mutate({ code: user.paystack.subscription_code, token: user.paystack.email_token, sk }, {
                                             onSuccess: () => {
                                                 console.log("User unsubscribed successfully!");
                                             },
@@ -150,7 +153,12 @@ const Login = () => {
                                 // console.log('This is not paystack');
                             }
                             
-                        }, onError: () => toast.error('An error occurred while trying to verify payment') });
+                        }, onError: () => toast.error('An error occurred while trying to verify payment') });} 
+                        else {
+                            await updateDoc(userDocRef, {
+                                is_premium: false
+                            }).then(() => navigate('/dashboard/explore'))
+                        }
                     }
                 }
             }

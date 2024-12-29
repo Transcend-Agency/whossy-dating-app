@@ -16,7 +16,7 @@ const ProfilePlan: React.FC<ProfilePlanProps> = ({ planTitle, type, pricePerMont
         <img className={'user-profile__plans__plan__gradient'} src={gradientSrc} alt={''} />
         <h3 className='user-profile__plans__plan__title'>{planTitle}</h3>
         <p className='user-profile__plans__plan__pricing'>
-            <span className='currency'>₦</span>
+            <span className='currency'>$</span>
             <span className='price'>{addCommasToNumber(pricePerMonth)}</span>
             <span className='billing-cycle'>/month</span>
         </p>
