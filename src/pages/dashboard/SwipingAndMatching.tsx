@@ -615,22 +615,23 @@ const SwipingAndMatching = () => {
     const fetchUsersWithinSpecifiedRadius = async () => {
         setProfilesLoading(true);
 
-        if (!user) {
+        if (!user || !loggedUserData) {
             console.error("User is not defined.");
             setProfilesLoading(false);
             return;
         }
 
-        const center = [user.latitude as number, user.longitude as number] as [number, number];
+        const center = [loggedUserData.latitude as number, loggedUserData.longitude as number]
         const radiusInM = (user.distance as number) * 1000;
 
         // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
         // a separate query for each pair. There can be up to 9 pairs of bounds
         // depending on overlap, but in most cases there are 4.
+        // @ts-ignore
         const bounds = geohashQueryBounds(center, radiusInM);
 
         const usersCollection = collection(db, 'users');
-        const baseQuery = query(usersCollection, where("has_completed_onboarding", "==", true), where("is_banned","==","false"));
+        const baseQuery = query(usersCollection, where("has_completed_onboarding", "==", true));
 
         // Add gender-specific filtering
         let finalQuery;
@@ -658,9 +659,20 @@ const SwipingAndMatching = () => {
         const matchingDocs = [];
 
         for (const snap of snapshots) {
-            for (const doc of snap.docs) {
-                const lat = doc.get('latitude');
-                const lng = doc.get('longitude');
+            for (const doc of snap.docs
+                .filter(doc => doc.get('is_banned') !== true)
+                .filter(doc => doc.get('is_approved') === true)
+                .filter(doc => {
+                    const userSettings = doc.get('user_settings');
+                    return userSettings && userSettings.public_search === true;
+                })
+                .filter(doc =>
+                typeof doc.get('latitude') === 'number' &&
+                typeof doc.get('longitude') === 'number'
+            )) {
+                const lat = doc.get('latitude') as number;
+                const lng = doc.get('longitude') as number;
+                // @ts-ignore
                 const distanceInKm = distanceBetween([lat, lng], center);
                 const distanceInM = distanceInKm * 1000;
 
@@ -678,6 +690,8 @@ const SwipingAndMatching = () => {
             }
         }
 
+        console.log("Final Look:", matchingDocs)
+
         setProfilesLoading(false);
         setProfiles(matchingDocs);
     };
@@ -689,15 +703,15 @@ const SwipingAndMatching = () => {
             // Create a document reference for the user
             const userDocRef = doc(db, 'users', userId!);
 
-			const geoPoint = new GeoPoint(latitude, longitude)
-            const geoHash = geohashForLocation([latitude, longitude])
-            const geography = { geoHash , geoPoint  }
+			const geopoint = new GeoPoint(latitude, longitude)
+            const geohash = geohashForLocation([latitude, longitude])
+            const geography = { geohash , geopoint }
 
             // Save location data under the user document with merge option
             await setDoc(userDocRef, {
-                location: geoPoint,
+                location: geopoint,
                 latitude, longitude,
-                geohash: geoHash,
+                geohash: geohash,
                 geography: geography
             }, { merge: true });
 

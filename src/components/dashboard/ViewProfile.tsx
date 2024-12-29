@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardPageContainer from "./DashboardPageContainer";
 import {useChatIdStore} from "@/store/ChatStore.tsx";
 import {createOrFetchChat} from "@/utils/chatService.ts";
+import {Chat} from "@/types/chat.ts";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -186,6 +187,11 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
 
+    const fetchUserChats = async (id: string) => {
+        const chatDocRef = doc(db, "chats", id);
+        const chatDocSnap = await getDoc(chatDocRef);
+        return chatDocSnap.exists() ? chatDocSnap.data() as Chat : null;
+    };
 
     return (
         <>
@@ -206,11 +212,13 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                           onClick={async () => {
                               const chatId = [auth?.uid, userData.uid].sort().join('_');
                               setChatId(chatId)
-                              await createOrFetchChat(auth?.uid as string, userData.uid as string, setChatId).then(
+                              const chat = await fetchUserChats(chatId) as Chat;
+                              await createOrFetchChat(auth?.uid as string, userData?.uid as string, setChatId).then(
                                   () => {
-                                      if (chatId != "nil") {
+                                      if (chatId != "nil" || !chat || !chat.participants || chat.participants.length < 2) {
+                                          const bothPremiumUsers = userData.is_premium && user?.is_premium
                                           navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
-                                              state: {chatId, recipientUser: userData},
+                                              state: {chatId, recipientUser: userData, chatUnlocked: bothPremiumUsers ? true : chat.is_unlocked },
                                           });
                                           setChatId(chatId)
                                       }

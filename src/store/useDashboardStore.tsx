@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User } from '@/types/user.ts';
+import {AdvancedSearchPreferences, User} from '@/types/user.ts';
 import { filterOptions } from '@/constants';
 import {PopulatedLikeData} from "@/types/likingAndMatching.ts";
 
@@ -19,6 +19,8 @@ interface DashboardState {
 	previousLocation: string | null;
 	currentLocation: string;
 	setLocation: (newLocation: string) => void;
+	advancedSearchPreferences: AdvancedSearchPreferences
+	setAdvancedSearchPreferences: (preferences: AdvancedSearchPreferences) => void
 }
 
 const useDashboardStore = create<DashboardState>((set) => ({
@@ -47,6 +49,16 @@ const useDashboardStore = create<DashboardState>((set) => ({
 			previousLocation: state.currentLocation,
 			currentLocation: newLocation,
 		})),
+
+	advancedSearchPreferences: {
+		gender: '',
+		age_range: { min: 18, max: 100 },
+		country: '',
+		relationship_preference: null,
+		religion: null
+	},
+	setAdvancedSearchPreferences: (preferences) => set({ advancedSearchPreferences: preferences })
+
 }));
 
 export default useDashboardStore;
