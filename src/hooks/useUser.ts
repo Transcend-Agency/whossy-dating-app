@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { AdvancedSearchPreferences, User, UserFilters, UserProfile } from "@/types/user";
 import toast from "react-hot-toast";
@@ -45,7 +45,7 @@ const updateAdvancedSearchPreferences = async (
   const userRef = doc(db, "advancedSearchPreferences", uid as string);
   await updateDoc(userRef, updatedFields as UserProfile).then(() => {
     success();
-    toast.success("Updated!");
+    toast.success("Updated")
   });
 }
 
@@ -56,13 +56,7 @@ const getAdvancedSearchPreferences = async (uid: string) => {
   if (docSnap.exists()) {
     return docSnap.data() as AdvancedSearchPreferences;
   } else {
-    // docSnap.data() will be undefined in this case
     console.log("No such document!");
-    await setDoc(doc(db, "advancedSearchPreferences", uid as string), {
-      gender: '',
-      age_range: { min: 18, max: 100 }
-
-    } as AdvancedSearchPreferences);
   }
 }
 

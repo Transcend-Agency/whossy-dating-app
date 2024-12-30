@@ -11,6 +11,10 @@
         @apply rounded-[1.2rem] w-[15.8rem] h-[17.4rem] p-[0.3rem] mt-[1.2rem];
         background-image: linear-gradient(180deg, #485FE6 0%, #309BBD 100%);
     }
+    &__total-matches-preview-small {
+        @apply rounded-[1.2rem] w-[11.2rem] h-[12rem] p-[0.3rem];
+        background-image: linear-gradient(180deg, #485FE6 0%, #309BBD 100%);
+    }
     &__total-matches-preview-inner {
         @apply bg-white w-full h-full rounded-[1.2rem] p-[0.3rem] relative;
         img {

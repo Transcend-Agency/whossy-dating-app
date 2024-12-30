@@ -33,15 +33,10 @@ const UserProfile = () => {
     const [completed, setCompleted] = useState<number>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
     const { auth } = useAuthStore();
 
     const fetchUserData = async () => {
@@ -61,7 +56,8 @@ const UserProfile = () => {
 
     const fetchUserFilters = async () => {
         const data = await getUserProfile("filters", auth?.uid as string) as UserFilters;
-        setUserFilters(data) }
+        setUserFilters(data)
+    }
 
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
@@ -70,13 +66,10 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
-
     // const { reference } = usePaystackStore();
-
+    
     return <>
-        
         <DashboardPageContainer>
-        
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
                 <div className='user-profile__container flex flex-col'>
                     <div className='flex justify-between gap-x-4'>
@@ -102,7 +95,7 @@ const UserProfile = () => {
                             {userData ? (
                                 // @ts-ignore
                                 <p> {userData?.first_name}, <span className='user-profile__profile-details__age'> {userData?.date_of_birth  ? (new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth!) : 'NIL'} </span>
-                                    <img src="/assets/icons/verified-badge.svg" alt="verified" />
+                                    {userData?.is_approved && <img src="/assets/icons/verified-badge.svg" alt="verified" />}
                                 </p>
                             ) : ( <Skeleton width='21rem' height='2.9rem' /> )}
                         </div>
@@ -124,9 +117,9 @@ const UserProfile = () => {
                     </div>
 
                     <section className='user-profile__credit-buttons'>
-                        <ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>
+                        {/*<ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>*/}
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description={`Credits: ${userData?.credits} `} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance !== undefined ? userData.credit_balance : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
@@ -136,7 +129,7 @@ const UserProfile = () => {
                 </section>
 
             </motion.div>
-            <AddCredits activePage={activePage} closePage={() => setActivePage('user-profile')} refetchUserData={refetchUserData}/>
+            <AddCredits activePage={activePage} closePage={() => {refetchUserData(); setActivePage('user-profile')} } refetchUserData={refetchUserData}/>
             <EditProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onPreviewProfile={() => { setActivePage('edit-profile'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} onInterests={() => setActivePage('user-interests')} userData={userData} refetchUserData={refetchUserData} />
             <SafetyGuide activePage={activePage} activeSubPage={activeSubPage} closePage={() => setActivePage('user-profile')} onSafetyItem={() => { setActivePage('safety-guide'); setActiveSubPage(1) }} setActiveSubPage={setActiveSubPage} />
             <ProfileSettings

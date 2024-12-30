@@ -14,8 +14,8 @@ interface SubscriptionPlansProps {
     activePage: boolean;
     currentPlan : 'free' | 'premium' | '';
     closePage: () => void;
-    userData: User;
-    refetchUserData: () => void;
+    userData?: User;
+    refetchUserData?: () => void;
 }
 
 const  SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, closePage, currentPlan, userData, refetchUserData }) => {
@@ -87,31 +87,10 @@ const  SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, clos
       };
 
       const [showPaymentOptionsModal, setShowPaymentOptionsModal] = useState<'hidden' | 'plan' | 'payment-detail' | 'stripe-payment' | 'cancel-subscription'>('hidden');
-
-
-    //   const {auth} = useAuthStore();
-
-    //   const { mutate } = useVerify();
-
-    //   useEffect(() => {
-    //     mutate( reference as string );
-    //   }, [])
-
       const [isPremiumUser, setIsPremiumUser] = useState<boolean | null>();
-    
-    //   const fetchUserData = async () => {
-    //     const data = await getUserProfile("users", auth?.uid as string) as User;
-    //     setIsPremiumUser(data.is_premium);
-    //   }
-    
+
       useEffect(() => {
         setIsPremiumUser(userData?.is_premium);
-        // userData && mutate(userData?.reference as string, { onSuccess: (res) => {
-        //     if (res.data.status === true) {
-        //         refetchUserData();
-        //     }
-        // } });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [userData])
 
     const [ currency, setCurrency ] = useState<'ngn' | 'kes' | 'usd'>('ngn');

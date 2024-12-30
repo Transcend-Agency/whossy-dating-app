@@ -7,7 +7,20 @@ import {useAuthStore} from "@/store/UserId.tsx";
 
 function useProfileFetcher() {
 	const { user } = useAuthStore()
-	const { blockedUsers, setBlockedUsers, setProfiles , selectedOption, setExploreDataLoading } = useDashboardStore()
+	const { blockedUsers, setBlockedUsers, setProfiles , selectedOption, setExploreDataLoading, advancedSearchPreferences} = useDashboardStore()
+
+	const calculateDOBRange = (minAge: any, maxAge: any) => {
+		const today = new Date();
+		const currentYear = today.getFullYear();
+
+		const minDOB = new Date(currentYear - maxAge, today.getMonth(), today.getDate()); // For oldest age (e.g., 30)
+		const maxDOB = new Date(currentYear - minAge, today.getMonth(), today.getDate()); // For youngest age (e.g., 25)
+
+		return {
+			minDOB: Timestamp.fromDate(minDOB),
+			maxDOB: Timestamp.fromDate(maxDOB),
+		};
+	};
 
 	const fetchBlockedUsers = useCallback(async () => {
 		if (!user?.uid) return [];
@@ -38,7 +51,6 @@ function useProfileFetcher() {
 			const userInfo = userDoc.exists() ? userDoc.data() : {};
 			const userInterest = userInfo.interests || []
 
-			const usersCollection = collection(db, "users");
 			const interestsFilter: boolean = userInterest && userInterest.length > 0;
 
 			let querySnapshot = await getDocs(queryParam);
@@ -46,7 +58,8 @@ function useProfileFetcher() {
 
 			if (selectedOption === "Similar interest" && interestsFilter) {
 				const currentUserInterests2 = userInterest || [];
-				querySnapshot = await getDocs(query(usersCollection, where("has_completed_onboarding", "==", true), where("interests", "array-contains-any", userInterest || [])))
+				const initialQuery = getUsers(user)
+				querySnapshot = await getDocs(query(initialQuery, where("interests", "array-contains-any", userInterest || [])))
 				userData = querySnapshot.docs.map(doc => doc.data() as UserProfile)
 
 				data = userData.sort((a , b) => {
@@ -58,11 +71,45 @@ function useProfileFetcher() {
 
 					return sharedInterestsB - sharedInterestsA;
 				});
+			} else if (selectedOption === "Advanced Search") {
+				let q = getUsers(user)
+				console.log("Advanced Search Preferences:", advancedSearchPreferences);
 
-			} else {
-				data = userData
-			}
-			data = userData
+				if (advancedSearchPreferences.gender) {
+					console.log("Filtering by gender:", advancedSearchPreferences.gender);
+					q = query(q, where("gender", "==", advancedSearchPreferences.gender));
+				}
+
+				if (advancedSearchPreferences.age_range?.min && advancedSearchPreferences.age_range?.max) {
+					const { minDOB, maxDOB } = calculateDOBRange(advancedSearchPreferences.age_range.min, advancedSearchPreferences.age_range.max);
+					q = query(q, where("date_of_birth", ">=", minDOB));
+					q = query(q, where("date_of_birth", "<=", maxDOB));
+				}
+
+				if (advancedSearchPreferences.country) {
+					console.log("Filtering by country:", advancedSearchPreferences.country);
+					q = query(q, where("country", "==", advancedSearchPreferences.country));
+				}
+
+				if (advancedSearchPreferences.relationship_preference) {
+					console.log("Filtering by relationship preference:", advancedSearchPreferences.relationship_preference);
+					q = query(q, where("preference", "==", advancedSearchPreferences.relationship_preference));
+				}
+
+				if (advancedSearchPreferences.religion) {
+					console.log("Filtering by Religion:", advancedSearchPreferences.religion);
+					q = query(q, where("religion", "==", advancedSearchPreferences.religion));
+				}
+
+				try {
+					const querySnapshot = await getDocs(q);
+					data = querySnapshot.docs.map((doc) => doc.data() as UserProfile);
+					console.log("Advanced Search results:", data);
+				} catch (error) {
+					console.error("Error fetching Advanced Search results:", error);
+				}
+			} else { data = userData }
+
 			setProfiles(filterBlockedAndCurrentUser(data as User[], blockedUsers));
 		} catch (error) {
 			console.error("Error fetching profiles:", error);
@@ -84,7 +131,8 @@ function useProfileFetcher() {
 
 	const getUsers = (user?: User) => {
 		const usersCollection = collection(db, "users");
-		const q_base = query(usersCollection, where("has_completed_onboarding", "==", true));
+		const q_base = query(usersCollection,
+			where("has_completed_onboarding", "==", true));
 		let q;
 		if (user) {
 			const userGender = user.gender;
@@ -96,6 +144,7 @@ function useProfileFetcher() {
 				const targetGender = user.meet === 0 ? "Male" : "Female";
 				q = query(q_base,
 					where("gender", "==", targetGender),
+					// where("meet","in", [2, user.meet === 0 ? 1 : 0])
 				);
 			} else {
 				throw new Error("Invalid meet value provided.");
@@ -133,6 +182,9 @@ function useProfileFetcher() {
 				break;
 			case "Outside my country":
 				fetchQuery = query(q, where("country_of_origin", "!=", user?.country_of_origin));
+				break;
+			case "Advanced Search":
+				fetchQuery = query(q)
 				break;
 			default:
 				console.log("Option not recognized");
