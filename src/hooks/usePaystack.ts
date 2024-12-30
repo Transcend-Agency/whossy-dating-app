@@ -3,9 +3,9 @@ import ApiClient from "@/services/paystackApiClient";
 import { useMutation } from "@tanstack/react-query";
 
 export const useSubscribe = (sk: string) => {
-    const apiClient = new ApiClient<any, {email: string, amount: number, plan: string}>("/transaction/initialize");
+    const apiClient = new ApiClient<any, {email: string, amount: number, plan: string, metadata: { userId: string }  }>("/transaction/initialize");
     return useMutation({
-        mutationFn: (data: {email: string, amount: number, plan: string}) => 
+        mutationFn: (data: {email: string, amount: number, plan: string, metadata: {userId: string}}) => 
         apiClient.post(data, { Authorization: `Bearer ${sk}` }),
     });
 };
@@ -45,6 +45,19 @@ export const useGetSubscriptionCodeAndEmailToken = () => {
       },
   });
 };
+
+export const useGetCustomerInformation = () => {
+  return useMutation({
+      mutationFn: async ({ email_or_code, sk }: { email_or_code: string; sk: string }) => {
+          const apiClient = new ApiClient<any, never>(`/customer/${email_or_code}`);
+          const response = await apiClient.get({ Authorization: `Bearer ${sk}` });
+          // Log response to check structure
+          console.log("API Response:", response);
+          return response;
+      },
+  });
+};
+
 
 // export const useEnableSubscription = (sk: string) => {
 //   const apiClient = new ApiClient<any, { code: string; token: string }>("/subscription/enable");

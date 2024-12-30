@@ -6,7 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { auth as firebaseAuth, db } from '@/firebase';
 import { useAuthStore } from '@/store/UserId';
 import { Oval } from 'react-loader-spinner';
-import { useSubscribe, useUnsubscribe } from '@/hooks/usePaystack';
+import { useGetCustomerInformation, useSubscribe, useUnsubscribe } from '@/hooks/usePaystack';
 import { useNavigate } from 'react-router-dom';
 import { User } from '@/types/user';
 
@@ -15,7 +15,7 @@ interface SubscriptionPlanModalProps {
   show: boolean, hide: () => void; advance?: (val: 'stripe-payment' | 'payment-detail') => void, refetchUserData?: () => void
 }
 
-type UserDetails = {name: string, phone: string, amount: number}
+// type UserDetails = {name: string, phone: string, amount: number}
 
 
 
@@ -60,12 +60,11 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps & { setC
   )
 }
 
-export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps & { currency: 'ngn' | 'kes' | 'usd', userEmail: string }> = ({ show, hide, currency, userEmail}) => {
+export const PaystackPaymentDetailsModal: React.FC<SubscriptionPlanModalProps & { currency: 'ngn' | 'kes' | 'usd', userData: User }> = ({ show, hide, currency, userData}) => {
 
-const [userDetails, setUserDetails] = useState<UserDetails>({name: "", phone: "", amount: 200000});
 const navigate = useNavigate();
 
-const { reset, user } = useAuthStore();
+const { reset } = useAuthStore();
 
 const { mutate } = useSubscribe(currency === 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES);
 
@@ -80,22 +79,22 @@ const logout = () => {
 const [isLoading, setIsLoading] = useState(false);
 
 return (
-  <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
+  <DashboardSettingsModal showing={show} title="Details" hideModal={hide}>
     <form className="flex flex-col gap-y-6" 
       onSubmit= { (e) => { 
         e.preventDefault(); 
-        if (userDetails.name !== "" && userDetails.phone !== "") {
+        if (userData) {
         setIsLoading(true);
 
         if (currency === 'ngn') {
-          mutate({email: userEmail, amount: 50000, plan: 'PLN_pmtergy4o4vv216'}, { onSuccess: async(res) => {  
-            const userDocRef = doc(db, "users", user?.uid as string);
-            await updateDoc(userDocRef, {
-              paystack: {
-                reference: res.data.reference
-              },
-              currency: 'ngn'
-            });
+          mutate({email: userData?.email as string, amount: 50000, plan: 'PLN_pmtergy4o4vv216', metadata: { userId: userData?.uid as string } }, { onSuccess: async(res) => {  
+            // const userDocRef = doc(db, "users", user?.uid as string);
+            // await updateDoc(userDocRef, {
+            //   paystack: {
+            //     reference: res.data.reference
+            //   },
+            //   currency: 'ngn'
+            // });
   
             // setTimeout(() => { 
               window.open(res.data.authorization_url, '_blank');
@@ -115,19 +114,17 @@ return (
       }
       >
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
-          <label htmlFor="name" className='text-[#666]'>Name {currency}</label>
-          <input id='name' type="text" value={userDetails.name} placeholder='Enter your full name' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
-          onChange={(e) => setUserDetails((prev) => ({...prev, name: e.target.value}) )} />
+          <label htmlFor="name" className='text-[#666]'>Name</label>
+          <input id='name' type="text" value={(userData?.first_name as string) + ' ' + (userData?.last_name as string)} readOnly placeholder='Enter your full name' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'/>
       </div>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
           <label htmlFor="name" className='text-[#666]'>Phone Number</label>
-          <input id='name' type="text" value={userDetails.phone} placeholder='Enter your phone number' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
-          onChange={(e) => setUserDetails((prev) => ({...prev, phone: e.target.value}) )} />
+          <input id='name' type="text" value={(userData?.phone_number as string)} readOnly placeholder='Enter your phone number' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'/>
       </div>
       <div className='flex flex-col space-y-2 text-[1.8rem]'>
           <label htmlFor="name" className='text-[#666]'>Email</label>
           <input id='name' type="email"  placeholder='Enter your email address' className='border py-4 px-4 outline-none border-[#ccc] rounded-lg placeholder:text-[#dad9d9]'
-          value={userEmail} readOnly
+          value={(userData?.email as string)} readOnly
           />
       </div>
       <button 
@@ -150,37 +147,59 @@ return (
 
 export const CancelPlanModal: React.FC<SubscriptionPlanModalProps & { userData: User }> = ({ show, hide, refetchUserData, userData}) => {
 
-  const { auth } = useAuthStore();
+  const { auth, user } = useAuthStore();
 
   const userDoc = doc(db, "users", auth?.uid as string );
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const sk = userData?.currency === 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES;
+  const sk = userData?.paystack?.charge_success?.currency === 'NGN' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES;
 
   const { mutate } = useUnsubscribe();
+  const fetchCustomerInfo = useGetCustomerInformation();
 
   const handleUnsubscription = async () => {
     setIsLoading(true);
 
-    if (userData) {
-      console.log(userData)
-      mutate ({
-        code: userData.paystack?.subscription_code as string,
-        token: userData.paystack?.email_token as string,
-        sk
-      }, { onSuccess: async() => {
-        await updateDoc(userDoc, {
-          is_premium: false,
-          paystack: {}
-        });
-        refetchUserData && refetchUserData();
-        toast.success('Subscription cancelled successfully');
-        window.location.reload();
-        hide();
-      }, onError: () => { setIsLoading(false); toast.error('An error occurred while trying to cancel subscription. Please try again later') }})
-    } 
-  } 
+    if (user) {
+      fetchCustomerInfo.mutate({email_or_code: user.email as string, sk}, {onSuccess: (res) => {
+        console.log(res);
+        mutate ({
+          code: res.data.subscriptions[0].subscription_code,
+          token: res.data.subscriptions[0].email_token,
+          sk
+          }, { onSuccess: async() => {
+          await updateDoc(userDoc, {
+            is_premium: false,
+            paystack: {}
+          });
+          refetchUserData && refetchUserData();
+          toast.success('Subscription cancelled successfully');
+          window.location.reload();
+          hide();
+          }, onError: () => { setIsLoading(false); toast.error('An error occurred while trying to cancel subscription. Please try again later') }})
+      }})
+    }
+  }
+
+  //   if (userData) {
+  //     console.log(userData)
+  //     mutate ({
+  //       code: userData.paystack?.subscription_code as string,
+  //       token: userData.paystack?.email_token as string,
+  //       sk
+  //     }, { onSuccess: async() => {
+  //       await updateDoc(userDoc, {
+  //         is_premium: false,
+  //         paystack: {}
+  //       });
+  //       refetchUserData && refetchUserData();
+  //       toast.success('Subscription cancelled successfully');
+  //       window.location.reload();
+  //       hide();
+  //     }, onError: () => { setIsLoading(false); toast.error('An error occurred while trying to cancel subscription. Please try again later') }})
+  //   } 
+  // } 
 
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
