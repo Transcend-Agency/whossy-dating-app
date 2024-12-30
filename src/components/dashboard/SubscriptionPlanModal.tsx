@@ -9,6 +9,7 @@ import { Oval } from 'react-loader-spinner';
 import { useGetCustomerInformation, useSubscribe, useUnsubscribe } from '@/hooks/usePaystack';
 import { useNavigate } from 'react-router-dom';
 import { User } from '@/types/user';
+import { addCommasToNumber } from '@/constants';
 
 
 interface SubscriptionPlanModalProps {
@@ -39,17 +40,17 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps & { setC
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'ngn' ? '#f46a1afa' : '#ececec'}}
           onClick={() => setSelectedPaymentMethod('ngn')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'ngn' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
-            <p className='text-center w-full text-[#8A8A8E]'>Pay using NGN (Paystack)</p>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using Naira (NGN)</p>
         </div>
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'kes' ? '#f46a1afa' : '#ececec'}}
           onClick={() => setSelectedPaymentMethod('kes')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'kes' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
-            <p className='text-center w-full text-[#8A8A8E]'>Pay using KES (Nomba)</p>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using Kenyan Shellings (KEN)</p>
         </div>
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'usd' ? '#f46a1afa' : '#ececec'}}
           onClick={() => toast.error("Coming soon. Stay tuned!")}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'usd' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
-            <p className='text-center w-full text-[#8A8A8E]'>Pay using USD (Nomba)</p>
+            <p className='text-center w-full text-[#8A8A8E]'>Pay using Dollars (USD)</p>
         </div>
         <button className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" onClick={
           handlePayment
@@ -129,7 +130,7 @@ return (
       </div>
       <button 
       className="bg-[#ff5e00f7] w-full py-[1.5rem] text-center flex justify-center items-center rounded-[0.8rem] text-[1.8rem] text-white font-medium tracking-wide cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-300" 
-      >{ !isLoading ? 'Pay - $12' : <Oval color="#ffffff" secondaryColor="#f6f6f6" width={20} height={20} /> }</button>
+      >{ !isLoading ? `Pay - ${currency === 'ngn' ? '₦' + addCommasToNumber(50000) : 'KES' + addCommasToNumber(2000) }` : <Oval color="#ffffff" secondaryColor="#f6f6f6" width={20} height={20} /> }</button>
       {/* <PaystackButton text='Pay Now' className="paystack-button" email={userDetails.email}  amount={userDetails.amount} publicKey={publicKey} onSuccess={handleSuccessfulPayment}/> */}
       {/* <button onClick={(e) => {alert('pay now'); e.preventDefault()}}>click</button> */}
     </form>
