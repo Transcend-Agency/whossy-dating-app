@@ -54,7 +54,7 @@ export type User = {
     geohash: string,
     geopoint: GeoPoint
   };
-  credit_balance?: number | null;
+  credits?: number | null;
   amount_paid_in_total?: number | null;
   paystack?: {
     charge_success?: {
