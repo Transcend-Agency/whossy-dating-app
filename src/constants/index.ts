@@ -751,10 +751,9 @@ const smoking = [
 ];
 
 const workout = [
-  "Yes, regularly",
+  "Regularly",
   "Occasionally",
   "Only on weekends",
-  "Regularly",
   "Rarely",
   "Not at all",
 ];
