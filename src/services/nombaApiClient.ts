@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_PAYSTACK_BASE_URL,
+    baseURL: import.meta.env.VITE_NOMBA_BASE_URL,
     headers: {
         Authorization: `Bearer sk_test_4261de68b79d24467a76a311d70254429923d9fa`,
         "Content-Type": "application/json",
