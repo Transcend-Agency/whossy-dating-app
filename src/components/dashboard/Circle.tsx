@@ -29,7 +29,7 @@ const Circle: React.FC<CircleProps> = ({ percentage, imageUrl }) => {
             {/* Inner Circle with Image or Skeleton */}
             <div className="relative flex items-center justify-center h-[160px] w-[160px] rounded-full bg-white overflow-hidden">
                 {!imageUrl ? (
-                    <Skeleton width={"140px"} height={"140px"} circle />
+                    <Skeleton width={"160px"} height={"160px"} circle />
                 ) : (
                     <img
                         src={imageUrl}
