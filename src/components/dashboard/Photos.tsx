@@ -130,7 +130,7 @@ const Photos: FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
 
       <section className="bg-[#F6F6F6] py-[1.2rem] px-[1.6rem] flex flex-col">
         <div className="grid grid-cols-6 grid-rows-2 gap-4">
-          <input ref={fileInputRef} accept="image/*" type="file" className="hidden" onChange={handleImageUpload} />
+          <input ref={fileInputRef} accept="image/jpeg, image/png, image/bmp, image/webp" type="file" className="hidden" onChange={handleImageUpload} />
           <Card photo={mutatedPhoto[0] || ''} index={1} colspan="col-span-3 xs:col-span-2 " rowspan="row-span-2 xs:row-span-1" height="h-[184px]" onPress={() => { if (mutatedPhoto[0]) { setPhotoModalShowing('photo-one') } else { setPhotoModalShowing('photo-one-first-upload') } }} onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[0]); updateUserPhotos(updatedPhotos); }} />
           <Card photo={mutatedPhoto[1]} index={2} colspan="col-span-3 xs:col-span-2 " onPress={() => { if (mutatedPhoto[1]) { setPhotoModalShowing('photo-two') } else { setPhotoModalShowing('photo-two-first-upload') } }} height="h-[88px]" onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[1]); updateUserPhotos(updatedPhotos); }} />
           <Card photo={mutatedPhoto[2]} index={3} colspan="col-span-3 xs:col-span-2 " onPress={() => { if (mutatedPhoto[2]) { setPhotoModalShowing('photo-three') } else { setPhotoModalShowing('photo-three-first-upload') } }} height="h-[88px]" onDelete={() => { const updatedPhotos = photo.filter(item => item !== photo[2]); updateUserPhotos(updatedPhotos); }} />
