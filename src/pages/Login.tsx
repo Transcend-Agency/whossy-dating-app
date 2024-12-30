@@ -54,7 +54,6 @@ const Login = () => {
     // const { mutate: paystackReferenceQuery } = useVerify();
     // const subscriptionList = useGetSubscriptionCodeAndEmailToken();
     // const unsubscribeUser = useUnsubscribe();
-
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
             setLoading(true)
@@ -213,7 +212,7 @@ const Login = () => {
                     email: res.user.email,
                     has_completed_account_creation: false,
                     has_completed_onboarding: false,
-                    is_verified: false,
+                    is_approved: false,
                     created_at: serverTimestamp()
                 });
                 setId(res.user.uid)

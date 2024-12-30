@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
             </nav>
             <main className='dashboard-layout__main-app'>
                 <MatchesSide />
-                <Outlet />
+                <Outlet/>
             </main>
         </div>
         <div className="h-screen flex flex-col lg:hidden">

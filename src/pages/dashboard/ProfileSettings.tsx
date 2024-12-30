@@ -140,9 +140,6 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
         console.log("Cookies and local storage cleared.");
     };
 
-
-
-
     return (
         <>
             <SettingsModal show={showModal == 'logout'} onCloseModal={() => setShowModal('hidden')} onLogout={logout}/>

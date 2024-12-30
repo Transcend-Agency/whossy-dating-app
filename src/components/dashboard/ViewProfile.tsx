@@ -14,6 +14,8 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import DashboardPageContainer from "./DashboardPageContainer";
 import {useChatIdStore} from "@/store/ChatStore.tsx";
+import {createOrFetchChat} from "@/utils/chatService.ts";
+import {Chat} from "@/types/chat.ts";
 
 interface ViewProfileProps {
     onBackClick: () => void;
@@ -185,6 +187,11 @@ const ViewProfile: React.FC<ViewProfileProps> = (
         return Boolean(userLikes.filter(like => (like.liked_id === selectedProfile)).length)
     }
 
+    const fetchUserChats = async (id: string) => {
+        const chatDocRef = doc(db, "chats", id);
+        const chatDocSnap = await getDoc(chatDocRef);
+        return chatDocSnap.exists() ? chatDocSnap.data() as Chat : null;
+    };
 
     return (
         <>
@@ -202,11 +209,21 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                     </div>
                     }
                     {<div className="preview-profile__action-button"
-                          onClick={() => {
-                              // setSelectedProfile(null)
+                          onClick={async () => {
                               const chatId = [auth?.uid, userData.uid].sort().join('_');
-                              setChatId(chatId);
-                              navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`)
+                              setChatId(chatId)
+                              const chat = await fetchUserChats(chatId) as Chat;
+                              await createOrFetchChat(auth?.uid as string, userData?.uid as string, setChatId).then(
+                                  () => {
+                                      if (chatId != "nil" || !chat || !chat.participants || chat.participants.length < 2) {
+                                          const bothPremiumUsers = userData.is_premium && user?.is_premium
+                                          navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
+                                              state: {chatId, recipientUser: userData, chatUnlocked: bothPremiumUsers ? true : chat.is_unlocked },
+                                          });
+                                          setChatId(chatId)
+                                      }
+                                  }
+                              )
                           }}>
                         <img src="/assets/icons/message-heart.svg" alt={``} />
                     </div>}
@@ -272,9 +289,8 @@ const ViewProfile: React.FC<ViewProfileProps> = (
                                 </div>
                                 <motion.div initial={{ marginBottom: '2.8rem' }} className="name-row">
                                     <div className="left">
-                                        {/*@ts-ignore*/}
                                         <p className="details">{userData.first_name}, <span className="age">{(new Date()).getFullYear() - getYearFromFirebaseDate(userData.date_of_birth)}</span></p>
-                                        {userData.is_verified && <img src="/assets/icons/verified.svg" />}
+                                        {userData.is_approved && <img src="/assets/icons/verified.svg" />}
                                     </div>
                                     {/* <AnimatePresence>
                                 {expanded && <motion.img exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}

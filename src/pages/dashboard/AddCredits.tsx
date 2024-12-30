@@ -2,7 +2,7 @@ import { db } from "@/firebase";
 import { useAuthStore } from "@/store/UserId";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { motion } from "framer-motion"
-import React, { useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { PaystackButton } from 'react-paystack'
 
@@ -73,7 +73,7 @@ const AddCredits: React.FC<AddCreditProps> = ({ activePage, closePage, refetchUs
         if (userDocSnap.exists()) {
           const data = userDocSnap.data();
           await updateDoc(userDocRef, {
-            credits: data.credits + selectedCreditOption?.credits,
+            credit_balance: data.credit_balance + selectedCreditOption?.credits,
             amount_paid_in_total: data.amount_paid_in_total + selectedCreditOption?.price
           });
           refetchUserData();
@@ -89,7 +89,7 @@ const AddCredits: React.FC<AddCreditProps> = ({ activePage, closePage, refetchUs
     <motion.div animate={activePage == 'add-credits' ? { x: "-100%", opacity: 1, transition: {duration: 0.25 , ease: 'easeInOut'} } : {x: "100%", opacity: 0}} className="dashboard-layout__main-app__body__secondary-page add-credits-page">
         <div className="settings-page__title">
             <button onClick={closePage} className="settings-page__title__left text-black">
-                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" />
+                <img src="/assets/icons/back-arrow-black.svg" className="settings-page__title__icon" alt={``} />
                 <p>Whossy Credits</p>
             </button>
         </div>

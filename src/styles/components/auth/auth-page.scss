@@ -16,7 +16,7 @@
     }
 
     &__request-error {
-        @apply bg-[#2F080C] rounded-[0.6rem] flex items-center justify-center py-[1.2rem] px-[1.6rem] w-fit text-[1.6rem] left-[50%] absolute translate-x-[-50%] min-w-[30rem];
+        @apply bg-[#2F080C] rounded-[0.6rem] flex items-center justify-center py-[1.2rem] px-[1.6rem] w-fit text-[1.6rem] left-[50%] absolute translate-x-[-50%] min-w-[30rem] whitespace-nowrap;
         border: 1px solid #F2243E;
 
         span {

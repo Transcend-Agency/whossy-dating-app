@@ -6,7 +6,7 @@ import { User } from '@/types/user';
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 
 interface PopulatedMatchData extends Match {
-    matchedUserData: User; // Adjust this type to match your user data
+    matchedUserData: User;
 }
 
 const useSyncUserMatches = (userId: string) => {
@@ -34,22 +34,29 @@ const useSyncUserMatches = (userId: string) => {
             const matchedUserId = match.user1_id === userId ? match.user2_id : match.user1_id;
             const matchedUserDoc = await getDoc(doc(db, 'users', matchedUserId));
 
+            if (!matchedUserDoc.exists()) {
+                return null;
+            }
+            const matchedUserData = matchedUserDoc.data() as User;
+            if (matchedUserData.is_banned) {
+                return null;
+            }
+
             return {
                 ...match,
-                matchedUserData: matchedUserDoc.exists() ? matchedUserDoc.data() : null,
+                matchedUserData
             };
         };
 
         const updateMatches = (newMatches: PopulatedMatchData[]) => {
-            const filteredMatches = newMatches.filter((match) => {
-
+            const filteredMatches = newMatches
+                .filter(match => match !== null)
+                .filter((match) => {
                 if (blockedUsers.includes(match.user1_id) || blockedUsers.includes(match.user2_id)) {
                     return false;
                 }
-
                 // Create a unique key by combining user1_id and user2_id
                 const matchKey = [match.user1_id, match.user2_id].sort().join('_');
-                
                 // Check if the combination of user1_id and user2_id is already in the Set
                 if (!uniqueMatchIds.has(matchKey)) {
                     uniqueMatchIds.add(matchKey); // Add the unique match to the Set
@@ -57,9 +64,8 @@ const useSyncUserMatches = (userId: string) => {
                 }
                 return false; // Exclude duplicate matches
             });
-
             // Update state with filtered matches
-            setMatches(filteredMatches);
+            setMatches(filteredMatches as PopulatedMatchData[]);
         };
 
         // Listen to both queries and merge the results
@@ -77,7 +83,6 @@ const useSyncUserMatches = (userId: string) => {
             if (user1QueryFetched && user2QueryFetched) {
                 setLoading(false);
             }
-
         });
 
         const unsubscribeUser2 = onSnapshot(user2Query, async (snapshot) => {

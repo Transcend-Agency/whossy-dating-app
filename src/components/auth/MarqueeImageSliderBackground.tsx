@@ -5,10 +5,10 @@ const MarqueeImageSliderBackground = () => {
     const imageNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
 
     return <motion.div
-        initial={{ scale: 1.1 }} animate={{ scale: 1, transition: { duration: 5, ease: 'easeOut' } }}
+        
         className='marquee-background'>
         <div className='marquee-background__overlay'></div>
-        <div className='marquee-background__container'>
+        <motion.div initial={{ scale: 1.1 }} animate={{ scale: 1, transition: { duration: 5, ease: 'easeOut' } }} className='marquee-background__container'>
             <Marquee speed={20}>
                 {imageNumbers.slice(0, 10).map(image => (
                     <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
@@ -49,7 +49,7 @@ const MarqueeImageSliderBackground = () => {
                     <img key={image} src={`/assets/images/auth-bg/${image}.webp`} className='marquee-background__image' alt={``} />
                 ))}
             </Marquee>
-        </div>
+        </motion.div>
     </motion.div>
 }
 export default MarqueeImageSliderBackground;
