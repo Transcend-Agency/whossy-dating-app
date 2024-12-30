@@ -86,7 +86,7 @@ const BigSnapshots = () => {
       {!photos.imageOne && (
         <img className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer active:scale-[0.90] ease-in-out duration-200" src="/assets/icons/camera.png" alt="add pictures" onClick={handleClick} />
       )}
-      <input  type="file"  accept="image/*"  ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
+      <input  type="file"  accept="image/jpeg, image/png, image/bmp, image/webp"   ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
       {photos.imageOne && (
         <img src={photos.imageOne} style={{ position: "absolute", top: 0, left: 0, width: `30rem`, height: `33.5rem`, zIndex: 40, borderRadius: "22px", objectFit: "cover",}} alt="user image"/>
       )}

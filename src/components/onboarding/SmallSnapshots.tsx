@@ -68,7 +68,7 @@ const Image: React.FC<ImageProps> = ({ name }) => {
           </Modal>
       )}
       </AnimatePresence>
-      <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
+      <input type="file" accept="image/jpeg, image/png, image/bmp, image/webp" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
       {!photos[name]  ? (<div className="w-[8rem] h-[6.4rem] rounded-lg bg-[#F0F0F0] " />)
       : 
       isLoading !== (photos[name] as string) ? (<img src={photos[name] as string} className="w-[8rem] h-[6.4rem] rounded-lg object-cover" alt="user photo"/>) : <div className="rounded-lg overflow-hidden"><Skeleton width="8rem" height="6.4rem" /></div>}
