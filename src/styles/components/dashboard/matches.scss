@@ -67,7 +67,7 @@
     }
 }
 .matches-page {
-    @apply relative overflow-scroll;
+    @apply flex flex-col lg:relative overflow-scroll;
     &__matches-container, &__likes-container {
         @apply min-h-[calc(100%-6rem)] relative;
     }

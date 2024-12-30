@@ -179,11 +179,11 @@ const ChatPage = () => {
     return (
         <>
             {!selectedProfile && currentUser && (
-                <DashboardPageContainer className="block">
+                <DashboardPageContainer className="flex flex-col lg:block h-screen lg:h-auto">
                     <motion.div
                         animate={activePage === 'chats' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="user-profile h-full space-y-10"
+                        className="user-profile space-y-10 flex-1 lg:h-full"
                     >
                         <section className="space-y-[1.6rem] px-[1.6rem]">
                             <h1 className="text-[1.6rem] font-medium">Likes and Matches</h1>

@@ -74,7 +74,7 @@ const MatchesPage = () => {
                     </div>
                 </div>
                 <AnimatePresence mode="wait">
-                    {activePage == 'like' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container">
+                    {activePage == 'like' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container h-screen lg:h-auto">
                         <AnimatePresence mode="wait">
                             {likes.length == 0 && <LikesEmptyState />}
                             {peopleWhoLiked.length == 0 && !likesLoading &&
@@ -126,7 +126,7 @@ const MatchesPage = () => {
                         </AnimatePresence>
 
                     </motion.div>}
-                    {activePage == 'match' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'match'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__matches-container">
+                    {activePage == 'match' && <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'match'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__matches-container h-screen lg:h-auto">
 
                         <AnimatePresence mode="wait">
                             {matches.length == 0 && !matchesLoading &&
