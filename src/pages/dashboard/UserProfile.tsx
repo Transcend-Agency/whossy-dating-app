@@ -81,7 +81,7 @@ const UserProfile = () => {
                             {/* <button onClick={() => setActivePage('preferences')} className='user-profile__settings-button'><img src="/assets/icons/control.svg" alt={``} /></button> */}
                         </div>
                     </div>
-                    <div className='self-center relative '>
+                    <div className='self-center relative mt-10 lg:mt-0'>
                         <Circle percentage={completed ? Math.ceil(completed / 19 * 100) : 0} imageUrl={userData?.photos && Array.isArray(userData.photos) && userData.photos.length > 0 ? userData.photos[0] : null} />
                         <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button '>
                             <img src="/assets/icons/update-profile.svg" alt={``} />
@@ -113,13 +113,13 @@ const UserProfile = () => {
                     </div>
                     <div onClick={() => setActivePage('safety-guide')} className='user-profile__banner user-profile__banner--safety-guide'>
                         <img src="/assets/icons/safety-guide.svg" alt={``} />
-                        <p>Whossy Safety Guide</p>
+                        <p>Whossy Safety Guide </p>
                     </div>
 
                     <section className='user-profile__credit-buttons'>
                         {/*<ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>*/}
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance !== undefined ? userData.credit_balance : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                        <ProfileCreditButton description={`Credits: ${userData?.credits ? userData.credits : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>
