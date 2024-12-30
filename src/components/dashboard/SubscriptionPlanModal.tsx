@@ -36,7 +36,7 @@ export const SubscriptionPlanModal: React.FC<SubscriptionPlanModalProps & { setC
 
   return (
     <DashboardSettingsModal showing={show} title="Select a payment option" hideModal={hide}>
-      <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col gap-y-4 ">
         <div className='cursor-pointer text-[1.8rem] font-medium bg-[#FFFFFF] px-[1.8rem] py-[1.8rem] flex items-center gap-x-2 rounded-[0.8rem] hover:bg-[#fafafa] transition duration-300 hover:scale-[1.01] ' style={{border: '1px solid', borderColor: selectedPaymentMethod === 'ngn' ? '#f46a1afa' : '#ececec'}}
           onClick={() => setSelectedPaymentMethod('ngn')}>
             <div className={`size-[2rem] rounded-full transition-all duration-300 ${selectedPaymentMethod === 'ngn' ? 'bg-[#f46a1afa]' : 'bg-white'}`} style={{border: '1px solid #ececec'}}/>
