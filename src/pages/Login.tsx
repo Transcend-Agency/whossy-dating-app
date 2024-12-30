@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/store/UserId";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  updateDoc,  where} from 'firebase/firestore';
+import { collection,  doc,  getDocs,  query,  serverTimestamp,  setDoc,  where} from 'firebase/firestore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { useForm } from "react-hook-form";
@@ -17,8 +17,8 @@ import { auth, db } from "@/firebase";
 import { signInWithGoogle } from '../firebase/auth';
 import useAccountSetupFormStore from '../store/AccountSetup';
 import { FormData } from "../types/auth";
-import { useGetSubscriptionCodeAndEmailToken, useUnsubscribe, useVerify } from "@/hooks/usePaystack";
-import toast from "react-hot-toast";
+// import { useGetSubscriptionCodeAndEmailToken, useUnsubscribe, useVerify } from "@/hooks/usePaystack";
+// import toast from "react-hot-toast";
 
 export const LoginFormSchema: ZodType<FormData> = z
     .object({
@@ -51,9 +51,9 @@ const Login = () => {
     const navigate = useNavigate()
     const [attemptedAuthUser, setAttemptedAuthUser] = useState<any>({})
     const { setAuth } = useAuthStore();
-    const { mutate: paystackReferenceQuery } = useVerify();
-    const subscriptionList = useGetSubscriptionCodeAndEmailToken();
-    const unsubscribeUser = useUnsubscribe();
+    // const { mutate: paystackReferenceQuery } = useVerify();
+    // const subscriptionList = useGetSubscriptionCodeAndEmailToken();
+    // const unsubscribeUser = useUnsubscribe();
 
     const onEmailAndPasswordSubmit = async (data: FormData) => {
         try {
@@ -83,82 +83,97 @@ const Login = () => {
                         navigate('/onboarding')
                     } else {
                         setAuth({ uid: res.user.uid, has_completed_onboarding: user.has_completed_onboarding }, user);
-                        const userDocRef = doc(db, "users", res.user?.uid);
-                        if ( user.paystack.reference) {
-                            const sk = user.currency == 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES
-                            paystackReferenceQuery({reference: user.paystack.reference as string, sk }, { onSuccess: async (paystackRes) => {
-                            // navigate('/dashboard/explore');
-                            if (paystackRes.status === true) {
+                        navigate('/dashboard/explore')
+                        // const userDocRef = doc(db, "users", res.user?.uid);
+                        // if ( user.paystack.reference) {
+                        //     const sk = user.currency == 'ngn' ? import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_NGN : import.meta.env.VITE_PAYSTACK_SECRET_TEST_KEY_KES
+                        //     paystackReferenceQuery({reference: user.paystack.reference as string, sk }, { onSuccess: async (paystackRes) => {
+                        //     navigate('/dashboard/explore');
+                        //     if ( paystackRes.data.status === "success" ) {
 
-                                await updateDoc(userDocRef, { is_premium: true });
+                        //         await updateDoc(userDocRef, { is_premium: true });
 
-                                if (paystackRes.data.authorization.authorization_code !== user.paystack.authorization_code || paystackRes.data.customer.customer_code !== user.paystack.customer_code) {
-                                    await updateDoc(userDocRef, {
-                                        paystack: {
-                                            reference: user.paystack.reference,
-                                            authorization_code: paystackRes.data.authorization.authorization_code,
-                                            customer_code: paystackRes.data.customer.customer_code,
-                                            customer_id: paystackRes.data.customer.id,
-                                        }
-                                    }).then(() => {
-                                        subscriptionList.mutate({ customer_id:paystackRes.data.customer.id, sk}, {
-                                            onSuccess: async (subRes) => {
-                                                try {
-                                                    console.log("Subscription Response:", subRes); // Debugging
-                                                    const subscriptionData = subRes?.data?.[0];
+                        //         if (paystackRes.data.authorization.authorization_code !== user.paystack.authorization_code || paystackRes.data.customer.customer_code !== user.paystack.customer_code) {
+                        //             await updateDoc(userDocRef, {
+                        //                 paystack: {
+                        //                     reference: user.paystack.reference,
+                        //                     authorization_code: paystackRes.data.authorization.authorization_code,
+                        //                     customer_code: paystackRes.data.customer.customer_code,
+                        //                     customer_id: paystackRes.data.customer.id,
+                        //                 }
+                        //             }).then(() => {
+                        //                 subscriptionList.mutate({ customer_id:paystackRes.data.customer.id, sk}, {
+                        //                     onSuccess: async (subRes) => {
+                        //                         try {
+                        //                             console.log("Subscription Response:", subRes); // Debugging
+                        //                             const subscriptionData = subRes?.data?.[0];
                                         
-                                                    if (!subscriptionData) {
-                                                        console.error("No subscription data found.");
-                                                        return;
-                                                    }
+                        //                             if (!subscriptionData) {
+                        //                                 console.error("No subscription data found.");
+                        //                                 return;
+                        //                             }
                                         
-                                                    // Update Firestore
-                                                    await updateDoc(userDocRef, {
-                                                        paystack: {
-                                                            reference: user.paystack.reference,
-                                                            authorization_code: paystackRes.data.authorization.authorization_code,
-                                                            customer_code: paystackRes.data.customer.customer_code,
-                                                            customer_id: paystackRes.data.customer.id,
-                                                            subscription_code: subscriptionData.subscription_code,
-                                                            email_token: subscriptionData.email_token,
-                                                        },
-                                                    });
-                                                    console.log("Document updated successfully!");
-                                                } catch (error) {
-                                                    console.error("Error updating Firestore document:", error);
-                                                }
-                                            },
-                                            onError: (err) => {
-                                                console.error("Error during mutation:", err);
-                                            },
-                                        });
-                                    });
-                                }
-
-                            } else {
-                                await updateDoc(userDocRef, {
-                                    is_premium: false
-                                }).then(() => {
-                                    if (user.paystack.subscription_code || user.paystack.email_token) {
-                                        unsubscribeUser.mutate({ code: user.paystack.subscription_code, token: user.paystack.email_token, sk }, {
-                                            onSuccess: () => {
-                                                console.log("User unsubscribed successfully!");
-                                            },
-                                            onError: () => {
-                                                console.error("Error unsubscribing user!");
-                                            },
-                                        })
-                                    }
-                            });
-                                // console.log('This is not paystack');
-                            }
+                        //                             // Update Firestore
+                        //                             await updateDoc(userDocRef, {
+                        //                                 paystack: {
+                        //                                     reference: user.paystack.reference,
+                        //                                     authorization_code: paystackRes.data.authorization.authorization_code,
+                        //                                     customer_code: paystackRes.data.customer.customer_code,
+                        //                                     customer_id: paystackRes.data.customer.id,
+                        //                                     subscription_code: subscriptionData.subscription_code,
+                        //                                     email_token: subscriptionData.email_token,
+                        //                                     // status: "new",
+                        //                                 },
+                        //                             });
+                        //                             console.log("Document updated successfully!");
+                        //                         } catch (error) {
+                        //                             console.error("Error updating Firestore document:", error);
+                        //                         }
+                        //                     },
+                        //                     onError: (err) => {
+                        //                         console.error("Error during mutation:", err);
+                        //                     },
+                        //                 });
+                        //             });
+                        //         }
+                        //         else {
+                        //             await updateDoc(userDocRef, {
+                        //                 paystack: {
+                        //                     reference: user.paystack.reference,
+                        //                     authorization_code: user.paystack.authorization_code,
+                        //                     customer_code: user.paystack.customer_code,
+                        //                     customer_id: user.paystack.customer_id,
+                        //                     subscription_code: user.paystack.subscription_code,
+                        //                     email_token: user.paystack.email_token,
+                        //                     status: "old",
+                        //                 },
+                        //             });
+                        //         }
+                        //     } else {
+                        //         await updateDoc(userDocRef, {
+                        //             is_premium: false,
+                        //             paystack: {}
+                        //         }).then(() => {
+                        //             if (user.paystack.subscription_code || user.paystack.email_token) {
+                        //                 unsubscribeUser.mutate({ code: user.paystack.subscription_code, token: user.paystack.email_token, sk }, {
+                        //                     onSuccess: () => {
+                        //                         console.log("User unsubscribed successfully!");
+                        //                     },
+                        //                     onError: () => {
+                        //                         console.error("Error unsubscribing user!");
+                        //                     },
+                        //                 })
+                        //             }
+                        //     });
+                        //         // console.log('This is not paystack');
+                        //     }
                             
-                        }, onError: () => toast.error('An error occurred while trying to verify payment') });} 
-                        else {
-                            await updateDoc(userDocRef, {
-                                is_premium: false
-                            }).then(() => navigate('/dashboard/explore'))
-                        }
+                        // }, onError: () => toast.error('An error occurred while trying to verify payment') });} 
+                        // else {
+                        //     await updateDoc(userDocRef, {
+                        //         is_premium: false
+                        //     }).then(() => navigate('/dashboard/explore'))
+                        // }
                     }
                 }
             }
