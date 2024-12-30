@@ -41,7 +41,7 @@
     }
 
     &__mobile-nav {
-        @apply sticky bottom-0 h-[49px] flex w-full justify-around bg-white items-center z-40;
+        @apply sticky bottom-0 py-[2.3rem] flex w-full justify-around bg-white items-center;
     }
 
     &__main-app {
