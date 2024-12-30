@@ -22,7 +22,8 @@
         }
     }
     &__update-profile-button {
-        @apply w-[4.8rem] h-[4.8rem] bg-white absolute top-[1.5rem] right-[2rem] cursor-pointer rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition duration-200;
+        @apply w-[4.8rem] h-[4.8rem] bg-white absolute top-[1rem] right-[1rem] cursor-pointer rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition duration-200;
+        border: 1px solid #e8e8e8;
         img {
             @apply h-[1.6rem];
         }
