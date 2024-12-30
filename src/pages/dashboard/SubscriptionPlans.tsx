@@ -99,8 +99,8 @@ const  SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ activePage, clos
     return (
         <>
             <SubscriptionPlanModal show={showPaymentOptionsModal === "plan"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={refetchUserData} setCurrency={setCurrency}/>
-            <CancelPlanModal userData={ userData } show={showPaymentOptionsModal === "cancel-subscription"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={refetchUserData}/>
-            <PaystackPaymentDetailsModal userData={userData} show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')} currency={currency}  />
+            <CancelPlanModal userData={ userData as User } show={showPaymentOptionsModal === "cancel-subscription"} hide={() => setShowPaymentOptionsModal('hidden')}  advance={ setShowPaymentOptionsModal } refetchUserData={refetchUserData}/>
+            <PaystackPaymentDetailsModal userData={ userData as User } show={showPaymentOptionsModal === "payment-detail"} hide={() => setShowPaymentOptionsModal('plan')} currency={currency}  />
             {/* <StripePaymentDetailsModal show={showPaymentOptionsModal === "stripe-payment"} hide={() => setShowPaymentOptionsModal('plan')}  /> */}
             <motion.div onWheel={handleWheel} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} animate={activePage ? { x: "-100%", opacity: 1 } : { x: 0 }} transition={{ duration: 0.25 }} className="dashboard-layout__main-app__body__secondary-page edit-profile settings-page">
                 <div className="settings-page__container">
