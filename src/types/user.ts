@@ -57,10 +57,18 @@ export type User = {
   credit_balance?: number | null;
   amount_paid_in_total?: number | null;
   paystack?: {
+    charge_success?: {
+      currency?: string
+    },
     reference: string,
     subscription_code: string,
     email_token: string,
+    customer_id: number,
+    customer_code: string,
+    authorization_code: string,
+    status: string,
   } | null;
+  currency?: string | null;
   is_banned?: boolean | null;
 };
 

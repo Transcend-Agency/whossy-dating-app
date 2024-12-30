@@ -21,6 +21,7 @@ import AddCredits from './AddCredits';
 import toast from "react-hot-toast";
 import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
 import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
+// import { usePaystackStore } from '@/store/Paystack';
 
 const UserProfile = () => {
     const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
@@ -43,7 +44,10 @@ const UserProfile = () => {
             const data = await getUserProfile("users", auth?.uid as string) as User;
             setUserData(data);
             setCompleted(checkUserProfileCompletion(data));
-
+            // if (data.is_premium !== user?.is_premium) {
+            //     toast.success('You are now a premium user');
+            //     setAuth({uid: data.uid as string, has_completed_onboarding: true}, data);
+            // }
             console.log("User Settings on the DB 1:", userData?.user_settings)
         } catch (err) {
             console.log("Error fetching user data:", err);
@@ -62,6 +66,8 @@ const UserProfile = () => {
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
+    // const { reference } = usePaystackStore();
+    
     return <>
         <DashboardPageContainer>
             <motion.div animate={activePage == 'user-profile' ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }} transition={{ duration: 0.25 }} className='user-profile h-full'>
@@ -103,7 +109,7 @@ const UserProfile = () => {
                     </section>
                     <div className='user-profile__banner user-profile__banner--info'>
                         <img src="/assets/icons/notification-alert.svg" alt={``} />
-                        <p>Add more info to your profile to stand out. Click on the edit button to get started.</p>
+                        <p>Add more info to your profile to stand out. Click on the edit button to get started</p>
                     </div>
                     <div onClick={() => setActivePage('safety-guide')} className='user-profile__banner user-profile__banner--safety-guide'>
                         <img src="/assets/icons/safety-guide.svg" alt={``} />
@@ -118,8 +124,8 @@ const UserProfile = () => {
 
                 </div>
                 <section className='user-profile__plans'>
-                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth={30000} benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setCurrentPlan('free'); setActivePage('subscription-plans'); console.log(currentPlan) }} />
-                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
+                    <ProfilePlan planTitle='Whossy Premium Plan' pricePerMonth={30} benefits={['Chat Initiation', 'Rewind', 'Top Picks', 'Read Receipts']} type='premium' gradientSrc='/assets/images/dashboard/free.svg' goToPlansPage={() => { setCurrentPlan('free'); setActivePage('subscription-plans'); console.log(currentPlan) }} />
+                    <ProfilePlan planTitle='Whossy Free Plan' pricePerMonth={0} benefits={['Profile Browsing', 'Swipe And Match', 'See Who Likes You', 'Profile Boost']}  type='free' gradientSrc='/assets/images/dashboard/premium.svg' goToPlansPage={() => { setActivePage('subscription-plans'); setCurrentPlan('premium'); console.log(currentPlan) }} />
                 </section>
 
             </motion.div>
