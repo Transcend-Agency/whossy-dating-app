@@ -147,8 +147,8 @@ const Explore = () => {
         {!selectedProfile &&
             <>
                 {
-                    !advancedSearchShowing && <DashboardPageContainer className='explore-page' span={2}>
-                        <div className='explore'>
+                    !advancedSearchShowing && <DashboardPageContainer className='explore-page h-screen lg:h-auto flex flex-col' span={2}>
+                        <div className='explore flex-grow'>
                             <div className='filter'>
                                 <div className='filter__left'>
                                     {filterOptions.map(item => <div key={item} onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
