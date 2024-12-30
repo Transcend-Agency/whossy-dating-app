@@ -6,7 +6,7 @@
         @apply top-0 left-0 absolute w-full h-full flex items-center justify-center;
     }
     &__overlay {
-        @apply bg-[#0000004D] w-full h-full absolute inset-0;
+        @apply bg-[#0000004D] w-full h-full fixed lg:absolute inset-0;
         z-index: z('modal__overlay');
         // z-index: 30;
     }
