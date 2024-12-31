@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import { FC,  useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMediaQuery } from 'react-responsive'
 
 export type DashboardSettingsModalProps = {
     showing: boolean;
@@ -10,9 +9,7 @@ export type DashboardSettingsModalProps = {
     save?: JSX.Element | JSX.Element[] | boolean;
 };
 
-const DashboardSettingsModal: React.FC<DashboardSettingsModalProps> = ({ showing, children, hideModal, title, save }) => {
-
-    const isDesktop = useMediaQuery({query: '(min-width: 1024px)'})
+const DashboardSettingsModal: FC<DashboardSettingsModalProps> = ({ showing, children, hideModal, title, save }) => {
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 

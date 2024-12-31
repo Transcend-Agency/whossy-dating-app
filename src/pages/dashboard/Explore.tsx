@@ -84,6 +84,7 @@ const Explore = () => {
     const isNewUserFromDate = (timestampDate: string) => {
         const twoDaysAgo = new Date();
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+        // @ts-ignore
         return timestampDate >= Timestamp.fromDate(twoDaysAgo);
     };
 
@@ -221,7 +222,6 @@ const Explore = () => {
                                                             <ExploreGridProfile
                                                                 // @ts-ignore
                                                                 isNewUser={isNewUserFromDate(profile.created_at as string)}
-                                                                // isNewUser={false}
                                                                 profile_image={profile.photos ? profile.photos![0] : undefined}
                                                                 first_name={profile!.first_name!}
                                                                 // @ts-ignore

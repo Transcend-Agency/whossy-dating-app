@@ -1,7 +1,7 @@
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
 import { motion } from 'framer-motion'
-import {FC, useEffect} from "react";
+import {FC } from "react";
 
 interface ExploreGridProfileProps {
     profile_image?: string
@@ -18,8 +18,8 @@ const ExploreGridProfile: FC<ExploreGridProfileProps> = ({profile_image, distanc
 }) => {
 
     return (
-        <div onClick={onProfileClick} className='min-h-[20rem] h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative transition duration-200 active:scale-100 cursor-pointer block mb-[0.8rem] explore-grid__profile2'>
-            <figure className='w-full h-full transition-all duration-[0.3s] bg-[#ebebeb]'>
+        <div onClick={onProfileClick} className='min-h-[20rem] h-[20rem] w-full rounded-[0.8rem] overflow-hidden relative transition duration-200 active:scale-100 cursor-pointer block mb-[0.8rem] explore-grid__profile2 group'>
+            <figure className='w-full h-full transition-all duration-[0.3s] bg-[#ebebeb] group-hover:scale-110'>
                 <LazyLoadImage
                     className='w-full h-full object-cover min-h-[20rem]'
                     height={'100%'}
