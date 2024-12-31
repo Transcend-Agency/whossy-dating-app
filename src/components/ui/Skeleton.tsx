@@ -1,4 +1,4 @@
-import React from "react";
+import {FC} from "react";
 
 interface SkeletonProps {
   height: string;
@@ -6,11 +6,11 @@ interface SkeletonProps {
   className?: string;
 }
 
-const Skeleton: React.FC<SkeletonProps> = ({ height = 4, width = 16, className }) => {
+const Skeleton: FC<SkeletonProps> = ({ height = 4, width = 16, className }) => {
   return (
     <div className="animate-pulse">
       <div
-        className={`bg-gray-800/20 ${className}`}
+        className={`bg-[#8A8A8E]/70 ${className ? className : ""}`}
         style={{ height, width }}
       ></div>
     </div>

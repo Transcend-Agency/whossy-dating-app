@@ -56,7 +56,7 @@
     &__match-details {
         @apply inline-flex items-center;
         .first-name, .age {
-            @apply text-[1.8rem] leading-[1.5rem] font-bold text-white;
+            @apply text-[14px] leading-[1.5rem] font-bold text-white;
         }
         .age {
             @apply font-normal inline-block ml-[0.4rem];
@@ -82,9 +82,9 @@
         @apply flex items-center;
     }
     &__nav-item {
-        @apply text-[1.6rem] font-medium px-[0.8rem] text-[#8A8A8E] cursor-pointer transition-all duration-200 items-center;
+        @apply text-[16px] font-medium px-[0.8rem] text-[#8A8A8E] cursor-pointer transition-all duration-200 items-center;
         &--active {
-            @apply text-[2.4rem] font-bold leading-[2.88rem] text-[#F2243E];
+            @apply text-[22px] font-bold leading-[2.88rem] text-[#F2243E];
         }
     }
     .right-nav {
@@ -100,7 +100,7 @@
         }
     }
     &__empty-state-text {
-        @apply font-medium text-[1.6rem] mt-[1.6rem];
+        @apply font-medium text-[16px] mt-[1.6rem];
     }
     &__grid {
         @apply grid grid-cols-3 px-[2.4rem] gap-x-[0.8rem] mt-[1.2rem];

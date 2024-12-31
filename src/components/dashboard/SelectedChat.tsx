@@ -287,6 +287,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             toast.error("Insufficient credit to unlock chat");}
         else {
             const newCredit: number = currentUser?.credit_balance as number - 5;
+            console.log(newCredit)
             try {
                 await updateDoc(chatRef, {
                     is_unlocked: true,
@@ -296,14 +297,17 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                 state.chatUnlocked = true
                 setChatUnlocked(true)
                 console.log("Chat unlocked successfully!");
-                toast.success("Chat unlocked successfully!")
+                // toast.success("Chat unlocked successfully!")
             } catch (error) {
                 console.error("Error unlocking chat:", error);
                 toast.error("An error occurred.")
             }
 
             try {
-                updateUserProfile("users" , chatId, () => console.log("Chat document updated!"), { credit_balance : newCredit }).catch(e => console.error(e))
+                console.log("Updating Chat Credit")
+                updateUserProfile("users" , currentUser.uid as string,
+                    () => console.log("Chat document updated!"),
+                    { credit_balance : newCredit }).catch(e => console.error(e))
             }
             catch (err) { console.error("Error updating credit balance")}
         }
@@ -347,11 +351,6 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             closePage()
             return;
         }
-
-        // chats.forEach((doc) => {
-        //     const result = doc.id;
-        //     recipientsId.push(result);
-        // });
 
         // Generate the messageId and timestamp upfront
         const messageId = uuidv4();
@@ -426,7 +425,6 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
         }
 
         if (!state.chatUnlocked) {
-            console.log("Chat is locked. Read receipts are unavailable.");
             return false;
         }
 

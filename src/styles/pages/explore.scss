@@ -34,7 +34,7 @@
             @apply w-full max-w-[70rem] flex flex-wrap gap-x-[1.6rem] gap-y-[1.6rem];
         }
         &__item {
-            @apply leading-[1.1rem] text-[1.6rem] px-[1.6rem] py-[1.2rem] min-w-fit bg-[#F6F6F6] hover:bg-[#eeeeee] text-[#8A8A8E] rounded-full cursor-pointer active:scale-95 transition-all duration-200 flex items-center;
+            @apply leading-[1.1rem] text-[16px] px-[1.6rem] py-[1.2rem] min-w-fit bg-[#F6F6F6] hover:bg-[#eeeeee] text-[#8A8A8E] rounded-full cursor-pointer active:scale-95 transition-all duration-200 flex items-center;
             &--active {
                 @apply bg-[#F2243E] hover:bg-[#F2243E]  text-white;
             }
@@ -68,14 +68,14 @@
                 @apply mr-[0.8rem]
             }
             &:nth-of-type(2n + 2) {
-                .explore-grid__profile:nth-child(4n+3), 
-                .explore-grid__profile:nth-child(4n+4) {
+                .explore-grid__profile2:nth-child(4n+3),
+                .explore-grid__profile2:nth-child(4n+4) {
                     @apply min-h-[28rem] h-[28rem];
                 }
             }
             &:nth-of-type(2n + 1) {
-                .explore-grid__profile:nth-child(4n+1), 
-                .explore-grid__profile:nth-child(4n+2) {
+                .explore-grid__profile2:nth-child(4n+1),
+                .explore-grid__profile2:nth-child(4n+2) {
                     @apply min-h-[28rem] h-[28rem];
                 }
             }
@@ -132,7 +132,7 @@
             }
         }
         &__profile-name {
-            @apply text-white  text-[2rem] font-bold;
+            @apply text-white text-[2rem] font-bold;
             @include media('<=480px'){
                 @apply text-[1.5rem];
             }

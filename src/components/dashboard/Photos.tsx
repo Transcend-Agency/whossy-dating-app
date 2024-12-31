@@ -49,7 +49,6 @@ const Photos: FC<{ refetchUserData: () => void }> = ({ refetchUserData }) => {
 
   const fetchUserPhotos = async () => {
     const data = await getUserProfile("users", auth?.uid as string) as User;
-    console.log(data)
     setPhoto(data?.photos as string[] || [])
   }
 

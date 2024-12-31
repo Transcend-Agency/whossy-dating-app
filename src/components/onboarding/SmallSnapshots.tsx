@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import {ChangeEvent, FC, useEffect, useRef, useState} from "react";
 import { PictureData } from "@/store/onboarding/usePictureStore.ts";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
@@ -6,34 +6,36 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useAuthStore } from "@/store/UserId";
 import { usePhotoStore } from "@/store/PhotoStore";
 import Skeleton from "../ui/Skeleton";
+import toast from "react-hot-toast";
 
 interface ImageProps {
   name: keyof PictureData;
 }
 
-const Image: React.FC<ImageProps> = ({ name }) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [openModal, setOpenModal] = useState(false);
+const Image: FC<ImageProps> = ({ name }) => {
 
-  const {auth} = useAuthStore();
-  const {setPhotos, photos} = usePhotoStore();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [openModal, setOpenModal] = useState(false);
+    const {auth} = useAuthStore();
+    const {setPhotos, photos} = usePhotoStore();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState<string | null>(null);
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const storage = getStorage();
       const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
-      setIsLoading(photos[name] as string);
+      setIsLoading(true);
+        toast.loading("Uploading image...")
       uploadBytes(storageRef, file)
       .then(() => {
         getDownloadURL(storageRef)
           .then((url) => {
             setPhotos({[name]: url});
+              toast.success("Image Upload Complete...")
           })
           .catch((error) => console.log(error));
-      }).then(() => { setIsLoading(null); })
+      }).then(() => { setIsLoading(false); })
       .catch((err) => console.log(err));
     }
   };
@@ -69,10 +71,19 @@ const Image: React.FC<ImageProps> = ({ name }) => {
       )}
       </AnimatePresence>
       <input type="file" accept="image/jpeg, image/png, image/bmp, image/webp" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageSelect}/>
-      {!photos[name]  ? (<div className="w-[8rem] h-[6.4rem] rounded-lg bg-[#F0F0F0] " />)
-      : 
-      isLoading !== (photos[name] as string) ? (<img src={photos[name] as string} className="w-[8rem] h-[6.4rem] rounded-lg object-cover" alt="user photo"/>) : <div className="rounded-lg overflow-hidden"><Skeleton width="8rem" height="6.4rem" /></div>}
-
+        {isLoading ? (
+            <div className="rounded-lg overflow-hidden">
+                <Skeleton width="8rem" height="6.4rem" />
+            </div>
+        ) : photos[name] ? (
+            <img
+                src={photos[name] as string}
+                className="w-[8rem] h-[6.4rem] rounded-lg object-cover"
+                alt="user photo"
+            />
+        ) : (
+            <div className="w-[8rem] h-[6.4rem] rounded-lg bg-[#F0F0F0]" />
+        )}
     </figure>
   );
 };

@@ -31,7 +31,6 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
   }
 
   useEffect(() => {
-    console.log(auth, userSettings)
     if (auth?.has_completed_onboarding) {
       navigate('/dashboard/explore');
     }

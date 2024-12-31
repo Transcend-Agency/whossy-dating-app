@@ -63,7 +63,7 @@ export const MatchItem: React.FC<MatchesProps> = ({ userData, isLazyLoaded}) => 
                     </figure>
                     <div className='matches__match-content'>
                         {viewButtonShowing && <button onClick={() => setSelectedProfile(userData?.uid as string)} className='matches__view-button'>View</button>}
-                        <div className='matches__match-details'><span className='first-name'>{userData?.first_name}{userData?.date_of_birth ? ',' : ''}
+                        <div className='matches__match-details'><span className='first-name'>{userData.first_name.length >= 8 ? `${userData.first_name.slice(0,5)}... ` : userData.first_name} {userData?.date_of_birth ? ',' : ''}
                         </span>{userData?.date_of_birth && <span className='age'>{(new Date()).getFullYear() - getYearFromFirebaseDate(userData?.date_of_birth)}</span>} {userData?.is_approved && <img src="/assets/icons/verified.svg" alt={``} />} </div>
                     </div>
                 </div>

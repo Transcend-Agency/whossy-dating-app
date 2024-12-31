@@ -48,7 +48,6 @@ const UserProfile = () => {
             //     toast.success('You are now a premium user');
             //     setAuth({uid: data.uid as string, has_completed_onboarding: true}, data);
             // }
-            console.log("User Settings on the DB 1:", userData?.user_settings)
         } catch (err) {
             console.log("Error fetching user data:", err);
         }
@@ -119,7 +118,7 @@ const UserProfile = () => {
                     <section className='user-profile__credit-buttons'>
                         {/*<ProfileCreditButton description='Profile Boost' linkText='Get Now' imgSrc='/assets/images/dashboard/rocket.png' onLinkClick={handleOpenModal}/>*/}
                         <ProfileBoostModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
-                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance ? userData.credit_balance : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
+                        <ProfileCreditButton description={`Credits: ${userData?.credit_balance !== undefined ? userData.credit_balance : ''}`} linkText='Add More' imgSrc='/assets/images/dashboard/coin.png' onLinkClick={() => setActivePage('add-credits')}  />
                     </section>
 
                 </div>

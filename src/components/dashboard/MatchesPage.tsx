@@ -50,7 +50,7 @@ const MatchesPage = () => {
             <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
                 <img className="" src="/assets/icons/like-empty-state.png" alt={``} />
-                <p className="matches-page__empty-state-text">No Likes Yet</p>
+                <p className="matches-page__empty-state-text">No one has liked your profile</p>
             </motion.div>
         )
     }
@@ -59,7 +59,7 @@ const MatchesPage = () => {
             <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'empty-state'} exit={{ opacity: 0 }} className="matches-page__empty-state">
                 <img className="" src="/assets/images/dashboard/no-matches.png" alt={``} />
-                <p className="matches-page__empty-state-text">No Matches Yet ^_^</p>
+                <p className="matches-page__empty-state-text text-center">No one has matched with you ^_^</p>
             </motion.div>
         )
     }

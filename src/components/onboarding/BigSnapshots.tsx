@@ -1,24 +1,25 @@
-import React, { useRef, useState } from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
 import { usePhotoStore } from "@/store/PhotoStore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useAuthStore } from "@/store/UserId";
 import Skeleton from "../ui/Skeleton";
+import toast from "react-hot-toast";
 
 const BigSnapshots = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [openModal, setOpenModal] = useState(false);
-
-  //new
   const {setPhotos, photos} = usePhotoStore();
   const {auth} = useAuthStore();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
     const file = event.target.files?.[0];
+
     if (file) {
+      toast.loading("Uploading image...")
       const storage = getStorage();
       const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
       setIsLoading(true);
@@ -27,6 +28,7 @@ const BigSnapshots = () => {
         getDownloadURL(storageRef)
           .then((url) => {
             setPhotos({imageOne: url});
+            toast.success("Image Upload Complete")
           })
           .catch((error) => console.log(error));
       }).then(() => { setIsLoading(false); })
@@ -34,13 +36,12 @@ const BigSnapshots = () => {
     }
   };
 
-
-
   const handleClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
+
   return (
     <figure className="relative h-[35rem] mt-10">
       {photos.imageOne && (
@@ -90,22 +91,14 @@ const BigSnapshots = () => {
       {photos.imageOne && (
         <img src={photos.imageOne} style={{ position: "absolute", top: 0, left: 0, width: `30rem`, height: `33.5rem`, zIndex: 40, borderRadius: "22px", objectFit: "cover",}} alt="user image"/>
       )}
-      {images.map((item, i) => (
-        <div style={{ position: "absolute", top: `${i * 2}rem`, left: `${i * 6}rem`, width: `${30 - i * 3}rem`, height: `${33.5 - i * 3}rem`, zIndex: `${30 - i * 10}`, borderRadius: "22px", backgroundColor: item.color, transform: `rotate(${(i * 5)}deg)`,}} key={i}/>
-      ))}
+      <div style={{ position: "absolute", width: `30rem`, height: `33.5rem`, zIndex: `30`, borderRadius: "22px", backgroundColor: `#E2E2E2` }} />
 
-    {isLoading &&  <div style={{ position: "absolute", top: `0rem`, left: `0rem`, width: `30rem`, height: `${33.5}rem`, zIndex: `${40}`, borderRadius: "22px", backgroundColor: '', transform: `rotate(${0}deg)`, overflow:'hidden'}}>
-        <Skeleton width="30rem" height="33.5rem" />
-     </div>}
+      {isLoading && <div style={{ position: "absolute", top: `0rem`, left: `0rem`, width: `30rem`, height: `33.5rem`, zIndex: `70`, borderRadius: "22px", backgroundColor: '', transform: `rotate(${0}deg)`, overflow: 'hidden'}}>
+            <Skeleton width="30rem" height="33.5rem" />
+      </div>}
 
     </figure>
   );
 };
 
 export default BigSnapshots;
-
-const images = [
-  { alt: "", image: "", color: "#E2E2E2" },
-  { alt: "", image: "", color: "#F0F0F0" },
-  { alt: "", image: "", color: "#F7F7F7" },
-];
