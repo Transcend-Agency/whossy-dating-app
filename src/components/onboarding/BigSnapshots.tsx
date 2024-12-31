@@ -21,8 +21,9 @@ const BigSnapshots = () => {
     if (file) {
       toast.loading("Uploading image...")
       const storage = getStorage();
-      const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
+      const storageRef = ref(storage, `users/${auth?.uid}/profile_pictures/image_${file.name}`);
       setIsLoading(true);
+      toast.success("Your image is being uploaded");
       uploadBytes(storageRef, file)
       .then(() => {
         getDownloadURL(storageRef)
@@ -45,7 +46,7 @@ const BigSnapshots = () => {
   return (
     <figure className="relative h-[35rem] mt-10">
       {photos.imageOne && (
-        <img className="absolute -top-[2rem] size-[5rem] z-[99] cursor-pointer active:scale-[0.90] duration-200 ease-in-out" src="/assets/images/onboarding/menu.png" alt="show more" onClick={() => setOpenModal(true)}/>
+        <img className="absolute -top-[2rem] size-[5rem] z-[50] cursor-pointer active:scale-[0.90] duration-200 ease-in-out" src="/assets/images/onboarding/menu.png" alt="show more" onClick={() => setOpenModal(true)}/>
       )}
       <AnimatePresence>
         {openModal && (

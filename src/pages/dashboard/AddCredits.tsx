@@ -76,13 +76,14 @@ const AddCredits: React.FC<AddCreditProps> = ({ activePage, closePage, refetchUs
             credit_balance: data.credit_balance + selectedCreditOption?.credits,
             amount_paid_in_total: data.amount_paid_in_total + selectedCreditOption?.price
           });
+          closePage();
           refetchUserData();
         }
 
-        toast.success("Thanks for doing business with us! Come back soon!!");
+        toast.success("Thanks for doing business with us!");
 
       },
-      onClose: () => toast.error("Wait! You need this oil, don't go!!!!"),
+      onClose: () => toast.error("Payment cancelled"),
     }
 
   return (

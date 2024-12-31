@@ -271,7 +271,7 @@ const Explore = () => {
                     </DashboardPageContainer>
                 }
 
-                {advancedSearchShowing && <DashboardPageContainer className='explore-page' span={1}>
+                {advancedSearchShowing && <DashboardPageContainer className={`explore-page ${advancedSearchShowing && 'h-screen lg:h-auto'}`} span={1}>
                     <div className="settings-page__container">
                         <div className="settings-page__title">
                             <button onClick={() => {

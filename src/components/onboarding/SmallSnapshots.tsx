@@ -1,4 +1,4 @@
-import {ChangeEvent, FC, useEffect, useRef, useState} from "react";
+import {ChangeEvent, FC, useRef, useState} from "react";
 import { PictureData } from "@/store/onboarding/usePictureStore.ts";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
@@ -24,7 +24,7 @@ const Image: FC<ImageProps> = ({ name }) => {
     const file = event.target.files?.[0];
     if (file) {
       const storage = getStorage();
-      const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
+      const storageRef = ref(storage, `users/${auth?.uid}/profile_pictures/image_${file.name}`);
       setIsLoading(true);
         toast.loading("Uploading image...")
       uploadBytes(storageRef, file)
