@@ -24,6 +24,7 @@ const OnboardingButton: React.FC<OnboardingButtonProps> = ({
       style={{
         backgroundColor: selected === null ? "#F6F6F6" : "",
         color: selected === null ? "#000000" : "",
+        width: '100%',
       }}
     />
   );

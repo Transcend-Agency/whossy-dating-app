@@ -45,7 +45,7 @@
     }
 
     &__main-app {
-        @apply w-full max-w-[151.2rem] lg:px-[5.6rem] mx-auto h-screen lg:h-[calc(100dvh-14.4rem)] grid grid-cols-1 lg:grid-cols-[37.7rem_57.6rem_auto] gap-[2.4rem] relative ;
+        @apply w-full max-w-[151.2rem] lg:px-[5.6rem] mx-auto h-screen lg:h-[calc(100dvh-14.4rem)] grid grid-cols-1 lg:grid-cols-[37.7rem_57.6rem_auto] gap-[2.4rem] relative;
         &__body {
             @media (min-width: 1024px) {
                 border: 1px solid #D9D9D980;
