@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useRef, useState} from "react";
 import Modal from "../ui/Modal";
 import { AnimatePresence } from "framer-motion";
 import { usePhotoStore } from "@/store/PhotoStore";
