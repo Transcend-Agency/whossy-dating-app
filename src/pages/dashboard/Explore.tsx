@@ -82,10 +82,9 @@ const Explore = () => {
     }, [selectedOption, blockedUsers]);
 
     const isNewUserFromDate = (timestampDate: string) => {
-        const timestamp = Timestamp.fromDate(new Date(timestampDate));
         const twoDaysAgo = new Date();
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-        return timestamp >= Timestamp.fromDate(twoDaysAgo);
+        return timestampDate >= Timestamp.fromDate(twoDaysAgo);
     };
 
     const fetchSearchPreferences = async () => {
@@ -130,12 +129,13 @@ const Explore = () => {
         { label: 'Religion', value: advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('religion') }
     ];
 
+    // user.is_approved === true &&
     const noSearchResults = (profiles: User[]): number => {
-        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false).length;
+        return profiles.filter(user => user?.user_settings?.public_search === true && user.is_banned === false).length;
     };
 
     const noSearchResult = (profiles: User[]): User[] => {
-        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false);
+        return profiles.filter(user => user?.user_settings?.public_search === true && user.is_banned === false);
     };
 
     useEffect(() => {
@@ -221,6 +221,7 @@ const Explore = () => {
                                                             <ExploreGridProfile
                                                                 // @ts-ignore
                                                                 isNewUser={isNewUserFromDate(profile.created_at as string)}
+                                                                // isNewUser={false}
                                                                 profile_image={profile.photos ? profile.photos![0] : undefined}
                                                                 first_name={profile!.first_name!}
                                                                 // @ts-ignore
@@ -249,6 +250,7 @@ const Explore = () => {
                                                             key={`${index}-${profile.uid}`}
                                                             // @ts-ignore
                                                             isNewUser={isNewUserFromDate(profile.created_at as string)}
+                                                            // isNewUser={false}
                                                             profile_image={profile.photos ? profile.photos![0] : undefined}
                                                             first_name={profile!.first_name!}
                                                             // @ts-ignore

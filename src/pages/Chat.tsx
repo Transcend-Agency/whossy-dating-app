@@ -19,6 +19,7 @@ import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser.tsx";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
+    message?: string
 }
 
 const ChatPage = () => {
@@ -92,7 +93,7 @@ const ChatPage = () => {
                 const validMessage = messages.find(
                     (msg) => !msg.sender_id_blocked || msg.sender_id === currentUserUid
                 );
-                return validMessage ? validMessage.message : "No message available";
+                return validMessage ? validMessage.message : null;
             } catch (error) {
                 console.error("Error fetching messages:", error);
                 return "Error loading message";
@@ -128,17 +129,20 @@ const ChatPage = () => {
                             console.warn("Skipping chat due to missing user data:", chat);
                             return null;
                         }
-
-                        return { ...chat, user: recipientUserData };
+                        const lastMessage = await getLastValidMessage(chat, currentUserId);
+                        return { ...chat, user: recipientUserData, message: lastMessage  };
                     })
             );
-            const filteredChats = chatDataWithUserData.filter(chat => chat !== null) as ChatDataWithUserData[];
 
-            const sortedChats = filteredChats.filter(chat => {
-                const lastMessage = getLastValidMessage(chat, currentUserId);
-                if (lastMessage instanceof Promise) return true;
-                chat.last_sender_id !== null || chat.last_message !== null || lastMessage !== "No message available" }
-            ).sort((a, b) => {
+            const filteredChats = chatDataWithUserData
+                .filter(chat => chat !== null)
+                .filter(chat =>
+                        chat.last_sender_id !== null ||
+                        chat.last_message !== null ||
+                        chat.message as string !== null
+                    ) as ChatDataWithUserData[];
+
+            const sortedChats = filteredChats.sort((a, b) => {
                 // @ts-ignore
                 const aTimestamp = a.last_message_timestamp?.seconds || 0;
                 // @ts-ignore
@@ -186,7 +190,7 @@ const ChatPage = () => {
                         className="user-profile space-y-10 flex-1 lg:h-full"
                     >
                         <section className="space-y-[1.6rem] px-[1.6rem]">
-                            <h1 className="text-[1.6rem] font-medium">Likes and Matches</h1>
+                            <h1 className="text-[16px] font-medium">Likes and Matches</h1>
                             <div className="flex gap-x-4">
 
                                 {peopleWhoLiked.length == 0 ? <div
@@ -234,7 +238,7 @@ const ChatPage = () => {
                         </section>
                         <section>
                             {allChats.length !== 0 &&
-                                <h1 className="text-[1.6rem] font-medium mb-4 px-[1.6rem]">Messages</h1>}
+                                <h1 className="text-[16px] font-medium mb-4 px-[1.6rem]">Messages</h1>}
                             {!isLoadingChats ? (
                                 allChats.length === 0 ? (
                                     <div

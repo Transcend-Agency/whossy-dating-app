@@ -56,18 +56,18 @@ export const ChatListItem: FC<ChatListItemProps> = ({profileImage, contactName, 
     return ( <div className='flex justify-between cursor-pointer hover:bg-[#f9f8f8] px-[1.6rem] pb-[0.6rem] pt-[1.4rem] transition-all duration-300 ease-in-out transform hover:scale-[1.02]' style={{borderBottom: '1px solid #F6F6F6'}} onClick={openChat} >
         <div className='flex gap-x-[0.8rem]'> 
             <div className='relative'>
-                { profileImage ? <img className='size-[5.6rem] object-cover rounded-full' src={profileImage} alt="profile picture" /> : <div className='bg-[#D3D3D3] size-[5.6rem] rounded-full text-[1.8rem] font-semibold flex justify-center items-center'>{contactName?.charAt(0)}</div>}
+                { profileImage ? <img className='size-[5.6rem] object-cover rounded-full' src={profileImage} alt="profile picture" /> : <div className='bg-[#D3D3D3] size-[5.6rem] rounded-full text-[16px] font-semibold flex justify-center items-center'>{contactName?.charAt(0)}</div>}
                 {onlineStatus && <div className='bg-white p-[0.2rem] absolute bottom-0 right-0 rounded-full'>
                     <div className='bg-[#0CB25A] size-[1.4rem] rounded-full'/>
                 </div>}
             </div>
             <div>
-                <p className='text-[1.8rem] leading-[2.16rem]'>{contactName} </p>
-                {userData?.is_premium || chatUnlocked ? (<p className={`text-[1.6rem] leading-[1.92rem] ${lastMessage === 'Image' ? 'italic text-[#b2b2b5]' : 'text-[#8A8A8E]'}`}> {lastMessage !== "Image" ? (chatInterface ? lastMessage.length > 25 ? lastMessage.slice(0, 25) + '...' : lastMessage : lastMessage.length > 35 ? lastMessage.slice(0, 35) + '...' : lastMessage) : 'sent a photo'}
-                        </p> ) : (<p className="text-[1.6rem] leading-[1.92rem] text-[#8A8A8E]">Upgrade plan or use credits to chat</p>)}
+                <p className='text-[15px] leading-[3rem]'>{contactName} </p>
+                {userData?.is_premium || chatUnlocked ? (<p className={`text-[12px] leading-[1.92rem] ${lastMessage === 'Image' ? 'italic text-[#b2b2b5]' : 'text-[#8A8A8E]'}`}> {lastMessage !== "Image" ? (chatInterface ? lastMessage.length > 25 ? lastMessage.slice(0, 25) + '...' : lastMessage : lastMessage.length > 35 ? lastMessage.slice(0, 35) + '...' : lastMessage) : 'sent a photo'}
+                        </p> ) : (<p className="text-[12px] leading-[1.92rem] text-[#8A8A8E]">Upgrade plan or use credits to chat</p>)}
             </div>
         </div>
-       {messageStatus && <p className='bg-[#F6F6F6] text-[1.4rem] flex items-center font-normal h-[28px] px-[0.6rem] rounded-[0.6rem]'>Unread</p>}
+       {messageStatus && <p className='bg-[#F6F6F6] text-[14px] flex items-center font-normal h-[28px] px-[0.6rem] rounded-[0.6rem]'>Unread</p>}
     </div>
   )
 }

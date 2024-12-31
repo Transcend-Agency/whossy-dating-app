@@ -67,9 +67,9 @@
         &__button {
             @apply py-[2rem] bg-[#FDFAE7] rounded-[1.2rem] text-[1.8rem] font-medium flex justify-center items-center;
             &:first-of-type {
-                @apply bg-[#F5EBFD];
+                @apply bg-[#FDFAE7];
                 .user-profile__credit-buttons__button__link {
-                    @apply text-[#9935EC];
+                    @apply text-[#EECA0C];
                 }
             }
             &__description {

@@ -34,6 +34,14 @@ export const createOrFetchChat = async ( currentUserId: string,  recipientUserId
 	}
 
 	updateChatId(newChatId);
+	//
+	// if (newChatId != "nil" || !chat || !chat.participants || chat.participants.length < 2) {
+	// 	const bothPremiumUsers = userData.is_premium && user?.is_premium
+	// 	navigate(`/dashboard/chat?recipient-user-id=${userData.uid}`, {
+	// 		state: {chatId, recipientUser: userData, chatUnlocked: bothPremiumUsers ? true : chat.is_unlocked },
+	// 	});
+	// 	setChatId(chatId)
+	// }
 };
 
 export const getLastValidMessage = async (chat: Chat, currentUserUid: string) => {

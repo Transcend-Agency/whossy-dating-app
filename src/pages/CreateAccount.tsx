@@ -61,7 +61,6 @@ const CreateAccount = () => {
         const result = await getDocs(q);
 
         if (result.docs.length === 0) {
-            console.log("Just setting up for the first time")
             setUserId(user.uid);
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
@@ -74,7 +73,6 @@ const CreateAccount = () => {
                 is_approved: false,
                 created_at: serverTimestamp(),
             });
-            console.log("reached here")
             setId(user.uid);
             setAuthProvider(authProvider);
             navigate('/auth/account-setup');

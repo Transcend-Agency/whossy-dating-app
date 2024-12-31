@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from "react";
+import {FC, ReactNode, useEffect, useRef } from "react";
 
 interface ModalProps {
   children: ReactNode;
@@ -8,7 +8,7 @@ interface ModalProps {
 
 import  {motion as m} from 'framer-motion';
 
-const Modal: React.FC<ModalProps> = ({ children, onClose, className = "" }) => {
+const Modal: FC<ModalProps> = ({ children, onClose, className = "" }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
