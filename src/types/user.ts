@@ -55,7 +55,10 @@ export type User = {
     geopoint: GeoPoint
   };
   credit_balance?: number | null;
-  amount_paid_in_total?: number | null;
+  amount_paid_in_total?: {
+    naira?: number | null,
+    kenyan_shillings?: number | null,
+  };
   paystack?: {
     charge_success?: {
       currency?: string

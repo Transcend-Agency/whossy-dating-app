@@ -74,7 +74,10 @@ const AddCredits: React.FC<AddCreditProps> = ({ activePage, closePage, refetchUs
           const data = userDocSnap.data();
           await updateDoc(userDocRef, {
             credit_balance: data.credit_balance + selectedCreditOption?.credits,
-            amount_paid_in_total: data.amount_paid_in_total + selectedCreditOption?.price
+            amount_paid_in_total: {
+              naira: selectedCreditOption?.currency === 'ngn' ? data.amount_paid_in_total.naira + selectedCreditOption?.price : data.amount_paid_in_total.naira,
+              kenyan_shillings: selectedCreditOption?.currency === 'kes' ? data.amount_paid_in_total.kenyan_shillings + selectedCreditOption?.price : data.amount_paid_in_total.kenyan_shillings
+            }
           });
           closePage();
           refetchUserData();
