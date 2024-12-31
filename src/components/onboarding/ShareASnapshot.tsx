@@ -69,7 +69,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
         uid: auth.uid,
         is_premium: false,
         amount_paid_in_total: 0,
-        paystack: {reference: ""},
+        paystack: {},
         created_at: serverTimestamp(),
         blockedIds: arrayUnion(),
         credit_balance: 0,
@@ -81,7 +81,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ goBack }) => {
       });
 
       await setDoc(doc(db, "advancedSearchPreferences", auth.uid as string), {
-        ggender: '',
+        gender: '',
         age_range: { min: 18, max: 100 },
         country: '',
         relationship_preference: null,
