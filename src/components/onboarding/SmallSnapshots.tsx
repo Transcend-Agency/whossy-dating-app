@@ -6,6 +6,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useAuthStore } from "@/store/UserId";
 import { usePhotoStore } from "@/store/PhotoStore";
 import Skeleton from "../ui/Skeleton";
+import toast from "react-hot-toast";
 
 interface ImageProps {
   name: keyof PictureData;
@@ -24,8 +25,9 @@ const Image: React.FC<ImageProps> = ({ name }) => {
     const file = event.target.files?.[0];
     if (file) {
       const storage = getStorage();
-      const storageRef = ref(storage, `tests/${auth?.uid}/profile_pictures/image_${file.name}`);
+      const storageRef = ref(storage, `users/${auth?.uid}/profile_pictures/image_${file.name}`);
       setIsLoading(photos[name] as string);
+      toast.success("Your image is being uploaded")
       uploadBytes(storageRef, file)
       .then(() => {
         getDownloadURL(storageRef)
