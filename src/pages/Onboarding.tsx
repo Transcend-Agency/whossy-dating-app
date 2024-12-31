@@ -39,6 +39,9 @@ const Onboarding = () => {
 
   return (
     <>
+      <nav>
+        <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem] mb-[5rem] cursor-pointer' />
+      </nav>
       <div className="onboarding-page__progress-bar">
         {pageOrder.map((_page, index) => {
           return (
