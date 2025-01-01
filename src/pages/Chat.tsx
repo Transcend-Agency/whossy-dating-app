@@ -16,6 +16,7 @@ import useDashboardStore from "@/store/useDashboardStore";
 import useProfileFetcher from "@/hooks/useProfileFetcher";
 import {useMatchStore} from "@/store/Matches.tsx";
 import useSyncPeopleWhoLikedUser from "@/hooks/useSyncPeopleWhoLikedUser.tsx";
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 interface ChatDataWithUserData extends Chat {
     user: User;
@@ -36,6 +37,7 @@ const ChatPage = () => {
     const [isLoadingChats, setIsLoadingChats] = useState(false);
     const { matches } = useMatchStore()
     const { peopleWhoLiked } = useSyncPeopleWhoLikedUser()
+    const { setActivePage: setPage } = useNavigationStore()
 
     const fetchLoggedUserData = async () => {
         setChatId(null)
@@ -74,6 +76,7 @@ const ChatPage = () => {
     };
 
     useEffect(() => {
+        setPage('user-profile')
         fetchLoggedUserData();
     }, []);
 

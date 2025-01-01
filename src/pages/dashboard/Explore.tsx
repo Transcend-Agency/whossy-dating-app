@@ -22,6 +22,7 @@ import CustomIcon from "@/components/dashboard/CustomIcon.tsx";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 import ViewProfile from "@/components/dashboard/ViewProfile";
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 interface SettingsDataItem {
     label: string;
@@ -54,6 +55,11 @@ const Explore = () => {
     const [advancedSearchShowing, setAdvancedSearchShowing] = useState(false)
     const [advancedSearchModalShowing, setAdvancedSearchModalShowing] = useState('hidden')
     const hideModal = () => setAdvancedSearchModalShowing('hidden')
+    const { setActivePage: setPage } = useNavigationStore()
+
+    useEffect(() => {
+        setPage('user-profile')
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
