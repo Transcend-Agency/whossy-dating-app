@@ -21,10 +21,12 @@ import AddCredits from './AddCredits';
 import toast from "react-hot-toast";
 import ProfileCreditButton from "@/components/dashboard/ProfileCreditButton.tsx";
 import ProfileBoostModal from "@/components/dashboard/ProfileBoostModal.tsx";
-// import { usePaystackStore } from '@/store/Paystack';
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 const UserProfile = () => {
-    const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
+    // const [activePage, setActivePage] = useState<'user-profile' | 'edit-profile' | 'add-credits' | 'profile-settings' | 'preferences' | 'safety-guide' | 'interests' | 'user-interests' | 'subscription-plans'>('user-profile');
+
+    const { activePage, setActivePage } = useNavigationStore()
     const [activeSubPage, setActiveSubPage] = useState(0);
 
     const [userData, setUserData] = useState<User>();
@@ -61,11 +63,11 @@ const UserProfile = () => {
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
         fetchUserFilters().catch(err => console.log(err));
+        console.log(activePage)
     }, []);
 
     const refetchUserData = async () => { await fetchUserData() }
     const refetchUserFilters = async () => { await fetchUserFilters() }
-    // const { reference } = usePaystackStore();
     
     return <>
         <DashboardPageContainer>
@@ -82,7 +84,7 @@ const UserProfile = () => {
                     </div>
                     <div className='self-center relative mt-10 lg:mt-0'>
                         <Circle percentage={completed ? Math.ceil(completed / 19 * 100) : 0} imageUrl={userData?.photos && Array.isArray(userData.photos) && userData.photos.length > 0 ? userData.photos[0] : null} />
-                        <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button '>
+                        <button onClick={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} className='user-profile__update-profile-button'>
                             <img src="/assets/icons/update-profile.svg" alt={``} />
                         </button>
                     </div>

@@ -12,6 +12,7 @@ import useProfileFetcher from "@/hooks/useProfileFetcher";
 import SubscriptionPlans from "@/pages/dashboard/SubscriptionPlans.tsx";
 import {User} from "@/types/user.ts";
 import { getUserProfile } from '@/hooks/useUser';
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match' | 'plans'>('like')
@@ -23,6 +24,11 @@ const MatchesPage = () => {
     const { peopleWhoLiked, loading: likesLoading } = useSyncPeopleWhoLikedUser()
     const { profiles,  selectedProfile,  setSelectedProfile } = useDashboardStore()
     const { refreshProfiles } = useProfileFetcher()
+    const { setActivePage: setPage } = useNavigationStore()
+
+    useEffect(() => {
+        setPage('user-profile')
+    }, []);
 
     const fetchUserData = async () => {
         try {

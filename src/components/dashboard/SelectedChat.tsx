@@ -26,9 +26,10 @@ import {useChatIdStore} from "@/store/ChatStore";
 import {Chat, Messages} from "@/types/chat";
 import {User} from "@/types/user";
 import toast from "react-hot-toast";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useMatchStore} from "@/store/Matches.tsx";
 import ReportModal from "@/components/dashboard/ReportModal.tsx";
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 interface SelectedChatProps {
     activePage: string
@@ -81,6 +82,9 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
     const endRef = useRef<HTMLDivElement>(null);
     const { chatId, setChatId } = useChatIdStore();
     const { fetchMatches } = useMatchStore()
+    const navigate = useNavigate()
+
+    const { setActivePage: setPage } = useNavigationStore()
 
     //getting recipient user's name and profile picture from query params
     const queryParams = new URLSearchParams(location.search);
@@ -284,8 +288,9 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
 
         // @ts-ignore
         if(currentUser.credit_balance < 5){
-            toast.error("Insufficient credit to unlock chat");}
-        else {
+            setPage('add-credits')
+            navigate("/dashboard/user-profile")
+        } else {
             const newCredit: number = currentUser?.credit_balance as number - 5;
             console.log(newCredit)
             try {
@@ -554,7 +559,12 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                               unlockChat(chatId)
                                                                   .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
                                                           }
-                                                      }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>Use Credits</button>
+                                                      }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
+                                                          {/*@ts-ignore*/}
+                                                          {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
+                                                              ? 'Buy Credits'
+                                                              : 'Use Credits'}
+                                                      </button>
                                                   </div>
                                               </div>
                                           </div>
@@ -579,7 +589,12 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                                 unlockChat(chatId)
                                                                     .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
                                                             }
-                                                        }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>Use Credits</button>
+                                                        }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
+                                                            {/*@ts-ignore*/}
+                                                            {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
+                                                                ? 'Buy Credits'
+                                                                : 'Use Credits'}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>

@@ -39,6 +39,7 @@ import useDashboardStore from "@/store/useDashboardStore.tsx";
 import toast from "react-hot-toast";
 import {useMatchStore} from "@/store/Matches.tsx";
 import { getUserProfile } from "@/hooks/useUser";
+import {useNavigationStore} from "@/store/NavigationStore.tsx";
 
 interface ProfileCardProps {
     profiles: User[],
@@ -483,6 +484,11 @@ const SwipingAndMatching = () => {
     const { user, auth } = useAuthStore()
 
     const [loggedUserData, setLoggedUserData] = useState<User | null>(null);
+    const { setActivePage: setPage } = useNavigationStore()
+
+    useEffect(() => {
+        setPage('user-profile')
+    }, []);
 
     const fetchLoggedUserData = async () => {
         const data = await getUserProfile("users", auth?.uid as string) as User;
