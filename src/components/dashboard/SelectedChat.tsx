@@ -76,9 +76,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
     const [image, setImage] = useState<{ file: File | null, url: string | null }>({ file: null, url: null});
 
     const imageRef = useRef<HTMLInputElement | null>(null);
-    // @ts-ignore
     const dropdownRef = useRef<HTMLDivElement>(null);
-    // @ts-ignore
     const endRef = useRef<HTMLDivElement>(null);
     const { chatId, setChatId } = useChatIdStore();
     const { fetchMatches } = useMatchStore()
@@ -286,7 +284,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
             new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
         );
 
-        // @ts-ignore
+        // @ts-expect-error currentUser is probably undefined.
         if(currentUser.credit_balance < 5){
             setPage('add-credits')
             navigate("/dashboard/user-profile")
@@ -551,20 +549,28 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                   <p>Chat has not been unlocked 🔒</p>
                                                   <p>Unlock this chat for both of you to connect 😍</p>
                                                   <p>5 Credit is required to unlock chat</p>
-                                                  <p className={`whitespace-nowrap`}>Credit Balance: {`${currentUser?.credit_balance || 0}`} credits</p>
-                                                  <div className={`flex justify-center gap-4 items-center`}>
+                                                  <p className={`whitespace-nowrap flex gap-x-2 items-start`}>
+                                                      <img className={`size-[24px]`}
+                                                           src={`/assets/images/dashboard/coin.png`} alt={``}/>
+                                                      Credit Balance: {`${currentUser?.credit_balance || 0}`} credits
+                                                  </p>
+                                                  <div className={` flex-col flex justify-center gap-4 items-center`}>
                                                       <button onClick={(e) => {
                                                           e.preventDefault();
                                                           if(chatId) {
                                                               unlockChat(chatId)
                                                                   .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
                                                           }
-                                                      }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
-                                                          {/*@ts-ignore*/}
+                                                      }} className={`border p-3 bg-gradient-to-br from-red to-orange-400 hover:bg-gradient-to-br hover:from-red/80 hover:to-orange-600 active:scale-95 rounded-md px-2 w-[140px]`}>
+                                                          { /* @ts-expect-error currentUser is probably undefined.*/ }
                                                           {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
                                                               ? 'Buy Credits'
                                                               : 'Use Credits'}
                                                       </button>
+                                                      <button onClick={() => {
+                                                          setPage('subscription-plans')
+                                                          navigate("/dashboard/user-profile")}
+                                                      } className={`border p-4 bg-gradient-to-r from-orange-400 to-red hover:from-orange-600 hover:to-red/80 active:scale-95 rounded-md px-3 w-fit`} >Subscribe to Premium</button>
                                                   </div>
                                               </div>
                                           </div>
@@ -590,7 +596,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                                     .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
                                                             }
                                                         }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
-                                                            {/*@ts-ignore*/}
+                                                            {/* @ts-expect-error currentUser is probably undefined.*/ }
                                                             {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
                                                                 ? 'Buy Credits'
                                                                 : 'Use Credits'}
@@ -626,7 +632,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                         </section>
                         <AnimatePresence>
                             {openEmoji && <m.div initial={{ opacity: 0, scale: 0.8, y: 50 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8, y: 50 }} transition={{ duration: 0.3, ease: "easeInOut" }} ref={dropdownRef} className="absolute bottom-32 right-8 "><EmojiPicker onEmojiClick={(e) => { if (!(chatUnlocked || currentUser?.is_premium)) return; setText((prev) => prev + e.emoji) } } /> </m.div>}</AnimatePresence>
-                        {!currentChat?.user_blocked[0] || isLoading ? <footer className="relative flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
+                        {!currentChat?.user_blocked[0] || isLoading ? <footer className=" flex justify-between text-[1.6rem] bg-white items-center gap-x-4 mx-6 sticky bottom-10">
                                 <div className="flex-1 flex gap-x-4">
                                     {/* Image Upload Section */}
                                     <img

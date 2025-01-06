@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import React from "react";
 
 interface IconProps {
@@ -55,14 +55,23 @@ const ChatIcon: React.FC<IconProps> = ({ active }) => {
 }
 
 const DashboardNavIcon: React.FC<DashboardNavIconProps> = ({ active, icon }) => {
+    const navigate = useNavigate()
 
-    return <Link to={`/dashboard/${icon}`}>
+    return <p onClick={() => navigate(`/dashboard/${icon}`)}>
         {icon === 'explore' && <ExploreIcon active={active} />}
         {icon === 'matches' && <MatchesIcon active={active} />}
         {icon === 'swipe-and-match' && <SwipeAndMatchIcon active={active} />}
         {icon === 'user-profile' && <UserProfileIcon active={active} />}
         {icon === 'chat' && <ChatIcon active={active} />}
-    </Link>
+    </p>
+
+    // return <Link to={`/dashboard/${icon}`}>
+    //     {icon === 'explore' && <ExploreIcon active={active} />}
+    //     {icon === 'matches' && <MatchesIcon active={active} />}
+    //     {icon === 'swipe-and-match' && <SwipeAndMatchIcon active={active} />}
+    //     {icon === 'user-profile' && <UserProfileIcon active={active} />}
+    //     {icon === 'chat' && <ChatIcon active={active} />}
+    // </Link>
 
 }
 
