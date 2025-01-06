@@ -58,9 +58,9 @@ const Dashboard: React.FC = () => {
             </AnimatePresence>
             <nav className='dashboard-layout__top-nav'>
                 <div className='dashboard-layout__top-nav__container'>
-                    <div className='dashboard-layout__top-nav__logo hidden lg:block'>
+                    <div className='dashboard-layout__top-nav__logo cursor-pointer hidden lg:block'
+                         onClick={() => navigate('/dashboard/explore')}>
                         <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem]' />
-
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container items-center'>
                         <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
