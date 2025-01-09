@@ -63,8 +63,8 @@ const Dashboard: React.FC = () => {
                         <img src={'/assets/icons/whossy-logo.svg'} alt="Logo" className='w-[10rem]' />
                     </div>
                     <div className='dashboard-layout__top-nav__icons-container items-center'>
-                        <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                         <DashboardNavIcon active={pathname === '/dashboard/explore'} icon='explore' />
+                        <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                         <DashboardNavIcon active={pathname === '/dashboard/matches'} icon='matches' />
                         <DashboardNavIcon active={pathname === '/dashboard/chat'} icon='chat' />
                         <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
@@ -86,8 +86,8 @@ const Dashboard: React.FC = () => {
         <div className="h-screen flex flex-col lg:hidden">
             <Outlet />
             <div className='dashboard-layout__mobile-nav'>
-                <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                 <DashboardNavIcon active={pathname === '/dashboard/explore'} icon='explore' />
+                <DashboardNavIcon active={pathname === '/dashboard/swipe-and-match'} icon='swipe-and-match' />
                 <DashboardNavIcon active={pathname === '/dashboard/matches'} icon='matches' />
                 <DashboardNavIcon active={pathname === '/dashboard/chat'} icon='chat' />
                 <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
