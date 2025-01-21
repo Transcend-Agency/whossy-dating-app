@@ -37,10 +37,28 @@ export const tourGuideSteps: Tour = {
 				{
 						selector: '.dashboard-layout__matches-wrapper',
 						content: 'Review the matches you’ve made with other users on the platform, based on mutual interest and likes.',
-				}
+				},
+				{
+						selector: '[data-cy="chat-interface-modal"]',
+						content: 'This is the chat interface where you interact with profiles liked or matched. Enjoy seamless ' +
+								' communication with those you connect with.',
+				},
 		],
 		'swipe-and-match' : [],
-		'matches' : [],
+		'matches' : [
+				{
+						selector: '[data-cy="likes-page"]',
+						content: "This is the Likes page where you can view the profiles of users who have liked you. Explore these profiles and decide who you'd like to connect with."
+				},
+				{
+						selector: '[data-cy="matches-page"]',
+						content: "This is the Matches page where you can see users you've mutually matched with. Start chatting or view their profiles to learn more about them."
+				},
+				{
+						selector: '[data-cy="subscribe-modal-cta"]',
+						content: "This is the subscription modal where you can unlock premium features to enhance your matching and chatting experience."
+				}
+		],
 		'chat' : [],
 		'user-profile': [
 				{
@@ -89,7 +107,7 @@ export const styles = {
 		badge: (base: any) => ({
 				...base,
 				background: 'linear-gradient(90deg, #F2243E, #FB923C)',
-				padding: '4px 8px',
+				padding: '5px 10px',
 				borderRadius: '9999px',
 				fontSize: '14px',
 				fontWeight: 'bold',

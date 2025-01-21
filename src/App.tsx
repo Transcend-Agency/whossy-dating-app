@@ -74,10 +74,9 @@ function App() {
 
         if (totalCurrentStep === steps.length - 1) {
             const completedTours: CompletedTours = JSON.parse(
-                localStorage.getItem("completedTourPages") || "{}"
+                localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,}"
             );
             completedTours[pageKey] = true;
-            completedTours['chat'] = true;
             localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
             localStorage.removeItem("lastStep"); // Clear last step on completion
         }

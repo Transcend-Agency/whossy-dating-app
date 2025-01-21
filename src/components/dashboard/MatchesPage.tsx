@@ -75,8 +75,8 @@ const MatchesPage = () => {
             {!selectedProfile && <DashboardPageContainer className="matches-page" span={1}>
                 <div className={`${activePage === "plans" ? "hidden" : `matches-page__nav `}`}>
                     <div className="left-nav">
-                        <button onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Likes</button>
-                        <button onClick={() => setActivePage('match')} className={`matches-page__nav-item ${activePage === 'match' && 'matches-page__nav-item--active'}`}>Matches</button>
+                        <button data-cy="likes-page" onClick={() => setActivePage('like')} className={`matches-page__nav-item ${activePage === 'like' && 'matches-page__nav-item--active'}`}>Likes</button>
+                        <button data-cy="matches-page" onClick={() => setActivePage('match')} className={`matches-page__nav-item ${activePage === 'match' && 'matches-page__nav-item--active'}`}>Matches</button>
                     </div>
                 </div>
                 <AnimatePresence mode="wait">
@@ -100,7 +100,7 @@ const MatchesPage = () => {
 
                             {!likesLoading && peopleWhoLiked.length !== 0 && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 {!user?.is_premium && <div className="likes-subscribe-cta-container">
-                                    <div className="likes-subscribe-cta">
+                                    <div data-cy="subscribe-modal-cta" className="likes-subscribe-cta">
                                         <figure className="likes-subscribe-cta__image">
                                             <img src="/assets/images/matches/stephen.png" alt={``} />
                                             <div className="likes-subscribe-cta__overlay">
