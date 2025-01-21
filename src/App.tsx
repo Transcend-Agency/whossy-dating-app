@@ -77,6 +77,7 @@ function App() {
                 localStorage.getItem("completedTourPages") || "{}"
             );
             completedTours[pageKey] = true;
+            completedTours['chat'] = true;
             localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
             localStorage.removeItem("lastStep"); // Clear last step on completion
         }

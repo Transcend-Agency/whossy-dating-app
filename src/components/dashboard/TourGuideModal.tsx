@@ -17,12 +17,16 @@ export const TourGuideModal = () => {
 		useEffect(() => {
 				const pageKey = location.pathname;
 				const completedTours: CompletedTours = JSON.parse(
-						localStorage.getItem('completedTourPages') || '{}'
+						localStorage.getItem('completedTourPages') || "{/dashboard/chat: true,}"
 				);
+
+				completedTours['/dashboard/chat'] = true;
+				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
 
 				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
 				if(!hasCompletedTour){
 						setTourIsOpen(true)
+						// setTimeout(() => setTourIsOpen(true), 2500)
 				}else{
 						setTourIsOpen(false)
 				}
@@ -75,7 +79,7 @@ export const TourGuideModal = () => {
 
 export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', className = '', ...props }) => {
 		const baseClasses =
-				'px-6 py-3 text-[14px] rounded-md outline-none border-none focus:outline-none font-bold';
+				'px-6 py-3 text-[14px] rounded-md cursor-pointer outline-none border-none focus:outline-none font-bold';
 		const variantClasses =
 				variant === 'primary'
 						? 'bg-gradient-to-br from-red to-orange-400 text-white hover:bg-blue-700 focus:ring-blue-500'

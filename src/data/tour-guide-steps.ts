@@ -42,9 +42,33 @@ export const tourGuideSteps: Tour = {
 		'swipe-and-match' : [],
 		'matches' : [],
 		'chat' : [],
-		'user-profile' : []
+		'user-profile': [
+				{
+						selector: '[data-cy=profile-settings-button]',
+						content: 'Click here to access your profile settings and update your personal information or preferences.',
+				},
+				{
+						selector: '[data-cy=update-profile-button]',
+						content: 'Use this button to edit your profile details and showcase your best self to potential matches.',
+				},
+				{
+						selector: '[data-cy=update-profile-btn2]',
+						content: 'This option allows you to make quick updates to your profile pictures and bio.',
+				},
+				{
+						selector: '[data-cy=whossy-safety-guide]',
+						content: 'Click here to view our safety guide for tips on secure and enjoyable interactions within the app.',
+				},
+				{
+						selector: '[data-cy=buy-credit-modal]',
+						content: 'Need more credits? Open this modal to explore credit packages and enhance your app experience.',
+				},
+				{
+						selector: '[data-cy=subscription-modal]',
+						content: 'Unlock premium features by subscribing to our plans. Click here to learn more.',
+				}
+		]
 }
-
 
 
 export const styles = {
