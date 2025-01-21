@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
                         <DashboardNavIcon active={pathname === '/dashboard/chat'} icon='chat' />
                         <DashboardNavIcon active={pathname === '/dashboard/user-profile'} icon='user-profile' />
                     </div>
-                    <div className='dashboard-layout__top-nav__control-icons-container relative' onClick={() => navigate('/dashboard/notification')}>
+                    <div className='dashboard-layout__top-nav__control-icons-container relative nav-notification' onClick={() => navigate('/dashboard/notification')}>
                         <IoIosNotifications className={`size-[2.8rem] hover:scale-[1.02] active:scale-[0.95] cursor-pointer ${pathname === '/dashboard/notification' ? 'text-[#F2243E]' : 'text-[#8A8A8E]'}`} />
                         {unseenNotificationsCount > 0 &&
                             <div className='bg-[#ff0000]/70 absolute font-medium size-[1.6rem] text-[1.3rem] rounded-full right-[1px] text-white'>
