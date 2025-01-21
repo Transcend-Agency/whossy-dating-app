@@ -66,7 +66,7 @@ const useDashboardStore = create<DashboardState>((set) => ({
 		totalCurrentStep: 0,
 		setTotalCurrentStep: (totalCurrentStep) => set({ totalCurrentStep: totalCurrentStep }),
 
-		tourIsOpen: true,
+		tourIsOpen: false,
 		setTourIsOpen: (tourIsOpen) => set({ tourIsOpen: tourIsOpen }),
 
 }));
