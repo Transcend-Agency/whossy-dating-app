@@ -44,7 +44,29 @@ export const tourGuideSteps: Tour = {
 								' communication with those you connect with.',
 				},
 		],
-		'swipe-and-match' : [],
+		'swipe-and-match' : [
+				{
+						selector: '[data-cy="dislike-profile"]',
+						content: 'Use this button to indicate that you\'re not interested in a profile. This helps refine your recommendations.'
+				},
+				{
+						selector: '[data-cy="like-profile"]',
+						content: 'Tap this button to like a profile that interests you. A mutual like will create a match!'
+				},
+				{
+						selector: '[data-cy="chat-profile"]',
+						content: 'Click here to start a conversation with this profile once you\'ve matched.'
+				},
+				{
+						selector: '[data-cy="expand-profile-card"]',
+						content: 'Click this arrow to view more details about the user\'s profile, including their bio and' +
+								' interests.'
+				},
+				{
+						selector: '[data-cy="control-button"]',
+						content: 'This button lets you access additional options, such as reporting or blocking a profile for safety.'
+				}
+		],
 		'matches' : [
 				{
 						selector: '[data-cy="likes-page"]',
@@ -103,6 +125,7 @@ export const styles = {
 		maskArea: (base: any) => ({
 				...base,
 				rx: '8px',
+				zIndex: 9999
 		}),
 		badge: (base: any) => ({
 				...base,

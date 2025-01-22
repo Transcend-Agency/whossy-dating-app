@@ -411,12 +411,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                 <div className="interests-row">
                                     <img src="/assets/icons/interests.svg" alt={``} />
                                     <div className="interests">
-                                        {item?.interests?.slice(0, 4)?.map((item, i) => <div key={i} className="interest">{item}</div>)}
+                                        {item?.interests?.slice(0, 4)?.map((item, i) =>
+                                            <div key={i} className="interest">{item}</div>)}
                                         {/* <div className="interest">Travelling</div> */}
                                     </div>
                                     <img onClick={() => {
                                         setExpanded(!expanded)
-                                    }} className="expand-profile" src="/assets/icons/down.svg" alt={``} />
+                                    }} data-cy="expand-profile-card" className="expand-profile" src="/assets/icons/down.svg" alt={``} />
                                 </div>
                             </motion.div>
                             <div className="preview-profile__image-counter-container">
@@ -793,21 +794,24 @@ const SwipingAndMatching = () => {
                                     style={{opacity: actionButtonsOpacity}}
                                     className="action-buttons">
                                     {/*{profiles.length}*/}
-                                    <button onClick={() => {
+                                    <button data-cy="dislike-profile" onClick={() => {
                                         setSwipedUser(item?.uid as string)
                                         setActionType('cancel');
                                     }} className="action-buttons__button">
                                         <img src="/assets/icons/cancel.svg" alt={``}/>
                                     </button>
-                                    <button onClick={() => {
+                                    <button data-cy="like-profile" onClick={() => {
                                         setSwipedUser(item?.uid as string)
                                         setActionType('like');
                                     }} className="action-buttons__button">
                                         <img src="/assets/icons/heart.svg" alt={``}/>
                                     </button>
-                                    <button className="action-buttons__button action-buttons__button--small"
-                                        onClick={() => {loggedUserData?.is_premium ? navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) : toast.error('Upgrade to premium to chat'); console.log(loggedUserData)}}
-                                        // onClick={() => console.log(loggedUserData)}
+                                    <button data-cy="chat-profile" className="action-buttons__button action-buttons__button--small"
+                                        onClick={() => {
+                                            loggedUserData?.is_premium ?
+                                                navigate(`/dashboard/chat?recipient-user-id=${item.uid}`) :
+                                                toast.error('Upgrade to premium to chat');
+                                            console.log(loggedUserData)}}
                                     >
                                         <img src="/assets/icons/message-heart.svg" alt={``}/>
                                     </button>
