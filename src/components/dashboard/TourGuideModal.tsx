@@ -19,12 +19,18 @@ export const TourGuideModal = () => {
 				const pageKey = location.pathname;
 				const pageKeyValue = location.pathname.split('/')[2];
 				setPage(pageKeyValue);
-				const completedTours: CompletedTours = JSON.parse(
-						localStorage.getItem('completedTourPages') || "{/dashboard/chat: true,}"
-				);
+				let completedTours: CompletedTours;
 
-				completedTours['/dashboard/chat'] = true;
-				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
+				try {
+						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{}');
+				} catch (error) {
+						console.error('Error parsing completedTourPages from localStorage:', error);
+						completedTours = {};
+				}
+
+				if (!completedTours['/dashboard/chat']) {
+						completedTours['/dashboard/chat'] = true;
+				}
 
 				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
 				if(!hasCompletedTour){
