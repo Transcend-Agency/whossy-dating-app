@@ -14,6 +14,7 @@ import HowOldAreYou from "../components/onboarding/HowOldAreYou";
 import { AnimatePresence } from "framer-motion";
 import ProgressBarItem from "../components/onboarding/ProgressBarItem";
 import {GetPhotoVerified} from "@/components/onboarding/GetPhotoVerified.tsx";
+import {TakeASelfie} from "@/components/onboarding/TakeASelfie.tsx";
 
 const Onboarding = () => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -94,7 +95,7 @@ const Onboarding = () => {
           }
           {
               pageOrder[currentPage] == "take-a-selfie" && (
-                  <ShareASnapshot key={"snapshot"} advance={() => console.log("This is the final page")} goBack={goBack} />
+                  <TakeASelfie key={"snapshot"} advance={() => console.log("This is the final page")} goBack={goBack} />
               )
           }
       </AnimatePresence>
