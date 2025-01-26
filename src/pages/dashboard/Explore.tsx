@@ -136,13 +136,12 @@ const Explore = () => {
         { label: 'Religion', value: advancedSearchPreferences.religion !== null ? religion[advancedSearchPreferences.religion as number] : 'Choose', onClick: () => setAdvancedSearchModalShowing('religion') }
     ];
 
-    // user.is_approved === true &&
     const noSearchResults = (profiles: User[]): number => {
-        return profiles.filter(user => user?.user_settings?.public_search === true && user.is_banned === false).length;
+        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false).length;
     };
 
     const noSearchResult = (profiles: User[]): User[] => {
-        return profiles.filter(user => user?.user_settings?.public_search === true && user.is_banned === false);
+        return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false);
     };
 
     useEffect(() => {
@@ -159,12 +158,12 @@ const Explore = () => {
                             <div className='filter'>
                                 <div className='filter__left'>
                                     {filterOptions.map(item => <div key={item} onClick={() => setSelectedOption(item)} className={`filter__item ${selectedOption == item && 'filter__item--active'}`}>{item}</div>)}
-                                    <div onClick={() => setSelectedOption('Advanced Search')} className={`filter__item ${selectedOption == 'Advanced Search' && 'filter__item--active'}`}>
+                                    <div onClick={() => setSelectedOption('Advanced Search')} className={`filter__item advanced-search-btn2 ${selectedOption == 'Advanced Search' && 'filter__item--active'}`}>
                                         <CustomIcon />
                                         Advanced Search
                                     </div>
                                 </div>
-                                <div className='filter__right'>
+                                <div className='filter__right advanced-search-btn'>
                                     <button onClick={() => setAdvancedSearchShowing(true)} className='filter__saved-search'>
                                         <img src="/assets/icons/saved-search.svg" alt={``} />
                                     </button>

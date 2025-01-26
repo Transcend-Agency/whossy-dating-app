@@ -19,8 +19,12 @@ interface DashboardState {
 	previousLocation: string | null;
 	currentLocation: string;
 	setLocation: (newLocation: string) => void;
-	advancedSearchPreferences: AdvancedSearchPreferences
-	setAdvancedSearchPreferences: (preferences: AdvancedSearchPreferences) => void
+	advancedSearchPreferences: AdvancedSearchPreferences;
+	setAdvancedSearchPreferences: (preferences: AdvancedSearchPreferences) => void;
+	totalCurrentStep: number;
+	setTotalCurrentStep: (totalCurrentStep: number) => void;
+	tourIsOpen: boolean;
+	setTourIsOpen: (tourIsOpen: boolean) => void;
 }
 
 const useDashboardStore = create<DashboardState>((set) => ({
@@ -57,7 +61,13 @@ const useDashboardStore = create<DashboardState>((set) => ({
 		relationship_preference: null,
 		religion: null
 	},
-	setAdvancedSearchPreferences: (preferences) => set({ advancedSearchPreferences: preferences })
+	setAdvancedSearchPreferences: (preferences) => set({ advancedSearchPreferences: preferences }),
+
+		totalCurrentStep: 0,
+		setTotalCurrentStep: (totalCurrentStep) => set({ totalCurrentStep: totalCurrentStep }),
+
+		tourIsOpen: false,
+		setTourIsOpen: (tourIsOpen) => set({ tourIsOpen: tourIsOpen }),
 
 }));
 
