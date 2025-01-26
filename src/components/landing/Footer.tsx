@@ -37,6 +37,7 @@ const Footer = () => {
         <div className="flex flex-col items-start space-y-[2.4rem] text-[1.6rem]">
           <button onClick={() => navigate('/faq')}>FAQ</button>
           <button onClick={() => navigate('/contact')}>Contact Us</button>
+          <button onClick={() => navigate('/privacy-policy')}>Terms And Conditions</button>
         </div>
 
         <div className="flex flex-col space-y-[4rem] ">
