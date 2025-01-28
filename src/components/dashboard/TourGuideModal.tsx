@@ -19,13 +19,19 @@ export const TourGuideModal = () => {
 				const pageKey = location.pathname;
 				const pageKeyValue = location.pathname.split('/')[2];
 				setPage(pageKeyValue);
-				const completedTours: CompletedTours = JSON.parse(
-						localStorage.getItem('completedTourPages') || "{/dashboard/chat: true,}"
-				);
+				let completedTours: CompletedTours;
 
-				completedTours['/dashboard/chat'] = true;
+				try {
+						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{"/dashboard/chat: true"}');
+				} catch (error) {
+						console.error('Error parsing completedTourPages from localStorage:', error);
+						completedTours = {};
+				}
+
+				if (!completedTours['/dashboard/chat']) {
+						completedTours['/dashboard/chat'] = true;
+				}
 				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
-
 				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
 				if(!hasCompletedTour){
 						setTourIsOpen(true)
@@ -57,9 +63,9 @@ export const TourGuideModal = () => {
 		return (
 				<div className="absolute z-[9999] inset-0 bg-black bg-opacity-50 flex items-center justify-center p-6">
 						<div className="bg-white rounded-lg max-w-[420px] w-full mx-4 relative">
-								<img className={`absolute -top-[15px] -right-[25px] rotate-[15deg] size-[50px]`} src={`/assets/icons/logo-gradient.svg`} alt={``} />
+								<img className={`absolute md:-top-[15px] -right-[10px] -top-[30px] md:-right-[25px] rotate-[15deg] size-[50px]`} src={`/assets/icons/logo-gradient.svg`} alt={``} />
 								<div className="px-12 py-10 grid gap-y-10">
-										<h2 className="text-[40px] font-bold whitespace-nowrap">
+										<h2 className="text-[34px] md:text-[40px] font-bold whitespace-nowrap">
 												Welcome to{' '}<span className={`bg-gradient-to-br bg-clip-text text-transparent from-red to-orange-400 filter`}>Whossy</span>
 										</h2>
 										<p className={`text-gray-600 text-[17.5px] leading-7`}>This is the{' '}<span className={`bg-gradient-to-br bg-clip-text text-transparent from-red to-orange-400 filter`}>{page}</span>{' '}Page.</p>

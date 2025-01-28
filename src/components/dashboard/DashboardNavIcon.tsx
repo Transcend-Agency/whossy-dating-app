@@ -56,7 +56,7 @@ const ChatIcon: React.FC<IconProps> = ({ active }) => {
 
 const DashboardNavIcon: React.FC<DashboardNavIconProps> = ({ active, icon }) => {
 
-    return <Link className={`nav-${icon}`} to={`/dashboard/${icon}`}>
+    return <Link data-cy={`nav-${icon}`} className={`nav-${icon}`} to={`/dashboard/${icon}`}>
         {icon === 'explore' && <ExploreIcon active={active} />}
         {icon === 'matches' && <MatchesIcon active={active} />}
         {icon === 'swipe-and-match' && <SwipeAndMatchIcon active={active} />}
