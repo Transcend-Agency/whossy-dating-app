@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useOnboardingStore } from "@/store/OnboardingStore";
@@ -15,6 +15,7 @@ import {FaceVerification, OnboardingProps} from "@/types/onboarding";
 const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
     const { photos, setPhotos, reset: resetPhoto } = usePhotoStore();
     const { updateOnboardingData, "onboarding-data": data } = useOnboardingStore();
+    const [pictureSaved, setPictureSaved] = useState<boolean>(true);
     const { auth, user } = useAuthStore();
 
     const addToFaceVerificationDB = async (uploaded_photos: FaceVerification["uploaded_photos"]) => {
@@ -33,8 +34,10 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
             };
 
             await setDoc(faceVerificationRef, payload);
+            setPictureSaved(true);
             console.log("Face verification data successfully added to Firestore.");
         } catch (error) {
+            // setPictureSaved(false);
             console.error("Error adding data to Firestore:", error);
             toast.error("Failed to save photos. Please try again.");
         }
@@ -86,11 +89,12 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                             };
 
                             await addToFaceVerificationDB(uploaded_photos);
-
-                            updateOnboardingData({ photos: validPhotos });
-                            toast.success("Loading...")
-                            advance();
-                            resetPhoto();
+                            if(pictureSaved){
+                                updateOnboardingData({ photos: validPhotos });
+                                toast.success("Loading...")
+                                advance();
+                                resetPhoto();
+                            }
                         } else {
                             toast.error("Please add at least 2 photos of yourself 🤗");
                         }
