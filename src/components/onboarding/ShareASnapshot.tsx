@@ -15,7 +15,7 @@ import {FaceVerification, OnboardingProps} from "@/types/onboarding";
 const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
     const { photos, setPhotos, reset: resetPhoto } = usePhotoStore();
     const { updateOnboardingData, "onboarding-data": data } = useOnboardingStore();
-    const [pictureSaved, setPictureSaved] = useState<boolean>(true);
+    const [pictureSaved, setPictureSaved] = useState<boolean>(false);
     const { auth, user } = useAuthStore();
 
     const addToFaceVerificationDB = async (uploaded_photos: FaceVerification["uploaded_photos"]) => {
@@ -37,7 +37,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
             setPictureSaved(true);
             console.log("Face verification data successfully added to Firestore.");
         } catch (error) {
-            // setPictureSaved(false);
+            setPictureSaved(false);
             console.error("Error adding data to Firestore:", error);
             toast.error("Failed to save photos. Please try again.");
         }
