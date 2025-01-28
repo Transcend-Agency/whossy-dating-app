@@ -26,6 +26,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                 first_name: user?.first_name,
                 last_name: user?.last_name,
                 uploaded_photos,
+                captured_photo: null,
                 is_approved: false,
                 created_at: Timestamp.now(),
                 updated_at: Timestamp.now(),

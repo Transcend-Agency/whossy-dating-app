@@ -16,6 +16,7 @@ export type FaceVerification = {
     photo4: string,
     photo5: string,
   }
+  captured_photo: string | null,
   is_approved?: boolean,
   created_at?: Timestamp | Date | null;
   updated_at?: Timestamp | Date | null;
