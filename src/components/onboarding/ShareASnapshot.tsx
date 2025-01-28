@@ -92,7 +92,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                             advance();
                             resetPhoto();
                         } else {
-                            toast.error("You need to upload at least 2 photos");
+                            toast.error("Please add at least 2 photos of yourself 🤗");
                         }
                     }}
                 />

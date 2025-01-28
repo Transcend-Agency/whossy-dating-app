@@ -22,7 +22,7 @@ export const TourGuideModal = () => {
 				let completedTours: CompletedTours;
 
 				try {
-						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{}');
+						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{"/dashboard/chat: true"}');
 				} catch (error) {
 						console.error('Error parsing completedTourPages from localStorage:', error);
 						completedTours = {};
@@ -31,7 +31,7 @@ export const TourGuideModal = () => {
 				if (!completedTours['/dashboard/chat']) {
 						completedTours['/dashboard/chat'] = true;
 				}
-
+				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
 				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
 				if(!hasCompletedTour){
 						setTourIsOpen(true)

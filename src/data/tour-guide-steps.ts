@@ -3,7 +3,8 @@ import {Tour} from "@/types/tourGuide.ts";
 export const tourGuideSteps: Tour = {
 		'explore' : [
 				{
-						selector: '.nav-explore',
+						// selector: '.nav-explore',
+						selector: '[data-cy="nav-explore"]',
 						content: 'Explore profiles based on your selected preferences (male, female, or everyone). You can view profiles and apply filters to narrow your search results.',
 				},
 				{
