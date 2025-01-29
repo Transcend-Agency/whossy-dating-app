@@ -15,7 +15,7 @@ import {FaceVerification, OnboardingProps} from "@/types/onboarding";
 const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
     const { photos, setPhotos, reset: resetPhoto } = usePhotoStore();
     const { updateOnboardingData, "onboarding-data": data } = useOnboardingStore();
-    const [pictureSaved, setPictureSaved] = useState<boolean>(false);
+    const [pictureSaved, setPictureSaved] = useState<boolean>(true);
     const { auth, user } = useAuthStore();
 
     const addToFaceVerificationDB = async (uploaded_photos: FaceVerification["uploaded_photos"]) => {
@@ -89,12 +89,12 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                             };
 
                             await addToFaceVerificationDB(uploaded_photos);
-                            if(pictureSaved){
+                            // if(pictureSaved){
                                 updateOnboardingData({ photos: validPhotos });
                                 toast.success("Loading...")
                                 advance();
                                 resetPhoto();
-                            }
+                            // }
                         } else {
                             toast.error("Please add at least 2 photos of yourself 🤗");
                         }

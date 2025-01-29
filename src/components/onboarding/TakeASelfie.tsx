@@ -16,6 +16,7 @@ import {AdvancedSearchPreferences, User} from "@/types/user.ts";
 import Modal from "../ui/Modal";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
+import { resolve } from 'path';
 
 export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 		const [openModal, setOpenModal] = useState(false);
@@ -69,7 +70,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 				}
 		};
 
-		const stopCamera = () => {
+		const stopCamera = async () => {
 			if (videoRef.current) {
 				const stream = videoRef.current.srcObject as MediaStream;
 				if (stream) {
@@ -85,7 +86,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 			setCameraHasStarted(false);
 		};			
 
-		const captureImage = () => {
+		const captureImage = async () => {
 				if (videoRef.current && canvasRef.current) {
 						const canvas = canvasRef.current;
 						const context = canvas.getContext('2d');
@@ -114,15 +115,15 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 								const img = new Image();
 
 								img.src = imageData;
-								img.onload = () => {
+								img.onload = async () => {
 										const validation = validateImageClarity(img);
-										if (!validation.brightness) {
+										if (!(await validation).brightness) {
 												toast.error("The image is too dark or too bright. Please try again.", {duration: 5000});
 												stopCamera()
 												setCapturedImage(null);
 												setCameraHasStarted(false)
 												setPictureHasBeenTaken(false)
-										} else if (!validation.blur) {
+										} else if (!(await validation).blur) {
 												toast.error("The image is too blurry. Please try again.", {duration: 5000});
 												stopCamera()
 												setCapturedImage(null);
@@ -137,7 +138,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 				}
 		};
 
-		function validateImageClarity(image: HTMLImageElement): { brightness: boolean; blur: boolean } {
+		const validateImageClarity = async (image: HTMLImageElement) : Promise<{ brightness: boolean; blur: boolean }> => {
 				const canvas = document.createElement("canvas");
 				const context = canvas.getContext("2d");
 
@@ -163,7 +164,8 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ advance, goBack }) => {
 				const laplacianVariance = calculateLaplacianVariance(image, canvas, context);
 				const blurOK = laplacianVariance > 100;
 
-				return { brightness: brightnessOK, blur: blurOK };
+				return new Promise((resolve) => setTimeout(() => resolve({ brightness: brightnessOK, blur: blurOK }), 2000)) 
+				// return { brightness: brightnessOK, blur: blurOK };
 		}
 
 		function calculateLaplacianVariance(_image: HTMLImageElement, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
