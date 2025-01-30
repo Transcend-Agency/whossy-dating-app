@@ -73,6 +73,10 @@ export type User = {
   } | null;
   currency?: string | null;
   is_banned?: boolean | null;
+  face_verification?: {
+    photo?: string | null;
+    updated_at?: Timestamp | null;
+  }
 };
 
 export type UserFilters = {

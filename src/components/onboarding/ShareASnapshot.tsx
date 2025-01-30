@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from "react";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { FC, useEffect } from "react";
+import {arrayUnion, doc, setDoc, updateDoc} from "firebase/firestore";
 import { db } from "@/firebase";
 import { useOnboardingStore } from "@/store/OnboardingStore";
 import { PictureData, usePhotoStore } from "@/store/PhotoStore";
@@ -10,36 +10,79 @@ import BigSnapshots from "./BigSnapshots";
 import OnboardingBackButton from "./OnboardingBackButton";
 import OnboardingPage from "./OnboardingPage";
 import SmallSnapshots from "./SmallSnapshots";
-import {FaceVerification, OnboardingProps} from "@/types/onboarding";
+import { OnboardingProps } from "@/types/onboarding";
+import {serverTimestamp} from "firebase/database";
+import { AdvancedSearchPreferences } from "@/types/user.ts";
 
 const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
     const { photos, setPhotos, reset: resetPhoto } = usePhotoStore();
     const { updateOnboardingData, "onboarding-data": data } = useOnboardingStore();
-    const [pictureSaved, setPictureSaved] = useState<boolean>(true);
-    const { auth, user } = useAuthStore();
+    const { auth } = useAuthStore();
 
-    const addToFaceVerificationDB = async (uploaded_photos: FaceVerification["uploaded_photos"]) => {
+    const userSettings = {
+        incoming_messages: true,
+        public_search: true,
+        read_receipts: true,
+        online_status: true,
+    };
+
+    const uploadToFirestore = async () => {
+        console.log(auth?.uid);
+        console.log("Loading...");
+
+        if (!auth?.uid) {
+            console.error("User ID is undefined. Cannot update Firestore without a valid UID.");
+            toast.error("An error occurred. Please try again.");
+            return;
+        }
+
         try {
-            const faceVerificationRef = doc(db, "faceVerification", auth?.uid as string);
+            console.log(auth.uid);
+            console.log(data['date-of-birth']);
+            const userDocRef = doc(db, "users", auth.uid);
 
-            const payload: FaceVerification = {
-                uid: auth?.uid,
-                first_name: user?.first_name,
-                last_name: user?.last_name,
-                uploaded_photos,
-                captured_photo: null,
-                is_approved: false,
-                created_at: Timestamp.now(),
-                updated_at: Timestamp.now(),
-            };
+            await updateDoc(userDocRef, {
+                bio: data["short-introduction"],
+                date_of_birth: data["date-of-birth"],
+                distance: data["distance-search"],
+                drink: data["drinking-preference"],
+                education: data.education,
+                interests: data.interests,
+                meet: data["gender-preference"],
+                pets: data.pets,
+                photos: Object.values(photos).filter(value => Boolean(value)),
+                preference: data["relationship-preference"],
+                smoke: data["smoking-preference"],
+                workout: data["workout-preference"],
+                uid: auth.uid,
+                is_premium: false,
+                amount_paid_in_total: {
+                    naira: 0,
+                    kenyan_shillings: 0
+                },
+                paystack: {},
+                created_at: serverTimestamp(),
+                blockedIds: arrayUnion(),
+                credit_balance: 0,
+                is_banned: false,
+                has_completed_onboarding: true,
+                user_settings: {
+                    ...userSettings
+                },
+            });
 
-            await setDoc(faceVerificationRef, payload);
-            setPictureSaved(true);
-            console.log("Face verification data successfully added to Firestore.");
+            await setDoc(doc(db, "advancedSearchPreferences", auth.uid as string), {
+                gender: '',
+                age_range: { min: 18, max: 100 },
+                country: '',
+                relationship_preference: null,
+                religion: null,
+            } as AdvancedSearchPreferences);
+
+            resetPhoto();
         } catch (error) {
-            setPictureSaved(false);
-            console.error("Error adding data to Firestore:", error);
-            toast.error("Failed to save photos. Please try again.");
+            console.error("Failed to update Firestore document:", error);
+            toast.error("Failed to set up profile. Please try again.");
         }
     };
 
@@ -80,21 +123,16 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                         const validPhotos = Object.values(photos).filter((value) => Boolean(value));
 
                         if (validPhotos.length >= 2) {
-                            const uploaded_photos = {
-                                photo1: validPhotos[0] || "",
-                                photo2: validPhotos[1] || "",
-                                photo3: validPhotos[2] || "",
-                                photo4: validPhotos[3] || "",
-                                photo5: validPhotos[4] || "",
-                            };
+                            uploadToFirestore()
+                                .catch((e) => {
+                                    toast.error("An error occurred while onboarding")
+                                    console.error("Error onboarding user: ", e)
+                                });
 
-                            await addToFaceVerificationDB(uploaded_photos);
-                            // if(pictureSaved){
                                 updateOnboardingData({ photos: validPhotos });
                                 toast.success("Loading...")
                                 advance();
                                 resetPhoto();
-                            // }
                         } else {
                             toast.error("Please add at least 2 photos of yourself 🤗");
                         }
