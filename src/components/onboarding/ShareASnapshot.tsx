@@ -11,7 +11,6 @@ import OnboardingBackButton from "./OnboardingBackButton";
 import OnboardingPage from "./OnboardingPage";
 import SmallSnapshots from "./SmallSnapshots";
 import { OnboardingProps } from "@/types/onboarding";
-import {serverTimestamp} from "firebase/database";
 import { AdvancedSearchPreferences } from "@/types/user.ts";
 
 const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
@@ -41,6 +40,21 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
             console.log(data['date-of-birth']);
             const userDocRef = doc(db, "users", auth.uid);
 
+            function getFormattedTimestamp() {
+                const date = new Date();
+                return date.toLocaleString('en-GB', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: true,
+                    timeZoneName: 'short'
+                });
+            }
+
             await updateDoc(userDocRef, {
                 bio: data["short-introduction"],
                 date_of_birth: data["date-of-birth"],
@@ -61,7 +75,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                     kenyan_shillings: 0
                 },
                 paystack: {},
-                created_at: serverTimestamp(),
+                created_at: getFormattedTimestamp(),
                 blockedIds: arrayUnion(),
                 credit_balance: 0,
                 is_banned: false,

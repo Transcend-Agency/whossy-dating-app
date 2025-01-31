@@ -11,7 +11,6 @@ import {useOnboardingStore} from "@/store/OnboardingStore.tsx";
 import toast from "react-hot-toast";
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db} from "@/firebase";
-import {serverTimestamp} from "firebase/database";
 import {User} from "@/types/user.ts";
 import Modal from "../ui/Modal";
 import Lottie from "lottie-react";
@@ -104,6 +103,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 
 								const imageData = canvas.toDataURL('image/png');
 								setCapturedImage(imageData);
+								console.log(imageData)
 
 								// Stop the camera
 								await stopCamera();
@@ -221,6 +221,20 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		//
 		// 		return laplacian.reduce((acc, value) => acc + (value - (laplacian.reduce((a, b) => a + b) / laplacian.length)) ** 2, 0) / laplacian.length;
 		// }
+		const getFormattedTimestamp = () => {
+				const date = new Date();
+				return date.toLocaleString('en-GB', {
+						weekday: 'long',
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric',
+						second: 'numeric',
+						hour12: true,
+						timeZoneName: 'short'
+				});
+		}
 
 		const uploadToFirestore = async () => {
 				console.log(auth?.uid);
@@ -241,7 +255,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 								await updateDoc(userDocRef, {
 										face_verification:{
 												photo: capturedImage,
-												updated_at: serverTimestamp()
+												updated_at: getFormattedTimestamp()
 										}
 								});
 						}else{
