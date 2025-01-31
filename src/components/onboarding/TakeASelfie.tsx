@@ -89,6 +89,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 						const canvas = canvasRef.current;
 						const context = canvas.getContext('2d');
 						if (context) {
+								toast.success("Processing Image...", {duration: 3000})
 								const video = videoRef.current;
 
 								canvas.width = video.videoWidth;
@@ -110,7 +111,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 
 								await stopCamera();
 
-								toast.success("Processing Image...")
 								setCameraHasStarted(false)
 								const img = new Image();
 
