@@ -15,6 +15,7 @@ import {User} from "@/types/user.ts";
 import Modal from "../ui/Modal";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
+import upload from "@/hooks/upload.ts";
 
 export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		const [openModal, setOpenModal] = useState(false);
@@ -90,11 +91,9 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 						if (context) {
 								const video = videoRef.current;
 
-								// Set canvas size to match video
 								canvas.width = video.videoWidth;
 								canvas.height = video.videoHeight;
 
-								// Flip the canvas horizontally to match the video
 								context.save();
 								context.translate(canvas.width, 0);
 								context.scale(-1, 1);
@@ -102,10 +101,13 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 								context.restore();
 
 								const imageData = canvas.toDataURL('image/png');
-								setCapturedImage(imageData);
-								console.log(imageData)
+								const blob = await fetch(imageData).then(res => res.blob());
+								const file = new File([blob], 'captured-image.png', { type: 'image/png' });
 
-								// Stop the camera
+								const imageUrl = await upload(file);
+								setCapturedImage(imageUrl);
+								console.log(imageUrl);
+
 								await stopCamera();
 
 								toast.success("Processing Image...")
@@ -139,36 +141,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 						}
 				}
 		};
-		//
-		// const validateImageClarity = async (image: HTMLImageElement) : Promise<{ brightness: boolean; blur: boolean }> => {
-		// 		const canvas = document.createElement("canvas");
-		// 		const context = canvas.getContext("2d");
-		//
-		// 		if (!context) return { brightness: false, blur: false };
-		//
-		// 		canvas.width = image.width;
-		// 		canvas.height = image.height;
-		// 		context.drawImage(image, 0, 0, image.width, image.height);
-		//
-		// 		const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-		// 		const data = imageData.data;
-		//
-		// 		// Brightness Check
-		// 		let totalBrightness = 0;
-		// 		for (let i = 0; i < data.length; i += 4) {
-		// 				const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-		// 				totalBrightness += avg;
-		// 		}
-		// 		const avgBrightness = totalBrightness / (canvas.width * canvas.height);
-		// 		const brightnessOK = avgBrightness >= 50 && avgBrightness <= 200;
-		//
-		// 		// Blurriness Check
-		// 		const laplacianVariance = calculateLaplacianVariance(image, canvas, context);
-		// 		const blurOK = laplacianVariance > 100;
-		//
-		// 		return new Promise((resolve) => setTimeout(() => resolve({ brightness: brightnessOK, blur: blurOK }), 2000))
-		// 		// return { brightness: brightnessOK, blur: blurOK };
-		// }
 
 		const validateImageClarity = async (image: HTMLImageElement): Promise<{ brightness: boolean; blur: boolean }> => {
 				return new Promise((resolve) => {
@@ -201,26 +173,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 				});
 		};
 
-
-		// function calculateLaplacianVariance(_image: HTMLImageElement, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-		// 		const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-		// 		const gray = new Uint8ClampedArray(imageData.width * imageData.height);
-		//
-		// 		for (let i = 0; i < imageData.data.length; i += 4) {
-		// 				gray[i / 4] = 0.2989 * imageData.data[i] + 0.5870 * imageData.data[i + 1] + 0.1140 * imageData.data[i + 2];
-		// 		}
-		//
-		// 		const laplacian = gray.map((_, i) => {
-		// 				const neighbors = [
-		// 						gray[i - imageData.width - 1], gray[i - imageData.width], gray[i - imageData.width + 1],
-		// 						gray[i - 1], gray[i], gray[i + 1],
-		// 						gray[i + imageData.width - 1], gray[i + imageData.width], gray[i + imageData.width + 1],
-		// 				].filter(Boolean);
-		// 				return Math.max(...neighbors) - Math.min(...neighbors);
-		// 		});
-		//
-		// 		return laplacian.reduce((acc, value) => acc + (value - (laplacian.reduce((a, b) => a + b) / laplacian.length)) ** 2, 0) / laplacian.length;
-		// }
 		const getFormattedTimestamp = () => {
 				const date = new Date();
 				return date.toLocaleString('en-GB', {
