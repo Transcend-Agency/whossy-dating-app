@@ -137,7 +137,7 @@ const UserProfile = () => {
             <ProfileSettings
                 activePage={activePage == 'profile-settings'} closePage={() => setActivePage('user-profile')}
                 userSettings={{ incoming_messages: userData?.user_settings?.incoming_messages, public_search: userData?.user_settings?.public_search, online_status: userData?.user_settings?.online_status, read_receipts: userData?.user_settings?.read_receipts }}
-                prefetchUserData={refetchUserData} />
+                prefetchUserData={refetchUserData} userHasTakenFaceVerificationPhoto={userData?.face_verification?.photo != null} />
             <Preferences activePage={activePage == 'preferences'} closePage={() => setActivePage('user-profile')} onInterests={() => setActivePage('interests')} userData={userData} userFilters={userFilters} refetchUserData={refetchUserData} refetchUserFilters={refetchUserFilters} />
             <PreviewProfile activePage={activePage} activeSubPage={activeSubPage} closePage={() => { setActivePage('edit-profile'); setActiveSubPage(0) }} setActiveSubPage={setActiveSubPage} userData={userData} />
             <PreferredInterestsDesktop activePage={activePage == 'interests'} closePage={() => setActivePage('preferences')} onInterests={() => setActivePage('interests')} userFilters={userFilters} refetchUserFilters={refetchUserFilters} />

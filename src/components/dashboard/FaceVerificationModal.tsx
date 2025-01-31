@@ -45,6 +45,12 @@ export const FaceVerificationModal: FC<FaceVerificationModalProps> = ({show, onC
 						}
 
 						toast.success("Image has been uploaded successfully 🚀");
+
+						setCameraHasStarted(false)
+						setPictureHasBeenTaken(false)
+						setCapturedImage(null)
+
+						onCloseModal()
 				} catch (error) {
 						console.error("Failed to update Firestore document:", error);
 						toast.error("Failed to capture face. Please try again.");
