@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import {arrayUnion, doc, setDoc, updateDoc} from "firebase/firestore";
+import {arrayUnion, doc, setDoc, Timestamp, updateDoc} from "firebase/firestore";
 import { db } from "@/firebase";
 import { useOnboardingStore } from "@/store/OnboardingStore";
 import { PictureData, usePhotoStore } from "@/store/PhotoStore";
@@ -40,21 +40,6 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
             console.log(data['date-of-birth']);
             const userDocRef = doc(db, "users", auth.uid);
 
-            function getFormattedTimestamp() {
-                const date = new Date();
-                return date.toLocaleString('en-GB', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                    hour12: true,
-                    timeZoneName: 'short'
-                });
-            }
-
             await updateDoc(userDocRef, {
                 bio: data["short-introduction"],
                 date_of_birth: data["date-of-birth"],
@@ -74,8 +59,12 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                     naira: 0,
                     kenyan_shillings: 0
                 },
+                face_verification:{
+                    photo: null,
+                    updated_at: null
+                },
                 paystack: {},
-                created_at: getFormattedTimestamp(),
+                created_at: Timestamp.now(),
                 blockedIds: arrayUnion(),
                 credit_balance: 0,
                 is_banned: false,

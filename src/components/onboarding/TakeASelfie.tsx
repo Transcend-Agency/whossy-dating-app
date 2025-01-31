@@ -9,7 +9,7 @@ import {useAuthStore} from "@/store/UserId.tsx";
 import {usePhotoStore} from "@/store/PhotoStore.tsx";
 import {useOnboardingStore} from "@/store/OnboardingStore.tsx";
 import toast from "react-hot-toast";
-import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {doc, getDoc, Timestamp, updateDoc} from "firebase/firestore";
 import {db} from "@/firebase";
 import {User} from "@/types/user.ts";
 import Modal from "../ui/Modal";
@@ -173,21 +173,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 				});
 		};
 
-		const getFormattedTimestamp = () => {
-				const date = new Date();
-				return date.toLocaleString('en-GB', {
-						weekday: 'long',
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric',
-						hour: 'numeric',
-						minute: 'numeric',
-						second: 'numeric',
-						hour12: true,
-						timeZoneName: 'short'
-				});
-		}
-
 		const uploadToFirestore = async () => {
 				console.log(auth?.uid);
 				console.log("Loading...");
@@ -207,14 +192,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 								await updateDoc(userDocRef, {
 										face_verification:{
 												photo: capturedImage,
-												updated_at: getFormattedTimestamp()
-										}
-								});
-						}else{
-								await updateDoc(userDocRef, {
-										face_verification:{
-												photo: null,
-												updated_at: null
+												updated_at: Timestamp.now()
 										}
 								});
 						}

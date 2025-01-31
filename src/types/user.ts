@@ -75,7 +75,7 @@ export type User = {
   is_banned?: boolean | null;
   face_verification?: {
     photo?: string | null;
-    updated_at?: Timestamp | null;
+    updated_at?: Timestamp | Date | null;
   }
 };
 
