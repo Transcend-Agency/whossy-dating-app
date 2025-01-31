@@ -9,6 +9,7 @@ import {useAuthStore} from "@/store/UserId.tsx";
 interface FaceVerificationModalProps {
 		show: boolean
 		onCloseModal: () => void
+		refetchUserData: () => void
 }
 
 const modalVariants = {
@@ -17,7 +18,7 @@ const modalVariants = {
 		exit: { opacity: 0, }
 };
 
-export const FaceVerificationModal: FC<FaceVerificationModalProps> = ({show, onCloseModal}) => {
+export const FaceVerificationModal: FC<FaceVerificationModalProps> = ({show, onCloseModal, refetchUserData}) => {
 		const videoRef = useRef<HTMLVideoElement>(null);
 		const canvasRef = useRef<HTMLCanvasElement>(null);
 		const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -51,6 +52,7 @@ export const FaceVerificationModal: FC<FaceVerificationModalProps> = ({show, onC
 						setPictureHasBeenTaken(false)
 						setCapturedImage(null)
 
+						refetchUserData()
 						onCloseModal()
 				} catch (error) {
 						console.error("Failed to update Firestore document:", error);
