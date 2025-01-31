@@ -1,41 +1,35 @@
-self.onmessage = (e) => {
-		const { imageData, width, height } = e.data
-		const result = calculateLaplacianVariance(imageData, width, height)
-		self.postMessage(result)
-}
+// imageProcessingWorker.ts
+self.onmessage = (event) => {
+		const imageData = event.data.imageData;
+		const width = event.data.width;
+		const height = event.data.height;
 
-function calculateLaplacianVariance(data: Uint8ClampedArray, width: number, height: number): number {
-		const laplacian = new Float32Array(width * height)
-
-		let sum = 0
-		let sum2 = 0
-		const count = width * height
-
-		for (let y = 1; y < height - 1; y++) {
-				for (let x = 1; x < width - 1; x++) {
-						const index = y * width + x
-						const gx =
-								-data[(index - width - 1) * 4] +
-								-2 * data[(index - width) * 4] +
-								-data[(index - width + 1) * 4] +
-								data[(index + width - 1) * 4] +
-								2 * data[(index + width) * 4] +
-								data[(index + width + 1) * 4]
-						const gy =
-								-data[(index - width - 1) * 4] +
-								-2 * data[(index - 1) * 4] +
-								-data[(index + width - 1) * 4] +
-								data[(index - width + 1) * 4] +
-								2 * data[(index + 1) * 4] +
-								data[(index + width + 1) * 4]
-						const value = Math.sqrt(gx * gx + gy * gy)
-						laplacian[index] = value
-						sum += value
-						sum2 += value * value
+		function calculateBrightness(imageData: Uint8ClampedArray, width: number, height: number) {
+				let totalBrightness = 0;
+				for (let i = 0; i < imageData.length; i += 4) {
+						const avg = (imageData[i] + imageData[i + 1] + imageData[i + 2]) / 3;
+						totalBrightness += avg;
 				}
+				const avgBrightness = totalBrightness / (width * height);
+				return avgBrightness >= 50 && avgBrightness <= 200;
 		}
 
-		const mean = sum / count
-		return sum2 / count - mean * mean
-}
+		function calculateBlurriness(imageData: Uint8ClampedArray, width: number, height: number) {
+				const laplacian = new Uint8ClampedArray(width * height);
+				for (let i = 0; i < imageData.length; i += 4) {
+						laplacian[i / 4] = 0.2989 * imageData[i] + 0.5870 * imageData[i + 1] + 0.1140 * imageData[i + 2];
+				}
+				let variance = 0;
+				const mean = laplacian.reduce((a, b) => a + b) / laplacian.length;
+				for (let i = 0; i < laplacian.length; i++) {
+						variance += Math.pow(laplacian[i] - mean, 2);
+				}
+				variance /= laplacian.length;
+				return variance > 100; // Adjust threshold if needed
+		}
 
+		const brightnessOK = calculateBrightness(imageData, width, height);
+		const blurOK = calculateBlurriness(imageData, width, height);
+
+		self.postMessage({ brightness: brightnessOK, blur: blurOK });
+};
