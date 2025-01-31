@@ -73,6 +73,11 @@ export type User = {
   } | null;
   currency?: string | null;
   is_banned?: boolean | null;
+  face_verification?: {
+    retake_photo?: boolean | null;
+    photo?: string | null;
+    updated_at?: Timestamp | Date | null;
+  }
 };
 
 export type UserFilters = {
