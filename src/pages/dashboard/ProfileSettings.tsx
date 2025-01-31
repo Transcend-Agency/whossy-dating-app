@@ -25,10 +25,10 @@ interface ProfileSettingsProps {
         online_status?: boolean;
     }
     prefetchUserData: () => void;
-    userHasTakenFaceVerificationPhoto: boolean;
+    userShouldRetakePhoto: boolean;
 }
 
-const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, prefetchUserData, userHasTakenFaceVerificationPhoto}) => {
+const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, userSettings, prefetchUserData, userShouldRetakePhoto}) => {
     const [profileSettings, setProfileSettings] = useState(userSettings);
     const [showBlockedContacts, setShowBlockedContacts] = useState(false);
     const [showModal, setShowModal] = useState<'hidden' | 'logout'>('hidden');
@@ -211,7 +211,7 @@ const ProfileSettings: FC<ProfileSettingsProps> = ({ activePage, closePage, user
                         <button onClick={() => setOpenModal(true)}>
                             <ProfileSettingsGroup title="Help and Support"/>
                         </button>
-                        {!userHasTakenFaceVerificationPhoto && <button onClick={() => setOpenFaceVModal(true)}>
+                        {userShouldRetakePhoto && <button onClick={() => setOpenFaceVModal(true)}>
                             <ProfileSettingsGroup title="Take Verification Photo"/>
                         </button>}
                     </section>

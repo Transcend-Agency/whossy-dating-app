@@ -64,6 +64,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 						if(capturedImage){
 								await updateDoc(userDocRef, {
 										face_verification:{
+												retake_photo: false,
 												photo: capturedImage,
 												updated_at: Timestamp.now()
 										}

@@ -74,6 +74,7 @@ export type User = {
   currency?: string | null;
   is_banned?: boolean | null;
   face_verification?: {
+    retake_photo?: boolean | null;
     photo?: string | null;
     updated_at?: Timestamp | Date | null;
   }
