@@ -15,7 +15,7 @@ import {User} from "@/types/user.ts";
 import Modal from "../ui/Modal";
 import Lottie from "lottie-react";
 import Cat from "../../Cat.json";
-import upload from "@/hooks/upload.ts";
+import {captureImage, startCamera} from "@/utils/cameraUtils.ts";
 
 export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		const [openModal, setOpenModal] = useState(false);
@@ -45,134 +45,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 								console.error("Error onboarding user: ", e)
 						});
 		}
-
-		const startCamera = async () => {
-				if(cameraHasStarted){
-						await stopCamera()
-				}
-
-			toast.success("Camera Loading...")
-			setCapturedImage(null)
-				setPictureHasBeenTaken(false)
-			setCameraHasStarted(true)
-				if (navigator.mediaDevices.getUserMedia) {
-						try {
-								const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-								if (videoRef.current) {
-										videoRef.current.srcObject = stream;
-								}
-						} catch (err) {
-								console.error('Error accessing camera:', err);
-								setCameraHasStarted(false)
-								setPictureHasBeenTaken(false)
-						}
-				}
-		};
-
-		const stopCamera = async () => {
-			if (videoRef.current) {
-				const stream = videoRef.current.srcObject as MediaStream;
-				if (stream) {
-					const tracks = stream.getTracks();
-					tracks.forEach((track) => {
-						track.stop();
-					});
-				}
-				videoRef.current.srcObject = null;
-			}
-			navigator.mediaDevices.getUserMedia({ video: false }).catch(() => {
-			});
-			setCameraHasStarted(false);
-		};
-
-		const captureImage = async () => {
-				if (videoRef.current && canvasRef.current) {
-						const canvas = canvasRef.current;
-						const context = canvas.getContext('2d');
-						if (context) {
-								toast.success("Processing Image...", {duration: 3000})
-								const video = videoRef.current;
-
-								canvas.width = video.videoWidth;
-								canvas.height = video.videoHeight;
-
-								context.save();
-								context.translate(canvas.width, 0);
-								context.scale(-1, 1);
-								context.drawImage(video, 0, 0, canvas.width, canvas.height);
-								context.restore();
-
-								const imageData = canvas.toDataURL('image/png');
-								const blob = await fetch(imageData).then(res => res.blob());
-								const file = new File([blob], 'captured-image.png', { type: 'image/png' });
-
-								const imageUrl = await upload(file);
-								setCapturedImage(imageUrl);
-								console.log(imageUrl);
-
-								await stopCamera();
-
-								setCameraHasStarted(false)
-								const img = new Image();
-
-								img.src = imageData;
-								img.onload = async () => {
-										console.log("Got to the image processing..")
-										const validation = validateImageClarity(img);
-										if (!(await validation).brightness) {
-												console.log("Image is too bright")
-												toast.error("The image is too dark or too bright. Please try again.", {duration: 5000});
-												await stopCamera()
-												setCapturedImage(null);
-												setCameraHasStarted(false)
-												setPictureHasBeenTaken(false)
-										} else if (!(await validation).blur) {
-												console.log("Image is too blurry")
-												toast.error("The image is too blurry. Please try again.", {duration: 5000});
-												await stopCamera()
-												setCapturedImage(null);
-												setCameraHasStarted(false)
-												setPictureHasBeenTaken(false)
-										} else {
-												console.log("Image is just right")
-											setPictureHasBeenTaken(true);
-											toast.success("Image captured successfully! Looks great.", {duration: 5000});
-										}
-								};
-						}
-				}
-		};
-
-		const validateImageClarity = async (image: HTMLImageElement): Promise<{ brightness: boolean; blur: boolean }> => {
-				return new Promise((resolve) => {
-						console.log("Processing Image..")
-						const worker = new Worker(new URL('@/utils/imageProcessingWorker.ts', import.meta.url));
-
-						const canvas = document.createElement("canvas");
-						const context = canvas.getContext("2d");
-						if (!context) return resolve({ brightness: false, blur: false });
-
-						canvas.width = image.width;
-						canvas.height = image.height;
-						context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-						const imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
-						console.log("Still Processing Image..")
-						worker.postMessage({ imageData, width: canvas.width, height: canvas.height });
-
-						worker.onmessage = (event) => {
-								worker.terminate();
-								resolve(event.data);
-						};
-
-						worker.onerror = (error) => {
-								console.error("Worker error:", error);
-								worker.terminate();
-								console.log("Done Processing Image..")
-								resolve({ brightness: false, blur: false });
-						};
-				});
-		};
 
 		const uploadToFirestore = async () => {
 				console.log(auth?.uid);
@@ -239,7 +111,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 														<canvas className={`size-full absolute z-20`} ref={canvasRef} style={{ display: 'none' }}></canvas>
 														{capturedImage && <img className={`size-full absolute z-10 rounded-[15px] object-center`} src={capturedImage} alt="Captured" />}
 														<img onClick={() => {
-																startCamera()
+																startCamera(cameraHasStarted, setCapturedImage, setPictureHasBeenTaken, setCameraHasStarted, videoRef)
 																		.then(() => console.log("Camera Started"))
 														}} className={`size-[30px] cursor-pointer z-50 ${cameraHasStarted ? "opacity-10" : "opacity-70"} absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%]`} src={`/assets/icons/black-camera.svg`} alt={``} />
 														{pictureHasBeenTaken && <div onClick={() => {
@@ -247,7 +119,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 															setPictureHasBeenTaken(false)
 														}} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] top-[10px] left-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer`}>Clear</div> }
 														{cameraHasStarted &&
-														<button onClick={captureImage} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer ${capturedImage ? "hidden" : "block"}`}>Capture</button> }
+														<button onClick={() => captureImage(videoRef, canvasRef, setCapturedImage, setCameraHasStarted, setPictureHasBeenTaken)} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer ${capturedImage ? "hidden" : "block"}`}>Capture</button> }
 												</div>
 												<div className="onboarding-page__section-one__buttons">
 														<OnboardingBackButton onClick={goBack} />
