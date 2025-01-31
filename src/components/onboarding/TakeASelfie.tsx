@@ -38,6 +38,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		}, [auth?.has_completed_onboarding]);
 
 		const handleFaceVerificationSkip = () => {
+				setOpenModal(true);
 				uploadToFirestore()
 						.catch((e) => {
 								toast.error("An error occurred while onboarding")
