@@ -46,8 +46,13 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		}
 
 		const startCamera = async () => {
+				if(cameraHasStarted){
+						await stopCamera()
+				}
+
 			toast.success("Camera Loading...")
 			setCapturedImage(null)
+				setPictureHasBeenTaken(false)
 			setCameraHasStarted(true)
 				if (navigator.mediaDevices.getUserMedia) {
 						try {
@@ -284,20 +289,20 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 										</div>
 
 										<div className={`grid gap-y-6`}>
-												<div className={`w-[250px] h-[250px] bg-center bg-no-repeat bg-cover rounded-[15px] bg-opacity-20 bg-[#8A8A8E] relative`}>
-														<video className={`size-[250px] absolute z-10 video-flip ${capturedImage ? "hidden" : "block"}`} ref={videoRef} autoPlay></video>
-														<canvas className={`size-[250px] absolute z-20`} ref={canvasRef} style={{ display: 'none' }}></canvas>
-														{capturedImage && <img className={`size-[250px] absolute z-10 rounded-[15px] object-center object-scale-down`} src={capturedImage} alt="Captured" />}
+												<div className={`w-[300px] h-[225px] bg-center bg-no-repeat bg-cover rounded-[15px] bg-opacity-20 bg-[#8A8A8E] relative`}>
+														<video className={`size-full absolute z-30 video-flip ${capturedImage ? "hidden" : "block"}`} ref={videoRef} autoPlay></video>
+														<canvas className={`size-full absolute z-20`} ref={canvasRef} style={{ display: 'none' }}></canvas>
+														{capturedImage && <img className={`size-full absolute z-10 rounded-[15px] object-center`} src={capturedImage} alt="Captured" />}
 														<img onClick={() => {
 																startCamera()
 																		.then(() => console.log("Camera Started"))
-														}} className={`size-[30px] cursor-pointer z-50 opacity-70 absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%]`} src={`/assets/icons/black-camera.svg`} alt={``} />
+														}} className={`size-[30px] cursor-pointer z-50 ${cameraHasStarted ? "opacity-10" : "opacity-70"} absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%]`} src={`/assets/icons/black-camera.svg`} alt={``} />
 														{pictureHasBeenTaken && <div onClick={() => {
 															setCapturedImage(null)
 															setPictureHasBeenTaken(false)
-														}} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] top-[10px] left-[10px] font-bold text-[10px] cursor-pointer`}>Clear</div> }
+														}} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] top-[10px] left-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer`}>Clear</div> }
 														{cameraHasStarted &&
-														<button className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer ${capturedImage ? "hidden" : "block"}`} onClick={captureImage}>Capture</button> }
+														<button onClick={captureImage} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer ${capturedImage ? "hidden" : "block"}`}>Capture</button> }
 												</div>
 												<div className="onboarding-page__section-one__buttons">
 														<OnboardingBackButton onClick={goBack} />
