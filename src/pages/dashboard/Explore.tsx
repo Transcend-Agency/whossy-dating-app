@@ -163,10 +163,13 @@ const Explore = () => {
                                         Advanced Search
                                     </div>
                                 </div>
-                                <div className='filter__right advanced-search-btn'>
-                                    <button onClick={() => setAdvancedSearchShowing(true)} className='filter__saved-search'>
-                                        <img src="/assets/icons/saved-search.svg" alt={``} />
-                                    </button>
+                                <div data-cy="advanced-search-btn-mobile">
+                                    <div className='filter__right advanced-search-btn'>
+                                        <button onClick={() => setAdvancedSearchShowing(true)}
+                                                className='filter__saved-search'>
+                                            <img src="/assets/icons/saved-search.svg" alt={``}/>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className='explore-grid-gradient-top'></div>
                             </div>
