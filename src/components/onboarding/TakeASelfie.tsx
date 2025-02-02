@@ -120,7 +120,7 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 															setPictureHasBeenTaken(false)
 														}} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] top-[10px] left-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer`}>Clear</div> }
 														{cameraHasStarted &&
-														<button onClick={() => captureImage(videoRef, canvasRef, setCapturedImage, setCameraHasStarted, setPictureHasBeenTaken)} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer ${capturedImage ? "hidden" : "block"}`}>Capture</button> }
+														<button onClick={() => captureImage(videoRef, canvasRef, setCapturedImage, setCameraHasStarted, setPictureHasBeenTaken, auth?.uid as string)} className={`absolute z-[60] bg-black/80 text-white px-3 py-2 rounded-[8px] bottom-[10px] right-[10px] font-bold text-[10px] cursor-pointer hover:cursor-pointer ${capturedImage ? "hidden" : "block"}`}>Capture</button> }
 												</div>
 												<div className="onboarding-page__section-one__buttons">
 														<OnboardingBackButton onClick={goBack} />

@@ -50,7 +50,8 @@ export const captureImage = async (
 		canvasRef: React.RefObject<HTMLCanvasElement>,
 		setCapturedImage: (value: string | null) => void,
 		setCameraHasStarted: (value: boolean) => void,
-		setPictureHasBeenTaken: (value: boolean) => void
+		setPictureHasBeenTaken: (value: boolean) => void,
+		userId: string
 ) => {
 		if (!videoRef.current || !canvasRef.current) return;
 
@@ -75,7 +76,7 @@ export const captureImage = async (
 		const blob = await fetch(imageData).then((res) => res.blob());
 		const file = new File([blob], "captured-image.png", { type: "image/png" });
 
-		const imageUrl = await upload(file);
+		const imageUrl = await upload(file, `users/${userId}/profile_pictures`);
 		setCapturedImage(imageUrl);
 
 		await stopCamera(videoRef, setCameraHasStarted);

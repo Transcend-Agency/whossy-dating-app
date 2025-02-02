@@ -60,6 +60,7 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                     kenyan_shillings: 0
                 },
                 face_verification:{
+                    retake_photo: true,
                     photo: null,
                     updated_at: null
                 },
