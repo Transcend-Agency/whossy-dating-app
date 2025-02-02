@@ -91,7 +91,9 @@ function App() {
             showDots={false}
             padding={{
               mask: 8,
-              popover: [-20, 0, 0, -40],
+              // popover: [-20, 0, 0, -40],
+                popover: location.pathname == "/dashboard/swipe-and-match" ? [0,30,0,0] : [-20, 0, 0, -40],
+                // popover: window.innerWidth < 1024 ? [20,0,0,10] : [-20, 0, 0, -40],
               wrapper: 0,
             }}
             position="right" // Ensure the popover respects this position

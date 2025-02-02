@@ -76,7 +76,7 @@ export const captureImage = async (
 		const blob = await fetch(imageData).then((res) => res.blob());
 		const file = new File([blob], "captured-image.png", { type: "image/png" });
 
-		const imageUrl = await upload(file, `users/${userId}/profile_pictures`);
+		const imageUrl = await upload(file, `users/${userId}/face_verification`);
 		setCapturedImage(imageUrl);
 
 		await stopCamera(videoRef, setCameraHasStarted);

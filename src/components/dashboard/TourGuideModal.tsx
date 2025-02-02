@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useTour } from '@reactour/tour';
 import useDashboardStore from '@/store/useDashboardStore';
 import {CompletedTours} from "@/types/tourGuide.ts";
-import {tourGuideSteps} from "@/data/tour-guide-steps.ts";
+import { tourGuideSteps} from "@/data/tour-guide-steps.ts";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 		variant?: 'primary' | 'outline'
@@ -14,6 +14,16 @@ export const TourGuideModal = () => {
 		const [page, setPage] = useState<string>("explore")
 		const location = useLocation();
 		const { setIsOpen, setSteps, setCurrentStep } = useTour();
+
+		const [innerWidth, setInnerWidth] = useState(window.innerWidth);
+
+		useEffect(() => {
+				const handleResize = () => {
+						setInnerWidth(window.innerWidth as number)
+				};
+				window.addEventListener("resize", handleResize);
+				return () => window.removeEventListener("resize", handleResize);
+		}, []);
 
 		useEffect(() => {
 				const pageKey = location.pathname;
@@ -34,8 +44,7 @@ export const TourGuideModal = () => {
 				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
 				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
 				if(!hasCompletedTour){
-						setTourIsOpen(true)
-						// setTimeout(() => setTourIsOpen(true), 2500)
+						setTimeout(() => setTourIsOpen(true), 1000)
 				}else{
 						setTourIsOpen(false)
 				}
@@ -58,17 +67,18 @@ export const TourGuideModal = () => {
 				}
 		};
 
+		if(innerWidth < 1024) return null;
 		if (!tourIsOpen) return null;
 
 		return (
 				<div className="absolute z-[9999] inset-0 bg-black bg-opacity-50 flex items-center justify-center p-6">
 						<div className="bg-white rounded-lg max-w-[420px] w-full mx-4 relative">
 								<img className={`absolute md:-top-[15px] -right-[10px] -top-[30px] md:-right-[25px] rotate-[15deg] size-[50px]`} src={`/assets/icons/logo-gradient.svg`} alt={``} />
-								<div className="px-12 py-10 grid gap-y-10">
+								<div className="px-12 py-10 grid gap-y-6">
 										<h2 className="text-[34px] md:text-[40px] font-bold whitespace-nowrap">
 												Welcome to{' '}<span className={`bg-gradient-to-br bg-clip-text text-transparent from-red to-orange-400 filter`}>Whossy</span>
 										</h2>
-										<p className={`text-gray-600 text-[17.5px] leading-7`}>This is the{' '}<span className={`bg-gradient-to-br bg-clip-text text-transparent from-red to-orange-400 filter`}>{page}</span>{' '}Page.</p>
+										<p className={`text-gray-600 text-[17.5px] leading-7`}>This is the{' '}<span className={`uppercase bg-gradient-to-br bg-clip-text text-transparent from-red to-orange-400 filter`}>{page}</span>{' '}Page.</p>
 										<div className="text-gray-600 mb-2 text-[16.5px] leading-10 flex flex-col gap-y-3">
 												<p>	Would you like a quick tour to help you get started? </p>
 												<p>We'll show you all the important features.</p>
