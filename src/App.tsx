@@ -30,15 +30,16 @@ import ResetPassword from "./pages/ResetPassword";
 import Notification from "./pages/Notification";
 import Faq from "./pages/Faq";
 import Contact from "./pages/Contact";
-import React, {useEffect } from "react";
+import React, { useEffect } from "react";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
 import useAutoLogout from "@/store/UserId.tsx";
 import ViewProfile from "./components/dashboard/ViewProfile";
-import {TourProvider } from '@reactour/tour'
-import {CompletedTours} from "@/types/tourGuide.ts";
-import {TourGuideModal} from "@/components/dashboard/TourGuideModal.tsx";
-import {styles, tourGuideSteps} from "@/data/tour-guide-steps.ts";
+import { TourProvider } from '@reactour/tour'
+import { CompletedTours } from "@/types/tourGuide.ts";
+import { TourGuideModal } from "@/components/dashboard/TourGuideModal.tsx";
+import { styles, tourGuideSteps } from "@/data/tour-guide-steps.ts";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -64,151 +65,157 @@ function App() {
     fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
   }, [selectedOption, blockedUsers]);
 
-    const handleClose = () => {
-        const tourStepsData = tourGuideSteps
-        const pageKeyValue = location.pathname.split('/')[2];
-        const steps = tourStepsData[pageKeyValue] || []
+  useEffect(() => {
+    // Scroll to the top of the page whenever the route changes
+    window.scrollTo(0, 0);
+  }, [location]);
 
-        const pageKey = location.pathname;
-        console.log(totalCurrentStep);
+  const handleClose = () => {
+    const tourStepsData = tourGuideSteps
+    const pageKeyValue = location.pathname.split('/')[2];
+    const steps = tourStepsData[pageKeyValue] || []
 
-        if (totalCurrentStep === steps.length - 1) {
-            const completedTours: CompletedTours = JSON.parse(
-                localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,}"
-            );
-            completedTours[pageKey] = true;
-            localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
-            localStorage.removeItem("lastStep"); // Clear last step on completion
-        }
-    };
+    const pageKey = location.pathname;
+    console.log(totalCurrentStep);
+
+    if (totalCurrentStep === steps.length - 1) {
+      const completedTours: CompletedTours = JSON.parse(
+        localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,}"
+      );
+      completedTours[pageKey] = true;
+      localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
+      localStorage.removeItem("lastStep"); // Clear last step on completion
+    }
+  };
 
   return (
-      <QueryClientProvider client={queryClient}>
-        <TourProvider
-            steps={[]}
-            styles={styles}
-            showNavigation={true} showBadge={true}
-            showDots={false}
-            padding={{
-              mask: 8,
-              // popover: [-20, 0, 0, -40],
-                popover: location.pathname == "/dashboard/swipe-and-match" ? [0,30,0,0] : [-20, 0, 0, -40],
-                // popover: window.innerWidth < 1024 ? [20,0,0,10] : [-20, 0, 0, -40],
-              wrapper: 0,
-            }}
-            position="right" // Ensure the popover respects this position
-            prevButton={({currentStep, setCurrentStep}) => (
-                <button onClick={() => setCurrentStep(s => s - 1)}
-                        disabled={currentStep === 0}
-                        className="flex items-center gap-2 px-4 py-2 text-[12px] font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2243E] disabled:opacity-50 disabled:cursor-not-allowed">
-                  Previous
-                </button>
-            )}
-            onClickMask={({ setCurrentStep, currentStep, steps, setIsOpen }) => {
-              if (steps) {
-                if (currentStep === steps.length - 1) {
-                  handleClose();
-                  setIsOpen(false);
-                }
-                const nextStep = currentStep === steps.length - 1 ? 0 : currentStep + 1;
-                localStorage.setItem("lastStep", nextStep.toString());
-                setCurrentStep(nextStep);
-              }
-            }}
-            onClickClose={({ setIsOpen, setCurrentStep, currentStep }) => {
+    <QueryClientProvider client={queryClient}>
+      <TourProvider
+        steps={[]}
+        styles={styles}
+        showNavigation={true} showBadge={true}
+        showDots={false}
+        padding={{
+          mask: 8,
+          // popover: [-20, 0, 0, -40],
+          popover: location.pathname == "/dashboard/swipe-and-match" ? [0, 30, 0, 0] : [-20, 0, 0, -40],
+          // popover: window.innerWidth < 1024 ? [20,0,0,10] : [-20, 0, 0, -40],
+          wrapper: 0,
+        }}
+        position="right" // Ensure the popover respects this position
+        prevButton={({ currentStep, setCurrentStep }) => (
+          <button onClick={() => setCurrentStep(s => s - 1)}
+            disabled={currentStep === 0}
+            className="flex items-center gap-2 px-4 py-2 text-[12px] font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2243E] disabled:opacity-50 disabled:cursor-not-allowed">
+            Previous
+          </button>
+        )}
+        onClickMask={({ setCurrentStep, currentStep, steps, setIsOpen }) => {
+          if (steps) {
+            if (currentStep === steps.length - 1) {
               handleClose();
               setIsOpen(false);
-              localStorage.setItem("lastStep", currentStep.toString()); // Save last step
-              setCurrentStep(currentStep);
+            }
+            const nextStep = currentStep === steps.length - 1 ? 0 : currentStep + 1;
+            localStorage.setItem("lastStep", nextStep.toString());
+            setCurrentStep(nextStep);
+          }
+        }}
+        onClickClose={({ setIsOpen, setCurrentStep, currentStep }) => {
+          handleClose();
+          setIsOpen(false);
+          localStorage.setItem("lastStep", currentStep.toString()); // Save last step
+          setCurrentStep(currentStep);
+        }}
+        nextButton={({ currentStep, stepsLength, setCurrentStep, setIsOpen }) => (
+          <button
+            onClick={() => {
+              if (currentStep === stepsLength - 1) {
+                handleClose();
+                setIsOpen(false);
+              } else {
+                const nextStep = currentStep + 1;
+                localStorage.setItem("lastStep", nextStep.toString()); // Save current step
+                setCurrentStep(nextStep);
+                setTotalCurrentStep(nextStep);
+              }
             }}
-            nextButton={({ currentStep, stepsLength, setCurrentStep, setIsOpen }) => (
-                <button
-                    onClick={() => {
-                      if (currentStep === stepsLength - 1) {
-                        handleClose();
-                        setIsOpen(false);
-                      } else {
-                        const nextStep = currentStep + 1;
-                        localStorage.setItem("lastStep", nextStep.toString()); // Save current step
-                        setCurrentStep(nextStep);
-                        setTotalCurrentStep(nextStep);
-                      }
-                    }}
-                    className="items-center gap-2 px-4 py-2 text-[12px] font-medium text-white bg-gradient-to-r from-[#F2243E] to-[#FB923C] rounded-full hover:from-[#E01E32] hover:to-[#F97316] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2243E] cursor-pointer"
-                >
-                  {currentStep === stepsLength - 1 ? "Finish" : "Next"}
-                </button>
-            )}
-            disableInteraction={false}
-        >
-          {location.pathname.startsWith("/auth") && (<MarqueeImageSliderBackground />)}
-          <AnimatePresence>
-            <RouteWatcher key={`${currentLocation}_${previousLocation}`}/>
-            <Routes location={location} key={location.pathname}>
-              <Route path="/auth" element={<AuthLayout />}>
-                <Route index element={<Home />} />
-                <Route path="login" element={<Login />} />
-                <Route path="forgot-password" element={<ForgotPassword />} />
-                <Route path="reset-password" element={<ResetPassword />} />
-                <Route path="create-account" element={<CreateAccount />} />
-                <Route path="account-setup" element={<AccountSetup />} />
-                <Route path="phone-number" element={<PhoneNumber />} />
-                <Route path="finalize-setup" element={<FinalizeSetup />} />
-                <Route path="email-verification" element={<EmailVerification />} />
-              </Route>
-              <Route path="/onboarding" element={<OnboardingLayout />}>
-                <Route index element={<Onboarding />} />
-              </Route>
-              <Route path="/dashboard" element={
-                <ProtectedDashboard>
-                    <DashboardLayout />
-                    <TourGuideModal />
-                </ProtectedDashboard>}>
-                <Route path="user-profile" element={selectedProfile ? <ViewProfile
-                    onBackClick={() => {setSelectedProfile(null) }}
-                    userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                    onBlockChange={refreshProfiles}
-                /> : <UserProfile />} />
-                <Route path="explore" element={<Explore />} />
-                <Route path="swipe-and-match" element={<SwipingAndMatching />} />
-                <Route path="matches" element={selectedProfile ? <ViewProfile
-                    onBackClick={() => {setSelectedProfile(null) }}
-                    userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                    onBlockChange={refreshProfiles}
-                /> : <MatchesPage />} />
-                <Route path="globalSearch" element={<GlobalSearch />} />
-                <Route path="heart" element={<Favorites />} />
-                <Route path="chat" element={selectedProfile ? <ViewProfile
-                    onBackClick={() => {setSelectedProfile(null) }}
-                    userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
-                    onBlockChange={refreshProfiles}
-                /> : <Chat />} />
-                <Route path="notification" element={<Notification />} />
-              </Route>
-              <Route path="" element={<Landing />} />
-              <Route path="/faq" element={<Faq />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
-            <ToastContainer />
-          </AnimatePresence>
-        </TourProvider>
-      </QueryClientProvider>
+            className="items-center gap-2 px-4 py-2 text-[12px] font-medium text-white bg-gradient-to-r from-[#F2243E] to-[#FB923C] rounded-full hover:from-[#E01E32] hover:to-[#F97316] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2243E] cursor-pointer"
+          >
+            {currentStep === stepsLength - 1 ? "Finish" : "Next"}
+          </button>
+        )}
+        disableInteraction={false}
+      >
+        {location.pathname.startsWith("/auth") && (<MarqueeImageSliderBackground />)}
+        <AnimatePresence>
+          <RouteWatcher key={`${currentLocation}_${previousLocation}`} />
+          <Routes location={location} key={location.pathname}>
+            <Route path="/auth" element={<AuthLayout />}>
+              <Route index element={<Home />} />
+              <Route path="login" element={<Login />} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="reset-password" element={<ResetPassword />} />
+              <Route path="create-account" element={<CreateAccount />} />
+              <Route path="account-setup" element={<AccountSetup />} />
+              <Route path="phone-number" element={<PhoneNumber />} />
+              <Route path="finalize-setup" element={<FinalizeSetup />} />
+              <Route path="email-verification" element={<EmailVerification />} />
+            </Route>
+            <Route path="/onboarding" element={<OnboardingLayout />}>
+              <Route index element={<Onboarding />} />
+            </Route>
+            <Route path="/dashboard" element={
+              <ProtectedDashboard>
+                <DashboardLayout />
+                <TourGuideModal />
+              </ProtectedDashboard>}>
+              <Route path="user-profile" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+              /> : <UserProfile />} />
+              <Route path="explore" element={<Explore />} />
+              <Route path="swipe-and-match" element={<SwipingAndMatching />} />
+              <Route path="matches" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+              /> : <MatchesPage />} />
+              <Route path="globalSearch" element={<GlobalSearch />} />
+              <Route path="heart" element={<Favorites />} />
+              <Route path="chat" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+              /> : <Chat />} />
+              <Route path="notification" element={<Notification />} />
+            </Route>
+            <Route path="" element={<Landing />} />
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          </Routes>
+          <ToastContainer />
+        </AnimatePresence>
+      </TourProvider>
+    </QueryClientProvider>
   );
 }
 export default App;
 
 const ToastContainer: React.FC = () => {
   return (
-      <Toaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              maxWidth: "1000px",
-              fontSize: "1.6rem",
-            },
-            duration: 1500,
-          }}
-      />
+    <Toaster
+      position="top-center"
+      toastOptions={{
+        style: {
+          maxWidth: "1000px",
+          fontSize: "1.6rem",
+        },
+        duration: 1500,
+      }}
+    />
   );
 };
 
