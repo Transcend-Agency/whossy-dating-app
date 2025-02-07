@@ -16,6 +16,8 @@ interface DashboardState {
 	setExploreDataLoading: (exploreDataLoading: boolean) => void;
 	peopleWhoLiked: PopulatedLikeData[]
 	setPeopleWhoLiked: (likes: PopulatedLikeData[]) => void;
+	peopleYouLiked: PopulatedLikeData[];
+	setPeopleYouLiked: (likes: PopulatedLikeData[]) => void;
 	previousLocation: string | null;
 	currentLocation: string;
 	setLocation: (newLocation: string) => void;
@@ -45,6 +47,9 @@ const useDashboardStore = create<DashboardState>((set) => ({
 
 	peopleWhoLiked: [],
 	setPeopleWhoLiked: (likes) => set({ peopleWhoLiked: likes }),
+
+	peopleYouLiked: [],
+	setPeopleYouLiked: (liked) => set({ peopleWhoLiked: liked }),
 
 	previousLocation: null,
 	currentLocation: window.location.pathname,
