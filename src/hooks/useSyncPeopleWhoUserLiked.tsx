@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/firebase'; // your Firebase configuration
 import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore';
-import { Like, PopulatedLikeData } from '../types/likingAndMatching'; // your Like interface & type for populated like data
+import {Like, PopulatedLikedByData} from '../types/likingAndMatching'; // your Like interface & type for populated
+// like data
 import { useAuthStore } from '@/store/UserId';
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import { User } from "@/types/user.ts";
@@ -34,7 +35,7 @@ function useSyncPeopleWhoUserLiked() {
 						return {
 								...like,
 								liked: likedUserData, // attach the liked user's details
-						} as PopulatedLikeData;
+						} as PopulatedLikedByData;
 				};
 
 				// Set up a real-time listener to keep the liked data in sync
@@ -50,8 +51,8 @@ function useSyncPeopleWhoUserLiked() {
 						const filteredLikes = likes
 								.filter((like) => like !== null)
 								.filter((like) => !blockedUsers.includes(like!.liked_id));
-
-						setPeopleYouLiked(filteredLikes as PopulatedLikeData[]);
+						setPeopleYouLiked(filteredLikes as PopulatedLikedByData[]);
+						console.log(peopleYouLiked)
 						setLoading(false);
 				});
 

@@ -74,7 +74,7 @@ function App() {
   }, [location]);
 
   const updateUser = async (s: User) => {
-    updateUserProfile("users", auth?.uid as string, () => {console.log("Update Successful")}, s)
+    updateUserProfile("users", auth?.uid as string, () => {}, s, false)
         .catch(err => console.error(err))
   }
 

@@ -17,7 +17,7 @@ import useSyncPeopleWhoUserLiked from "@/hooks/useSyncPeopleWhoUserLiked.tsx";
 
 const MatchesPage = () => {
     const [activePage, setActivePage] = useState<'profile' | 'like' | 'match' | 'liked-by' | 'plans'>('like')
-    const [likes] = useState([1, 2, 3, 4, 5])
+    // const [likes] = useState([1, 2, 3, 4, 5])
     const [currentPlan, setCurrentPlan] = useState<'free' | 'premium'>('free');
     const [userData, setUserData] = useState<User>();
     const { auth, user } = useAuthStore()
@@ -30,6 +30,7 @@ const MatchesPage = () => {
 
     useEffect(() => {
         setPage('user-profile')
+        console.log(peopleWhoLiked, peopleYouLiked)
     }, []);
 
     const fetchUserData = async () => {
@@ -101,7 +102,7 @@ const MatchesPage = () => {
                     {activePage == 'like' &&
                         <motion.div initial={{opacity: 0, scale: 0.96}} animate={{opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container h-screen lg:h-auto">
                         <AnimatePresence mode="wait">
-                            {likes.length == 0 && <LikesEmptyState />}
+                            {/*{likes.length == 0 && <LikesEmptyState />}*/}
                             {peopleWhoLiked.length == 0 && !likesLoading &&
                                 <LikesEmptyState />}
                             {likesLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -138,7 +139,7 @@ const MatchesPage = () => {
                                         </div>
                                     </div>
                                 </div>}
-                                {likes.length !== 0 && <div className="matches-page__grid">
+                                { <div className="matches-page__grid">
                                     {peopleWhoLiked?.map((like, i,) =>
                                         <div key={i}>
                                             <MatchItem
@@ -154,7 +155,7 @@ const MatchesPage = () => {
                     {activePage == 'liked-by' &&
                         <motion.div initial={{opacity: 0, scale: 0.96}} animate={{opacity: 1, scale: 1 }} transition={{ duration: 0.15 }} key={'like'} exit={{ opacity: 0, scale: 0.96 }} className="matches-page__likes-container h-screen lg:h-auto">
                             <AnimatePresence mode="wait">
-                                {likes.length == 0 && <LikesEmptyState />}
+                                {/*{likes.length == 0 && <LikesEmptyState />}*/}
                                 {peopleYouLiked.length == 0 && !likedByLoading &&
                                     <LikedByEmptyState /> }
                                 {likedByLoading && <motion.div key="matches-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -191,15 +192,18 @@ const MatchesPage = () => {
                                             </div>
                                         </div>
                                     </div>}
-                                    {likes.length !== 0 && <div className="matches-page__grid">
+                                    <div className="matches-page__grid">
+                                        {/*{peopleYouLiked?.map(like => (*/}
+                                        {/*    console.log(like)*/}
+                                        {/*))}*/}
                                         {peopleYouLiked?.map((like, i,) =>
                                             <div key={i}>
                                                 <MatchItem
-                                                    userData={like.liker}
+                                                    userData={like.liked as User}
                                                 />
                                             </div>
                                         )}
-                                    </div>}
+                                    </div>
                                 </motion.div>}
                             </AnimatePresence>
 

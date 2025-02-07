@@ -19,6 +19,9 @@ export interface Match {
 }
 
 export interface PopulatedLikeData extends Like {
-    liked?: User
-    liker?: User
+    liker: User
+}
+
+export interface PopulatedLikedByData extends Like {
+    liked: User
 }

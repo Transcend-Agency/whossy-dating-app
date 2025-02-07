@@ -23,7 +23,7 @@ export const TourGuideModal = () => {
 		const [innerWidth, setInnerWidth] = useState(window.innerWidth);
 
 		const updateUser = async (s: UserProfile) => {
-				updateUserProfile("users", auth?.uid as string, () => {console.log("Update Successful")}, s)
+				updateUserProfile("users", auth?.uid as string, () => {}, s, false)
 						.catch(err => console.error(err))
 		}
 
@@ -83,8 +83,6 @@ export const TourGuideModal = () => {
 				completedTours[pageKey] = true;
 				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
 				localStorage.removeItem("lastStep");
-
-				console.log(pageKey);
 
 				updateUser({
 						tour_guide: {

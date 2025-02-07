@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import {AdvancedSearchPreferences, User} from '@/types/user.ts';
 import { filterOptions } from '@/constants';
-import {PopulatedLikeData} from "@/types/likingAndMatching.ts";
+import {PopulatedLikeData, PopulatedLikedByData} from "@/types/likingAndMatching.ts";
 
 interface DashboardState {
 	profiles: User[];
@@ -16,8 +16,8 @@ interface DashboardState {
 	setExploreDataLoading: (exploreDataLoading: boolean) => void;
 	peopleWhoLiked: PopulatedLikeData[]
 	setPeopleWhoLiked: (likes: PopulatedLikeData[]) => void;
-	peopleYouLiked: PopulatedLikeData[];
-	setPeopleYouLiked: (likes: PopulatedLikeData[]) => void;
+	peopleYouLiked: PopulatedLikedByData[];
+	setPeopleYouLiked: (likedByData: PopulatedLikedByData[]) => void;
 	previousLocation: string | null;
 	currentLocation: string;
 	setLocation: (newLocation: string) => void;
@@ -49,7 +49,7 @@ const useDashboardStore = create<DashboardState>((set) => ({
 	setPeopleWhoLiked: (likes) => set({ peopleWhoLiked: likes }),
 
 	peopleYouLiked: [],
-	setPeopleYouLiked: (liked) => set({ peopleWhoLiked: liked }),
+	setPeopleYouLiked: (likedByData) => set({ peopleYouLiked: likedByData }),
 
 	previousLocation: null,
 	currentLocation: window.location.pathname,
