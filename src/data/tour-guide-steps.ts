@@ -167,16 +167,16 @@ export const mobileTourSteps: Tour = {
 		'matches' : [
 				{
 						selector: '[data-cy="likes-page"]',
-						content: "This is the Likes page where you can view the profiles of users who have liked you. Explore these profiles and decide who you'd like to connect with."
+						content: "This is the \"Liked Me\" page where you can view the profiles of users who have liked you." +
+								" Explore these profiles and decide who you'd like to connect with."
 				},
 				{
 						selector: '[data-cy="matches-page"]',
 						content: "This is the Matches page where you can see users you've mutually matched with. Start chatting or view their profiles to learn more about them."
 				},
 				{
-						selector: '[data-cy="subscribe-modal-cta"]',
-						content: "This is the subscription modal where you can unlock premium features to enhance your matching and chatting experience."
-				}
+						selector: '[data-cy="liked-by-page"]',
+						content: "This is the \"Liked Me\" page where you can view the profiles of users who you have liked"},
 		],
 		'chat' : [],
 		'user-profile': [
