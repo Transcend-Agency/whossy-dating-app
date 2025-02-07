@@ -715,9 +715,6 @@ const SwipingAndMatching = () => {
                 }
             }
         }
-
-        console.log("Final Look:", matchingDocs)
-
         setProfilesLoading(false);
         setProfiles(matchingDocs);
     };
@@ -782,7 +779,7 @@ const SwipingAndMatching = () => {
             </nav>
             <AnimatePresence mode="sync">
                 {!profilesLoading && profiles.length !== 0 &&
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="swipe-and-match-page">
+                    <motion.div key={'index'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="swipe-and-match-page">
                         <motion.div style={{ opacity: chosenActionButtonOpacity, scale: chosenActionScale }} className="chosen-action-button">
                             {activeAction == 'cancel' && <img src="/assets/icons/cancel.svg" alt={``} />}
                             {activeAction == 'like' && <img src="/assets/icons/heart.svg" alt={``} />}

@@ -73,6 +73,13 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                 user_settings: {
                     ...userSettings
                 },
+                tour_guide: {
+                    explore: false,
+                    "swipe-and-match": false,
+                    matches: false,
+                    chat: false,
+                    "user-profile": false,
+                }
             });
 
             await setDoc(doc(db, "advancedSearchPreferences", auth.uid as string), {
