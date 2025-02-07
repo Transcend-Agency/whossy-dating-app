@@ -33,13 +33,15 @@ import Contact from "./pages/Contact";
 import React, { useEffect } from "react";
 import useDashboardStore from "@/store/useDashboardStore.tsx";
 import useProfileFetcher from "@/hooks/useProfileFetcher.tsx";
-import useAutoLogout from "@/store/UserId.tsx";
+import useAutoLogout, {useAuthStore} from "@/store/UserId.tsx";
 import ViewProfile from "./components/dashboard/ViewProfile";
 import { TourProvider } from '@reactour/tour'
 import { CompletedTours } from "@/types/tourGuide.ts";
 import { TourGuideModal } from "@/components/dashboard/TourGuideModal.tsx";
 import { styles, tourGuideSteps } from "@/data/tour-guide-steps.ts";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import {updateUserProfile} from "@/hooks/useUser.ts";
+import { User } from "@/types/user.ts";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +62,7 @@ function App() {
     setTotalCurrentStep
   } = useDashboardStore()
   const { fetchProfilesBasedOnOption, refreshProfiles } = useProfileFetcher()
+  const { auth } = useAuthStore();
 
   useEffect(() => {
     fetchProfilesBasedOnOption().catch((err) => console.error("An error occurred while trying to fetch profiles: ", err))
@@ -70,6 +73,11 @@ function App() {
     window.scrollTo(0, 0);
   }, [location]);
 
+  const updateUser = async (s: User) => {
+    updateUserProfile("users", auth?.uid as string, () => {}, s, false)
+        .catch(err => console.error(err))
+  }
+
   const handleClose = () => {
     const tourStepsData = tourGuideSteps
     const pageKeyValue = location.pathname.split('/')[2];
@@ -77,6 +85,12 @@ function App() {
 
     const pageKey = location.pathname;
     console.log(totalCurrentStep);
+
+    updateUser({
+      tour_guide: {
+        [pageKey.split('/')[2]]: true // Assign a value (true in this case)
+      }
+    }).catch(e => console.log(e))
 
     if (totalCurrentStep === steps.length - 1) {
       const completedTours: CompletedTours = JSON.parse(

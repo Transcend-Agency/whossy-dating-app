@@ -78,6 +78,13 @@ export type User = {
     photo?: string | null;
     updated_at?: Timestamp | Date | null;
   }
+  tour_guide?: {
+    explore?: boolean;
+    "swipe-and-match"?: boolean;
+    matches?: boolean;
+    chat?: boolean;
+    "user-profile"?: boolean;
+  }
 };
 
 export type UserFilters = {

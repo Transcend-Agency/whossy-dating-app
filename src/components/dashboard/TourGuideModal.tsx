@@ -4,6 +4,9 @@ import { useTour } from '@reactour/tour';
 import useDashboardStore from '@/store/useDashboardStore';
 import {CompletedTours} from "@/types/tourGuide.ts";
 import { tourGuideSteps} from "@/data/tour-guide-steps.ts";
+import {User, UserProfile} from "@/types/user.ts";
+import {getUserProfile, updateUserProfile} from "@/hooks/useUser.ts";
+import {useAuthStore} from "@/store/UserId.tsx";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 		variant?: 'primary' | 'outline'
@@ -12,12 +15,29 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const TourGuideModal = () => {
 		const { tourIsOpen, setTourIsOpen } = useDashboardStore();
 		const [page, setPage] = useState<string>("explore")
+		const [userData, setUserData] = useState<User>();
 		const location = useLocation();
 		const { setIsOpen, setSteps, setCurrentStep } = useTour();
+		const { auth } = useAuthStore();
 
 		const [innerWidth, setInnerWidth] = useState(window.innerWidth);
 
+		const updateUser = async (s: UserProfile) => {
+				updateUserProfile("users", auth?.uid as string, () => {}, s, false)
+						.catch(err => console.error(err))
+		}
+
+		const fetchUserData = async () => {
+				try {
+						const data = await getUserProfile("users", auth?.uid as string) as User;
+						setUserData(data);
+				} catch (err) {
+						console.log("Error fetching user data:", err);
+				}
+		};
+
 		useEffect(() => {
+				fetchUserData().catch(e => console.error(e))
 				const handleResize = () => {
 						setInnerWidth(window.innerWidth as number)
 				};
@@ -42,22 +62,50 @@ export const TourGuideModal = () => {
 						completedTours['/dashboard/chat'] = true;
 				}
 				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
-				const hasCompletedTour = completedTours[pageKey]; // Check if the modal should show based on the page.
-				if(!hasCompletedTour){
+				const hasCompletedTour = completedTours[pageKey];// Check if the modal should show based on the page.
+
+				if(!hasCompletedTour || userData?.tour_guide?.[pageKeyValue as keyof typeof userData.tour_guide] === false){
 						setTimeout(() => setTourIsOpen(true), 1000)
+						completedTours[pageKey] = true;
+						localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
 				}else{
 						setTourIsOpen(false)
 				}
 		}, [location.pathname, setTourIsOpen]);
 
+		const handleSkip = () => {
+				setTourIsOpen(false)
+				const pageKey = location.pathname;
+
+				const completedTours: CompletedTours = JSON.parse(
+						localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,}"
+				);
+				completedTours[pageKey] = true;
+				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));
+				localStorage.removeItem("lastStep");
+
+				updateUser({
+						tour_guide: {
+								[pageKey.split('/')[2]]: true // Assign a value (true in this case)
+						}
+				}).catch(e => console.log(e))
+		}
+
 		const handleStartTour = () => {
 				localStorage.setItem('hasStartedTour', 'true');
+
 
 				const tourStepsData = tourGuideSteps;
 				const pageKeyValue = location.pathname.split('/')[2];
 				const steps = tourStepsData[pageKeyValue] || []
 
 				const lastStep = parseInt(localStorage.getItem("lastStep") || "0", 10);
+
+				updateUser({
+						tour_guide: {
+								[pageKeyValue.split('/')[2]]: true // Assign a value (true in this case)
+						}
+				}).catch(e => console.log(e))
 
 				setTourIsOpen(false);
 				setIsOpen(true);
@@ -84,7 +132,7 @@ export const TourGuideModal = () => {
 												<p>We'll show you all the important features.</p>
 										</div>
 										<div className="flex justify-end space-x-4">
-												<Button variant="outline" onClick={() => setTourIsOpen(false)}>
+												<Button variant="outline" onClick={handleSkip}>
 														Skip for now
 												</Button>
 												<Button onClick={handleStartTour}>
