@@ -47,8 +47,6 @@ export const TakeASelfie: React.FC<OnboardingProps> = ({ goBack }) => {
 		}
 
 		const uploadToFirestore = async () => {
-				console.log(auth?.uid);
-				console.log("Loading...");
 
 				if (!auth?.uid) {
 						console.error("User ID is undefined. Cannot update Firestore without a valid UID.");

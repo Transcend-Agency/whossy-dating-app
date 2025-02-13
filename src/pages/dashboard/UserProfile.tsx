@@ -63,7 +63,6 @@ const UserProfile = () => {
     useEffect(() => {
         fetchUserData().catch(err => console.log(err));
         fetchUserFilters().catch(err => console.log(err));
-        console.log(activePage)
     }, []);
 
     const refetchUserData = async () => { await fetchUserData() }

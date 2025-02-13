@@ -23,8 +23,14 @@ export const startCamera = async (
 				if (videoRef.current) {
 						videoRef.current.srcObject = stream;
 				}
-		} catch (err) {
+		} catch (err: any) {
 				console.error("Error accessing camera:", err);
+				// Check for a permission error (e.g., NotAllowedError)
+				if (err.name === "NotAllowedError") {
+						toast.error("Camera access is disabled. Please enable it in your browser settings.");
+				} else {
+						toast.error("There was an error accessing your camera.");
+				}
 				setCameraHasStarted(false);
 				setPictureHasBeenTaken(false);
 		}
