@@ -281,15 +281,15 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
         const chatRef = doc(db, "chats", chatId);
 
         const expirationTime = Timestamp.fromDate(
-            new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            new Date(new Date().getTime() + (48 * 60 * 60 * 1000) )
         );
 
         // @ts-expect-error currentUser is probably undefined.
-        if(currentUser.credit_balance < 5){
+        if(currentUser.credit_balance < 1){
             setPage('add-credits')
             navigate("/dashboard/user-profile")
         } else {
-            const newCredit: number = currentUser?.credit_balance as number - 5;
+            const newCredit: number = currentUser?.credit_balance as number - 1;
             console.log(newCredit)
             try {
                 await updateDoc(chatRef, {
@@ -548,7 +548,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                   <img className={`size-[50px] mx-auto`} src="/assets/icons/no-message.svg" alt={``} />
                                                   <p>Chat has not been unlocked 🔒</p>
                                                   <p>Unlock this chat for both of you to connect 😍</p>
-                                                  <p>5 Credit is required to unlock chat</p>
+                                                  <p>1 Credit is required to unlock chat</p>
                                                   <p className={`whitespace-nowrap flex gap-x-2 items-start`}>
                                                       <img className={`size-[24px]`}
                                                            src={`/assets/images/dashboard/coin.png`} alt={``}/>
@@ -567,6 +567,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                               ? 'Buy Credits'
                                                               : 'Use Credits'}
                                                       </button>
+                                                      <p className={`font-bold text-[18px] text-white`}>OR</p>
                                                       <button onClick={() => {
                                                           setPage('subscription-plans')
                                                           navigate("/dashboard/user-profile")}
@@ -586,20 +587,31 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                     <img className={`size-[50px] mx-auto`} src="/assets/icons/no-message.svg" alt={``} />
                                                     <p>Chat has not been unlocked 🔒</p>
                                                     <p>Unlock this chat for both of you to connect 😍</p>
-                                                    <p>5 Credit is required to unlock chat</p>
+                                                    <p>1 Credit is required to unlock chat</p>
                                                     <p className={`whitespace-nowrap`}>Credit Balance: {`${currentUser?.credit_balance || 0}`} credits</p>
                                                     <div className={`flex justify-center gap-4 items-center`}>
                                                         <button onClick={(e) => {
                                                             e.preventDefault();
-                                                            if(chatId) {
+                                                            if (chatId) {
                                                                 unlockChat(chatId)
                                                                     .then(() => console.log("Chat Unlocked")).catch(e => console.error("Error Unlocking chat", e))
                                                             }
-                                                        }} className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
-                                                            {/* @ts-expect-error currentUser is probably undefined.*/ }
+                                                        }}
+                                                                className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
+                                                            {/* @ts-expect-error currentUser is probably undefined.*/}
                                                             {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
                                                                 ? 'Buy Credits'
                                                                 : 'Use Credits'}
+                                                        </button>
+                                                        <p className={`font-bold text-[18px] text-white`}>OR</p>
+                                                        <button onClick={() => {
+                                                            setPage('subscription-plans')
+                                                            navigate("/dashboard/user-profile")
+                                                        }
+                                                        }
+                                                                className={`border p-4 bg-gradient-to-r from-orange-400 to-red hover:from-orange-600 hover:to-red/80 active:scale-95 rounded-md px-3 w-fit`}>Subscribe
+                                                                                                                                                                                                             to
+                                                                                                                                                                                                             Premium
                                                         </button>
                                                     </div>
                                                 </div>

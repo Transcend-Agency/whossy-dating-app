@@ -52,7 +52,6 @@ function useSyncPeopleWhoUserLiked() {
 								.filter((like) => like !== null)
 								.filter((like) => !blockedUsers.includes(like!.liked_id));
 						setPeopleYouLiked(filteredLikes as PopulatedLikedByData[]);
-						console.log(peopleYouLiked)
 						setLoading(false);
 				});
 

@@ -30,7 +30,6 @@ const MatchesPage = () => {
 
     useEffect(() => {
         setPage('user-profile')
-        console.log(peopleWhoLiked, peopleYouLiked)
     }, []);
 
     const fetchUserData = async () => {
