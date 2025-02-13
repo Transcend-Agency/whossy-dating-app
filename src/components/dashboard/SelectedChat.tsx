@@ -300,7 +300,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                 state.chatUnlocked = true
                 setChatUnlocked(true)
                 console.log("Chat unlocked successfully!");
-                // toast.success("Chat unlocked successfully!")
+                toast.success("Chat unlocked for 48Hours", { duration: 3} )
             } catch (error) {
                 console.error("Error unlocking chat:", error);
                 toast.error("An error occurred.")
@@ -563,7 +563,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                           }
                                                       }} className={`border p-3 bg-gradient-to-br from-red to-orange-400 hover:bg-gradient-to-br hover:from-red/80 hover:to-orange-600 active:scale-95 rounded-md px-2 w-[140px]`}>
                                                           { /* @ts-expect-error currentUser is probably undefined.*/ }
-                                                          {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
+                                                          {currentUser?.credit_balance !== null && currentUser?.credit_balance < 1
                                                               ? 'Buy Credits'
                                                               : 'Use Credits'}
                                                       </button>
@@ -599,7 +599,7 @@ const SelectedChat: FC<SelectedChatProps> = ({activePage,closePage,updateChatId,
                                                         }}
                                                                 className={`border p-3 bg-green-700 hover:bg-green-800 active:scale-95 rounded-md px-2 w-[140px]`}>
                                                             {/* @ts-expect-error currentUser is probably undefined.*/}
-                                                            {currentUser?.credit_balance !== null && currentUser?.credit_balance < 5
+                                                            {currentUser?.credit_balance !== null && currentUser?.credit_balance < 1
                                                                 ? 'Buy Credits'
                                                                 : 'Use Credits'}
                                                         </button>
