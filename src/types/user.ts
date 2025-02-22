@@ -84,6 +84,7 @@ export type User = {
     matches?: boolean;
     chat?: boolean;
     "user-profile"?: boolean;
+    "notification"?: boolean;
   }
 };
 

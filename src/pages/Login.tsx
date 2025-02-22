@@ -177,7 +177,6 @@ const Login = () => {
                 }
             }
         } catch (error: any) {
-            console.log(error)
             if ((error.code == 'auth/network-request-failed')) {
                 setRequestError("Poor Internet Connection")
             }

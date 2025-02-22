@@ -52,7 +52,7 @@ export const TourGuideModal = () => {
 				let completedTours: CompletedTours;
 
 				try {
-						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{"/dashboard/chat: true"}');
+						completedTours = JSON.parse(localStorage.getItem('completedTourPages') || '{/dashboard/chat: true,/dashboard/notification: true}');
 				} catch (error) {
 						console.error('Error parsing completedTourPages from localStorage:', error);
 						completedTours = {};
@@ -78,7 +78,7 @@ export const TourGuideModal = () => {
 				const pageKey = location.pathname;
 
 				const completedTours: CompletedTours = JSON.parse(
-						localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,}"
+						localStorage.getItem("completedTourPages") || "{/dashboard/chat: true,/dashboard/notification: true}"
 				);
 				completedTours[pageKey] = true;
 				localStorage.setItem("completedTourPages", JSON.stringify(completedTours));

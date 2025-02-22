@@ -144,10 +144,10 @@ const Explore = () => {
         return profiles.filter(user => user.is_approved === true && user?.user_settings?.public_search === true && user.is_banned === false);
     };
 
-    useEffect(() => {
-        setSelectedProfile(null)
-        return () => setSelectedProfile(null)
-    }, [])
+    // useEffect(() => {
+    //     setSelectedProfile(null)
+    //     return () => setSelectedProfile(null)
+    // }, [])
 
     return <>
         {!selectedProfile &&
