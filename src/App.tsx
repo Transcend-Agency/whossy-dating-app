@@ -16,9 +16,7 @@ import CreateAccount from "./pages/CreateAccount";
 import Explore from "./pages/dashboard/Explore";
 import SwipingAndMatching from "./pages/dashboard/SwipingAndMatching";
 import UserProfile from "./pages/dashboard/UserProfile";
-import Favorites from "./pages/Favorites";
 import ForgotPassword from "./pages/ForgotPassword";
-import GlobalSearch from "./pages/GlobalSearch";
 import Home from "./pages/Home";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -72,6 +70,11 @@ function App() {
     // Scroll to the top of the page whenever the route changes
     window.scrollTo(0, 0);
   }, [location]);
+
+  //
+  useEffect(() => {
+    setSelectedProfile(null); // Reset selectedProfile on route change
+  }, [location.pathname]);
 
   const updateUser = async (s: User) => {
     updateUserProfile("users", auth?.uid as string, () => {}, s, false)
@@ -184,20 +187,35 @@ function App() {
                 <DashboardLayout />
                 <TourGuideModal />
               </ProtectedDashboard>}>
-              <Route path="user-profile" element={selectedProfile ? <ViewProfile
+              <Route path="user-profile"
+                     element={
+                selectedProfile ?
+                         <ViewProfile
+                             onBackClick={() => { setSelectedProfile(null) }}
+                             userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                             onBlockChange={refreshProfiles}
+                         /> :
+                    <UserProfile />
+              } />
+              {/*<Route path="explore" element={<Explore />} />*/}
+              <Route path="explore" element={selectedProfile ? <ViewProfile
                 onBackClick={() => { setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}
-              /> : <UserProfile />} />
-              <Route path="explore" element={<Explore />} />
-              <Route path="swipe-and-match" element={<SwipingAndMatching />} />
+            /> : <Explore />} />
+              {/*<Route path="swipe-and-match" element={<SwipingAndMatching />} />*/}
+
+              <Route path="swipe-and-match" element={selectedProfile ? <ViewProfile
+                onBackClick={() => { setSelectedProfile(null) }}
+                userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
+                onBlockChange={refreshProfiles}
+            /> : <SwipingAndMatching />} />
+
               <Route path="matches" element={selectedProfile ? <ViewProfile
                 onBackClick={() => { setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}
                 onBlockChange={refreshProfiles}
               /> : <MatchesPage />} />
-              <Route path="globalSearch" element={<GlobalSearch />} />
-              <Route path="heart" element={<Favorites />} />
               <Route path="chat" element={selectedProfile ? <ViewProfile
                 onBackClick={() => { setSelectedProfile(null) }}
                 userData={profiles.find(profile => selectedProfile as string == profile.uid)!}

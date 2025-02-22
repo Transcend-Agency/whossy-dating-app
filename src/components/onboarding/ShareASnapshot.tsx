@@ -75,8 +75,9 @@ const ShareASnapshot: FC<OnboardingProps> = ({ advance, goBack }) => {
                     explore: false,
                     "swipe-and-match": false,
                     matches: false,
-                    chat: false,
+                    chat: true,
                     "user-profile": false,
+                    notification: true
                 }
             });
 
